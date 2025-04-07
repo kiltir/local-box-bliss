@@ -1,0 +1,76 @@
+
+import React from 'react';
+import { Button } from "@/components/ui/button";
+import { X } from 'lucide-react';
+
+interface BoxDetailsProps {
+  title: string;
+  price: number;
+  description: string;
+  image: string;
+  products: {
+    name: string;
+    quantity: string;
+    producer: string;
+  }[];
+  onClose: () => void;
+}
+
+const BoxDetails = ({ title, price, description, image, products, onClose }: BoxDetailsProps) => {
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+      <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+        <div className="relative">
+          <button
+            onClick={onClose}
+            className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 z-10"
+          >
+            <X className="h-6 w-6" />
+          </button>
+          
+          <div className="md:flex">
+            <div className="md:w-1/2">
+              <img 
+                src={image} 
+                alt={title} 
+                className="w-full h-64 md:h-full object-cover"
+              />
+            </div>
+            
+            <div className="p-6 md:w-1/2">
+              <h2 className="text-2xl font-bold mb-2">{title}</h2>
+              <div className="text-2xl font-bold text-leaf-green mb-4">
+                {price.toFixed(2)}€
+              </div>
+              
+              <p className="text-gray-600 mb-6">{description}</p>
+              
+              <div className="mb-6">
+                <h3 className="text-lg font-semibold mb-3">Contenu de la box</h3>
+                <ul className="divide-y">
+                  {products.map((product, index) => (
+                    <li key={index} className="py-3">
+                      <div className="flex justify-between">
+                        <span className="font-medium">{product.name}</span>
+                        <span className="text-gray-600">{product.quantity}</span>
+                      </div>
+                      <div className="text-sm text-gray-500">
+                        Producteur: {product.producer}
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              
+              <Button className="w-full bg-leaf-green hover:bg-dark-green text-white">
+                Ajouter au panier
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default BoxDetails;
