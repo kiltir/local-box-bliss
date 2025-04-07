@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -63,13 +62,12 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				// Custom colors for our local box application
-				'leaf-green': '#4CAF50',
+				'leaf-green': '#FFD700',
 				'soft-beige': '#F5F5DC',
 				'earth-brown': '#8B4513',
 				'cream': '#FFFDD0',
-				'light-green': '#8BC34A',
-				'dark-green': '#2E7D32',
+				'light-green': '#FFEB3B',
+				'dark-green': '#FFC107',
 			},
 			borderRadius: {
 				lg: 'var(--radius)',

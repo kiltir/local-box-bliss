@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -14,7 +13,7 @@
     --popover: 0 0% 100%;
     --popover-foreground: 20 14.3% 4.1%;
 
-    --primary: 122 39% 49%;
+    --primary: 48 100% 50%;
     --primary-foreground: 60 33% 96%;
 
     --secondary: 60 33% 96%;
@@ -31,7 +30,7 @@
 
     --border: 20 5.9% 90%;
     --input: 20 5.9% 90%;
-    --ring: 122 39% 45%;
+    --ring: 48 100% 50%;
     --radius: 0.75rem;
   }
 
@@ -54,7 +53,7 @@
 
 @layer components {
   .hero-section {
-    @apply relative bg-gradient-to-b from-leaf-green/20 to-white overflow-hidden;
+    @apply relative bg-gradient-to-b from-[#FEF7CD]/50 to-white overflow-hidden;
   }
 
   .container-section {
