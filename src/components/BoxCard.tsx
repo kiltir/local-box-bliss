@@ -18,7 +18,7 @@ const BoxCard = ({ title, price, description, image, items, size, onClick }: Box
       case 'small':
         return 'bg-blue-100 text-blue-800';
       case 'medium':
-        return 'bg-yellow-100 text-yellow-800'; // Changed from green to yellow
+        return 'bg-yellow-100 text-yellow-800';
       case 'large':
         return 'bg-purple-100 text-purple-800';
       default:
@@ -26,13 +26,29 @@ const BoxCard = ({ title, price, description, image, items, size, onClick }: Box
     }
   };
 
+  // Utilisez la même image pour toutes les tailles, mais ajustez la classe CSS
+  const boxImage = "/lovable-uploads/e61e04cf-8400-4470-894b-0a44d7663e8d.png";
+  
+  const getBoxSizeClass = () => {
+    switch (size) {
+      case 'small':
+        return 'scale-75';
+      case 'medium':
+        return 'scale-90';
+      case 'large':
+        return 'scale-100';
+      default:
+        return 'scale-90';
+    }
+  };
+
   return (
     <div className="bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300">
-      <div className="relative h-56">
+      <div className="relative h-56 flex items-center justify-center bg-[#f5eada]">
         <img 
-          src={image} 
+          src={boxImage} 
           alt={title} 
-          className="w-full h-full object-cover"
+          className={`w-auto h-auto max-h-48 object-contain transition-transform ${getBoxSizeClass()}`}
         />
         <div className={`absolute top-4 right-4 px-3 py-1 rounded-full text-sm font-medium ${getBadgeColor()}`}>
           {size === 'small' ? 'Petite' : size === 'medium' ? 'Moyenne' : 'Grande'}
