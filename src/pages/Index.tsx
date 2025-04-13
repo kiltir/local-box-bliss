@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import Navbar from '@/components/Navbar';
 import Hero from '@/components/Hero';
@@ -13,7 +14,7 @@ const Index = () => {
   const boxes = [
     {
       id: 1,
-      title: "Box Petite",
+      title: "Petite Box", // Updated from "Box Petite"
       price: 19.99,
       description: "La box idéale pour une personne ou un petit foyer, contenant une sélection de produits frais et locaux de saison.",
       image: "https://source.unsplash.com/1618160702438-9b02ab6515c9",
@@ -31,7 +32,7 @@ const Index = () => {
     },
     {
       id: 2,
-      title: "Box Moyenne",
+      title: "Moyenne Box", // Updated from "Box Moyenne"
       price: 34.99,
       description: "Parfaite pour un couple ou un foyer de 3-4 personnes, cette box contient une variété plus large de produits locaux.",
       image: "https://source.unsplash.com/1509316975850-ff9c5deb0cd9",
@@ -52,7 +53,7 @@ const Index = () => {
     },
     {
       id: 3,
-      title: "Box Grande",
+      title: "Grande Box", // Updated from "Box Grande"
       price: 49.99,
       description: "Notre box la plus complète, idéale pour une famille ou pour partager. Une gamme étendue de produits frais et d'épicerie.",
       image: "https://source.unsplash.com/1582562124811-c09040d0a901",
