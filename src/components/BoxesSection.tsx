@@ -26,12 +26,6 @@ const BoxesSection = () => {
               Personnalisez votre expérience en sélectionnant la thématique qui vous correspond.
             </p>
           </div>
-          <div className="flex justify-center mb-8">
-            <BoxThemeSelector 
-              selectedTheme={selectedTheme} 
-              onThemeChange={handleThemeChange} 
-            />
-          </div>
         </div>
       </section>
       
@@ -42,6 +36,14 @@ const BoxesSection = () => {
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
               Choisissez la formule qui correspond le mieux à vos besoins. Toutes nos box sont composées de produits frais et locaux, sélectionnés avec soin.
             </p>
+            
+            {/* Theme selector moved here, below "sélectionnés avec soin" */}
+            <div className="flex justify-center mt-6 mb-8">
+              <BoxThemeSelector 
+                selectedTheme={selectedTheme} 
+                onThemeChange={handleThemeChange} 
+              />
+            </div>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 fade-in">
@@ -76,3 +78,4 @@ const BoxesSection = () => {
 };
 
 export default BoxesSection;
+
