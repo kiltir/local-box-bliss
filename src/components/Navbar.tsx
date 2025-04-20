@@ -21,9 +21,7 @@ const Navbar = () => {
             <a href="#boxes" className="text-gray-600 hover:text-leaf-green transition-colors">
               Nos Box
             </a>
-            <a href="#producers" className="text-gray-600 hover:text-leaf-green transition-colors">
-              Producteurs
-            </a>
+            <a href="#producers" className="text-gray-600 hover:text-leaf-green transition-colors">Nos Partenaires</a>
             <Button className="bg-leaf-green hover:bg-dark-green text-white">
               Commander
             </Button>
