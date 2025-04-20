@@ -2,21 +2,28 @@
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import { X } from 'lucide-react';
+import { BoxProduct } from '@/types/boxes';
 
 interface BoxDetailsProps {
   title: string;
   price: number;
   description: string;
   image: string;
-  products: {
-    name: string;
-    quantity: string;
-    producer: string;
-  }[];
+  products: BoxProduct[];
   onClose: () => void;
 }
 
 const BoxDetails = ({ title, price, description, image, products, onClose }: BoxDetailsProps) => {
+  // Calculate total volume in m³
+  const calculateTotalVolume = () => {
+    return products.reduce((total, product) => {
+      const volume = (product.dimensions?.width || 0) * 
+                    (product.dimensions?.height || 0) * 
+                    (product.dimensions?.depth || 0) / 1000000; // Convert from cm³ to m³
+      return total + volume;
+    }, 0);
+  };
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
       <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
@@ -47,6 +54,9 @@ const BoxDetails = ({ title, price, description, image, products, onClose }: Box
               
               <div className="mb-6">
                 <h3 className="text-lg font-semibold mb-3">Contenu de la box</h3>
+                <div className="text-sm text-gray-600 mb-2">
+                  Volume total : {calculateTotalVolume().toFixed(6)} m³
+                </div>
                 <ul className="divide-y">
                   {products.map((product, index) => (
                     <li key={index} className="py-3">
@@ -57,6 +67,11 @@ const BoxDetails = ({ title, price, description, image, products, onClose }: Box
                       <div className="text-sm text-gray-500">
                         Producteur: {product.producer}
                       </div>
+                      {product.dimensions && (
+                        <div className="text-sm text-gray-500 mt-1">
+                          Dimensions: {product.dimensions.width} × {product.dimensions.height} × {product.dimensions.depth} cm
+                        </div>
+                      )}
                     </li>
                   ))}
                 </ul>

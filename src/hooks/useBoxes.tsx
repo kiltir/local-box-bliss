@@ -12,13 +12,48 @@ const boxes: BoxData[] = [
     items: 7,
     size: 'small',
     products: [
-      { name: "Tablette de chocolat noir", quantity: "100g", producer: "Chocolaterie Artisanale" },
-      { name: "Sachet de thé Earl Grey", quantity: "50g", producer: "Maison du Thé" },
-      { name: "Pot de miel", quantity: "250g", producer: "Le Rucher de Jean" },
-      { name: "Sachet de biscuits", quantity: "200g", producer: "Boulangerie Traditionnelle" },
-      { name: "Confiture d'abricot", quantity: "250g", producer: "Les Délices du Verger" },
-      { name: "Nougat traditionnel", quantity: "100g", producer: "Confiserie du Sud" },
-      { name: "Pâtes de fruits", quantity: "150g", producer: "Les Délices du Verger" }
+      { 
+        name: "Tablette de chocolat noir", 
+        quantity: "100g", 
+        producer: "Chocolaterie Artisanale",
+        dimensions: { width: 16, height: 1, depth: 8 }
+      },
+      { 
+        name: "Sachet de thé Earl Grey", 
+        quantity: "50g", 
+        producer: "Maison du Thé",
+        dimensions: { width: 8, height: 12, depth: 4 }
+      },
+      { 
+        name: "Pot de miel", 
+        quantity: "250g", 
+        producer: "Le Rucher de Jean",
+        dimensions: { width: 7, height: 10, depth: 7 }
+      },
+      { 
+        name: "Sachet de biscuits", 
+        quantity: "200g", 
+        producer: "Boulangerie Traditionnelle",
+        dimensions: { width: 20, height: 5, depth: 15 }
+      },
+      { 
+        name: "Confiture d'abricot", 
+        quantity: "250g", 
+        producer: "Les Délices du Verger",
+        dimensions: { width: 7, height: 10, depth: 7 }
+      },
+      { 
+        name: "Nougat traditionnel", 
+        quantity: "100g", 
+        producer: "Confiserie du Sud",
+        dimensions: { width: 15, height: 2, depth: 5 }
+      },
+      { 
+        name: "Pâtes de fruits", 
+        quantity: "150g", 
+        producer: "Les Délices du Verger",
+        dimensions: { width: 10, height: 3, depth: 15 }
+      }
     ],
     themes: {
       'Découverte': {

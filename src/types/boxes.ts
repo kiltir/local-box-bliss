@@ -1,10 +1,16 @@
-
 import { BoxSize, BoxTheme } from './box';
+
+export interface BoxProductDimensions {
+  width: number;   // Largeur en cm
+  height: number;  // Hauteur en cm
+  depth: number;   // Profondeur en cm
+}
 
 export interface BoxProduct {
   name: string;
   quantity: string;
   producer: string;
+  dimensions?: BoxProductDimensions;
 }
 
 export interface BoxThemeData {
