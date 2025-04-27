@@ -17,15 +17,20 @@ interface BoxDetailsProps {
 const BoxDetails = ({ title, price, description, image, products, onClose }: BoxDetailsProps) => {
   const [selectedProductIds, setSelectedProductIds] = useState<string[]>(products.map((_, index) => index.toString()));
 
+  // Calculate volume for a single product in m³
+  const calculateProductVolume = (product: BoxProduct) => {
+    if (!product.dimensions) return 0;
+    return (product.dimensions.width * 
+            product.dimensions.height * 
+            product.dimensions.depth) / 1000000; // Convert from cm³ to m³
+  };
+
   // Calculate total volume in m³
   const calculateTotalVolume = () => {
     return products
       .filter((_, index) => selectedProductIds.includes(index.toString()))
       .reduce((total, product) => {
-        const volume = (product.dimensions?.width || 0) * 
-                      (product.dimensions?.height || 0) * 
-                      (product.dimensions?.depth || 0) / 1000000; // Convert from cm³ to m³
-        return total + volume;
+        return total + calculateProductVolume(product);
       }, 0);
   };
 
@@ -68,7 +73,7 @@ const BoxDetails = ({ title, price, description, image, products, onClose }: Box
               <div className="mb-6">
                 <h3 className="text-lg font-semibold mb-3">Contenu de la box</h3>
                 <div className="text-sm text-gray-600 mb-2">
-                  Volume sélectionné : {calculateTotalVolume().toFixed(6)} m³
+                  Volume total sélectionné : {calculateTotalVolume().toFixed(6)} m³
                 </div>
                 <ul className="divide-y">
                   {products.map((product, index) => (
@@ -93,9 +98,14 @@ const BoxDetails = ({ title, price, description, image, products, onClose }: Box
                             Producteur: {product.producer}
                           </div>
                           {product.dimensions && (
-                            <div className="text-sm text-gray-500 mt-1">
-                              Dimensions: {product.dimensions.width} × {product.dimensions.height} × {product.dimensions.depth} cm
-                            </div>
+                            <>
+                              <div className="text-sm text-gray-500 mt-1">
+                                Dimensions: {product.dimensions.width} × {product.dimensions.height} × {product.dimensions.depth} cm
+                              </div>
+                              <div className="text-sm text-gray-500">
+                                Volume: {calculateProductVolume(product).toFixed(6)} m³
+                              </div>
+                            </>
                           )}
                         </div>
                       </div>
