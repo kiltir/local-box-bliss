@@ -1,6 +1,7 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { X } from 'lucide-react';
 import { BoxProduct } from '@/types/boxes';
 
@@ -14,14 +15,26 @@ interface BoxDetailsProps {
 }
 
 const BoxDetails = ({ title, price, description, image, products, onClose }: BoxDetailsProps) => {
+  const [selectedProductIds, setSelectedProductIds] = useState<string[]>(products.map((_, index) => index.toString()));
+
   // Calculate total volume in m³
   const calculateTotalVolume = () => {
-    return products.reduce((total, product) => {
-      const volume = (product.dimensions?.width || 0) * 
-                    (product.dimensions?.height || 0) * 
-                    (product.dimensions?.depth || 0) / 1000000; // Convert from cm³ to m³
-      return total + volume;
-    }, 0);
+    return products
+      .filter((_, index) => selectedProductIds.includes(index.toString()))
+      .reduce((total, product) => {
+        const volume = (product.dimensions?.width || 0) * 
+                      (product.dimensions?.height || 0) * 
+                      (product.dimensions?.depth || 0) / 1000000; // Convert from cm³ to m³
+        return total + volume;
+      }, 0);
+  };
+
+  const handleProductToggle = (productIndex: string, checked: boolean) => {
+    if (checked) {
+      setSelectedProductIds([...selectedProductIds, productIndex]);
+    } else {
+      setSelectedProductIds(selectedProductIds.filter(id => id !== productIndex));
+    }
   };
 
   return (
@@ -55,23 +68,37 @@ const BoxDetails = ({ title, price, description, image, products, onClose }: Box
               <div className="mb-6">
                 <h3 className="text-lg font-semibold mb-3">Contenu de la box</h3>
                 <div className="text-sm text-gray-600 mb-2">
-                  Volume total : {calculateTotalVolume().toFixed(6)} m³
+                  Volume sélectionné : {calculateTotalVolume().toFixed(6)} m³
                 </div>
                 <ul className="divide-y">
                   {products.map((product, index) => (
                     <li key={index} className="py-3">
-                      <div className="flex justify-between">
-                        <span className="font-medium">{product.name}</span>
-                        <span className="text-gray-600">{product.quantity}</span>
-                      </div>
-                      <div className="text-sm text-gray-500">
-                        Producteur: {product.producer}
-                      </div>
-                      {product.dimensions && (
-                        <div className="text-sm text-gray-500 mt-1">
-                          Dimensions: {product.dimensions.width} × {product.dimensions.height} × {product.dimensions.depth} cm
+                      <div className="flex items-start gap-3">
+                        <Checkbox 
+                          id={`product-${index}`}
+                          checked={selectedProductIds.includes(index.toString())}
+                          onCheckedChange={(checked) => handleProductToggle(index.toString(), checked === true)}
+                        />
+                        <div className="flex-1">
+                          <div className="flex justify-between">
+                            <label 
+                              htmlFor={`product-${index}`}
+                              className="font-medium cursor-pointer"
+                            >
+                              {product.name}
+                            </label>
+                            <span className="text-gray-600">{product.quantity}</span>
+                          </div>
+                          <div className="text-sm text-gray-500">
+                            Producteur: {product.producer}
+                          </div>
+                          {product.dimensions && (
+                            <div className="text-sm text-gray-500 mt-1">
+                              Dimensions: {product.dimensions.width} × {product.dimensions.height} × {product.dimensions.depth} cm
+                            </div>
+                          )}
                         </div>
-                      )}
+                      </div>
                     </li>
                   ))}
                 </ul>
