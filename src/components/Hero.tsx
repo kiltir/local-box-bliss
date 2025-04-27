@@ -1,15 +1,10 @@
-
 import React from 'react';
 import { Button } from "@/components/ui/button";
-
 const Hero = () => {
-  return (
-    <section className="hero-section py-16 md:py-24">
+  return <section className="hero-section py-16 md:py-24">
       <div className="container-section">
         <div className="max-w-3xl mx-auto text-center slide-in">
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6">
-            Des produits locaux livrés chez vous
-          </h1>
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6">Des produits locaux en 1 clic</h1>
           <p className="text-xl text-gray-600 mb-8">
             Découvrez nos box de produits frais, de saison et issus de producteurs locaux, 
             livrées directement à votre porte.
@@ -42,8 +37,6 @@ const Hero = () => {
           </div>
         </div>
       </div>
-    </section>
-  );
+    </section>;
 };
-
 export default Hero;
