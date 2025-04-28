@@ -13,7 +13,8 @@ const BoxesSection = () => {
     handleBoxClick,
     handleCloseDetails,
     getSelectedBoxDetails,
-    getBoxTitle
+    getBoxTitle,
+    handleBoxChange
   } = useBoxes();
 
   return (
@@ -54,6 +55,9 @@ const BoxesSection = () => {
           image={getSelectedBoxDetails()!.image} 
           products={getSelectedBoxDetails()!.products} 
           onClose={handleCloseDetails} 
+          boxSize={getSelectedBoxDetails()!.size}
+          boxId={getSelectedBoxDetails()!.id}
+          onBoxChange={handleBoxChange}
         />
       )}
     </section>

@@ -17,6 +17,10 @@ export const useBoxes = () => {
     setSelectedBox(null);
   };
 
+  const handleBoxChange = (boxId: number) => {
+    setSelectedBox(boxId);
+  };
+
   const getSelectedBoxDetails = () => {
     if (selectedBox === null) return null;
     const box = boxes.find(box => box.id === selectedBox);
@@ -30,6 +34,7 @@ export const useBoxes = () => {
     handleBoxClick,
     handleCloseDetails,
     handleThemeChange,
+    handleBoxChange,
     getSelectedBoxDetails,
     getBoxTitle: (box: BoxData) => getBoxTitle(box, selectedTheme),
   };

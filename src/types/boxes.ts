@@ -1,3 +1,4 @@
+
 import { BoxSize, BoxTheme } from './box';
 
 export interface BoxProductDimensions {
@@ -11,6 +12,7 @@ export interface BoxProduct {
   quantity: string;
   producer: string;
   dimensions?: BoxProductDimensions;
+  weight?: number; // Poids en kg
 }
 
 export interface BoxThemeData {
@@ -27,6 +29,7 @@ export interface BoxData {
   image: string;
   items: number;
   size: BoxSize;
+  weightLimit: number; // Limite de poids en kg
   products: BoxProduct[];
   themes: {
     [key in BoxTheme]: BoxThemeData;
