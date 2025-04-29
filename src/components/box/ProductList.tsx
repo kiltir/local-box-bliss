@@ -10,7 +10,9 @@ interface ProductListProps {
   totalWeight: number;
   totalVolume: number;
   weightLimit: number;
+  volumeLimit?: number;
   weightExceeded: boolean;
+  volumeExceeded?: boolean;
 }
 
 const ProductList: React.FC<ProductListProps> = ({
@@ -20,7 +22,9 @@ const ProductList: React.FC<ProductListProps> = ({
   totalWeight,
   totalVolume,
   weightLimit,
-  weightExceeded
+  volumeLimit,
+  weightExceeded,
+  volumeExceeded
 }) => {
   return (
     <div className="mb-6">
@@ -28,8 +32,8 @@ const ProductList: React.FC<ProductListProps> = ({
       <div className={`text-sm ${weightExceeded ? 'text-red-600 font-semibold' : 'text-gray-600'} mb-1`}>
         Poids total sélectionné: {totalWeight.toFixed(2)} kg / {weightLimit} kg {weightExceeded && '⚠️'}
       </div>
-      <div className="text-sm text-gray-600 mb-2">
-        Volume total sélectionné: {totalVolume.toFixed(2)} cm³
+      <div className={`text-sm ${volumeExceeded ? 'text-red-600 font-semibold' : 'text-gray-600'} mb-2`}>
+        Volume total sélectionné: {totalVolume.toFixed(2)} cm³ {volumeLimit ? `/ ${volumeLimit} cm³` : ''} {volumeExceeded && '⚠️'}
       </div>
       <ul className="divide-y">
         {products.map((product, index) => (

@@ -8,6 +8,13 @@ export const WEIGHT_LIMITS = {
   large: 6, // 6kg for Grande Box
 };
 
+// Volume limits in cm³
+export const VOLUME_LIMITS = {
+  small: 10626, // 10626cm³ for Petite Box
+  medium: 15246, // 15246cm³ for Moyenne Box
+  large: 20328, // 20328cm³ for Grande Box
+};
+
 // Calculate volume for a single product in cm³
 export const calculateProductVolume = (product: BoxProduct) => {
   if (!product.dimensions) return 0;
@@ -44,4 +51,16 @@ export const findAppropriateBox = (weight: number) => {
     return 'large';
   }
   return null; // Weight exceeds all limits
+};
+
+// Find the appropriate box size for the current volume
+export const findAppropriateBoxByVolume = (volume: number) => {
+  if (volume <= VOLUME_LIMITS.small) {
+    return 'small';
+  } else if (volume <= VOLUME_LIMITS.medium) {
+    return 'medium';
+  } else if (volume <= VOLUME_LIMITS.large) {
+    return 'large';
+  }
+  return null; // Volume exceeds all limits
 };
