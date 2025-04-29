@@ -5,7 +5,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { X } from 'lucide-react';
 import { BoxProduct } from '@/types/boxes';
 import { toast } from "@/hooks/use-toast";
-import { boxes } from '@/data/boxesData';
+import { boxes } from '@/data/boxes';
 
 interface BoxDetailsProps {
   title: string;
@@ -39,15 +39,15 @@ const BoxDetails = ({
     large: 6, // 6kg for Grande Box
   };
 
-  // Calculate volume for a single product in m³
+  // Calculate volume for a single product in cm³
   const calculateProductVolume = (product: BoxProduct) => {
     if (!product.dimensions) return 0;
     return (product.dimensions.width * 
             product.dimensions.height * 
-            product.dimensions.depth) / 1000000; // Convert from cm³ to m³
+            product.dimensions.depth); // Return in cm³
   };
 
-  // Calculate total volume in m³
+  // Calculate total volume in cm³
   const calculateTotalVolume = () => {
     return products
       .filter((_, index) => selectedProductIds.includes(index.toString()))
@@ -162,7 +162,7 @@ const BoxDetails = ({
                   Poids total sélectionné: {totalWeight.toFixed(2)} kg / {weightLimit} kg {weightExceeded && '⚠️'}
                 </div>
                 <div className="text-sm text-gray-600 mb-2">
-                  Volume total sélectionné: {calculateTotalVolume().toFixed(6)} m³
+                  Volume total sélectionné: {calculateTotalVolume().toFixed(2)} cm³
                 </div>
                 <ul className="divide-y">
                   {products.map((product, index) => (
@@ -192,14 +192,9 @@ const BoxDetails = ({
                             </div>
                           )}
                           {product.dimensions && (
-                            <>
-                              <div className="text-sm text-gray-500 mt-1">
-                                Dimensions: {product.dimensions.width} × {product.dimensions.height} × {product.dimensions.depth} cm
-                              </div>
-                              <div className="text-sm text-gray-500">
-                                Volume: {calculateProductVolume(product).toFixed(6)} m³
-                              </div>
-                            </>
+                            <div className="text-sm text-gray-500 mt-1">
+                              Dimensions: {product.dimensions.depth} × {product.dimensions.width} × {product.dimensions.height} cm (L×l×h)
+                            </div>
                           )}
                         </div>
                       </div>
