@@ -15,7 +15,7 @@ export const smallBox: BoxData = {
       name: "Tablette de chocolat noir", 
       quantity: "100g", 
       producer: "Chocolaterie Artisanale",
-      dimensions: { width: 8, height: 2, depth: 16 },
+      dimensions: { width: 16, height: 1, depth: 8 },
       weight: 0.1
     },
     { 
@@ -29,7 +29,7 @@ export const smallBox: BoxData = {
       name: "Pot de miel", 
       quantity: "250g", 
       producer: "Le Rucher de Jean",
-      dimensions: { width: 8, height: 9, depth: 8 },
+      dimensions: { width: 7, height: 10, depth: 7 },
       weight: 0.35 // Including container
     },
     { 
