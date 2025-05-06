@@ -12,38 +12,38 @@ export const smallBox: BoxData = {
   weightLimit: 3, // 3kg max
   products: [
     { 
-      name: "Tablette de chocolat noir", 
+      name: "Tablette de chocolat", 
       quantity: "100g", 
       producer: "Chocolaterie Artisanale",
-      dimensions: { width: 16, height: 1, depth: 8 },
+      dimensions: { width: 16, height: 2, depth: 8 },
       weight: 0.1
     },
     { 
       name: "Sachet de thé Earl Grey", 
       quantity: "50g", 
       producer: "Maison du Thé",
-      dimensions: { width: 8, height: 12, depth: 4 },
+      dimensions: { width: 15, height: 20, depth: 5 },
       weight: 0.05
     },
     { 
       name: "Pot de miel", 
       quantity: "250g", 
       producer: "Le Rucher de Jean",
-      dimensions: { width: 7, height: 10, depth: 7 },
+      dimensions: { width: 8, height: 9, depth: 8 },
       weight: 0.35 // Including container
     },
     { 
       name: "Sachet de biscuits", 
       quantity: "200g", 
       producer: "Boulangerie Traditionnelle",
-      dimensions: { width: 20, height: 5, depth: 15 },
+      dimensions: { width: 15, height: 20, depth: 5 },
       weight: 0.2
     },
     { 
       name: "Confiture d'abricot", 
       quantity: "250g", 
       producer: "Les Délices du Verger",
-      dimensions: { width: 7, height: 10, depth: 7 },
+      dimensions: { width: 8, height: 9, depth: 8 },
       weight: 0.35 // Including jar
     },
     { 
@@ -66,7 +66,7 @@ export const smallBox: BoxData = {
       description: "Une sélection variée de douceurs artisanales pour découvrir de nouvelles saveurs.",
       image: "https://source.unsplash.com/1618160702438-9b02ab6515c9",
       products: [
-        { name: "Tablette de chocolat noir", quantity: "100g", producer: "Chocolaterie Artisanale", weight: 0.1 },
+        { name: "Tablette de chocolat", quantity: "100g", producer: "Chocolaterie Artisanale", weight: 0.1 },
         { name: "Sachet de thé Earl Grey", quantity: "50g", producer: "Maison du Thé", weight: 0.05 },
         { name: "Pot de miel", quantity: "250g", producer: "Le Rucher de Jean", weight: 0.35 },
         { name: "Sachet de biscuits", quantity: "200g", producer: "Boulangerie Traditionnelle", weight: 0.2 },
