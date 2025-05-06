@@ -1,7 +1,8 @@
+
 import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { X, Box } from 'lucide-react';
+import { X, Box, Minus, Plus } from 'lucide-react';
 import { BoxProduct } from '@/types/boxes';
 import { toast } from "@/hooks/use-toast";
 import { boxes } from '@/data/boxes';
@@ -33,6 +34,12 @@ const BoxDetails = ({
 }: BoxDetailsProps) => {
   const [selectedProductIds, setSelectedProductIds] = useState<string[]>(products.map((_, index) => index.toString()));
   const [activeTab, setActiveTab] = useState<"details" | "3d">("details");
+  const [productQuantities, setProductQuantities] = useState<Record<string, number>>(
+    products.reduce((acc, _, index) => {
+      acc[index.toString()] = 1; // Initialize all products with quantity 1
+      return acc;
+    }, {} as Record<string, number>)
+  );
   
   // Weight limits
   const WEIGHT_LIMITS = {
@@ -60,8 +67,10 @@ const BoxDetails = ({
   const calculateTotalVolume = () => {
     return products
       .filter((_, index) => selectedProductIds.includes(index.toString()))
-      .reduce((total, product) => {
-        return total + calculateProductVolume(product);
+      .reduce((total, product, index) => {
+        const productIndex = index.toString();
+        const quantity = productQuantities[productIndex] || 1;
+        return total + (calculateProductVolume(product) * quantity);
       }, 0);
   };
 
@@ -69,8 +78,10 @@ const BoxDetails = ({
   const calculateTotalWeight = () => {
     return products
       .filter((_, index) => selectedProductIds.includes(index.toString()))
-      .reduce((total, product) => {
-        return total + (product.weight || 0);
+      .reduce((total, product, index) => {
+        const productIndex = index.toString();
+        const quantity = productQuantities[productIndex] || 1;
+        return total + ((product.weight || 0) * quantity);
       }, 0);
   };
 
@@ -93,28 +104,46 @@ const BoxDetails = ({
 
   // Convert BoxProduct to the format required by Box3DViewer
   const getProductsFor3DViewer = () => {
-    return products
+    const result: Array<{
+      id: number;
+      name: string;
+      width: number;
+      height: number;
+      depth: number;
+      color: string;
+    }> = [];
+
+    products
       .filter((_, index) => selectedProductIds.includes(index.toString()))
-      .map((product, index) => {
-        if (!product.dimensions) {
-          return {
-            id: index + 1,
-            name: product.name,
-            width: 5, // default values if dimensions not provided
-            height: 5,
-            depth: 5,
-            color: getRandomColor(product.name)
-          };
+      .forEach((product, i) => {
+        const productIndex = selectedProductIds[i];
+        const quantity = productQuantities[productIndex] || 1;
+
+        // Add one instance of the product for each quantity
+        for (let q = 0; q < quantity; q++) {
+          if (!product.dimensions) {
+            result.push({
+              id: result.length + 1,
+              name: `${product.name} (${q + 1}/${quantity})`,
+              width: 5, // default values if dimensions not provided
+              height: 5,
+              depth: 5,
+              color: getRandomColor(product.name)
+            });
+          } else {
+            result.push({
+              id: result.length + 1,
+              name: `${product.name} (${q + 1}/${quantity})`,
+              width: product.dimensions.width,
+              height: product.dimensions.height,
+              depth: product.dimensions.depth,
+              color: getRandomColor(product.name)
+            });
+          }
         }
-        return {
-          id: index + 1,
-          name: product.name,
-          width: product.dimensions.width,
-          height: product.dimensions.height,
-          depth: product.dimensions.depth,
-          color: getRandomColor(product.name)
-        };
       });
+
+    return result;
   };
 
   // Generate a consistent color based on product name
@@ -129,6 +158,17 @@ const BoxDetails = ({
       .toUpperCase();
     
     return `#${"00000".substring(0, 6 - c.length)}${c}`;
+  };
+
+  // Handle quantity change
+  const handleQuantityChange = (productIndex: string, change: number) => {
+    const currentQuantity = productQuantities[productIndex] || 1;
+    const newQuantity = Math.max(1, currentQuantity + change); // Minimum quantity is 1
+    
+    setProductQuantities({
+      ...productQuantities,
+      [productIndex]: newQuantity
+    });
   };
 
   useEffect(() => {
@@ -163,7 +203,7 @@ const BoxDetails = ({
         }
       }
     }
-  }, [selectedProductIds, boxSize, onBoxChange]);
+  }, [selectedProductIds, productQuantities, boxSize, onBoxChange]);
 
   const handleProductToggle = (productIndex: string, checked: boolean) => {
     if (checked) {
@@ -243,26 +283,52 @@ const BoxDetails = ({
                               onCheckedChange={(checked) => handleProductToggle(index.toString(), checked === true)}
                             />
                             <div className="flex-1">
-                              <div className="flex justify-between">
+                              <div className="flex justify-between items-center">
                                 <label 
                                   htmlFor={`product-${index}`}
                                   className="font-medium cursor-pointer"
                                 >
                                   {product.name}
                                 </label>
-                                <span className="text-gray-600">{product.quantity}</span>
+                                <div className="flex items-center">
+                                  <span className="text-gray-600 mr-3">{product.quantity}</span>
+                                  {selectedProductIds.includes(index.toString()) && (
+                                    <div className="flex items-center border rounded-md">
+                                      <button 
+                                        className="px-2 py-1 hover:bg-gray-100"
+                                        onClick={() => handleQuantityChange(index.toString(), -1)}
+                                        disabled={productQuantities[index.toString()] <= 1}
+                                      >
+                                        <Minus className="h-4 w-4" />
+                                      </button>
+                                      <span className="px-2 select-none">{productQuantities[index.toString()] || 1}</span>
+                                      <button 
+                                        className="px-2 py-1 hover:bg-gray-100"
+                                        onClick={() => handleQuantityChange(index.toString(), 1)}
+                                      >
+                                        <Plus className="h-4 w-4" />
+                                      </button>
+                                    </div>
+                                  )}
+                                </div>
                               </div>
                               <div className="text-sm text-gray-500">
                                 Producteur: {product.producer}
                               </div>
                               {product.weight && (
                                 <div className="text-sm text-gray-500">
-                                  Poids: {product.weight.toFixed(2)} kg
+                                  Poids: {product.weight.toFixed(2)} kg {selectedProductIds.includes(index.toString()) && productQuantities[index.toString()] > 1 && 
+                                    `× ${productQuantities[index.toString()] || 1} = ${(product.weight * (productQuantities[index.toString()] || 1)).toFixed(2)} kg`}
                                 </div>
                               )}
                               {product.dimensions && (
                                 <div className="text-sm text-gray-500 mt-1">
                                   Dimensions: {product.dimensions.width} × {product.dimensions.height} × {product.dimensions.depth} cm (L×H×P)
+                                  {selectedProductIds.includes(index.toString()) && productQuantities[index.toString()] > 1 && (
+                                    <span className="block">
+                                      Volume total: {(calculateProductVolume(product) * (productQuantities[index.toString()] || 1)).toFixed(2)} cm³
+                                    </span>
+                                  )}
                                 </div>
                               )}
                             </div>
