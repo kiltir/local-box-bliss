@@ -1,13 +1,21 @@
 
 import React, { useRef } from 'react';
 import { Canvas } from '@react-three/fiber';
-import { OrbitControls, useHelper } from '@react-three/drei';
+import { OrbitControls } from '@react-three/drei';
 import * as THREE from 'three';
-import { Product, BoxSize } from '@/types/box';
+
+interface Product {
+  id: number;
+  name: string;
+  width: number;
+  height: number;
+  depth: number;
+  color?: string;
+}
 
 interface Box3DViewerProps {
   products: Product[];
-  boxSize: BoxSize;
+  boxSize: 'small' | 'medium' | 'large';
   boxDimensions: {
     width: number;
     height: number;
