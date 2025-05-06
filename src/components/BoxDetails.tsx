@@ -1,8 +1,7 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { X, Cube } from 'lucide-react';
+import { X, Box } from 'lucide-react';
 import { BoxProduct } from '@/types/boxes';
 import { toast } from "@/hooks/use-toast";
 import { boxes } from '@/data/boxes';
@@ -208,7 +207,7 @@ const BoxDetails = ({
                 <TabsList className="grid w-full grid-cols-2 mb-4">
                   <TabsTrigger value="details">Détails</TabsTrigger>
                   <TabsTrigger value="3d" className="flex items-center gap-2">
-                    <Cube className="h-4 w-4" />
+                    <Box className="h-4 w-4" />
                     <span>Visualisation 3D</span>
                   </TabsTrigger>
                 </TabsList>
