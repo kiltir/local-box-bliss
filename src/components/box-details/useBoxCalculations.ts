@@ -3,7 +3,8 @@ import { useState, useEffect } from 'react';
 import { BoxProduct } from '@/types/boxes';
 import { toast } from "@/hooks/use-toast";
 import { boxes } from '@/data/boxes';
-import { Button } from "@/components/ui/button";
+import { createElement } from 'react';
+import ToastActionButton from './ToastActionButton';
 
 // Weight limits
 const WEIGHT_LIMITS = {
@@ -162,21 +163,20 @@ export function useBoxCalculations(
         const suggestedBox = findBoxBySize(appropriateSize);
         
         if (suggestedBox && onBoxChange) {
+          // Create the action element using createElement instead of JSX
+          const handleButtonClick = () => {
+            onBoxChange(suggestedBox.id);
+            toast({
+              title: "Box mise à jour",
+              description: `Vous avez changé pour ${suggestedBox.baseTitle}.`
+            });
+          };
+
           // Show toast notification
           toast({
             title: "Limite de poids dépassée!",
             description: `Le poids total (${totalWeight.toFixed(2)}kg) dépasse la limite de ${currentLimit}kg. Nous vous recommandons la ${suggestedBox.baseTitle}.`,
-            action: (
-              <Button variant="outline" onClick={() => {
-                onBoxChange(suggestedBox.id);
-                toast({
-                  title: "Box mise à jour",
-                  description: `Vous avez changé pour ${suggestedBox.baseTitle}.`
-                });
-              }}>
-                Changer
-              </Button>
-            )
+            action: createElement(ToastActionButton, { onClick: handleButtonClick })
           });
         }
       }
