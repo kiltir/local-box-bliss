@@ -1,7 +1,6 @@
-
 import React, { useRef } from 'react';
 import { Canvas } from '@react-three/fiber';
-import { OrbitControls } from '@react-three/drei';
+import { OrbitControls, Grid } from '@react-three/drei';
 import * as THREE from 'three';
 
 interface Product {
@@ -31,6 +30,24 @@ const Box3D = ({ dimensions, wireframe = false, color = '#f5eada' }) => {
       <boxGeometry args={[dimensions.width, dimensions.height, dimensions.depth]} />
       <meshStandardMaterial color={color} wireframe={wireframe} transparent opacity={wireframe ? 1 : 0.2} />
     </mesh>
+  );
+};
+
+const SideGrid = ({ size, rotation, position }) => {
+  return (
+    <Grid 
+      args={[size, size]} 
+      rotation={rotation} 
+      position={position} 
+      cellSize={0.5} 
+      cellThickness={0.5} 
+      cellColor="#6b7280" 
+      sectionSize={2} 
+      sectionThickness={1} 
+      sectionColor="#4b5563" 
+      fadeDistance={30} 
+      infiniteGrid={false}
+    />
   );
 };
 
@@ -156,6 +173,9 @@ const packProducts = (products: Product[], boxDimensions: { width: number; heigh
 const Scene = ({ products, boxDimensions }) => {
   const { productPositions, scaledProducts, scaledBox } = packProducts(products, boxDimensions);
   
+  // Calculate grid positions based on box dimensions
+  const gridSize = Math.max(scaledBox.width, scaledBox.height, scaledBox.depth) * 2;
+  
   return (
     <>
       <ambientLight intensity={0.5} />
@@ -173,8 +193,39 @@ const Scene = ({ products, boxDimensions }) => {
         />
       ))}
       
-      {/* Grid helpers */}
-      <gridHelper args={[20, 20]} position={[0, -scaledBox.height/2 - 0.1, 0]} rotation={[0, 0, 0]} />
+      {/* Bottom grid (already exists) */}
+      <Grid 
+        args={[gridSize, gridSize]} 
+        position={[0, -scaledBox.height/2 - 0.05, 0]} 
+        cellSize={0.5} 
+        cellThickness={0.5} 
+        cellColor="#6b7280" 
+        sectionSize={2}
+        sectionThickness={1}
+        sectionColor="#4b5563"
+        fadeDistance={30}
+      />
+      
+      {/* Left side grid (X-Z plane) */}
+      <SideGrid 
+        size={gridSize} 
+        rotation={[Math.PI/2, 0, Math.PI/2]} 
+        position={[-scaledBox.width/2 - 0.05, 0, 0]} 
+      />
+      
+      {/* Right side grid (X-Z plane) */}
+      <SideGrid 
+        size={gridSize} 
+        rotation={[Math.PI/2, 0, Math.PI/2]} 
+        position={[scaledBox.width/2 + 0.05, 0, 0]} 
+      />
+      
+      {/* Back side grid (Y-X plane) */}
+      <SideGrid 
+        size={gridSize} 
+        rotation={[0, 0, 0]} 
+        position={[0, 0, -scaledBox.depth/2 - 0.05]} 
+      />
       
       {/* Box outline */}
       <Box3D dimensions={{ 
