@@ -1,6 +1,7 @@
 
 import { toast } from "@/hooks/use-toast";
-import { createElement } from 'react';
+import { type ToastActionElement } from "@/components/ui/toast";
+import React from 'react';
 import ToastActionButton from '@/components/box-details/ToastActionButton';
 
 export function useToastNotification() {
@@ -13,7 +14,7 @@ export function useToastNotification() {
     toast({
       title: "Limite de poids dépassée!",
       description: `Le poids total (${totalWeight.toFixed(2)}kg) dépasse la limite de ${currentLimit}kg. Nous vous recommandons la ${suggestedBoxTitle}.`,
-      action: createElement(ToastActionButton, { onClick: onButtonClick })
+      action: React.createElement(ToastActionButton, { onClick: onButtonClick }) as ToastActionElement
     });
   };
 
