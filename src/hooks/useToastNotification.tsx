@@ -14,7 +14,7 @@ export function useToastNotification() {
     toast({
       title: "Limite de poids dépassée!",
       description: `Le poids total (${totalWeight.toFixed(2)}kg) dépasse la limite de ${currentLimit}kg. Nous vous recommandons la ${suggestedBoxTitle}.`,
-      action: React.createElement(ToastActionButton, { onClick: onButtonClick }) as ToastActionElement
+      action: <ToastActionButton onClick={onButtonClick} /> as unknown as ToastActionElement
     });
   };
 
