@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { Button } from "@/components/ui/button";
+import { ToastAction } from "@/components/ui/toast";
 
 interface ToastActionButtonProps {
   onClick: () => void;
@@ -8,9 +9,9 @@ interface ToastActionButtonProps {
 
 const ToastActionButton = ({ onClick }: ToastActionButtonProps) => {
   return (
-    <Button variant="outline" onClick={onClick}>
+    <ToastAction altText="Changer" onClick={onClick}>
       Changer
-    </Button>
+    </ToastAction>
   );
 };
 

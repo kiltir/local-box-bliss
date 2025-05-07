@@ -176,7 +176,7 @@ export function useBoxCalculations(
           toast({
             title: "Limite de poids dépassée!",
             description: `Le poids total (${totalWeight.toFixed(2)}kg) dépasse la limite de ${currentLimit}kg. Nous vous recommandons la ${suggestedBox.baseTitle}.`,
-            action: createElement(ToastActionButton, { onClick: handleButtonClick })
+            action: <ToastActionButton onClick={handleButtonClick} />
           });
         }
       }
