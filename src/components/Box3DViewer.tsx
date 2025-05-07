@@ -1,3 +1,4 @@
+
 import React, { useRef } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Grid } from '@react-three/drei';
@@ -62,10 +63,11 @@ const ProductMesh = ({ product, position }) => {
   );
 };
 
-// Simple packing algorithm for visualization purposes
+// Improved packing algorithm for better volume visualization
 const packProducts = (products: Product[], boxDimensions: { width: number; height: number; depth: number; }) => {
-  // Scale down for visualization (dividing real dimensions by 2)
-  const scaleFactor = 2;
+  // Use direct conversion with a smaller scale factor to make products visually recognizable
+  // but still proportional to the box
+  const scaleFactor = 10;
   const scale = (val: number) => val / scaleFactor;
   
   const scaledBox = {
@@ -75,12 +77,12 @@ const packProducts = (products: Product[], boxDimensions: { width: number; heigh
   };
   
   const positions: [number, number, number][] = [];
-  const grid: boolean[][][] = Array(Math.ceil(scaledBox.width))
+  const grid: boolean[][][] = Array(Math.ceil(scaledBox.width * 2))
     .fill(false)
     .map(() => 
-      Array(Math.ceil(scaledBox.height))
+      Array(Math.ceil(scaledBox.height * 2))
         .fill(false)
-        .map(() => Array(Math.ceil(scaledBox.depth)).fill(false))
+        .map(() => Array(Math.ceil(scaledBox.depth * 2)).fill(false))
     );
   
   // Center the box at the origin
@@ -100,11 +102,30 @@ const packProducts = (products: Product[], boxDimensions: { width: number; heigh
       depth: scale(product.depth)
     };
     
+    // Check if product is too big for the box
+    if (scaledProduct.width > scaledBox.width || 
+        scaledProduct.height > scaledBox.height || 
+        scaledProduct.depth > scaledBox.depth) {
+      console.warn(`Product ${product.name} is too big for the box and will be scaled down`);
+      // Scale down oversized products to fit
+      const maxRatio = Math.max(
+        scaledProduct.width / scaledBox.width,
+        scaledProduct.height / scaledBox.height,
+        scaledProduct.depth / scaledBox.depth
+      );
+      if (maxRatio > 1) {
+        scaledProduct.width /= maxRatio * 1.05;
+        scaledProduct.height /= maxRatio * 1.05;
+        scaledProduct.depth /= maxRatio * 1.05;
+      }
+    }
+    
     // Find a place for this product
     let placed = false;
     
-    for (let x = 0; x < scaledBox.width - scaledProduct.width + 1 && !placed; x++) {
-      for (let y = 0; y < scaledBox.height - scaledProduct.height + 1 && !placed; y++) {
+    // Try to place from bottom to top for better visual stability
+    for (let y = 0; y < scaledBox.height - scaledProduct.height + 1 && !placed; y++) {
+      for (let x = 0; x < scaledBox.width - scaledProduct.width + 1 && !placed; x++) {
         for (let z = 0; z < scaledBox.depth - scaledProduct.depth + 1 && !placed; z++) {
           // Check if this position is free
           let fits = true;
@@ -112,11 +133,15 @@ const packProducts = (products: Product[], boxDimensions: { width: number; heigh
           for (let dx = 0; dx < scaledProduct.width && fits; dx++) {
             for (let dy = 0; dy < scaledProduct.height && fits; dy++) {
               for (let dz = 0; dz < scaledProduct.depth && fits; dz++) {
+                const gridX = Math.floor(x + dx);
+                const gridY = Math.floor(y + dy);
+                const gridZ = Math.floor(z + dz);
+                
                 if (
-                  x + dx >= scaledBox.width || 
-                  y + dy >= scaledBox.height || 
-                  z + dz >= scaledBox.depth ||
-                  grid[x + dx][y + dy][z + dz]
+                  gridX >= grid.length || 
+                  gridY >= grid[0].length || 
+                  gridZ >= grid[0][0].length ||
+                  grid[gridX][gridY][gridZ]
                 ) {
                   fits = false;
                 }
@@ -129,8 +154,12 @@ const packProducts = (products: Product[], boxDimensions: { width: number; heigh
             for (let dx = 0; dx < scaledProduct.width; dx++) {
               for (let dy = 0; dy < scaledProduct.height; dy++) {
                 for (let dz = 0; dz < scaledProduct.depth; dz++) {
-                  if (x + dx < scaledBox.width && y + dy < scaledBox.height && z + dz < scaledBox.depth) {
-                    grid[x + dx][y + dy][z + dz] = true;
+                  const gridX = Math.floor(x + dx);
+                  const gridY = Math.floor(y + dy);
+                  const gridZ = Math.floor(z + dz);
+                  
+                  if (gridX < grid.length && gridY < grid[0].length && gridZ < grid[0][0].length) {
+                    grid[gridX][gridY][gridZ] = true;
                   }
                 }
               }
@@ -148,12 +177,12 @@ const packProducts = (products: Product[], boxDimensions: { width: number; heigh
       }
     }
     
-    // If can't place the product, put it at a random position
+    // If can't place the product, put it above the box (better than random placement)
     if (!placed) {
       positions.push([
-        Math.random() * 2 - 1,
-        Math.random() * 2 - 1,
-        Math.random() * 2 - 1
+        boxCenterX,
+        boxCenterY + scaledBox.height/2 + scaledProduct.height/2 + 0.1,
+        boxCenterZ
       ]);
     }
   }
