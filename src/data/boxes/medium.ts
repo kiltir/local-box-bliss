@@ -7,7 +7,7 @@ export const mediumBox: BoxData = {
   price: 34.99,
   description: "Parfaite pour un couple ou pour offrir, cette box contient une variété plus large de produits artisanaux.",
   image: "https://source.unsplash.com/1509316975850-ff9c5deb0cd9",
-  items: 10,
+  items: 6,
   size: 'medium',
   weightLimit: 4.5, // 4.5kg max
   products: [
@@ -52,34 +52,6 @@ export const mediumBox: BoxData = {
       producer: "Confiserie du Sud", 
       weight: 0.2,
       dimensions: { width: 15, height: 2, depth: 8 }
-    },
-    { 
-      name: "Calissons", 
-      quantity: "200g", 
-      producer: "Confiserie du Sud", 
-      weight: 0.2,
-      dimensions: { width: 12, height: 3, depth: 18 }
-    },
-    { 
-      name: "Pâtes de fruits", 
-      quantity: "250g", 
-      producer: "Les Délices du Verger", 
-      weight: 0.25,
-      dimensions: { width: 10, height: 3, depth: 15 }
-    },
-    { 
-      name: "Sirop artisanal", 
-      quantity: "50cl", 
-      producer: "Les Délices du Verger", 
-      weight: 0.75,
-      dimensions: { width: 7, height: 25, depth: 7 }
-    },
-    { 
-      name: "Fruits confits", 
-      quantity: "200g", 
-      producer: "Confiserie du Sud", 
-      weight: 0.2,
-      dimensions: { width: 12, height: 4, depth: 16 }
     }
   ],
   themes: {
@@ -128,34 +100,6 @@ export const mediumBox: BoxData = {
           producer: "Confiserie du Sud", 
           weight: 0.2,
           dimensions: { width: 15, height: 2, depth: 8 }
-        },
-        { 
-          name: "Calissons", 
-          quantity: "200g", 
-          producer: "Confiserie du Sud", 
-          weight: 0.2,
-          dimensions: { width: 12, height: 3, depth: 18 }
-        },
-        { 
-          name: "Pâtes de fruits", 
-          quantity: "250g", 
-          producer: "Les Délices du Verger", 
-          weight: 0.25,
-          dimensions: { width: 10, height: 3, depth: 15 }
-        },
-        { 
-          name: "Sirop artisanal", 
-          quantity: "50cl", 
-          producer: "Les Délices du Verger", 
-          weight: 0.75,
-          dimensions: { width: 7, height: 25, depth: 7 }
-        },
-        { 
-          name: "Fruits confits", 
-          quantity: "200g", 
-          producer: "Confiserie du Sud", 
-          weight: 0.2,
-          dimensions: { width: 12, height: 4, depth: 16 }
         }
       ]
     },
@@ -204,34 +148,6 @@ export const mediumBox: BoxData = {
           producer: "L'Olivier Gourmet", 
           weight: 0.2,
           dimensions: { width: 8, height: 6, depth: 8 }
-        },
-        { 
-          name: "Tapenade noire", 
-          quantity: "150g", 
-          producer: "L'Olivier Gourmet", 
-          weight: 0.2,
-          dimensions: { width: 8, height: 6, depth: 8 }
-        },
-        { 
-          name: "Biscuits salés aux herbes", 
-          quantity: "200g", 
-          producer: "Boulangerie Traditionnelle", 
-          weight: 0.2,
-          dimensions: { width: 12, height: 3, depth: 18 }
-        },
-        { 
-          name: "Mélange apéritif", 
-          quantity: "300g", 
-          producer: "Les Délices du Verger", 
-          weight: 0.3,
-          dimensions: { width: 12, height: 5, depth: 18 }
-        },
-        { 
-          name: "Chips de légumes", 
-          quantity: "150g", 
-          producer: "L'Olivier Gourmet", 
-          weight: 0.15,
-          dimensions: { width: 15, height: 4, depth: 20 }
         }
       ]
     },
@@ -280,34 +196,6 @@ export const mediumBox: BoxData = {
           producer: "Confiserie du Sud", 
           weight: 0.2,
           dimensions: { width: 10, height: 4, depth: 12 }
-        },
-        { 
-          name: "Fruits confits assortis", 
-          quantity: "300g", 
-          producer: "Les Délices du Verger", 
-          weight: 0.3,
-          dimensions: { width: 12, height: 5, depth: 18 }
-        },
-        { 
-          name: "Berlingots", 
-          quantity: "200g", 
-          producer: "Confiserie du Sud", 
-          weight: 0.2,
-          dimensions: { width: 10, height: 4, depth: 15 }
-        },
-        { 
-          name: "Sirop de lavande", 
-          quantity: "50cl", 
-          producer: "Les Délices du Verger", 
-          weight: 0.75,
-          dimensions: { width: 7, height: 25, depth: 7 }
-        },
-        { 
-          name: "Biscuits à la fleur d'oranger", 
-          quantity: "250g", 
-          producer: "Boulangerie Traditionnelle", 
-          weight: 0.25,
-          dimensions: { width: 15, height: 3, depth: 20 }
         }
       ]
     },
@@ -356,34 +244,6 @@ export const mediumBox: BoxData = {
           producer: "Confiserie du Sud", 
           weight: 0.2,
           dimensions: { width: 12, height: 3, depth: 18 }
-        },
-        { 
-          name: "Sirops de saison", 
-          quantity: "2x25cl", 
-          producer: "Les Délices du Verger", 
-          weight: 0.8,
-          dimensions: { width: 14, height: 20, depth: 7 }
-        },
-        { 
-          name: "Pâtes de fruits", 
-          quantity: "200g", 
-          producer: "Les Délices du Verger", 
-          weight: 0.2,
-          dimensions: { width: 10, height: 3, depth: 15 }
-        },
-        { 
-          name: "Bonbons artisanaux", 
-          quantity: "200g", 
-          producer: "Confiserie du Sud", 
-          weight: 0.2,
-          dimensions: { width: 10, height: 3, depth: 15 }
-        },
-        { 
-          name: "Biscuits sablés", 
-          quantity: "250g", 
-          producer: "Boulangerie Traditionnelle", 
-          weight: 0.25,
-          dimensions: { width: 15, height: 3, depth: 20 }
         }
       ]
     }
