@@ -26,8 +26,8 @@ const BoxCard = ({ title, price, description, image, items, size, onClick }: Box
     }
   };
 
-  // Utilisez la même image pour toutes les tailles, mais ajustez la classe CSS
-  const boxImage = "/lovable-uploads/e61e04cf-8400-4470-894b-0a44d7663e8d.png";
+  // Utiliser la nouvelle image téléchargée
+  const boxImage = "/lovable-uploads/925da699-e319-4ee7-ac61-63680db57305.png";
   
   const getBoxSizeClass = () => {
     switch (size) {
