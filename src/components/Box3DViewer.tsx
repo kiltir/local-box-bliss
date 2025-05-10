@@ -1,8 +1,11 @@
 
 import React, { useRef } from 'react';
-import { Canvas } from '@react-three/fiber';
+import { Canvas, extend, useFrame, useThree } from '@react-three/fiber';
 import { OrbitControls, Grid } from '@react-three/drei';
 import * as THREE from 'three';
+
+// Extend the JSX namespace with Three.js components
+extend({ Mesh: THREE.Mesh, BoxGeometry: THREE.BoxGeometry, MeshStandardMaterial: THREE.MeshStandardMaterial });
 
 interface Product {
   id: number;
