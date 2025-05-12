@@ -1,15 +1,10 @@
-
 import React from 'react';
-
 const FeaturesSection = () => {
-  return (
-    <section id="concept" className="py-16 bg-soft-beige/30">
+  return <section id="concept" className="py-16 bg-soft-beige/30">
       <div className="container-section">
         <div className="text-center mb-12 fade-in">
           <h2 className="text-3xl font-bold mb-4">Comment ça marche ?</h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            De la terre à votre table, découvrez notre processus simple pour vous apporter les meilleurs produits locaux.
-          </p>
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto">Choisissez, commandez, recevez.</p>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-10 mt-12 fade-in">
@@ -75,8 +70,6 @@ const FeaturesSection = () => {
           </ul>
         </div>
       </div>
-    </section>
-  );
+    </section>;
 };
-
 export default FeaturesSection;
