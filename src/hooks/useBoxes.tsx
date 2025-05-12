@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { boxes } from '@/data/boxesData';
+import { boxes } from '@/data/boxes';
 import { useBoxTheme } from './useBoxTheme';
 import { getBoxTitle, getBoxDetails } from '@/utils/boxUtils';
 import { BoxData } from '@/types/boxes';
