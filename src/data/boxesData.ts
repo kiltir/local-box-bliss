@@ -89,7 +89,7 @@ export const boxes: BoxData[] = [
     price: 34.99,
     description: "Parfaite pour un couple ou pour offrir, cette box contient une variété plus large de produits artisanaux.",
     image: "https://source.unsplash.com/1509316975850-ff9c5deb0cd9",
-    items: 10,
+    items: 6,
     size: 'medium',
     weightLimit: 4.5, // 4.5kg max
     products: [
@@ -98,11 +98,7 @@ export const boxes: BoxData[] = [
       { name: "Pot de miel", quantity: "500g", producer: "Le Rucher de Jean", weight: 0.65 },
       { name: "Biscuits assortis", quantity: "400g", producer: "Boulangerie Traditionnelle", weight: 0.4 },
       { name: "Duo de confitures", quantity: "2x250g", producer: "Les Délices du Verger", weight: 0.7 },
-      { name: "Nougat traditionnel", quantity: "200g", producer: "Confiserie du Sud", weight: 0.2 },
-      { name: "Calissons", quantity: "200g", producer: "Confiserie du Sud", weight: 0.2 },
-      { name: "Pâtes de fruits", quantity: "250g", producer: "Les Délices du Verger", weight: 0.25 },
-      { name: "Sirop artisanal", quantity: "50cl", producer: "Les Délices du Verger", weight: 0.75 },
-      { name: "Fruits confits", quantity: "200g", producer: "Confiserie du Sud", weight: 0.2 }
+      { name: "Nougat traditionnel", quantity: "200g", producer: "Confiserie du Sud", weight: 0.2 }
     ],
     themes: {
       'Découverte': {
@@ -114,11 +110,7 @@ export const boxes: BoxData[] = [
           { name: "Pot de miel", quantity: "500g", producer: "Le Rucher de Jean", weight: 0.65 },
           { name: "Biscuits assortis", quantity: "400g", producer: "Boulangerie Traditionnelle", weight: 0.4 },
           { name: "Duo de confitures", quantity: "2x250g", producer: "Les Délices du Verger", weight: 0.7 },
-          { name: "Nougat traditionnel", quantity: "200g", producer: "Confiserie du Sud", weight: 0.2 },
-          { name: "Calissons", quantity: "200g", producer: "Confiserie du Sud", weight: 0.2 },
-          { name: "Pâtes de fruits", quantity: "250g", producer: "Les Délices du Verger", weight: 0.25 },
-          { name: "Sirop artisanal", quantity: "50cl", producer: "Les Délices du Verger", weight: 0.75 },
-          { name: "Fruits confits", quantity: "200g", producer: "Confiserie du Sud", weight: 0.2 }
+          { name: "Nougat traditionnel", quantity: "200g", producer: "Confiserie du Sud", weight: 0.2 }
         ]
       },
       'Bourbon': {
@@ -130,11 +122,7 @@ export const boxes: BoxData[] = [
           { name: "Amandes fumées", quantity: "200g", producer: "Les Délices du Verger", weight: 0.2 },
           { name: "Crackers artisanaux", quantity: "250g", producer: "Boulangerie Traditionnelle", weight: 0.25 },
           { name: "Olives assorties", quantity: "300g", producer: "L'Olivier Gourmet", weight: 0.4 },
-          { name: "Tapenade verte", quantity: "150g", producer: "L'Olivier Gourmet", weight: 0.2 },
-          { name: "Tapenade noire", quantity: "150g", producer: "L'Olivier Gourmet", weight: 0.2 },
-          { name: "Biscuits salés aux herbes", quantity: "200g", producer: "Boulangerie Traditionnelle", weight: 0.2 },
-          { name: "Mélange apéritif", quantity: "300g", producer: "Les Délices du Verger", weight: 0.3 },
-          { name: "Chips de légumes", quantity: "150g", producer: "L'Olivier Gourmet", weight: 0.15 }
+          { name: "Tapenade verte", quantity: "150g", producer: "L'Olivier Gourmet", weight: 0.2 }
         ]
       },
       'Tradition': {
@@ -146,11 +134,7 @@ export const boxes: BoxData[] = [
           { name: "Miel de Provence", quantity: "500g", producer: "Le Rucher de Jean", weight: 0.65 },
           { name: "Navettes provençales", quantity: "300g", producer: "Boulangerie Traditionnelle", weight: 0.3 },
           { name: "Croquants aux amandes", quantity: "250g", producer: "Boulangerie Traditionnelle", weight: 0.25 },
-          { name: "Pâte d'amande", quantity: "200g", producer: "Confiserie du Sud", weight: 0.2 },
-          { name: "Fruits confits assortis", quantity: "300g", producer: "Les Délices du Verger", weight: 0.3 },
-          { name: "Berlingots", quantity: "200g", producer: "Confiserie du Sud", weight: 0.2 },
-          { name: "Sirop de lavande", quantity: "50cl", producer: "Les Délices du Verger", weight: 0.75 },
-          { name: "Biscuits à la fleur d'oranger", quantity: "250g", producer: "Boulangerie Traditionnelle", weight: 0.25 }
+          { name: "Pâte d'amande", quantity: "200g", producer: "Confiserie du Sud", weight: 0.2 }
         ]
       },
       'Saison': {
@@ -162,11 +146,7 @@ export const boxes: BoxData[] = [
           { name: "Miel de saison", quantity: "500g", producer: "Le Rucher de Jean", weight: 0.65 },
           { name: "Confitures de saison", quantity: "3x250g", producer: "Les Délices du Verger", weight: 1.05 },
           { name: "Chocolats spéciaux", quantity: "250g", producer: "Chocolaterie Artisanale", weight: 0.25 },
-          { name: "Calissons parfumés", quantity: "200g", producer: "Confiserie du Sud", weight: 0.2 },
-          { name: "Sirops de saison", quantity: "2x25cl", producer: "Les Délices du Verger", weight: 0.8 },
-          { name: "Pâtes de fruits", quantity: "200g", producer: "Les Délices du Verger", weight: 0.2 },
-          { name: "Bonbons artisanaux", quantity: "200g", producer: "Confiserie du Sud", weight: 0.2 },
-          { name: "Biscuits sablés", quantity: "250g", producer: "Boulangerie Traditionnelle", weight: 0.25 }
+          { name: "Calissons parfumés", quantity: "200g", producer: "Confiserie du Sud", weight: 0.2 }
         ]
       }
     }
