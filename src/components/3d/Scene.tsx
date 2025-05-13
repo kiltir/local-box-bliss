@@ -12,31 +12,24 @@ const Scene: React.FC<SceneProps> = ({ products, boxDimensions }) => {
   const { productPositions, scaledProducts, scaledBox } = packProducts(products, boxDimensions);
   const { scene } = useThree();
   const sceneRef = useRef(scene);
-  
+
   useEffect(() => {
-    // Add event listeners for hover effects
-    const canvas = document.querySelector('canvas');
-    if (canvas) {
-      canvas.addEventListener('mousemove', handleMouseMove);
-      return () => {
+    // Log visualization information for debugging
+    console.log(`Box dimensions: ${scaledBox.width}x${scaledBox.height}x${scaledBox.depth}`);
+    console.log(`Number of products: ${products.length}, positions: ${productPositions.length}`);
+    
+    // Clean up any event listeners when component unmounts
+    return () => {
+      const canvas = document.querySelector('canvas');
+      if (canvas) {
         canvas.removeEventListener('mousemove', handleMouseMove);
-      };
-    }
-  }, [products]);
-  
-  // Handle mouse movement for product labels
-  const handleMouseMove = (event: MouseEvent) => {
-    const labels = document.querySelectorAll('.product-label');
-    // Show/hide product labels based on mouse position
-    // This is a simple implementation - could be improved with proper raycasting
-    labels.forEach((label, index) => {
-      if (Math.random() < 0.01) {  // Random chance to show label on hover
-        label.setAttribute('style', 'opacity: 1; display: block;');
-        setTimeout(() => {
-          label.setAttribute('style', 'opacity: 0; display: none;');
-        }, 1500);
       }
-    });
+    };
+  }, [products, scaledBox, productPositions.length]);
+  
+  // Handle mouse movement for product labels - now handled by individual ProductMesh components
+  const handleMouseMove = (event: MouseEvent) => {
+    // This is now handled by the individual ProductMesh components with hover events
   };
   
   // Calculate grid positions based on box dimensions
@@ -46,20 +39,26 @@ const Scene: React.FC<SceneProps> = ({ products, boxDimensions }) => {
     <>
       <ambientLight intensity={0.5} />
       <directionalLight position={[10, 10, 10]} intensity={1} />
+      <pointLight position={[-10, -10, -10]} intensity={0.5} />
       
       {/* Box container */}
       <Box3D dimensions={scaledBox} wireframe={true} color="#388e3c" />
       
       {/* Products */}
-      {scaledProducts.map((product, index) => (
-        <ProductMesh 
-          key={`${product.id}-${index}`} 
-          product={product} 
-          position={productPositions[index] as [number, number, number]} 
-        />
-      ))}
+      {scaledProducts.map((product, index) => {
+        if (index < productPositions.length) {
+          return (
+            <ProductMesh 
+              key={`${product.id}-${index}`} 
+              product={product} 
+              position={productPositions[index] as [number, number, number]} 
+            />
+          );
+        }
+        return null;
+      })}
       
-      {/* Bottom grid (already exists) */}
+      {/* Bottom grid */}
       <Grid 
         args={[gridSize, gridSize]} 
         position={[0, -scaledBox.height/2 - 0.05, 0]} 
@@ -93,7 +92,7 @@ const Scene: React.FC<SceneProps> = ({ products, boxDimensions }) => {
         position={[0, 0, -scaledBox.depth/2 - 0.05]} 
       />
       
-      {/* Box outline */}
+      {/* Box outline - slightly larger to create a border effect */}
       <Box3D dimensions={{ 
         width: scaledBox.width + 0.05, 
         height: scaledBox.height + 0.05, 
