@@ -3,8 +3,14 @@ import React from 'react';
 import { useBoxes } from '@/hooks/useBoxes';
 import BoxDetailsModal from './BoxDetailsModal';
 
-export const BoxDetails = () => {
-  const { getSelectedBoxDetails, handleCloseDetails, handleBoxChange } = useBoxes();
+interface BoxDetailsProps {
+  onClose: () => void;
+  boxId: number;
+  onBoxChange?: (boxId: number) => void;
+}
+
+export const BoxDetails = ({ onClose, boxId, onBoxChange }: BoxDetailsProps) => {
+  const { getSelectedBoxDetails } = useBoxes();
   const selectedBox = getSelectedBoxDetails();
 
   if (!selectedBox) return null;
@@ -16,10 +22,10 @@ export const BoxDetails = () => {
       description={selectedBox.description}
       image={selectedBox.image}
       products={selectedBox.products}
-      onClose={handleCloseDetails}
+      onClose={onClose}
       boxSize={selectedBox.size}
-      boxId={selectedBox.id}
-      onBoxChange={handleBoxChange}
+      boxId={boxId}
+      onBoxChange={onBoxChange}
     />
   );
 };

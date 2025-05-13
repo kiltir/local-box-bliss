@@ -9,6 +9,7 @@ const BoxesSection = () => {
   const {
     boxes,
     selectedTheme,
+    selectedBox,
     handleThemeChange,
     handleBoxClick,
     handleCloseDetails,
@@ -47,16 +48,10 @@ const BoxesSection = () => {
         </div>
       </div>
 
-      {getSelectedBoxDetails() && (
+      {selectedBox !== null && (
         <BoxDetails 
-          title={getSelectedBoxDetails()!.title} 
-          price={getSelectedBoxDetails()!.price} 
-          description={getSelectedBoxDetails()!.description} 
-          image={getSelectedBoxDetails()!.image} 
-          products={getSelectedBoxDetails()!.products} 
           onClose={handleCloseDetails} 
-          boxSize={getSelectedBoxDetails()!.size}
-          boxId={getSelectedBoxDetails()!.id}
+          boxId={selectedBox}
           onBoxChange={handleBoxChange}
         />
       )}
