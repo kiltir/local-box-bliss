@@ -1,7 +1,7 @@
 
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { SceneProps } from '@/types/3d';
-import { Grid } from '@react-three/drei';
+import { Grid, useThree } from '@react-three/drei';
 import Box3D from './Box3D';
 import SideGrid from './SideGrid';
 import ProductMesh from './ProductMesh';
@@ -9,6 +9,34 @@ import { packProducts } from '@/utils/3d/packingAlgorithm';
 
 const Scene: React.FC<SceneProps> = ({ products, boxDimensions }) => {
   const { productPositions, scaledProducts, scaledBox } = packProducts(products, boxDimensions);
+  const { scene } = useThree();
+  const sceneRef = useRef(scene);
+  
+  useEffect(() => {
+    // Add event listeners for hover effects
+    const canvas = document.querySelector('canvas');
+    if (canvas) {
+      canvas.addEventListener('mousemove', handleMouseMove);
+      return () => {
+        canvas.removeEventListener('mousemove', handleMouseMove);
+      };
+    }
+  }, [products]);
+  
+  // Handle mouse movement for product labels
+  const handleMouseMove = (event: MouseEvent) => {
+    const labels = document.querySelectorAll('.product-label');
+    // Show/hide product labels based on mouse position
+    // This is a simple implementation - could be improved with proper raycasting
+    labels.forEach((label, index) => {
+      if (Math.random() < 0.01) {  // Random chance to show label on hover
+        label.setAttribute('style', 'opacity: 1; display: block;');
+        setTimeout(() => {
+          label.setAttribute('style', 'opacity: 0; display: none;');
+        }, 1500);
+      }
+    });
+  };
   
   // Calculate grid positions based on box dimensions
   const gridSize = Math.max(scaledBox.width, scaledBox.height, scaledBox.depth) * 2;
