@@ -1,7 +1,8 @@
 
 import React, { useEffect, useRef } from 'react';
 import { SceneProps } from '@/types/3d';
-import { Grid, useThree } from '@react-three/drei';
+import { Grid } from '@react-three/drei';
+import { useThree } from '@react-three/fiber';
 import Box3D from './Box3D';
 import SideGrid from './SideGrid';
 import ProductMesh from './ProductMesh';
