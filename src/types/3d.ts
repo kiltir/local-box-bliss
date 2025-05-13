@@ -6,6 +6,10 @@ export interface Product {
   height: number;
   depth: number;
   color?: string;
+  // Spaced dimensions for packing algorithm
+  spacedWidth?: number;
+  spacedHeight?: number;
+  spacedDepth?: number;
 }
 
 export interface Box3DViewerProps {

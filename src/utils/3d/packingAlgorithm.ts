@@ -10,7 +10,10 @@ export const packProducts = (products: Product[], boxDimensions: { width: number
   const scale = (val: number) => val / scaleFactor;
   
   // Add a safety margin to ensure products don't touch the box walls
-  const SAFETY_MARGIN = 0.05; // 5% safety margin
+  const SAFETY_MARGIN = 0.1; // 10% safety margin (increased from 5%)
+  
+  // Define minimum spacing between products (4cm in scaled units)
+  const PRODUCT_SPACING = scale(4); // 4cm spacing between products
   
   const scaledBox = {
     width: scale(boxDimensions.width) * (1 - 2 * SAFETY_MARGIN),
@@ -66,14 +69,14 @@ export const packProducts = (products: Product[], boxDimensions: { width: number
       
       // Calculate how much we need to scale down the product to fit
       const maxRatio = Math.max(
-        scaledProduct.width / (scaledBox.width * 0.9), // More aggressive scaling (90% of box)
-        scaledProduct.height / (scaledBox.height * 0.9),
-        scaledProduct.depth / (scaledBox.depth * 0.9)
+        scaledProduct.width / (scaledBox.width * 0.85), // More aggressive scaling (85% of box)
+        scaledProduct.height / (scaledBox.height * 0.85),
+        scaledProduct.depth / (scaledBox.depth * 0.85)
       );
       
       if (maxRatio > 1) {
         // Apply a slightly more aggressive scale down factor to ensure some margin
-        const scaleFactor = maxRatio * 1.1; // Add 10% more scaling for safety
+        const scaleFactor = maxRatio * 1.2; // Add 20% more scaling for safety (increased from 10%)
         
         // Scale down the product proportionally to fit inside the box
         scaledProduct.width /= scaleFactor;
@@ -85,15 +88,20 @@ export const packProducts = (products: Product[], boxDimensions: { width: number
     }
     
     // Apply additional scaling for large products as safety
-    if (scaledProduct.width > scaledBox.width * 0.5 ||
-        scaledProduct.height > scaledBox.height * 0.5 ||
-        scaledProduct.depth > scaledBox.depth * 0.5) {
-      // Scale down products that take up more than 50% of any box dimension
-      const safetyScale = 0.95;
+    if (scaledProduct.width > scaledBox.width * 0.4 ||
+        scaledProduct.height > scaledBox.height * 0.4 ||
+        scaledProduct.depth > scaledBox.depth * 0.4) {
+      // Scale down products that take up more than 40% of any box dimension (reduced from 50%)
+      const safetyScale = 0.90;
       scaledProduct.width *= safetyScale;
       scaledProduct.height *= safetyScale;
       scaledProduct.depth *= safetyScale;
     }
+
+    // Add spacing to product dimensions to enforce minimum distance between products
+    scaledProduct.spacedWidth = scaledProduct.width + PRODUCT_SPACING;
+    scaledProduct.spacedHeight = scaledProduct.height + PRODUCT_SPACING;
+    scaledProduct.spacedDepth = scaledProduct.depth + PRODUCT_SPACING;
     
     scaledProducts.push(scaledProduct);
   });
@@ -112,9 +120,9 @@ export const packProducts = (products: Product[], boxDimensions: { width: number
     let bestPosition = [0, 0, 0];
     
     // Start from the bottom of the box for better stability
-    for (let y = 0; y < gridSize.y - Math.ceil(scaledProduct.height) && !placed; y++) {
-      for (let x = 0; x < gridSize.x - Math.ceil(scaledProduct.width) && !placed; x++) {
-        for (let z = 0; z < gridSize.z - Math.ceil(scaledProduct.depth) && !placed; z++) {
+    for (let y = 0; y < gridSize.y - Math.ceil(scaledProduct.spacedHeight) && !placed; y++) {
+      for (let x = 0; x < gridSize.x - Math.ceil(scaledProduct.spacedWidth) && !placed; x++) {
+        for (let z = 0; z < gridSize.z - Math.ceil(scaledProduct.spacedDepth) && !placed; z++) {
           // Check if this position is free
           let fits = true;
           
@@ -123,20 +131,20 @@ export const packProducts = (products: Product[], boxDimensions: { width: number
           const realY = boxMinY + (y / (gridSize.y - 1)) * scaledBox.height;
           const realZ = boxMinZ + (z / (gridSize.z - 1)) * scaledBox.depth;
           
-          // Check if product would fit within box bounds
-          const productMaxX = realX + scaledProduct.width;
-          const productMaxY = realY + scaledProduct.height;
-          const productMaxZ = realZ + scaledProduct.depth;
+          // Check if product would fit within box bounds with spacing buffer
+          const productMaxX = realX + scaledProduct.spacedWidth;
+          const productMaxY = realY + scaledProduct.spacedHeight;
+          const productMaxZ = realZ + scaledProduct.spacedDepth;
           
           if (productMaxX > boxMaxX || productMaxY > boxMaxY || productMaxZ > boxMaxZ) {
             fits = false;
             continue;
           }
           
-          // Check if position is already occupied
-          for (let dx = 0; dx < Math.ceil(scaledProduct.width) && fits; dx++) {
-            for (let dy = 0; dy < Math.ceil(scaledProduct.height) && fits; dy++) {
-              for (let dz = 0; dz < Math.ceil(scaledProduct.depth) && fits; dz++) {
+          // Check if position is already occupied, considering spaced dimensions
+          for (let dx = 0; dx < Math.ceil(scaledProduct.spacedWidth) && fits; dx++) {
+            for (let dy = 0; dy < Math.ceil(scaledProduct.spacedHeight) && fits; dy++) {
+              for (let dz = 0; dz < Math.ceil(scaledProduct.spacedDepth) && fits; dz++) {
                 const gridX = x + dx;
                 const gridY = y + dy;
                 const gridZ = z + dz;
@@ -154,10 +162,10 @@ export const packProducts = (products: Product[], boxDimensions: { width: number
           }
           
           if (fits) {
-            // Place the product and mark the grid cells as occupied
-            for (let dx = 0; dx < Math.ceil(scaledProduct.width); dx++) {
-              for (let dy = 0; dy < Math.ceil(scaledProduct.height); dy++) {
-                for (let dz = 0; dz < Math.ceil(scaledProduct.depth); dz++) {
+            // Place the product and mark the grid cells as occupied (including spacing)
+            for (let dx = 0; dx < Math.ceil(scaledProduct.spacedWidth); dx++) {
+              for (let dy = 0; dy < Math.ceil(scaledProduct.spacedHeight); dy++) {
+                for (let dz = 0; dz < Math.ceil(scaledProduct.spacedDepth); dz++) {
                   const gridX = x + dx;
                   const gridY = y + dy;
                   const gridZ = z + dz;
@@ -169,7 +177,7 @@ export const packProducts = (products: Product[], boxDimensions: { width: number
               }
             }
             
-            // Calculate the center position of the product
+            // Calculate the center position of the product (using actual product dimensions, not spaced)
             const productCenterX = realX + scaledProduct.width / 2;
             const productCenterY = realY + scaledProduct.height / 2;
             const productCenterZ = realZ + scaledProduct.depth / 2;
@@ -181,7 +189,7 @@ export const packProducts = (products: Product[], boxDimensions: { width: number
       }
     }
     
-    // If can't place the product normally, find a fallback position
+    // If can't place the product normally, find a fallback position with minimal overlaps
     if (!placed) {
       console.warn(`Could not place product: ${scaledProduct.name} - will use fallback position`);
       
@@ -196,9 +204,9 @@ export const packProducts = (products: Product[], boxDimensions: { width: number
             // Count occupied cells in this region
             let overlapCount = 0;
             
-            for (let dx = 0; dx < Math.ceil(scaledProduct.width); dx++) {
-              for (let dy = 0; dy < Math.ceil(scaledProduct.height); dy++) {
-                for (let dz = 0; dz < Math.ceil(scaledProduct.depth); dz++) {
+            for (let dx = 0; dx < Math.ceil(scaledProduct.spacedWidth); dx++) {
+              for (let dy = 0; dy < Math.ceil(scaledProduct.spacedHeight); dy++) {
+                for (let dz = 0; dz < Math.ceil(scaledProduct.spacedDepth); dz++) {
                   const gridX = x + dx;
                   const gridY = y + dy;
                   const gridZ = z + dz;
@@ -245,9 +253,9 @@ export const packProducts = (products: Product[], boxDimensions: { width: number
       positions.push([productCenterX, productCenterY, productCenterZ]);
       
       // Mark the grid cells as occupied (even if there's overlap)
-      for (let dx = 0; dx < Math.ceil(scaledProduct.width); dx++) {
-        for (let dy = 0; dy < Math.ceil(scaledProduct.height); dy++) {
-          for (let dz = 0; dz < Math.ceil(scaledProduct.depth); dz++) {
+      for (let dx = 0; dx < Math.ceil(scaledProduct.spacedWidth); dx++) {
+        for (let dy = 0; dy < Math.ceil(scaledProduct.spacedHeight); dy++) {
+          for (let dz = 0; dz < Math.ceil(scaledProduct.spacedDepth); dz++) {
             const gridX = bestPosition[0] + dx;
             const gridY = bestPosition[1] + dy;
             const gridZ = bestPosition[2] + dz;
