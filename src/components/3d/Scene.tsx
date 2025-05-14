@@ -9,7 +9,7 @@ import ProductMesh from './ProductMesh';
 import { packProducts } from '@/utils/3d/packingAlgorithm';
 
 const Scene: React.FC<SceneProps> = ({ products, boxDimensions }) => {
-  const { productPositions, scaledProducts, scaledBox } = packProducts(products, boxDimensions);
+  const { productPositions, productRotations, scaledProducts, scaledBox } = packProducts(products, boxDimensions);
   const { scene } = useThree();
   const sceneRef = useRef(scene);
 
@@ -47,11 +47,16 @@ const Scene: React.FC<SceneProps> = ({ products, boxDimensions }) => {
       {/* Products */}
       {scaledProducts.map((product, index) => {
         if (index < productPositions.length) {
+          const rotation = productRotations && productRotations[index] 
+            ? productRotations[index] 
+            : [0, 0, 0];
+            
           return (
             <ProductMesh 
               key={`${product.id}-${index}`} 
               product={product} 
               position={productPositions[index] as [number, number, number]} 
+              rotation={rotation as [number, number, number]}
             />
           );
         }

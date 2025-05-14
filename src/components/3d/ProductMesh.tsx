@@ -4,7 +4,7 @@ import * as THREE from 'three';
 import { ProductMeshProps } from '@/types/3d';
 import { Html } from '@react-three/drei';
 
-const ProductMesh: React.FC<ProductMeshProps> = ({ product, position }) => {
+const ProductMesh: React.FC<ProductMeshProps> = ({ product, position, rotation = [0, 0, 0] }) => {
   const mesh = useRef<THREE.Mesh>(null);
   const [hovered, setHovered] = useState(false);
   
@@ -12,6 +12,7 @@ const ProductMesh: React.FC<ProductMeshProps> = ({ product, position }) => {
     <mesh 
       ref={mesh} 
       position={position}
+      rotation={rotation}
       onPointerOver={() => setHovered(true)}
       onPointerOut={() => setHovered(false)}
     >

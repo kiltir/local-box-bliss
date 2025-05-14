@@ -10,6 +10,10 @@ export interface Product {
   spacedWidth?: number;
   spacedHeight?: number;
   spacedDepth?: number;
+  // Rotation information
+  rx?: number;
+  ry?: number;
+  rz?: number;
 }
 
 export interface Box3DViewerProps {
@@ -50,4 +54,5 @@ export interface SideGridProps {
 export interface ProductMeshProps {
   product: Product;
   position: [number, number, number];
+  rotation?: [number, number, number];
 }
