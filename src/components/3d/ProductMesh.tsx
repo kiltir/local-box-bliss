@@ -1,4 +1,3 @@
-
 import React, { useRef, useState } from 'react';
 import * as THREE from 'three';
 import { ProductMeshProps } from '@/types/3d';
@@ -8,6 +7,15 @@ const ProductMesh: React.FC<ProductMeshProps> = ({ product, position, rotation =
   const mesh = useRef<THREE.Mesh>(null);
   const [hovered, setHovered] = useState(false);
   
+  // Apply visual scaling factor to create space between products
+  // This will shrink the visual representation while keeping the calculated positions
+  const VISUAL_SCALE_FACTOR = 0.85; // Products will visually be 85% of their calculated size
+  
+  // Calculate scaled dimensions for visual representation only
+  const visualWidth = product.width * VISUAL_SCALE_FACTOR;
+  const visualHeight = product.height * VISUAL_SCALE_FACTOR;
+  const visualDepth = product.depth * VISUAL_SCALE_FACTOR;
+  
   return (
     <mesh 
       ref={mesh} 
@@ -16,7 +24,7 @@ const ProductMesh: React.FC<ProductMeshProps> = ({ product, position, rotation =
       onPointerOver={() => setHovered(true)}
       onPointerOut={() => setHovered(false)}
     >
-      <boxGeometry args={[product.width, product.height, product.depth]} />
+      <boxGeometry args={[visualWidth, visualHeight, visualDepth]} />
       <meshStandardMaterial 
         color={product.color || '#8B4513'} 
         opacity={0.9}
@@ -25,7 +33,7 @@ const ProductMesh: React.FC<ProductMeshProps> = ({ product, position, rotation =
       
       {/* Add hover tooltip to identify products */}
       <Html
-        position={[0, product.height / 2 + 0.1, 0]}
+        position={[0, visualHeight / 2 + 0.1, 0]}
         style={{
           backgroundColor: 'rgba(0,0,0,0.7)',
           padding: '2px 5px',
