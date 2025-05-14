@@ -252,8 +252,8 @@ function placeProductOptimally(scaledProduct: any, scaledBox: any, grid: boolean
           
           return {
             placed: true,
-            position: [productCenterX, productCenterY, productCenterZ],
-            rotation: [scaledProduct.rx || 0, scaledProduct.ry || 0, scaledProduct.rz || 0],
+            position: [productCenterX, productCenterY, productCenterZ] as [number, number, number],
+            rotation: [scaledProduct.rx || 0, scaledProduct.ry || 0, scaledProduct.rz || 0] as [number, number, number],
             gridPosition: [x, y, z]
           };
         }
@@ -264,8 +264,8 @@ function placeProductOptimally(scaledProduct: any, scaledBox: any, grid: boolean
   // If we couldn't place the product optimally
   return {
     placed: false,
-    position: [0, 0, 0],
-    rotation: [scaledProduct.rx || 0, scaledProduct.ry || 0, scaledProduct.rz || 0],
+    position: [0, 0, 0] as [number, number, number],
+    rotation: [scaledProduct.rx || 0, scaledProduct.ry || 0, scaledProduct.rz || 0] as [number, number, number],
     gridPosition: [0, 0, 0]
   };
 }
@@ -348,8 +348,8 @@ function findFallbackPosition(scaledProduct: any, scaledBox: any, grid: boolean[
   const productCenterZ = realZ + scaledProduct.depth / 2;
   
   return {
-    position: [productCenterX, productCenterY, productCenterZ],
-    rotation: [scaledProduct.rx || 0, scaledProduct.ry || 0, scaledProduct.rz || 0],
+    position: [productCenterX, productCenterY, productCenterZ] as [number, number, number],
+    rotation: [scaledProduct.rx || 0, scaledProduct.ry || 0, scaledProduct.rz || 0] as [number, number, number],
     gridPosition: bestPosition
   };
 }
