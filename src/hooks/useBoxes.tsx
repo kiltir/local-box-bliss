@@ -21,9 +21,11 @@ export const useBoxes = () => {
     setSelectedBox(boxId);
   };
 
-  const getSelectedBoxDetails = () => {
-    if (selectedBox === null) return null;
-    const box = boxes.find(box => box.id === selectedBox);
+  const getSelectedBoxDetails = (boxId?: number) => {
+    const id = boxId !== undefined ? boxId : selectedBox;
+    if (id === null) return null;
+    const box = boxes.find(box => box.id === id);
+    if (!box) return null;
     return getBoxDetails(box, selectedTheme);
   };
 

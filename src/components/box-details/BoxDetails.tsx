@@ -11,7 +11,7 @@ interface BoxDetailsProps {
 
 export const BoxDetails = ({ onClose, boxId, onBoxChange }: BoxDetailsProps) => {
   const { getSelectedBoxDetails } = useBoxes();
-  const selectedBox = getSelectedBoxDetails();
+  const selectedBox = getSelectedBoxDetails(boxId);
 
   if (!selectedBox) return null;
   
