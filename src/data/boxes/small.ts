@@ -19,7 +19,7 @@ export const smallBox: BoxData = {
       weight: 0.1
     },
     { 
-      name: "Sachet de thé Earl Grey", 
+      name: "Sachet de thé artisanal", 
       quantity: "50g", 
       producer: "Maison du Thé",
       dimensions: { width: 20, height: 15, depth: 5 },
@@ -46,7 +46,7 @@ export const smallBox: BoxData = {
       image: "https://source.unsplash.com/1618160702438-9b02ab6515c9",
       products: [
         { name: "Tablette de chocolat", quantity: "100g", producer: "Chocolaterie Artisanale", weight: 0.1, dimensions: { width: 16, height: 2, depth: 8 } },
-        { name: "Sachet de thé Earl Grey", quantity: "50g", producer: "Maison du Thé", weight: 0.05, dimensions: { width: 20, height: 15, depth: 5 } },
+        { name: "Sachet de thé artisanal", quantity: "50g", producer: "Maison du Thé", weight: 0.05, dimensions: { width: 20, height: 15, depth: 5 } },
         { name: "Pot de miel", quantity: "250g", producer: "Le Rucher de Jean", weight: 0.35, dimensions: { width: 8, height: 9, depth: 8 } },
         { name: "Confiture d'abricot", quantity: "250g", producer: "Les Délices du Verger", weight: 0.35, dimensions: { width: 8, height: 9, depth: 8 } }
       ]
@@ -83,4 +83,3 @@ export const smallBox: BoxData = {
     }
   }
 };
-

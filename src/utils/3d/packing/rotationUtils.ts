@@ -45,7 +45,7 @@ export function findOptimalRotation(product: any, boxDimensions: ScaledBox): any
   // Special case for tea bag with dimensions close to 20x15x5
   // This forces it to be placed flat rather than standing
   if (product.name && 
-      product.name.toLowerCase().includes("thé") && 
+      (product.name.toLowerCase().includes("thé") || product.name.toLowerCase().includes("the")) && 
       Math.abs(product.width - 20) < 2 && 
       Math.abs(product.height - 15) < 2 && 
       Math.abs(product.depth - 5) < 2) {
