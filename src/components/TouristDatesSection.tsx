@@ -3,7 +3,8 @@ import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { CalendarIcon, Plane, MapPin } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { CalendarIcon, Plane, MapPin, Clock } from "lucide-react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { cn } from "@/lib/utils";
@@ -11,6 +12,10 @@ import { cn } from "@/lib/utils";
 const TouristDatesSection = () => {
   const [arrivalDate, setArrivalDate] = useState<Date>();
   const [departureDate, setDepartureDate] = useState<Date>();
+  const [arrivalHour, setArrivalHour] = useState<string>('12');
+  const [arrivalMinute, setArrivalMinute] = useState<string>('00');
+  const [departureHour, setDepartureHour] = useState<string>('14');
+  const [departureMinute, setDepartureMinute] = useState<string>('00');
   const [showDeparturePicker, setShowDeparturePicker] = useState(false);
   const [showArrivalPicker, setShowArrivalPicker] = useState(false);
 
@@ -22,6 +27,12 @@ const TouristDatesSection = () => {
   };
 
   const canPlanPurchase = arrivalDate && departureDate;
+
+  // Generate hours (00-23)
+  const hours = Array.from({ length: 24 }, (_, i) => i.toString().padStart(2, '0'));
+  
+  // Generate minutes (00, 15, 30, 45)
+  const minutes = ['00', '15', '30', '45'];
 
   return (
     <section className="py-16 bg-gradient-to-b from-white to-[#FEF7CD]/30">
@@ -71,6 +82,40 @@ const TouristDatesSection = () => {
                     />
                   </PopoverContent>
                 </Popover>
+                
+                {/* Heure d'arrivée */}
+                <div className="mt-3">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Clock className="h-4 w-4 text-gray-500" />
+                    <span className="text-sm text-gray-600">Heure d'arrivée</span>
+                  </div>
+                  <div className="flex gap-2">
+                    <Select value={arrivalHour} onValueChange={setArrivalHour}>
+                      <SelectTrigger className="w-20">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {hours.map((hour) => (
+                          <SelectItem key={hour} value={hour}>
+                            {hour}h
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <Select value={arrivalMinute} onValueChange={setArrivalMinute}>
+                      <SelectTrigger className="w-20">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {minutes.map((minute) => (
+                          <SelectItem key={minute} value={minute}>
+                            {minute}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
               </div>
 
               {/* Date de départ */}
@@ -105,6 +150,40 @@ const TouristDatesSection = () => {
                     />
                   </PopoverContent>
                 </Popover>
+                
+                {/* Heure de départ */}
+                <div className="mt-3">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Clock className="h-4 w-4 text-gray-500" />
+                    <span className="text-sm text-gray-600">Heure de départ</span>
+                  </div>
+                  <div className="flex gap-2">
+                    <Select value={departureHour} onValueChange={setDepartureHour}>
+                      <SelectTrigger className="w-20">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {hours.map((hour) => (
+                          <SelectItem key={hour} value={hour}>
+                            {hour}h
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <Select value={departureMinute} onValueChange={setDepartureMinute}>
+                      <SelectTrigger className="w-20">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {minutes.map((minute) => (
+                          <SelectItem key={minute} value={minute}>
+                            {minute}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -127,7 +206,7 @@ const TouristDatesSection = () => {
                   </Button>
                 </div>
                 <p className="text-sm text-gray-500 mt-4">
-                  Séjour prévu du {format(arrivalDate!, "dd/MM", { locale: fr })} au {format(departureDate!, "dd/MM/yyyy", { locale: fr })}
+                  Séjour prévu du {format(arrivalDate!, "dd/MM", { locale: fr })} à {arrivalHour}h{arrivalMinute} au {format(departureDate!, "dd/MM/yyyy", { locale: fr })} à {departureHour}h{departureMinute}
                 </p>
               </div>
             )}
