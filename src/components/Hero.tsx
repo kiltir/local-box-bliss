@@ -28,7 +28,7 @@ const Hero = () => {
             </div>
             <div className="bg-white p-6 rounded-lg shadow-md">
               <div className="text-leaf-green text-2xl font-bold mb-2">Livraison</div>
-              <h3 className="text-lg font-medium mb-2">À domicile</h3>
+              <h3 className="text-lg font-medium mb-2">Sur-mesure</h3>
               <p className="text-gray-600">Recevez votre box directement chez vous, quand vous le souhaitez.</p>
             </div>
           </div>
