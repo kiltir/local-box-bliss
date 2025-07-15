@@ -19,12 +19,12 @@ const Hero = () => {
             <div className="bg-white p-6 rounded-lg shadow-md">
               <div className="text-leaf-green text-2xl font-bold mb-2">100%</div>
               <h3 className="text-lg font-medium mb-2">Produits locaux</h3>
-              <p className="text-gray-600">Tous nos produits viennent de producteurs situés à moins de 100km.</p>
+              <p className="text-gray-600">Tous nos produits viennent de producteurs locaux engagés et passionnés.</p>
             </div>
             <div className="bg-white p-6 rounded-lg shadow-md">
-              <div className="text-leaf-green text-2xl font-bold mb-2">Frais</div>
-              <h3 className="text-lg font-medium mb-2">De saison</h3>
-              <p className="text-gray-600">Nos box évoluent au fil des saisons pour vous garantir fraîcheur et qualité.</p>
+              <div className="text-leaf-green text-2xl font-bold mb-2">Choix</div>
+              <h3 className="text-lg font-medium mb-2">Thématique</h3>
+              <p className="text-gray-600">Nos box sont élaborées selon des thématiques vous garantissant originalité et qualité.</p>
             </div>
             <div className="bg-white p-6 rounded-lg shadow-md">
               <div className="text-leaf-green text-2xl font-bold mb-2">Livraison</div>
