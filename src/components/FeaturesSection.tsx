@@ -1,5 +1,4 @@
 
-
 import React from 'react';
 const FeaturesSection = () => {
   return <section id="concept" className="bg-soft-beige/30 py-[15px]">
@@ -38,8 +37,8 @@ const FeaturesSection = () => {
         <div className="mt-20 bg-white rounded-xl p-8 shadow-lg max-w-3xl mx-auto fade-in">
           <h3 className="text-2xl font-bold mb-4 text-center">Pourquoi choisir nos box ?</h3>
           
-          <p className="text-gray-600 mb-6">
-            <strong className="text-gray-900">Expérience inédite</strong> - Imprégnez-vous de l'authenticité et de l'ambiance péi.
+          <p className="text-lg text-center mb-6 text-gray-700 font-medium">
+            Expérience inédite - Imprégnez-vous de l'authenticité et de l'ambiance péi.
           </p>
           
           <ul className="space-y-4">
@@ -68,4 +67,3 @@ const FeaturesSection = () => {
     </section>;
 };
 export default FeaturesSection;
-
