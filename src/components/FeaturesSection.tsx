@@ -1,4 +1,3 @@
-
 import React from 'react';
 const FeaturesSection = () => {
   return <section id="concept" className="bg-soft-beige/30 py-[15px]">
@@ -21,9 +20,9 @@ const FeaturesSection = () => {
             <div className="w-16 h-16 bg-leaf-green rounded-full flex items-center justify-center mx-auto mb-6">
               <span className="text-white text-2xl font-bold">2</span>
             </div>
-            <h3 className="text-xl font-bold mb-3">Nous préparons votre commande</h3>
+            <h3 className="text-xl font-bold mb-3">Nos box sont toujours soigneusement élaborées avec des produits originaux et de qualité pour vous émerveiller.</h3>
             <p className="text-gray-600">
-              Nos colis sont toujours soigneusement élaborés avec des produits originaux et de qualité pour vous émerveiller.
+              Nous sélectionnons des produits frais directement chez nos producteurs partenaires.
             </p>
           </div>
           
