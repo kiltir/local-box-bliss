@@ -29,9 +29,7 @@ const FeaturesSection = () => {
               <span className="text-white text-2xl font-bold">3</span>
             </div>
             <h3 className="text-xl font-bold mb-3">Recevez vos produits</h3>
-            <p className="text-gray-600">
-              Nous livrons votre box directement chez vous, à la date de votre choix.
-            </p>
+            <p className="text-gray-600">Récupérez votre box à l'aéroport avant ou après votre vol ou directement chez vous en Métropole.</p>
           </div>
         </div>
         
