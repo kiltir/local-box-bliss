@@ -34,7 +34,7 @@ const FeaturesSection = () => {
         </div>
         
         <div className="mt-20 bg-white rounded-xl p-8 shadow-lg max-w-3xl mx-auto fade-in">
-          <h3 className="text-2xl font-bold mb-4 text-center">Une expérience inédite - Imprégnez-vous de l'authenticité et de l'ambiance péi.</h3>
+          <h3 className="text-2xl font-bold mb-4 text-center">Pourquoi choisir nos box ?</h3>
           
           <ul className="space-y-4">
             <li className="flex items-start">
@@ -43,12 +43,7 @@ const FeaturesSection = () => {
               </svg>
               <span><strong className="text-gray-900">Produits 100% locaux</strong> - Toutes nos box sont le résultat du savoir-faire de nos partenaires locaux engagés et passionnés.</span>
             </li>
-            <li className="flex items-start">
-              <svg className="h-6 w-6 text-leaf-green mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-              </svg>
-              <span><strong className="text-gray-900">Fraîcheur garantie</strong> - Nos produits sont récoltés à maturité et livrés dans les 24h.</span>
-            </li>
+            
             <li className="flex items-start">
               <svg className="h-6 w-6 text-leaf-green mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
