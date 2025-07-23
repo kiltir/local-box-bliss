@@ -34,7 +34,7 @@ const TouristDatesSection = () => {
   // Generate minutes (00, 15, 30, 45)
   const minutes = ['00', '15', '30', '45'];
   return <section className="bg-gradient-to-b from-white to-[#FEF7CD]/30 my-0 py-0">
-      <div className="container-section mx-0 my-0 py-[15px]">
+      <div className="container-section mx-0 my-0 py-0">
         <div className="max-w-4xl mx-auto text-center py-[30px]">
           <div className="flex items-center justify-center mb-6">
             <MapPin className="h-8 w-8 text-leaf-green mr-3" />
