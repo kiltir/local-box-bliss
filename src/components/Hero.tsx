@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button } from "@/components/ui/button";
 const Hero = () => {
-  return <section className="hero-section md:py-24 py-[50px]">
+  return <section className="hero-section md:py-24 py-[75px]">
       <div className="container-section py-[30px]">
         <div className="max-w-3xl mx-auto text-center slide-in">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 mx-[16px]">La Réunion sur place ou à emporter</h1>
