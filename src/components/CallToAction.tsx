@@ -7,7 +7,7 @@ const CallToAction = () => {
           <p className="text-xl mb-8 text-slate-900">
             Commandez dès maintenant votre première box et découvrez la fraîcheur et la qualité des produits de nos producteurs locaux.
           </p>
-          <button className="bg-white text-leaf-yellow hover:bg-gray-100 px-8 py-3 rounded-lg font-bold text-lg text-slate-900">
+          <button className="text-leaf-yellow px-8 py-3 rounded-lg font-bold text-lg text-slate-50 bg-yellow-500 hover:bg-yellow-400">
             Commander ma box
           </button>
         </div>
