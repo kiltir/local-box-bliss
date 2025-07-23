@@ -21,7 +21,7 @@ const FeaturesSection = () => {
               <span className="text-white text-2xl font-bold">2</span>
             </div>
             <h3 className="text-xl font-bold mb-3">Nous préparons votre commande</h3>
-            <p className="text-gray-600">Nos box sont toujours soigneusement élaborées avec des produits originaux et de qualité pour vous émerveiller.</p>
+            <p className="text-gray-600">Toutes nos box sont le résultat du savoir-faire de nos partenaires locaux engagés et passionnés.</p>
           </div>
           
           <div className="text-center">
@@ -41,7 +41,7 @@ const FeaturesSection = () => {
               <svg className="h-6 w-6 text-leaf-green mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
               </svg>
-              <span><strong className="text-gray-900">Produits 100% locaux</strong> - Tous nos produits sont issus d'agriculteurs et artisans situés à moins de 100km.</span>
+              <span><strong className="text-gray-900">Produits 100% locaux</strong> - Toutes nos box sont le résultat du savoir-faire de nos partenaires locaux engagés et passionnés.</span>
             </li>
             <li className="flex items-start">
               <svg className="h-6 w-6 text-leaf-green mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
