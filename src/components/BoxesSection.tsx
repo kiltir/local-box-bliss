@@ -1,10 +1,8 @@
-
 import React from 'react';
 import BoxCard from './BoxCard';
 import BoxDetails from './BoxDetails';
 import { useBoxes } from '@/hooks/useBoxes';
 import BoxThemeSelector from './BoxThemeSelector';
-
 const BoxesSection = () => {
   const {
     boxes,
@@ -17,9 +15,7 @@ const BoxesSection = () => {
     getBoxTitle,
     handleBoxChange
   } = useBoxes();
-
-  return (
-    <section id="boxes" className="py-16">
+  return <section id="boxes" className="py-[15px]">
       <div className="container-section">
         <div className="text-center mb-12 fade-in">
           <h2 className="text-3xl font-bold mb-4">Découvrez nos box</h2>
@@ -33,30 +29,11 @@ const BoxesSection = () => {
         </div>
           
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 fade-in">
-          {boxes.map(box => (
-            <BoxCard 
-              key={box.id} 
-              title={getBoxTitle(box)} 
-              price={box.price} 
-              description={box.themes[selectedTheme].description || box.description} 
-              image={box.themes[selectedTheme].image || box.image} 
-              items={box.themes[selectedTheme].products?.length || box.items} 
-              size={box.size} 
-              onClick={() => handleBoxClick(box.id)} 
-            />
-          ))}
+          {boxes.map(box => <BoxCard key={box.id} title={getBoxTitle(box)} price={box.price} description={box.themes[selectedTheme].description || box.description} image={box.themes[selectedTheme].image || box.image} items={box.themes[selectedTheme].products?.length || box.items} size={box.size} onClick={() => handleBoxClick(box.id)} />)}
         </div>
       </div>
 
-      {selectedBox !== null && (
-        <BoxDetails 
-          onClose={handleCloseDetails} 
-          boxId={selectedBox}
-          onBoxChange={handleBoxChange}
-        />
-      )}
-    </section>
-  );
+      {selectedBox !== null && <BoxDetails onClose={handleCloseDetails} boxId={selectedBox} onBoxChange={handleBoxChange} />}
+    </section>;
 };
-
 export default BoxesSection;

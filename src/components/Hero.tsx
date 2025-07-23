@@ -2,7 +2,7 @@ import React from 'react';
 import { Button } from "@/components/ui/button";
 const Hero = () => {
   return <section className="hero-section py-16 md:py-24">
-      <div className="container-section">
+      <div className="container-section py-[30px]">
         <div className="max-w-3xl mx-auto text-center slide-in">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 mx-[16px]">La Réunion sur place ou à emporter</h1>
           <p className="text-xl text-gray-600 mb-8">Découvrez nos box de produits typiques, de saison et issus de partenaires locaux disponibles avant/après votre voyage ou livrés directement chez vous en Métropole.</p>
