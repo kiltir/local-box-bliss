@@ -1,3 +1,4 @@
+
 import React from 'react';
 const FeaturesSection = () => {
   return <section id="concept" className="bg-soft-beige/30 py-[15px]">
@@ -22,7 +23,7 @@ const FeaturesSection = () => {
             </div>
             <h3 className="text-xl font-bold mb-3">Nous préparons votre commande</h3>
             <p className="text-gray-600">
-              Nous sélectionnons des produits frais directement chez nos producteurs partenaires.
+              Nos colis sont toujours soigneusement élaborés avec des produits originaux et de qualité pour vous émerveiller.
             </p>
           </div>
           
