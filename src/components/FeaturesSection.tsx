@@ -34,7 +34,7 @@ const FeaturesSection = () => {
         </div>
         
         <div className="mt-20 bg-white rounded-xl p-8 shadow-lg max-w-3xl mx-auto fade-in">
-          <h3 className="text-2xl font-bold mb-4 text-center">Pourquoi choisir nos box ?</h3>
+          <h3 className="text-2xl font-bold mb-4 text-center">Une expérience inédite - Imprégnez-vous de l'authenticité et de l'ambiance péi.</h3>
           
           <ul className="space-y-4">
             <li className="flex items-start">
