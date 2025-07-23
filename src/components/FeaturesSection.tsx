@@ -13,9 +13,7 @@ const FeaturesSection = () => {
               <span className="text-white text-2xl font-bold">1</span>
             </div>
             <h3 className="text-xl font-bold mb-3">Choisissez votre box</h3>
-            <p className="text-gray-600">
-              Sélectionnez la taille de box qui vous convient : petite, moyenne ou grande selon vos besoins.
-            </p>
+            <p className="text-gray-600">Sélectionnez la thématique de box qui vous convient selon vos goûts.</p>
           </div>
           
           <div className="text-center">
