@@ -41,10 +41,7 @@ const TouristDatesSection = () => {
             <h2 className="text-3xl font-bold text-gray-900">Vous êtes en voyage à la Réunion ?</h2>
           </div>
           
-          <p className="text-xl text-gray-600 mb-8">
-            Planifiez vos achats selon vos dates de séjour. Achetez maintenant pour découvrir nos produits locaux, 
-            ou programmez votre commande pour votre vol retour !
-          </p>
+          <p className="text-xl text-gray-600 mb-8">Planifiez vos achats selon vos dates de séjour. Achetez maintenant ou pour plus tard !</p>
 
           <div className="bg-white p-8 rounded-xl shadow-lg max-w-2xl mx-auto">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
