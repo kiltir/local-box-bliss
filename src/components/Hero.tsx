@@ -19,7 +19,7 @@ const Hero = () => {
             <div className="bg-white p-6 rounded-lg shadow-md">
               <div className="text-leaf-green text-2xl font-bold mb-2">100%</div>
               <h3 className="text-lg font-medium mb-2">Produits locaux</h3>
-              <p className="text-gray-600">Tous nos produits viennent de producteurs locaux engagés et passionnés.</p>
+              <p className="text-gray-600">Tous nos produits viennent de producteurs/artisans locaux engagés et passionnés.</p>
             </div>
             <div className="bg-white p-6 rounded-lg shadow-md">
               <div className="text-leaf-green text-2xl font-bold mb-2">Choix</div>
