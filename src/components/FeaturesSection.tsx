@@ -1,3 +1,4 @@
+
 import React from 'react';
 const FeaturesSection = () => {
   return <section id="concept" className="bg-soft-beige/30 py-[15px]">
@@ -48,7 +49,7 @@ const FeaturesSection = () => {
               <svg className="h-6 w-6 text-leaf-green mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
               </svg>
-              <span><strong className="text-gray-900">Soutien aux producteurs</strong> - Nous rémunérons justement nos producteurs partenaires.</span>
+              <span><strong className="text-gray-900">Soutien aux professionnels</strong> - Nous rémunérons justement nos producteurs partenaires.</span>
             </li>
             <li className="flex items-start">
               <svg className="h-6 w-6 text-leaf-green mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
