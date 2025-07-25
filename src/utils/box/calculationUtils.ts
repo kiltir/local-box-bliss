@@ -41,35 +41,25 @@ export const calculateTotalWeight = (
     }, 0);
 };
 
-// Find the appropriate box size for the current weight
+// Pour le nouveau système, toutes les boxes ont la même taille
 export const findAppropriateBox = (weight: number) => {
-  if (weight <= WEIGHT_LIMITS.small) {
-    return 'small';
-  } else if (weight <= WEIGHT_LIMITS.medium) {
-    return 'medium';
-  } else if (weight <= WEIGHT_LIMITS.large) {
-    return 'large';
-  }
-  return null; // Weight exceeds all limits
+  return weight <= WEIGHT_LIMITS.unique ? 'unique' : null;
 };
 
-// Find box with the specified size
-export const findBoxBySize = (size: 'small' | 'medium' | 'large') => {
-  return boxes.find(box => box.size === size);
+// Find box by theme instead of size
+export const findBoxByTheme = (theme: 'Découverte' | 'Bourbon' | 'Tradition' | 'Saison') => {
+  return boxes.find(box => box.theme === theme);
 };
 
 // Calculate box volume in cm³
-export const calculateBoxVolume = (boxSize: 'small' | 'medium' | 'large'): number => {
-  return BOX_DIMENSIONS[boxSize].width * 
-         BOX_DIMENSIONS[boxSize].height * 
-         BOX_DIMENSIONS[boxSize].depth;
+export const calculateBoxVolume = (): number => {
+  return BOX_DIMENSIONS.unique.width * 
+         BOX_DIMENSIONS.unique.height * 
+         BOX_DIMENSIONS.unique.depth;
 };
 
 // Calculate volume percentage
-export const calculateVolumePercentage = (
-  totalVolume: number, 
-  boxSize: 'small' | 'medium' | 'large'
-): number => {
-  const boxVolume = calculateBoxVolume(boxSize);
+export const calculateVolumePercentage = (totalVolume: number): number => {
+  const boxVolume = calculateBoxVolume();
   return (totalVolume / boxVolume) * 100;
 };

@@ -11,7 +11,7 @@ interface BoxDetailsContentProps {
   isActive: boolean;
   products: BoxProduct[];
   image: string;
-  boxSize: 'small' | 'medium' | 'large';
+  boxTheme: 'Découverte' | 'Bourbon' | 'Tradition' | 'Saison';
   boxId: number;
   onBoxChange?: (boxId: number) => void;
 }
@@ -20,7 +20,7 @@ const BoxDetailsContent = ({
   isActive,
   products,
   image,
-  boxSize,
+  boxTheme,
   boxId,
   onBoxChange
 }: BoxDetailsContentProps) => {
@@ -34,7 +34,7 @@ const BoxDetailsContent = ({
     weightExceeded,
     totalVolume,
     volumePercentage
-  } = useBoxCalculations(products, boxSize, boxId, onBoxChange);
+  } = useBoxCalculations(products, boxTheme, boxId, onBoxChange);
 
   return (
     <TabsContent value="details" className="p-6 pt-4">

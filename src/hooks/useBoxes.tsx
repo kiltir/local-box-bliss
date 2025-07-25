@@ -2,7 +2,6 @@
 import { useState } from 'react';
 import { boxes } from '@/data/boxes';
 import { useBoxTheme } from './useBoxTheme';
-import { getBoxTitle, getBoxDetails } from '@/utils/boxUtils';
 import { BoxData } from '@/types/boxes';
 
 export const useBoxes = () => {
@@ -25,8 +24,7 @@ export const useBoxes = () => {
     const id = boxId !== undefined ? boxId : selectedBox;
     if (id === null) return null;
     const box = boxes.find(box => box.id === id);
-    if (!box) return null;
-    return getBoxDetails(box, selectedTheme);
+    return box || null;
   };
 
   return {
@@ -38,6 +36,5 @@ export const useBoxes = () => {
     handleThemeChange,
     handleBoxChange,
     getSelectedBoxDetails,
-    getBoxTitle: (box: BoxData) => getBoxTitle(box, selectedTheme),
   };
 };

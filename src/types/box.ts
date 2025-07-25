@@ -1,5 +1,5 @@
 
-export type BoxSize = 'small' | 'medium' | 'large';
+export type BoxSize = 'unique';
 export type BoxTheme = 'Découverte' | 'Bourbon' | 'Tradition' | 'Saison';
 
 export interface Product {

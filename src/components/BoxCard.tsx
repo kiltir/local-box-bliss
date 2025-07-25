@@ -8,18 +8,20 @@ interface BoxCardProps {
   description: string;
   image: string;
   items: number;
-  size: 'small' | 'medium' | 'large';
+  theme: 'Découverte' | 'Bourbon' | 'Tradition' | 'Saison';
   onClick: () => void;
 }
 
-const BoxCard = ({ title, price, description, image, items, size, onClick }: BoxCardProps) => {
+const BoxCard = ({ title, price, description, image, items, theme, onClick }: BoxCardProps) => {
   const getBadgeColor = () => {
-    switch (size) {
-      case 'small':
+    switch (theme) {
+      case 'Découverte':
         return 'bg-blue-100 text-blue-800';
-      case 'medium':
-        return 'bg-yellow-100 text-yellow-800';
-      case 'large':
+      case 'Bourbon':
+        return 'bg-amber-100 text-amber-800';
+      case 'Tradition':
+        return 'bg-green-100 text-green-800';
+      case 'Saison':
         return 'bg-purple-100 text-purple-800';
       default:
         return 'bg-gray-100 text-gray-800';
@@ -28,19 +30,6 @@ const BoxCard = ({ title, price, description, image, items, size, onClick }: Box
 
   // Utiliser la nouvelle image téléchargée
   const boxImage = "/lovable-uploads/925da699-e319-4ee7-ac61-63680db57305.png";
-  
-  const getBoxSizeClass = () => {
-    switch (size) {
-      case 'small':
-        return 'scale-75';
-      case 'medium':
-        return 'scale-90';
-      case 'large':
-        return 'scale-100';
-      default:
-        return 'scale-90';
-    }
-  };
 
   return (
     <div className="bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300">
@@ -48,10 +37,10 @@ const BoxCard = ({ title, price, description, image, items, size, onClick }: Box
         <img 
           src={boxImage} 
           alt={title} 
-          className={`w-auto h-auto max-h-48 object-contain transition-transform ${getBoxSizeClass()}`}
+          className="w-auto h-auto max-h-48 object-contain"
         />
         <div className={`absolute top-4 right-4 px-3 py-1 rounded-full text-sm font-medium ${getBadgeColor()}`}>
-          {size === 'small' ? 'Petite' : size === 'medium' ? 'Moyenne' : 'Grande'}
+          {theme}
         </div>
       </div>
       

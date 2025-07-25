@@ -18,7 +18,7 @@ export interface Product {
 
 export interface Box3DViewerProps {
   products: Product[];
-  boxSize: 'small' | 'medium' | 'large';
+  boxSize: 'unique';
   boxDimensions: {
     width: number;
     height: number;

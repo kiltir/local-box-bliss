@@ -11,7 +11,7 @@ import {
   calculateTotalWeight,
   calculateTotalVolume,
   findAppropriateBox,
-  findBoxBySize,
+  findBoxByTheme,
   calculateVolumePercentage,
   calculateBoxVolume
 } from '@/utils/box/calculationUtils';
@@ -19,7 +19,7 @@ import { mapProductsFor3DViewer } from '@/utils/box/productMappers';
 
 export function useBoxCalculations(
   products: BoxProduct[], 
-  boxSize: 'small' | 'medium' | 'large',
+  boxTheme: 'Découverte' | 'Bourbon' | 'Tradition' | 'Saison',
   boxId: number,
   onBoxChange?: (boxId: number) => void
 ) {
@@ -30,44 +30,30 @@ export function useBoxCalculations(
     handleQuantityChange 
   } = useProductSelection(products);
   
-  const { showWeightExceededToast, showBoxUpdatedToast } = useToastNotification();
+  const { showWeightExceededToast } = useToastNotification();
 
   useEffect(() => {
     const totalWeight = calculateTotalWeight(products, selectedProductIds, productQuantities);
-    const currentLimit = WEIGHT_LIMITS[boxSize];
+    const weightLimit = WEIGHT_LIMITS.unique;
     
-    // Check if weight exceeds the current box's limit
-    if (totalWeight > currentLimit) {
-      const appropriateSize = findAppropriateBox(totalWeight);
-      
-      if (appropriateSize && appropriateSize !== boxSize) {
-        // Find a box with the appropriate size
-        const suggestedBox = findBoxBySize(appropriateSize);
-        
-        if (suggestedBox && onBoxChange) {
-          const handleButtonClick = () => {
-            onBoxChange(suggestedBox.id);
-            showBoxUpdatedToast(suggestedBox.baseTitle);
-          };
-
-          showWeightExceededToast(
-            totalWeight,
-            currentLimit,
-            suggestedBox.baseTitle,
-            handleButtonClick
-          );
-        }
-      }
+    // Check if weight exceeds the limit
+    if (totalWeight > weightLimit) {
+      showWeightExceededToast(
+        totalWeight,
+        weightLimit,
+        "Box unique",
+        () => {} // No action needed since there's only one box size
+      );
     }
-  }, [selectedProductIds, productQuantities, boxSize, onBoxChange]);
+  }, [selectedProductIds, productQuantities, showWeightExceededToast]);
 
   const totalWeight = calculateTotalWeight(products, selectedProductIds, productQuantities);
-  const weightLimit = WEIGHT_LIMITS[boxSize];
+  const weightLimit = WEIGHT_LIMITS.unique;
   const weightExceeded = totalWeight > weightLimit;
   
   const totalVolume = calculateTotalVolume(products, selectedProductIds, productQuantities);
-  const boxVolume = calculateBoxVolume(boxSize);
-  const volumePercentage = calculateVolumePercentage(totalVolume, boxSize);
+  const boxVolume = calculateBoxVolume();
+  const volumePercentage = calculateVolumePercentage(totalVolume);
 
   const getProductsFor3DViewer = () => {
     return mapProductsFor3DViewer(products, selectedProductIds, productQuantities);

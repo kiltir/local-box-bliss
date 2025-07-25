@@ -1,14 +1,10 @@
 
-// Box weight limits in kg
+// Box weight limits in kg - maintenant identique pour toutes les thématiques
 export const WEIGHT_LIMITS = {
-  small: 3, // 3kg for Petite Box
-  medium: 4.5, // 4.5kg for Moyenne Box
-  large: 6, // 6kg for Grande Box
+  unique: 4, // 4kg pour la box unique
 };
 
-// Box dimensions in cm (width × height × depth)
+// Box dimensions in cm (width × height × depth) - format unique
 export const BOX_DIMENSIONS = {
-  small: { width: 30, height: 15, depth: 25 }, // 11250 cm³
-  medium: { width: 35, height: 18, depth: 30 }, // 18900 cm³
-  large: { width: 40, height: 22, depth: 35 }, // 30800 cm³
+  unique: { width: 24, height: 17, depth: 8 }, // 3264 cm³
 };

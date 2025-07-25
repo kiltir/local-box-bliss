@@ -9,7 +9,7 @@ import AddToCartButton from './AddToCartButton';
 interface BoxDetails3DViewProps {
   isActive: boolean;
   products: BoxProduct[];
-  boxSize: 'small' | 'medium' | 'large';
+  boxTheme: 'Découverte' | 'Bourbon' | 'Tradition' | 'Saison';
   boxId: number;
   onBoxChange?: (boxId: number) => void;
 }
@@ -17,7 +17,7 @@ interface BoxDetails3DViewProps {
 const BoxDetails3DView = ({ 
   isActive, 
   products, 
-  boxSize, 
+  boxTheme, 
   boxId, 
   onBoxChange 
 }: BoxDetails3DViewProps) => {
@@ -28,7 +28,7 @@ const BoxDetails3DView = ({
     weightExceeded,
     weightLimit,
     getProductsFor3DViewer
-  } = useBoxCalculations(products, boxSize, boxId, onBoxChange);
+  } = useBoxCalculations(products, boxTheme, boxId, onBoxChange);
 
   return (
     <TabsContent value="3d" className="p-6 pt-4">
@@ -39,7 +39,7 @@ const BoxDetails3DView = ({
               Volume total sélectionné: {totalVolume.toFixed(2)} cm³ ({volumePercentage.toFixed(1)}% de la capacité)
             </p>
             <p className="text-sm text-gray-600">
-              Dimensions de la box: {BOX_DIMENSIONS[boxSize].width} × {BOX_DIMENSIONS[boxSize].height} × {BOX_DIMENSIONS[boxSize].depth} cm (L×H×P)
+              Dimensions de la box: {BOX_DIMENSIONS.unique.width} × {BOX_DIMENSIONS.unique.height} × {BOX_DIMENSIONS.unique.depth} cm (L×H×P)
             </p>
           </div>
         </div>
@@ -47,8 +47,8 @@ const BoxDetails3DView = ({
         <div className="h-[500px] border rounded-md">
           <Box3DViewer 
             products={getProductsFor3DViewer()}
-            boxSize={boxSize}
-            boxDimensions={BOX_DIMENSIONS[boxSize]}
+            boxSize="unique"
+            boxDimensions={BOX_DIMENSIONS.unique}
           />
         </div>
         

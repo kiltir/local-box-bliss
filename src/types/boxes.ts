@@ -30,8 +30,6 @@ export interface BoxData {
   items: number;
   size: BoxSize;
   weightLimit: number; // Limite de poids en kg
+  theme: BoxTheme; // Thème principal de la box
   products: BoxProduct[];
-  themes: {
-    [key in BoxTheme]: BoxThemeData;
-  };
 }
