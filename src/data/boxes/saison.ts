@@ -7,7 +7,7 @@ export const saisonBox: BoxData = {
   price: 26.99,
   description: "Une sélection de produits frais adaptés à la saison, mettant en valeur les fruits et légumes du moment.",
   image: "https://source.unsplash.com/1509316975850-ff9c5deb0cd9",
-  items: 5,
+  items: 4,
   size: 'unique',
   weightLimit: 4,
   theme: 'Saison',
@@ -39,13 +39,6 @@ export const saisonBox: BoxData = {
       producer: "Les Délices du Jardin",
       dimensions: { width: 7, height: 8, depth: 7 },
       weight: 0.25
-    },
-    { 
-      name: "Tisane de plantes péi", 
-      quantity: "60g", 
-      producer: "Herboristerie Créole",
-      dimensions: { width: 12, height: 8, depth: 3 },
-      weight: 0.06
     }
   ]
 };
