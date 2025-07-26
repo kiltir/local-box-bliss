@@ -7,25 +7,11 @@ export const decouverteBox: BoxData = {
   price: 24.99,
   description: "Une sélection variée de douceurs artisanales pour découvrir de nouvelles saveurs authentiques de La Réunion.",
   image: "https://source.unsplash.com/1618160702438-9b02ab6515c9",
-  items: 5,
+  items: 3,
   size: 'unique',
   weightLimit: 4,
   theme: 'Découverte',
   products: [
-    { 
-      name: "Tablette de chocolat péi", 
-      quantity: "100g", 
-      producer: "Chocolaterie Artisanale",
-      dimensions: { width: 16, height: 2, depth: 8 },
-      weight: 0.1
-    },
-    { 
-      name: "Sachet de thé lontan", 
-      quantity: "50g", 
-      producer: "Maison du Thé",
-      dimensions: { width: 12, height: 8, depth: 3 },
-      weight: 0.05
-    },
     { 
       name: "Pot de miel de letchis", 
       quantity: "200g", 
