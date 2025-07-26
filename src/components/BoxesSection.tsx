@@ -25,7 +25,7 @@ const BoxesSection = () => {
         <div className="text-center mb-12 fade-in">
           <h2 className="text-3xl font-bold mb-4">Découvrez nos box</h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
-            Choisissez la thématique qui vous correspond. Toutes nos box sont de format unique (24×17×8 cm) et composées de produits frais et locaux, sélectionnés avec soin.
+            Choisissez parmi nos 4 thématiques pensées et confectionnées avec soin pour une meilleure expérience.
           </p>
           
           <div className="flex justify-center mb-8">
