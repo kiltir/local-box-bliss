@@ -13,7 +13,7 @@ interface BoxDetailsModalProps {
   image: string;
   products: BoxProduct[];
   onClose: () => void;
-  boxSize: 'small' | 'medium' | 'large';
+  boxSize: 'unique';
   boxId: number;
   onBoxChange?: (boxId: number) => void;
 }
@@ -66,7 +66,7 @@ const BoxDetailsModal = ({
               isActive={activeTab === "details"}
               products={products}
               image={image}
-              boxSize={boxSize}
+              boxTheme={products.length > 0 ? 'Découverte' : 'Découverte'}
               boxId={boxId}
               onBoxChange={onBoxChange}
             />
@@ -74,7 +74,7 @@ const BoxDetailsModal = ({
             <BoxDetails3DView 
               isActive={activeTab === "3d"}
               products={products}
-              boxSize={boxSize}
+              boxTheme={products.length > 0 ? 'Découverte' : 'Découverte'}
               boxId={boxId}
               onBoxChange={onBoxChange}
             />

@@ -10,13 +10,11 @@ import { Product, BoxSize } from '@/types/box';
 const BoxManagement3D = () => {
   const navigate = useNavigate();
   const [selectedProducts, setSelectedProducts] = useState<Product[]>([]);
-  const [currentBoxSize, setCurrentBoxSize] = useState<BoxSize>('medium');
+  const [currentBoxSize, setCurrentBoxSize] = useState<BoxSize>('unique');
   
-  // Dimensions approximatives des box en cm
+  // Dimensions de la box unique en cm
   const boxDimensions = {
-    small: { width: 20, height: 15, depth: 15 },
-    medium: { width: 30, height: 20, depth: 20 },
-    large: { width: 40, height: 25, depth: 25 }
+    unique: { width: 24, height: 17, depth: 8 }
   };
 
   const handleAddProduct = (product: Product) => {
@@ -25,10 +23,6 @@ const BoxManagement3D = () => {
 
   const handleRemoveProduct = (productId: number) => {
     setSelectedProducts(selectedProducts.filter(p => p.id !== productId));
-  };
-
-  const handleBoxSizeChange = (size: BoxSize) => {
-    setCurrentBoxSize(size);
   };
 
   const calculateVolume = () => {
@@ -73,25 +67,13 @@ const BoxManagement3D = () => {
           <h2 className="text-xl font-bold mb-4">Paramètres</h2>
           
           <div className="mb-6">
-            <label className="block text-sm font-medium mb-2">Taille de la Box</label>
+            <label className="block text-sm font-medium mb-2">Box Unique</label>
             <div className="flex space-x-3">
               <Button 
-                variant={currentBoxSize === 'small' ? 'default' : 'outline'}
-                onClick={() => handleBoxSizeChange('small')}
+                variant="default"
+                disabled
               >
-                Petite
-              </Button>
-              <Button 
-                variant={currentBoxSize === 'medium' ? 'default' : 'outline'}
-                onClick={() => handleBoxSizeChange('medium')}
-              >
-                Moyenne
-              </Button>
-              <Button 
-                variant={currentBoxSize === 'large' ? 'default' : 'outline'}
-                onClick={() => handleBoxSizeChange('large')}
-              >
-                Grande
+                Format Unique (24×17×8 cm)
               </Button>
             </div>
           </div>

@@ -17,7 +17,7 @@ export const BoxDetails = ({ onClose, boxId, onBoxChange }: BoxDetailsProps) => 
   
   return (
     <BoxDetailsModal
-      title={selectedBox.title}
+      title={selectedBox.baseTitle}
       price={selectedBox.price}
       description={selectedBox.description}
       image={selectedBox.image}
