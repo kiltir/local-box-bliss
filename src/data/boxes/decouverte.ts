@@ -7,7 +7,7 @@ export const decouverteBox: BoxData = {
   price: 24.99,
   description: "Une sélection variée de douceurs artisanales pour découvrir de nouvelles saveurs authentiques de La Réunion.",
   image: "https://source.unsplash.com/1618160702438-9b02ab6515c9",
-  items: 3,
+  items: 4,
   size: 'unique',
   weightLimit: 4,
   theme: 'Découverte',
@@ -32,6 +32,13 @@ export const decouverteBox: BoxData = {
       producer: "Confiserie Péi",
       dimensions: { width: 10, height: 3, depth: 6 },
       weight: 0.15
+    },
+    { 
+      name: "3 huiles essentielles pour un total de 30ml", 
+      quantity: "30ml", 
+      producer: "Essence péi",
+      dimensions: { width: 3, height: 10, depth: 6 },
+      weight: 0.4
     }
   ]
 };
