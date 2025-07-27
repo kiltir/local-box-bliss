@@ -1,4 +1,3 @@
-
 import { BoxData } from '@/types/boxes';
 
 export const decouverteBox: BoxData = {
@@ -34,7 +33,7 @@ export const decouverteBox: BoxData = {
       weight: 0.15
     },
     { 
-      name: "3 huiles essentielles pour un total de 30ml", 
+      name: "3 huiles essentielles", 
       quantity: "30ml", 
       producer: "Essence péi",
       dimensions: { width: 3, height: 10, depth: 6 },
