@@ -7,7 +7,7 @@ export const traditionBox: BoxData = {
   price: 27.99,
   description: "Des produits authentiques issus de recettes traditionnelles créoles transmises de génération en génération.",
   image: "https://source.unsplash.com/472396961693-142e6e269027",
-  items: 3,
+  items: 4,
   size: 'unique',
   weightLimit: 4,
   theme: 'Tradition',
@@ -32,6 +32,13 @@ export const traditionBox: BoxData = {
       producer: "Herboristerie Créole",
       dimensions: { width: 12, height: 8, depth: 3 },
       weight: 0.06
+    },
+    { 
+      name: "Piment péi", 
+      quantity: "200g", 
+      producer: "Verger Payet",
+      dimensions: { width: 7, height: 8, depth: 7 },
+      weight: 0.2
     }
   ]
 };
