@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -7,6 +8,7 @@ import { CalendarIcon, Plane, MapPin, Clock } from "lucide-react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { cn } from "@/lib/utils";
+
 const Hero = () => {
   const [arrivalDate, setArrivalDate] = useState<Date>();
   const [departureDate, setDepartureDate] = useState<Date>();
@@ -16,6 +18,7 @@ const Hero = () => {
   const [departureMinute, setDepartureMinute] = useState<string>('00');
   const [showDeparturePicker, setShowDeparturePicker] = useState(false);
   const [showArrivalPicker, setShowArrivalPicker] = useState(false);
+
   const handlePlanPurchase = () => {
     if (arrivalDate && departureDate) {
       document.getElementById('boxes')?.scrollIntoView({
@@ -23,6 +26,7 @@ const Hero = () => {
       });
     }
   };
+
   const canPlanPurchase = arrivalDate && departureDate;
 
   // Generate hours (00-23)
@@ -32,7 +36,9 @@ const Hero = () => {
 
   // Generate minutes (00, 15, 30, 45)
   const minutes = ['00', '15', '30', '45'];
-  return <section className="hero-section md:py-24 py-[90px]">
+
+  return (
+    <section className="hero-section md:py-24 py-[90px]">
       <div className="container-section py-[30px]">
         <div className="max-w-3xl mx-auto text-center slide-in">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 mx-[16px]">La Réunion sur place ou à emporter</h1>
@@ -175,37 +181,10 @@ const Hero = () => {
                 </div>}
             </div>
           </div>
-          
-          <p className="text-xl text-gray-600 mb-8 my-[54px]">Découvrez nos box de produits typiques, de saison et issus de partenaires locaux disponibles avant/après votre voyage ou livrées directement chez vous en Métropole.</p>
-          
-          <div className="flex flex-col sm:flex-row justify-center gap-4">
-            <Button className="bg-leaf-green hover:bg-dark-green text-white px-8 py-6 text-lg">
-              Découvrir nos box
-            </Button>
-            <Button variant="outline" className="border-leaf-green text-leaf-green hover:bg-leaf-green/10 px-8 py-6 text-lg">
-              Comment ça marche
-            </Button>
-          </div>
-          
-          <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="bg-white p-6 rounded-lg shadow-md">
-              <div className="text-leaf-green text-2xl font-bold mb-2">100%</div>
-              <h3 className="text-lg font-medium mb-2">Produits locaux</h3>
-              <p className="text-gray-600">Tous nos produits viennent de producteurs/artisans locaux engagés et passionnés.</p>
-            </div>
-            <div className="bg-white p-6 rounded-lg shadow-md">
-              <div className="text-leaf-green text-2xl font-bold mb-2">Choix</div>
-              <h3 className="text-lg font-medium mb-2">Thématique</h3>
-              <p className="text-gray-600">Nos box sont élaborées selon des thématiques vous garantissant originalité et qualité.</p>
-            </div>
-            <div className="bg-white p-6 rounded-lg shadow-md">
-              <div className="text-leaf-green text-2xl font-bold mb-2">Livraison</div>
-              <h3 className="text-lg font-medium mb-2">Sur-mesure</h3>
-              <p className="text-gray-600">Recevez votre box à l'aéroport ou directement chez vous en Métropole.</p>
-            </div>
-          </div>
         </div>
       </div>
-    </section>;
+    </section>
+  );
 };
+
 export default Hero;

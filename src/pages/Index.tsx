@@ -2,6 +2,7 @@
 import React from 'react';
 import Navbar from '@/components/Navbar';
 import Hero from '@/components/Hero';
+import HeroDescription from '@/components/HeroDescription';
 import FeaturesSection from '@/components/FeaturesSection';
 import BoxesSection from '@/components/BoxesSection';
 import ProducerSection from '@/components/ProducerSection';
@@ -14,6 +15,7 @@ const Index = () => {
       <Navbar />
       <main>
         <Hero />
+        <HeroDescription />
         <FeaturesSection />
         <BoxesSection />
         <ProducerSection />
