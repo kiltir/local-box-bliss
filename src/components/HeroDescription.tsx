@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button } from "@/components/ui/button";
 const HeroDescription = () => {
-  return <section className="bg-white py-0">
+  return <section className="bg-white my-0 py-[10px]">
       <div className="container-section">
         <div className="max-w-3xl mx-auto text-center">
           <p className="text-xl text-gray-600 mb-8">
