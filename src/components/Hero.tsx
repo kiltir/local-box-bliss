@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -8,7 +7,6 @@ import { CalendarIcon, Plane, MapPin, Clock } from "lucide-react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { cn } from "@/lib/utils";
-
 const Hero = () => {
   const [arrivalDate, setArrivalDate] = useState<Date>();
   const [departureDate, setDepartureDate] = useState<Date>();
@@ -18,7 +16,6 @@ const Hero = () => {
   const [departureMinute, setDepartureMinute] = useState<string>('00');
   const [showDeparturePicker, setShowDeparturePicker] = useState(false);
   const [showArrivalPicker, setShowArrivalPicker] = useState(false);
-
   const handlePlanPurchase = () => {
     if (arrivalDate && departureDate) {
       document.getElementById('boxes')?.scrollIntoView({
@@ -26,7 +23,6 @@ const Hero = () => {
       });
     }
   };
-
   const canPlanPurchase = arrivalDate && departureDate;
 
   // Generate hours (00-23)
@@ -36,9 +32,7 @@ const Hero = () => {
 
   // Generate minutes (00, 15, 30, 45)
   const minutes = ['00', '15', '30', '45'];
-
-  return (
-    <section className="hero-section md:py-24 py-[90px]">
+  return <section className="hero-section md:py-24 py-[90px]">
       <div className="container-section py-[30px]">
         <div className="max-w-3xl mx-auto text-center slide-in">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 mx-[16px]">La Réunion sur place ou à emporter</h1>
@@ -50,7 +44,7 @@ const Hero = () => {
               <h2 className="text-3xl font-bold text-gray-900">Vous êtes en voyage à la Réunion ?</h2>
             </div>
             
-            <p className="text-xl text-gray-600 mb-8">Planifiez vos achats selon vos dates de séjour. Achetez maintenant ou pour plus tard !</p>
+            <p className="text-xl text-gray-600 mb-8">Renseignez vos dates de séjour et profitez d'un service sur-mesure.</p>
 
             <div className="bg-white p-8 rounded-xl shadow-lg max-w-2xl mx-auto mb-8">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
@@ -183,8 +177,6 @@ const Hero = () => {
           </div>
         </div>
       </div>
-    </section>
-  );
+    </section>;
 };
-
 export default Hero;
