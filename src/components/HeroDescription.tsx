@@ -1,10 +1,7 @@
-
 import React from 'react';
 import { Button } from "@/components/ui/button";
-
 const HeroDescription = () => {
-  return (
-    <section className="py-16 bg-white">
+  return <section className="bg-white py-0">
       <div className="container-section">
         <div className="max-w-3xl mx-auto text-center">
           <p className="text-xl text-gray-600 mb-8">
@@ -39,8 +36,6 @@ const HeroDescription = () => {
           </div>
         </div>
       </div>
-    </section>
-  );
+    </section>;
 };
-
 export default HeroDescription;
