@@ -1,11 +1,8 @@
-
 import React from 'react';
 import { Button } from "@/components/ui/button";
-
 const HeroDescription = () => {
-  return (
-    <section className="bg-white my-0 py-[10px]">
-      <div className="container-section">
+  return <section className="bg-white my-0 py-0">
+      <div className="container-section py-[30px]">
         <div className="max-w-3xl mx-auto text-center">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
             Un concept 100% local
@@ -43,8 +40,6 @@ const HeroDescription = () => {
           </div>
         </div>
       </div>
-    </section>
-  );
+    </section>;
 };
-
 export default HeroDescription;

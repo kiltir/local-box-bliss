@@ -16,8 +16,8 @@ const ProducerSection = () => {
     image: "https://source.unsplash.com/1465146344425-f00d5f5c8f07",
     description: "Émilie cultive des fruits de saison en privilégiant les variétés anciennes et goûteuses."
   }];
-  return <section id="producers" className="py-16 bg-gradient-to-b from-white to-soft-beige/20">
-      <div className="container-section py-[30px]">
+  return <section id="producers" className="bg-gradient-to-b from-white to-soft-beige/20 py-[15px]">
+      <div className="container-section py-[15px]">
         <div className="text-center mb-12 fade-in">
           <h2 className="text-3xl font-bold mb-4">Nos Partenaires</h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">

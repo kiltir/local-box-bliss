@@ -32,8 +32,8 @@ const Hero = () => {
 
   // Generate minutes (00, 15, 30, 45)
   const minutes = ['00', '15', '30', '45'];
-  return <section className="hero-section md:py-24 py-[90px]">
-      <div className="container-section py-[30px]">
+  return <section className="hero-section md:py-24 py-[18px]">
+      <div className="container-section py-[20px]">
         <div className="max-w-3xl mx-auto text-center slide-in">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 mx-[16px]">La Réunion sur place ou à emporter</h1>
           
