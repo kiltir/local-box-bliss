@@ -7,6 +7,7 @@ import { CalendarIcon, Plane, MapPin, Clock } from "lucide-react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { cn } from "@/lib/utils";
+
 const Hero = () => {
   const [arrivalDate, setArrivalDate] = useState<Date>();
   const [departureDate, setDepartureDate] = useState<Date>();
@@ -16,6 +17,7 @@ const Hero = () => {
   const [departureMinute, setDepartureMinute] = useState<string>('00');
   const [showDeparturePicker, setShowDeparturePicker] = useState(false);
   const [showArrivalPicker, setShowArrivalPicker] = useState(false);
+
   const handlePlanPurchase = () => {
     if (arrivalDate && departureDate) {
       document.getElementById('boxes')?.scrollIntoView({
@@ -23,28 +25,40 @@ const Hero = () => {
       });
     }
   };
+
   const canPlanPurchase = arrivalDate && departureDate;
 
   // Generate hours (00-23)
-  const hours = Array.from({
-    length: 24
-  }, (_, i) => i.toString().padStart(2, '0'));
+  const hours = Array.from({ length: 24 }, (_, i) => i.toString().padStart(2, '0'));
 
   // Generate minutes (00, 15, 30, 45)
   const minutes = ['00', '15', '30', '45'];
-  return <section className="hero-section md:py-24 py-[18px]">
+
+  return (
+    <section 
+      className="hero-section md:py-24 py-[18px] relative bg-cover bg-center bg-no-repeat"
+      style={{
+        backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('/lovable-uploads/53d8e975-3996-441a-9ccd-8e5874f90880.png')`
+      }}
+    >
       <div className="container-section py-[20px]">
         <div className="max-w-3xl mx-auto text-center slide-in">
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 mx-[16px]">La Réunion sur place ou à emporter</h1>
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 mx-[16px]">
+            La Réunion sur place ou à emporter
+          </h1>
           
           {/* Section des dates de voyage */}
           <div className="max-w-4xl mx-auto text-center py-[30px]">
             <div className="flex items-center justify-center mb-6">
               <MapPin className="h-8 w-8 text-leaf-green mr-3" />
-              <h2 className="text-3xl font-bold text-gray-900">Vous êtes en voyage à la Réunion ?</h2>
+              <h2 className="text-3xl font-bold text-white">
+                Vous êtes en voyage à la Réunion ?
+              </h2>
             </div>
             
-            <p className="text-xl text-gray-600 mb-8">Renseignez vos dates de séjour et profitez d'un service sur-mesure.</p>
+            <p className="text-xl text-white mb-8">
+              Renseignez vos dates de séjour et profitez d'un service sur-mesure.
+            </p>
 
             <div className="bg-white p-8 rounded-xl shadow-lg max-w-2xl mx-auto mb-8">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
@@ -177,6 +191,8 @@ const Hero = () => {
           </div>
         </div>
       </div>
-    </section>;
+    </section>
+  );
 };
+
 export default Hero;
