@@ -7,7 +7,6 @@ import { CalendarIcon, Plane, MapPin, Clock } from "lucide-react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { cn } from "@/lib/utils";
-
 const Hero = () => {
   const [arrivalDate, setArrivalDate] = useState<Date>();
   const [departureDate, setDepartureDate] = useState<Date>();
@@ -17,7 +16,6 @@ const Hero = () => {
   const [departureMinute, setDepartureMinute] = useState<string>('00');
   const [showDeparturePicker, setShowDeparturePicker] = useState(false);
   const [showArrivalPicker, setShowArrivalPicker] = useState(false);
-
   const handlePlanPurchase = () => {
     if (arrivalDate && departureDate) {
       document.getElementById('boxes')?.scrollIntoView({
@@ -25,22 +23,18 @@ const Hero = () => {
       });
     }
   };
-
   const canPlanPurchase = arrivalDate && departureDate;
 
   // Generate hours (00-23)
-  const hours = Array.from({ length: 24 }, (_, i) => i.toString().padStart(2, '0'));
+  const hours = Array.from({
+    length: 24
+  }, (_, i) => i.toString().padStart(2, '0'));
 
   // Generate minutes (00, 15, 30, 45)
   const minutes = ['00', '15', '30', '45'];
-
-  return (
-    <section 
-      className="hero-section md:py-24 py-[18px] relative bg-cover bg-center bg-no-repeat"
-      style={{
-        backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('/lovable-uploads/53d8e975-3996-441a-9ccd-8e5874f90880.png')`
-      }}
-    >
+  return <section style={{
+    backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('/lovable-uploads/53d8e975-3996-441a-9ccd-8e5874f90880.png')`
+  }} className="hero-section md:py-24 relative bg-cover bg-center bg-no-repeat py-[15px]">
       <div className="container-section py-[20px]">
         <div className="max-w-3xl mx-auto text-center slide-in">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 mx-[16px]">
@@ -191,8 +185,6 @@ const Hero = () => {
           </div>
         </div>
       </div>
-    </section>
-  );
+    </section>;
 };
-
 export default Hero;
