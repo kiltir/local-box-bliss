@@ -77,6 +77,16 @@ const ProductItem = ({
           checked={isSelected}
           onCheckedChange={(checked) => onToggle(index.toString(), checked === true)}
         />
+        <img 
+          src={getProductImage(product.name)}
+          alt={product.name}
+          className="w-16 h-16 object-cover rounded-md border flex-shrink-0"
+          onError={(e) => {
+            // Fallback to a default image if the specific image fails to load
+            const target = e.target as HTMLImageElement;
+            target.src = 'https://images.unsplash.com/photo-1586201375761-83865001e31c?w=100&h=100&fit=crop';
+          }}
+        />
         <div className="flex-1">
           <div className="flex justify-between items-start">
             <div className="flex-1">
@@ -127,16 +137,6 @@ const ProductItem = ({
                   </button>
                 </div>
               )}
-              <img 
-                src={getProductImage(product.name)}
-                alt={product.name}
-                className="w-16 h-16 object-cover rounded-md border"
-                onError={(e) => {
-                  // Fallback to a default image if the specific image fails to load
-                  const target = e.target as HTMLImageElement;
-                  target.src = 'https://images.unsplash.com/photo-1586201375761-83865001e31c?w=100&h=100&fit=crop';
-                }}
-              />
             </div>
           </div>
         </div>
