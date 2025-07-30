@@ -36,7 +36,7 @@ const Hero = () => {
     backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('/lovable-uploads/53d8e975-3996-441a-9ccd-8e5874f90880.png')`
   }} className="hero-section md:py-24 relative bg-cover bg-center bg-no-repeat py-0">
       <div className="container-section py-0">
-        <div className="max-w-3xl mx-auto text-center slide-in py-[40px]">
+        <div className="max-w-3xl mx-auto text-center slide-in py-[10px]">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 mx-[16px]">
             La Réunion sur place ou à emporter
           </h1>
