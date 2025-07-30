@@ -6,7 +6,7 @@ export const saisonBox: BoxData = {
   baseTitle: "Box Saison",
   price: 26.99,
   description: "Une sélection de produits frais adaptés à la saison, mettant en valeur les fruits et légumes du moment.",
-  image: "https://source.unsplash.com/1509316975850-ff9c5deb0cd9",
+  image: "/lovable-uploads/ac03653a-7722-48c5-a6c8-0a25a453791b.png",
   items: 4,
   size: 'unique',
   weightLimit: 4,
