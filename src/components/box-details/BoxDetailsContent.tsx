@@ -43,7 +43,7 @@ const BoxDetailsContent = ({
           <img 
             src={image} 
             alt="Box" 
-            className="w-full h-48 md:h-64 object-cover rounded-md mb-4"
+            className="w-full h-40 md:h-52 object-cover rounded-md mb-4"
           />
         </div>
         
