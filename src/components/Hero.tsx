@@ -42,7 +42,7 @@ const Hero = () => {
           </h1>
           
           {/* Section des dates de voyage */}
-          <div className="max-w-4xl mx-auto text-center py-[30px]">
+          <div className="max-w-4xl mx-auto text-center py-0">
             <div className="flex items-center justify-center mb-6">
               <MapPin className="h-8 w-8 text-leaf-green mr-3" />
               <h2 className="text-3xl font-bold text-white">
