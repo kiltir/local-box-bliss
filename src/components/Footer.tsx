@@ -1,16 +1,13 @@
-
 import React from 'react';
 import { ShoppingBag } from "lucide-react";
-
 const Footer = () => {
-  return (
-    <footer className="bg-gray-900 text-white">
+  return <footer className="bg-gray-900 text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
           <div>
             <div className="flex items-center mb-4">
               <ShoppingBag className="h-8 w-8 text-leaf-green mr-2" />
-              <span className="text-xl font-bold">LocalBox</span>
+              <span className="text-xl font-bold text-yellow-400">KiltirBox</span>
             </div>
             <p className="text-gray-400 mb-4">
               Des produits frais et locaux, livrés directement chez vous.
@@ -88,15 +85,8 @@ const Footer = () => {
             </p>
             <form>
               <div className="flex mb-2">
-                <input 
-                  type="email" 
-                  placeholder="Votre email" 
-                  className="bg-gray-800 text-white px-4 py-2 rounded-l-lg w-full focus:outline-none"
-                />
-                <button 
-                  type="submit"
-                  className="bg-leaf-green hover:bg-dark-green text-white px-4 rounded-r-lg"
-                >
+                <input type="email" placeholder="Votre email" className="bg-gray-800 text-white px-4 py-2 rounded-l-lg w-full focus:outline-none" />
+                <button type="submit" className="bg-leaf-green hover:bg-dark-green text-white px-4 rounded-r-lg">
                   OK
                 </button>
               </div>
@@ -113,8 +103,6 @@ const Footer = () => {
           </p>
         </div>
       </div>
-    </footer>
-  );
+    </footer>;
 };
-
 export default Footer;
