@@ -28,8 +28,8 @@ const BoxCard = ({ title, price, description, image, items, theme, onClick }: Bo
     }
   };
 
-  // Utiliser la nouvelle image téléchargée
-  const boxImage = "/lovable-uploads/925da699-e319-4ee7-ac61-63680db57305.png";
+  // Utiliser la nouvelle image téléchargée "kb1"
+  const boxImage = "/lovable-uploads/bbbefcf8-6fc3-45be-9a11-df15e8ecd5eb.png";
 
   return (
     <div className="bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300">
