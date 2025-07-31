@@ -70,70 +70,73 @@ const ProductItem = ({
   };
 
   return (
-    <li className="py-3">
+    <li className="py-3 border-b border-gray-100 last:border-b-0">
       <div className="flex items-start gap-3">
-        <Checkbox 
-          id={`product-${index}`}
-          checked={isSelected}
-          onCheckedChange={(checked) => onToggle(index.toString(), checked === true)}
-        />
+        <div className="flex-shrink-0 pt-1">
+          <Checkbox 
+            id={`product-${index}`}
+            checked={isSelected}
+            onCheckedChange={(checked) => onToggle(index.toString(), checked === true)}
+          />
+        </div>
+        
         <img 
           src={getProductImage(product.name)}
           alt={product.name}
-          className="w-20 h-20 object-cover rounded-md border flex-shrink-0"
+          className="w-16 h-16 sm:w-20 sm:h-20 object-cover rounded-md border flex-shrink-0"
           onError={(e) => {
-            // Fallback to a default image if the specific image fails to load
             const target = e.target as HTMLImageElement;
             target.src = 'https://images.unsplash.com/photo-1586201375761-83865001e31c?w=120&h=120&fit=crop';
           }}
         />
-        <div className="flex-1">
-          <div className="flex justify-between items-start">
-            <div className="flex-1">
+        
+        <div className="flex-1 min-w-0">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2">
+            <div className="flex-1 min-w-0">
               <label 
                 htmlFor={`product-${index}`}
-                className="font-medium cursor-pointer block"
+                className="font-medium cursor-pointer block text-sm sm:text-base leading-tight"
               >
                 {product.name}
               </label>
-              <div className="text-sm text-gray-500 mt-1">
-                Producteur: {product.producer}
+              <div className="text-xs sm:text-sm text-gray-500 mt-1 leading-tight">
+                {product.producer}
               </div>
               {product.weight && (
-                <div className="text-sm text-gray-500">
-                  Poids: {product.weight.toFixed(2)} kg {isSelected && quantity > 1 && 
+                <div className="text-xs sm:text-sm text-gray-500 mt-1">
+                  {product.weight.toFixed(2)} kg {isSelected && quantity > 1 && 
                     `× ${quantity} = ${(product.weight * quantity).toFixed(2)} kg`}
                 </div>
               )}
               {product.dimensions && (
-                <div className="text-sm text-gray-500 mt-1">
-                  Dimensions: {product.dimensions.width} × {product.dimensions.height} × {product.dimensions.depth} cm (L×H×P)
+                <div className="text-xs sm:text-sm text-gray-500 mt-1">
+                  {product.dimensions.width}×{product.dimensions.height}×{product.dimensions.depth} cm
                   {isSelected && quantity > 1 && (
                     <span className="block">
-                      Volume total: {(calculateProductVolume(product) * quantity).toFixed(2)} cm³
+                      Vol: {(calculateProductVolume(product) * quantity).toFixed(0)} cm³
                     </span>
                   )}
                 </div>
               )}
             </div>
             
-            <div className="flex items-center gap-3 ml-4">
-              <span className="text-gray-600 text-sm">{product.quantity}</span>
+            <div className="flex items-center justify-between sm:justify-end gap-3 sm:ml-4 flex-shrink-0">
+              <span className="text-gray-600 text-xs sm:text-sm">{product.quantity}</span>
               {isSelected && (
-                <div className="flex items-center border rounded-md">
+                <div className="flex items-center border rounded-md bg-white">
                   <button 
-                    className="px-2 py-1 hover:bg-gray-100"
+                    className="px-2 py-1 hover:bg-gray-100 touch-manipulation"
                     onClick={() => onQuantityChange(index.toString(), -1)}
                     disabled={quantity <= 1}
                   >
-                    <Minus className="h-4 w-4" />
+                    <Minus className="h-3 w-3 sm:h-4 sm:w-4" />
                   </button>
-                  <span className="px-2 select-none">{quantity}</span>
+                  <span className="px-2 py-1 text-sm select-none min-w-[2rem] text-center">{quantity}</span>
                   <button 
-                    className="px-2 py-1 hover:bg-gray-100"
+                    className="px-2 py-1 hover:bg-gray-100 touch-manipulation"
                     onClick={() => onQuantityChange(index.toString(), 1)}
                   >
-                    <Plus className="h-4 w-4" />
+                    <Plus className="h-3 w-3 sm:h-4 sm:w-4" />
                   </button>
                 </div>
               )}

@@ -37,34 +37,38 @@ const BoxDetailsContent = ({
   } = useBoxCalculations(products, boxTheme, boxId, onBoxChange);
 
   return (
-    <TabsContent value="details" className="p-6 pt-4">
-      <div className="md:flex">
-        <div className="md:w-1/2 md:pr-6">
+    <TabsContent value="details" className="p-3 sm:p-6 pt-3 sm:pt-4">
+      <div className="flex flex-col">
+        {/* Image de la box - optimisée pour mobile */}
+        <div className="mb-4 sm:mb-6">
           <img 
             src={image} 
             alt="Box" 
-            className="w-full h-40 md:h-52 object-cover rounded-md mb-4"
+            className="w-full h-32 sm:h-40 md:h-52 object-cover rounded-md"
           />
         </div>
         
-        <div className="md:w-1/2">
-          <div className="mb-6">
-            <h3 className="text-lg font-semibold mb-3">Contenu de la box</h3>
-            <div className={`text-sm ${weightExceeded ? 'text-red-600 font-semibold' : 'text-gray-600'} mb-1`}>
-              Poids total sélectionné: {totalWeight.toFixed(2)} kg / {weightLimit} kg {weightExceeded && '⚠️'}
+        {/* Informations sur la box */}
+        <div className="mb-4 sm:mb-6">
+          <h3 className="text-lg font-semibold mb-3">Contenu de la box</h3>
+          
+          {/* Informations de poids et volume - stack sur mobile */}
+          <div className="space-y-1 mb-3">
+            <div className={`text-sm ${weightExceeded ? 'text-red-600 font-semibold' : 'text-gray-600'}`}>
+              <span className="font-medium">Poids:</span> {totalWeight.toFixed(2)} kg / {weightLimit} kg {weightExceeded && '⚠️'}
             </div>
-            <div className="text-sm text-gray-600 mb-2">
-              Volume total sélectionné: {totalVolume.toFixed(2)} cm³ ({volumePercentage.toFixed(1)}% de la capacité)
+            <div className="text-sm text-gray-600">
+              <span className="font-medium">Volume:</span> {totalVolume.toFixed(2)} cm³ ({volumePercentage.toFixed(1)}%)
             </div>
-            
-            <ProductList 
-              products={products}
-              selectedProductIds={selectedProductIds}
-              productQuantities={productQuantities}
-              onToggle={handleProductToggle}
-              onQuantityChange={handleQuantityChange}
-            />
           </div>
+          
+          <ProductList 
+            products={products}
+            selectedProductIds={selectedProductIds}
+            productQuantities={productQuantities}
+            onToggle={handleProductToggle}
+            onQuantityChange={handleQuantityChange}
+          />
         </div>
       </div>
       
