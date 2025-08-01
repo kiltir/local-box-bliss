@@ -185,9 +185,7 @@ const Hero = () => {
 
             {/* Nouvelle phrase d'information importante */}
             <div className="max-w-2xl mx-auto mb-8">
-              <p className="text-sm text-white bg-black/20 backdrop-blur-sm px-6 py-4 rounded-lg border border-white/20">
-                *Une commande de box sur place à l'île de la Réunion ne peut se faire que 15 jours avant un vol aller ou retour. Dans le cas contraire la livraison se fera à votre adresse de résidence en Métropole.
-              </p>
+              <p className="text-sm text-white bg-black/20 backdrop-blur-sm px-6 py-4 rounded-lg border border-white/20">*Une commande de box à récupérer sur place à l'île de la Réunion ne peut se faire que 15 jours avant un vol aller ou retour. Dans le cas contraire, la livraison à votre adresse de résidence en Métropole vous sera proposée automatiquement.</p>
             </div>
           </div>
         </div>
