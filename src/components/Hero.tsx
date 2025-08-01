@@ -34,8 +34,8 @@ const Hero = () => {
   const minutes = ['00', '15', '30', '45'];
   return <section style={{
     backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('/lovable-uploads/53d8e975-3996-441a-9ccd-8e5874f90880.png')`
-  }} className="hero-section md:py-24 relative bg-cover bg-center bg-no-repeat py-[30px]">
-      <div className="container-section py-0">
+  }} className="hero-section md:py-24 relative bg-cover bg-center bg-no-repeat py-0">
+      <div className="container-section py-[15px]">
         <div className="max-w-3xl mx-auto text-center slide-in py-[10px]">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 mx-[16px]">
             La Réunion sur place ou à emporter
@@ -183,7 +183,7 @@ const Hero = () => {
 
             {/* Nouvelle phrase d'information importante */}
             <div className="max-w-2xl mx-auto mb-8">
-              <p className="text-sm backdrop-blur-sm px-6 py-4 rounded-lg text-slate-50">*Une commande de box à récupérer sur place à l'île de la Réunion ne peut se faire que 15 jours avant un vol aller ou retour. Dans le cas contraire, la livraison à votre adresse de résidence en Métropole vous sera proposée automatiquement.</p>
+              <p className="text-sm backdrop-blur-sm px-6 rounded-lg text-slate-50 py-[10px]">*Une commande de box à récupérer sur place à l'île de la Réunion ne peut se faire que 15 jours avant un vol aller ou retour. Dans le cas contraire, la livraison à votre adresse de résidence en Métropole vous sera proposée automatiquement.</p>
             </div>
           </div>
         </div>
