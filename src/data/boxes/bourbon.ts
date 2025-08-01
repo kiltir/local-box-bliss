@@ -6,7 +6,7 @@ export const bourbonBox: BoxData = {
   baseTitle: "Box Bourbon",
   price: 29.99,
   description: "Une sélection raffinée pour accompagner vos spiritueux préférés avec des produits locaux authentiques.",
-  image: "https://source.unsplash.com/493962853295-0fd70327578a",
+  image: "/lovable-uploads/dfae2a49-8682-4e2d-b364-efe22d218a5e.png",
   items: 6,
   size: 'unique',
   weightLimit: 4,
