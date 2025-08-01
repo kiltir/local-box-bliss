@@ -7,6 +7,7 @@ import { CalendarIcon, Plane, MapPin, Clock } from "lucide-react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { cn } from "@/lib/utils";
+
 const Hero = () => {
   const [arrivalDate, setArrivalDate] = useState<Date>();
   const [departureDate, setDepartureDate] = useState<Date>();
@@ -185,7 +186,7 @@ const Hero = () => {
 
             {/* Nouvelle phrase d'information importante */}
             <div className="max-w-2xl mx-auto mb-8">
-              <p className="text-sm backdrop-blur-sm px-6 py-4 rounded-lg border border-white/20 text-slate-50">*Une commande de box à récupérer sur place à l'île de la Réunion ne peut se faire que 15 jours avant un vol aller ou retour. Dans le cas contraire, la livraison à votre adresse de résidence en Métropole vous sera proposée automatiquement.</p>
+              <p className="text-sm backdrop-blur-sm px-6 py-4 rounded-lg text-slate-50">*Une commande de box à récupérer sur place à l'île de la Réunion ne peut se faire que 15 jours avant un vol aller ou retour. Dans le cas contraire, la livraison à votre adresse de résidence en Métropole vous sera proposée automatiquement.</p>
             </div>
           </div>
         </div>
