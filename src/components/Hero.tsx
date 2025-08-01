@@ -7,7 +7,6 @@ import { CalendarIcon, Plane, MapPin, Clock } from "lucide-react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { cn } from "@/lib/utils";
-
 const Hero = () => {
   const [arrivalDate, setArrivalDate] = useState<Date>();
   const [departureDate, setDepartureDate] = useState<Date>();
@@ -17,7 +16,6 @@ const Hero = () => {
   const [departureMinute, setDepartureMinute] = useState<string>('00');
   const [showDeparturePicker, setShowDeparturePicker] = useState(false);
   const [showArrivalPicker, setShowArrivalPicker] = useState(false);
-
   const handlePlanPurchase = () => {
     if (arrivalDate && departureDate) {
       document.getElementById('boxes')?.scrollIntoView({
@@ -25,7 +23,6 @@ const Hero = () => {
       });
     }
   };
-
   const canPlanPurchase = arrivalDate && departureDate;
 
   // Generate hours (00-23)
@@ -35,15 +32,10 @@ const Hero = () => {
 
   // Generate minutes (00, 15, 30, 45)
   const minutes = ['00', '15', '30', '45'];
-
-  return (
-    <section 
-      style={{
-        backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('/lovable-uploads/53d8e975-3996-441a-9ccd-8e5874f90880.png')`
-      }} 
-      className="hero-section md:py-24 relative bg-cover bg-center bg-no-repeat py-0"
-    >
-      <div className="container-section py-0">
+  return <section style={{
+    backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('/lovable-uploads/53d8e975-3996-441a-9ccd-8e5874f90880.png')`
+  }} className="hero-section md:py-24 relative bg-cover bg-center bg-no-repeat py-0">
+      <div className="container-section py-[15px]">
         <div className="max-w-3xl mx-auto text-center slide-in py-[10px]">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 mx-[16px]">
             La Réunion sur place ou à emporter
@@ -171,8 +163,7 @@ const Hero = () => {
                 </div>
               </div>
 
-              {canPlanPurchase && (
-                <div className="border-t pt-6">
+              {canPlanPurchase && <div className="border-t pt-6">
                   <div className="flex flex-col sm:flex-row gap-4 justify-center">
                     <Button className="bg-leaf-green hover:bg-dark-green text-white px-6 py-3" onClick={handlePlanPurchase}>
                       <Plane className="mr-2 h-4 w-4" />
@@ -184,13 +175,12 @@ const Hero = () => {
                   </div>
                   <p className="text-sm text-gray-500 mt-4">
                     Séjour prévu du {format(arrivalDate!, "dd/MM", {
-                    locale: fr
-                  })} à {arrivalHour}h{arrivalMinute} au {format(departureDate!, "dd/MM/yyyy", {
-                    locale: fr
-                  })} à {departureHour}h{departureMinute}
+                  locale: fr
+                })} à {arrivalHour}h{arrivalMinute} au {format(departureDate!, "dd/MM/yyyy", {
+                  locale: fr
+                })} à {departureHour}h{departureMinute}
                   </p>
-                </div>
-              )}
+                </div>}
             </div>
 
             {/* Nouvelle phrase d'information importante */}
@@ -202,8 +192,6 @@ const Hero = () => {
           </div>
         </div>
       </div>
-    </section>
-  );
+    </section>;
 };
-
 export default Hero;
