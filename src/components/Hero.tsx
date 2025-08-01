@@ -7,6 +7,7 @@ import { CalendarIcon, Plane, MapPin, Clock } from "lucide-react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { cn } from "@/lib/utils";
+
 const Hero = () => {
   const [arrivalDate, setArrivalDate] = useState<Date>();
   const [departureDate, setDepartureDate] = useState<Date>();
@@ -16,6 +17,7 @@ const Hero = () => {
   const [departureMinute, setDepartureMinute] = useState<string>('00');
   const [showDeparturePicker, setShowDeparturePicker] = useState(false);
   const [showArrivalPicker, setShowArrivalPicker] = useState(false);
+
   const handlePlanPurchase = () => {
     if (arrivalDate && departureDate) {
       document.getElementById('boxes')?.scrollIntoView({
@@ -23,6 +25,7 @@ const Hero = () => {
       });
     }
   };
+
   const canPlanPurchase = arrivalDate && departureDate;
 
   // Generate hours (00-23)
@@ -32,6 +35,7 @@ const Hero = () => {
 
   // Generate minutes (00, 15, 30, 45)
   const minutes = ['00', '15', '30', '45'];
+
   return <section style={{
     backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('/lovable-uploads/53d8e975-3996-441a-9ccd-8e5874f90880.png')`
   }} className="hero-section md:py-24 relative bg-cover bg-center bg-no-repeat py-0">
@@ -185,11 +189,12 @@ const Hero = () => {
 
             {/* Nouvelle phrase d'information importante */}
             <div className="max-w-2xl mx-auto mb-8">
-              <p className="text-sm text-white bg-black/20 backdrop-blur-sm px-6 py-4 rounded-lg border border-white/20">*Une commande de box à récupérer sur place à l'île de la Réunion ne peut se faire que 15 jours avant un vol aller ou retour. Dans le cas contraire, la livraison à votre adresse de résidence en Métropole vous sera proposée automatiquement.</p>
+              <p className="text-sm text-white backdrop-blur-sm px-6 py-4 rounded-lg border border-white/20">*Une commande de box à récupérer sur place à l'île de la Réunion ne peut se faire que 15 jours avant un vol aller ou retour. Dans le cas contraire, la livraison à votre adresse de résidence en Métropole vous sera proposée automatiquement.</p>
             </div>
           </div>
         </div>
       </div>
     </section>;
 };
+
 export default Hero;
