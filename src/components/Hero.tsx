@@ -166,7 +166,7 @@ const Hero = () => {
                   <div className="flex flex-col sm:flex-row gap-4 justify-center">
                     <Button className="bg-leaf-green hover:bg-dark-green text-white px-6 py-3" onClick={handlePlanPurchase}>
                       <Plane className="mr-2 h-4 w-4" />
-                      Récupérer à l'aéroport
+                      Récupérer à l'aéroport de Gillot
                     </Button>
                     <Button variant="outline" className="border-leaf-green text-leaf-green hover:bg-leaf-green/10 px-6 py-3" onClick={handlePlanPurchase}>Recevoir en Métropole</Button>
                   </div>
