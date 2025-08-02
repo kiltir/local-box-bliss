@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Menu, X, ShoppingBag } from "lucide-react";
@@ -16,9 +15,7 @@ const Navbar = () => {
           
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
-            <a href="#concept" className="text-gray-600 hover:text-leaf-green transition-colors">
-              Concept
-            </a>
+            <a href="#concept" className="text-gray-600 hover:text-leaf-green transition-colors">Mode d'emploi</a>
             <a href="#boxes" className="text-gray-600 hover:text-leaf-green transition-colors">
               Nos Box
             </a>
