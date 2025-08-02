@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Menu, X, ShoppingBag } from "lucide-react";
@@ -22,6 +23,7 @@ const Navbar = () => {
               Nos Box
             </a>
             <a href="#producers" className="text-gray-600 hover:text-leaf-green transition-colors">Nos Partenaires</a>
+            <a href="/notre-histoire" className="text-gray-600 hover:text-leaf-green transition-colors">Notre Histoire</a>
             <Button className="bg-leaf-green hover:bg-dark-green text-white">
               Commander
             </Button>
@@ -45,6 +47,9 @@ const Navbar = () => {
             </a>
             <a href="#producers" className="block text-gray-600 hover:text-leaf-green py-2 transition-colors" onClick={() => setIsOpen(false)}>
               Producteurs
+            </a>
+            <a href="/notre-histoire" className="block text-gray-600 hover:text-leaf-green py-2 transition-colors" onClick={() => setIsOpen(false)}>
+              Notre Histoire
             </a>
             <Button className="w-full bg-leaf-green hover:bg-dark-green text-white">
               Commander
