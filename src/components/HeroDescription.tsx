@@ -17,7 +17,7 @@ const HeroDescription = () => {
             </Button>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 bg-transparent">
             <div className="p-6 shadow-md rounded-lg bg-amber-100">
               <div className="text-leaf-green text-2xl font-bold mb-2">100%</div>
               <h3 className="text-lg font-medium mb-2">Produits locaux</h3>
