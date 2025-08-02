@@ -6,9 +6,7 @@ const HeroDescription = () => {
         <div className="max-w-3xl mx-auto text-center">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">Un concept original et local</h2>
           
-          <p className="text-xl text-gray-600 mb-8">
-            Découvrez nos box de produits typiques, de saison et issus de partenaires locaux disponibles avant/après votre voyage ou livrées directement chez vous en Métropole.
-          </p>
+          <p className="text-xl text-gray-600 mb-8">Découvrez nos box de produits typiques issus du savoir-faire local, disponibles avant/après votre voyage ou livrées directement chez vous en Métropole.</p>
           
           <div className="flex flex-col sm:flex-row justify-center gap-4 mb-16">
             <Button className="bg-leaf-green hover:bg-dark-green text-white px-8 py-6 text-lg">
