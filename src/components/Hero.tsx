@@ -167,9 +167,7 @@ const Hero = () => {
                       <Plane className="mr-2 h-4 w-4" />
                       Acheter maintenant
                     </Button>
-                    <Button variant="outline" className="border-leaf-green text-leaf-green hover:bg-leaf-green/10 px-6 py-3" onClick={handlePlanPurchase}>
-                      Programmer pour le retour
-                    </Button>
+                    <Button variant="outline" className="border-leaf-green text-leaf-green hover:bg-leaf-green/10 px-6 py-3" onClick={handlePlanPurchase}>Recevoir en Métropole</Button>
                   </div>
                   <p className="text-sm text-gray-500 mt-4">
                     Séjour prévu du {format(arrivalDate!, "dd/MM", {
