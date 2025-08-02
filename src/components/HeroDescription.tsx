@@ -8,14 +8,7 @@ const HeroDescription = () => {
           
           <p className="text-xl text-gray-600 mb-8">Découvrez nos box de produits typiques issus du savoir-faire local, disponibles avant/après votre voyage ou livrées directement chez vous en Métropole.</p>
           
-          <div className="flex flex-col sm:flex-row justify-center gap-4 mb-16">
-            <Button className="bg-leaf-green hover:bg-dark-green text-white px-8 py-6 text-lg">
-              Découvrir nos box
-            </Button>
-            <Button variant="outline" className="border-leaf-green text-leaf-green hover:bg-leaf-green/10 px-8 py-6 text-lg">
-              Comment ça marche
-            </Button>
-          </div>
+          
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 bg-transparent">
             <div className="p-6 shadow-md rounded-lg bg-amber-100">
