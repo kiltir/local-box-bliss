@@ -20,17 +20,17 @@ const HeroDescription = () => {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="bg-white p-6 rounded-lg shadow-md">
+            <div className="p-6 shadow-md rounded-lg bg-amber-100">
               <div className="text-leaf-green text-2xl font-bold mb-2">100%</div>
               <h3 className="text-lg font-medium mb-2">Produits locaux</h3>
               <p className="text-gray-600">Tous nos produits viennent de producteurs/artisans locaux engagés et passionnés.</p>
             </div>
-            <div className="bg-white p-6 rounded-lg shadow-md">
+            <div className="p-6 rounded-lg shadow-md bg-amber-100">
               <div className="text-leaf-green text-2xl font-bold mb-2">Choix</div>
               <h3 className="text-lg font-medium mb-2">Thématique</h3>
               <p className="text-gray-600">Nos box sont élaborées selon des thématiques vous garantissant originalité et qualité.</p>
             </div>
-            <div className="bg-white p-6 rounded-lg shadow-md">
+            <div className="p-6 rounded-lg shadow-md bg-amber-100">
               <div className="text-leaf-green text-2xl font-bold mb-2">Livraison</div>
               <h3 className="text-lg font-medium mb-2">Sur-mesure</h3>
               <p className="text-gray-600">Recevez votre box à l'aéroport ou directement chez vous en Métropole.</p>
