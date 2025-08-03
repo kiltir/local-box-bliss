@@ -52,7 +52,7 @@ const BoxThemeSelector: React.FC<BoxThemeSelectorProps> = ({ selectedTheme, onTh
       </Tabs>
       
       <div className="mt-4 text-center text-gray-600">
-        <p>{themes.find(t => t.value === selectedTheme)?.description}</p>
+        <p>Des produits de caractère et d'identité</p>
       </div>
     </div>
   );
