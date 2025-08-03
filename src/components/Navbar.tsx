@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Menu, X, ShoppingBag } from "lucide-react";
@@ -15,14 +14,26 @@ const Navbar = () => {
       setTimeout(() => {
         const element = document.getElementById(section.replace('#', ''));
         if (element) {
-          element.scrollIntoView({ behavior: 'smooth' });
+          // Scroll avec un offset pour s'assurer que le titre est bien visible
+          const headerHeight = 80; // Hauteur approximative du header sticky
+          const elementTop = element.offsetTop - headerHeight;
+          window.scrollTo({ 
+            top: elementTop, 
+            behavior: 'smooth' 
+          });
         }
       }, 100);
     } else {
       // Si on est déjà sur la page d'accueil, juste scroller vers la section
       const element = document.getElementById(section.replace('#', ''));
       if (element) {
-        element.scrollIntoView({ behavior: 'smooth' });
+        // Scroll avec un offset pour s'assurer que le titre est bien visible
+        const headerHeight = 80; // Hauteur approximative du header sticky
+        const elementTop = element.offsetTop - headerHeight;
+        window.scrollTo({ 
+          top: elementTop, 
+          behavior: 'smooth' 
+        });
       }
     }
     setIsOpen(false);
