@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -212,11 +213,7 @@ const Hero = () => {
                       <Button variant="outline" className="border-leaf-green text-leaf-green hover:bg-leaf-green/10 px-6 py-3" onClick={handlePlanPurchase}>Recevoir en Métropole</Button>
                     </div>
                     <p className="text-sm text-gray-500 mt-4">
-                      Séjour prévu du {format(arrivalDate!, "dd/MM", {
-                    locale: fr
-                  })} à {arrivalHour}h{arrivalMinute} au {format(departureDate!, "dd/MM/yyyy", {
-                    locale: fr
-                  })} à {departureHour}h{departureMinute}
+                      Séjour prévu du {arrivalDate ? format(arrivalDate, "dd/MM", { locale: fr }) : ""} à {arrivalHour}h{arrivalMinute} au {departureDate ? format(departureDate, "dd/MM/yyyy", { locale: fr }) : ""} à {departureHour}h{departureMinute}
                     </p>
                   </div>}
               </div>
@@ -242,55 +239,59 @@ const Hero = () => {
             </p>
             
             <div className="space-y-3">
-              <div 
-                className={cn(
-                  "p-4 border rounded-lg cursor-pointer transition-colors",
-                  selectedPickupDate === 'arrival' 
-                    ? "border-leaf-green bg-leaf-green/5" 
-                    : "border-gray-200 hover:border-gray-300"
-                )}
-                onClick={() => setSelectedPickupDate('arrival')}
-              >
-                <div className="flex items-center space-x-3">
-                  <div className={cn(
-                    "w-4 h-4 rounded-full border-2",
+              {arrivalDate && (
+                <div 
+                  className={cn(
+                    "p-4 border rounded-lg cursor-pointer transition-colors",
                     selectedPickupDate === 'arrival' 
-                      ? "border-leaf-green bg-leaf-green" 
-                      : "border-gray-300"
-                  )} />
-                  <div>
-                    <p className="font-medium">Date d'arrivée</p>
-                    <p className="text-sm text-gray-500">
-                      {format(arrivalDate!, "PPPP", { locale: fr })} à {arrivalHour}h{arrivalMinute}
-                    </p>
+                      ? "border-leaf-green bg-leaf-green/5" 
+                      : "border-gray-200 hover:border-gray-300"
+                  )}
+                  onClick={() => setSelectedPickupDate('arrival')}
+                >
+                  <div className="flex items-center space-x-3">
+                    <div className={cn(
+                      "w-4 h-4 rounded-full border-2",
+                      selectedPickupDate === 'arrival' 
+                        ? "border-leaf-green bg-leaf-green" 
+                        : "border-gray-300"
+                    )} />
+                    <div>
+                      <p className="font-medium">Date d'arrivée</p>
+                      <p className="text-sm text-gray-500">
+                        {format(arrivalDate, "PPPP", { locale: fr })} à {arrivalHour}h{arrivalMinute}
+                      </p>
+                    </div>
                   </div>
                 </div>
-              </div>
+              )}
               
-              <div 
-                className={cn(
-                  "p-4 border rounded-lg cursor-pointer transition-colors",
-                  selectedPickupDate === 'departure' 
-                    ? "border-leaf-green bg-leaf-green/5" 
-                    : "border-gray-200 hover:border-gray-300"
-                )}
-                onClick={() => setSelectedPickupDate('departure')}
-              >
-                <div className="flex items-center space-x-3">
-                  <div className={cn(
-                    "w-4 h-4 rounded-full border-2",
+              {departureDate && (
+                <div 
+                  className={cn(
+                    "p-4 border rounded-lg cursor-pointer transition-colors",
                     selectedPickupDate === 'departure' 
-                      ? "border-leaf-green bg-leaf-green" 
-                      : "border-gray-300"
-                  )} />
-                  <div>
-                    <p className="font-medium">Date de départ</p>
-                    <p className="text-sm text-gray-500">
-                      {format(departureDate!, "PPPP", { locale: fr })} à {departureHour}h{departureMinute}
-                    </p>
+                      ? "border-leaf-green bg-leaf-green/5" 
+                      : "border-gray-200 hover:border-gray-300"
+                  )}
+                  onClick={() => setSelectedPickupDate('departure')}
+                >
+                  <div className="flex items-center space-x-3">
+                    <div className={cn(
+                      "w-4 h-4 rounded-full border-2",
+                      selectedPickupDate === 'departure' 
+                        ? "border-leaf-green bg-leaf-green" 
+                        : "border-gray-300"
+                    )} />
+                    <div>
+                      <p className="font-medium">Date de départ</p>
+                      <p className="text-sm text-gray-500">
+                        {format(departureDate, "PPPP", { locale: fr })} à {departureHour}h{departureMinute}
+                      </p>
+                    </div>
                   </div>
                 </div>
-              </div>
+              )}
             </div>
           </div>
           
