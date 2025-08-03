@@ -22,7 +22,7 @@ const BoxThemeSelector: React.FC<BoxThemeSelectorProps> = ({ selectedTheme, onTh
       value: 'Bourbon', 
       label: 'Bourbon', 
       icon: <Wine className="h-4 w-4 mr-2" />,
-      description: 'Pour accompagner vos spiritueux'
+      description: 'Des produits de caractère et d\'identité'
     },
     { 
       value: 'Tradition', 
