@@ -253,7 +253,7 @@ const Hero = () => {
 
               {/* Nouvelle phrase d'information importante */}
               <div className="max-w-2xl mx-auto mb-8">
-                <p className="text-sm backdrop-blur-sm px-6 rounded-lg text-slate-50 py-[10px]">*Une commande de box à récupérer sur place à l'aéroport de Gillot sur l'île de la Réunion ne peut se faire que 15 jours avant un vol aller ou retour. Dans le cas contraire, la livraison à votre adresse de résidence en Métropole vous sera proposée automatiquement.</p>
+                <p className="text-sm backdrop-blur-sm px-6 rounded-lg text-slate-50 py-[10px]">*Une commande de box à récupérer sur place à l'aéroport de Gillot sur l'île de la Réunion ne peut se faire que 15 jours avant un vol aller ou retour. Dans le cas contraire, la livraison à votre adresse de résidence en Métropole vous sera proposée.</p>
               </div>
             </div>
           </div>
