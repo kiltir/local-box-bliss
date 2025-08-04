@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Compass, Wine, BookOpen, Leaf } from "lucide-react";
@@ -22,7 +21,7 @@ const BoxThemeSelector: React.FC<BoxThemeSelectorProps> = ({ selectedTheme, onTh
       value: 'Bourbon', 
       label: 'Bourbon', 
       icon: <Wine className="h-4 w-4 mr-2" />,
-      description: 'Pour accompagner vos spiritueux'
+      description: 'Des produits avec un caractère et une identité'
     },
     { 
       value: 'Tradition', 
