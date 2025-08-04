@@ -8,7 +8,6 @@ import { CalendarIcon, Plane, MapPin, Clock } from "lucide-react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { cn } from "@/lib/utils";
-
 const Hero = () => {
   const [arrivalDate, setArrivalDate] = useState<Date>();
   const [departureDate, setDepartureDate] = useState<Date>();
@@ -32,7 +31,6 @@ const Hero = () => {
   // Fonction pour obtenir les dates valides pour la récupération
   const getValidPickupDates = () => {
     const validDates = [];
-    
     if (arrivalDate && isValidPickupDate(arrivalDate)) {
       validDates.push({
         type: 'arrival' as const,
@@ -42,7 +40,6 @@ const Hero = () => {
         label: 'Date d\'arrivée'
       });
     }
-    
     if (departureDate && isValidPickupDate(departureDate)) {
       validDates.push({
         type: 'departure' as const,
@@ -52,10 +49,8 @@ const Hero = () => {
         label: 'Date de départ'
       });
     }
-    
     return validDates;
   };
-
   const handleAirportPickup = () => {
     if (arrivalDate && departureDate) {
       const validDates = getValidPickupDates();
@@ -65,7 +60,6 @@ const Hero = () => {
       }
     }
   };
-
   const handleConfirmPickup = () => {
     setShowPickupDateModal(false);
     // Procéder à l'achat avec la date sélectionnée
@@ -73,7 +67,6 @@ const Hero = () => {
       behavior: 'smooth'
     });
   };
-
   const handlePlanPurchase = () => {
     if (arrivalDate && departureDate) {
       document.getElementById('boxes')?.scrollIntoView({
@@ -81,20 +74,19 @@ const Hero = () => {
       });
     }
   };
-  
   const canPlanPurchase = arrivalDate && departureDate;
 
   // Generate hours (00-23)
-  const hours = Array.from({ length: 24 }, (_, i) => i.toString().padStart(2, '0'));
+  const hours = Array.from({
+    length: 24
+  }, (_, i) => i.toString().padStart(2, '0'));
 
   // Generate minutes (00, 15, 30, 45)
   const minutes = ['00', '15', '30', '45'];
-
-  return (
-    <>
+  return <>
       <section style={{
-        backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('/lovable-uploads/53d8e975-3996-441a-9ccd-8e5874f90880.png')`
-      }} className="hero-section md:py-24 relative bg-cover bg-center bg-no-repeat py-[40px]">
+      backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('/lovable-uploads/53d8e975-3996-441a-9ccd-8e5874f90880.png')`
+    }} className="hero-section md:py-24 relative bg-cover bg-center bg-no-repeat py-[40px]">
         <div className="container-section py-[15px]">
           <div className="max-w-3xl mx-auto text-center slide-in py-[10px]">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 mx-[16px]">
@@ -123,21 +115,16 @@ const Hero = () => {
                       <PopoverTrigger asChild>
                         <Button variant="outline" className={cn("w-full justify-start text-left font-normal", !arrivalDate && "text-muted-foreground")}>
                           <CalendarIcon className="mr-2 h-4 w-4" />
-                          {arrivalDate ? format(arrivalDate, "PPP", { locale: fr }) : "Sélectionner une date"}
+                          {arrivalDate ? format(arrivalDate, "PPP", {
+                          locale: fr
+                        }) : "Sélectionner une date"}
                         </Button>
                       </PopoverTrigger>
                       <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar 
-                          mode="single" 
-                          selected={arrivalDate} 
-                          onSelect={(date) => {
-                            setArrivalDate(date);
-                            setShowArrivalPicker(false);
-                          }} 
-                          disabled={(date) => date < new Date()} 
-                          initialFocus 
-                          className="pointer-events-auto" 
-                        />
+                        <Calendar mode="single" selected={arrivalDate} onSelect={date => {
+                        setArrivalDate(date);
+                        setShowArrivalPicker(false);
+                      }} disabled={date => date < new Date()} initialFocus className="pointer-events-auto" />
                       </PopoverContent>
                     </Popover>
                     
@@ -153,11 +140,9 @@ const Hero = () => {
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
-                            {hours.map((hour) => (
-                              <SelectItem key={hour} value={hour}>
+                            {hours.map(hour => <SelectItem key={hour} value={hour}>
                                 {hour}h
-                              </SelectItem>
-                            ))}
+                              </SelectItem>)}
                           </SelectContent>
                         </Select>
                         <Select value={arrivalMinute} onValueChange={setArrivalMinute}>
@@ -165,11 +150,9 @@ const Hero = () => {
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
-                            {minutes.map((minute) => (
-                              <SelectItem key={minute} value={minute}>
+                            {minutes.map(minute => <SelectItem key={minute} value={minute}>
                                 {minute}
-                              </SelectItem>
-                            ))}
+                              </SelectItem>)}
                           </SelectContent>
                         </Select>
                       </div>
@@ -185,21 +168,16 @@ const Hero = () => {
                       <PopoverTrigger asChild>
                         <Button variant="outline" className={cn("w-full justify-start text-left font-normal", !departureDate && "text-muted-foreground")}>
                           <CalendarIcon className="mr-2 h-4 w-4" />
-                          {departureDate ? format(departureDate, "PPP", { locale: fr }) : "Sélectionner une date"}
+                          {departureDate ? format(departureDate, "PPP", {
+                          locale: fr
+                        }) : "Sélectionner une date"}
                         </Button>
                       </PopoverTrigger>
                       <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar 
-                          mode="single" 
-                          selected={departureDate} 
-                          onSelect={(date) => {
-                            setDepartureDate(date);
-                            setShowDeparturePicker(false);
-                          }} 
-                          disabled={(date) => date < (arrivalDate || new Date())} 
-                          initialFocus 
-                          className="pointer-events-auto" 
-                        />
+                        <Calendar mode="single" selected={departureDate} onSelect={date => {
+                        setDepartureDate(date);
+                        setShowDeparturePicker(false);
+                      }} disabled={date => date < (arrivalDate || new Date())} initialFocus className="pointer-events-auto" />
                       </PopoverContent>
                     </Popover>
                     
@@ -215,11 +193,9 @@ const Hero = () => {
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
-                            {hours.map((hour) => (
-                              <SelectItem key={hour} value={hour}>
+                            {hours.map(hour => <SelectItem key={hour} value={hour}>
                                 {hour}h
-                              </SelectItem>
-                            ))}
+                              </SelectItem>)}
                           </SelectContent>
                         </Select>
                         <Select value={departureMinute} onValueChange={setDepartureMinute}>
@@ -227,11 +203,9 @@ const Hero = () => {
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
-                            {minutes.map((minute) => (
-                              <SelectItem key={minute} value={minute}>
+                            {minutes.map(minute => <SelectItem key={minute} value={minute}>
                                 {minute}
-                              </SelectItem>
-                            ))}
+                              </SelectItem>)}
                           </SelectContent>
                         </Select>
                       </div>
@@ -239,34 +213,29 @@ const Hero = () => {
                   </div>
                 </div>
 
-                {canPlanPurchase && (
-                  <div className="border-t pt-6">
+                {canPlanPurchase && <div className="border-t pt-6">
                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                      <Button 
-                        className="bg-leaf-green hover:bg-dark-green text-white px-6 py-3" 
-                        onClick={handleAirportPickup}
-                      >
+                      <Button className="bg-leaf-green hover:bg-dark-green text-white px-6 py-3" onClick={handleAirportPickup}>
                         <Plane className="mr-2 h-4 w-4" />
                         Récupérer à l'aéroport de Gillot
                       </Button>
-                      <Button 
-                        variant="outline" 
-                        className="border-leaf-green text-leaf-green hover:bg-leaf-green/10 px-6 py-3" 
-                        onClick={handlePlanPurchase}
-                      >
+                      <Button variant="outline" className="border-leaf-green text-leaf-green hover:bg-leaf-green/10 px-6 py-3" onClick={handlePlanPurchase}>
                         Recevoir en Métropole
                       </Button>
                     </div>
                     <p className="text-sm text-gray-500 mt-4">
-                      Séjour prévu du {arrivalDate ? format(arrivalDate, "dd/MM", { locale: fr }) : ""} à {arrivalHour}h{arrivalMinute} au {departureDate ? format(departureDate, "dd/MM/yyyy", { locale: fr }) : ""} à {departureHour}h{departureMinute}
+                      Séjour prévu du {arrivalDate ? format(arrivalDate, "dd/MM", {
+                    locale: fr
+                  }) : ""} à {arrivalHour}h{arrivalMinute} au {departureDate ? format(departureDate, "dd/MM/yyyy", {
+                    locale: fr
+                  }) : ""} à {departureHour}h{departureMinute}
                     </p>
-                  </div>
-                )}
+                  </div>}
               </div>
 
               {/* Nouvelle phrase d'information importante */}
               <div className="max-w-2xl mx-auto mb-8">
-                <p className="text-sm backdrop-blur-sm px-6 rounded-lg text-slate-50 py-[10px]">*Une commande de box à récupérer sur place à l'île de la Réunion ne peut se faire que 15 jours avant un vol aller ou retour. Dans le cas contraire, la livraison à votre adresse de résidence en Métropole vous sera proposée automatiquement.</p>
+                <p className="text-sm backdrop-blur-sm px-6 rounded-lg text-slate-50 py-[10px]">*Une commande de box à récupérer sur place à l'aéroport de Gillot sur l'île de la Réunion ne peut se faire que 15 jours avant un vol aller ou retour. Dans le cas contraire, une adresse de Métropole vous sera demandée pour la livraison.</p>
               </div>
             </div>
           </div>
@@ -285,67 +254,43 @@ const Hero = () => {
             </p>
             
             {(() => {
-              const validDates = getValidPickupDates();
-              
-              if (validDates.length === 0) {
-                return (
-                  <div className="p-4 bg-amber-50 border border-amber-200 rounded-lg">
+            const validDates = getValidPickupDates();
+            if (validDates.length === 0) {
+              return <div className="p-4 bg-amber-50 border border-amber-200 rounded-lg">
                     <p className="text-sm text-amber-800">
                       Aucune de vos dates de voyage ne permet la récupération à l'aéroport. 
                       La récupération ne peut se faire que 15 jours après la date d'aujourd'hui.
                     </p>
-                  </div>
-                );
-              }
-              
-              return (
-                <div className="space-y-3">
-                  {validDates.map((dateOption) => (
-                    <div 
-                      key={dateOption.type}
-                      className={cn(
-                        "p-4 border rounded-lg cursor-pointer transition-colors",
-                        selectedPickupDate === dateOption.type 
-                          ? "border-leaf-green bg-leaf-green/5" 
-                          : "border-gray-200 hover:border-gray-300"
-                      )}
-                      onClick={() => setSelectedPickupDate(dateOption.type)}
-                    >
+                  </div>;
+            }
+            return <div className="space-y-3">
+                  {validDates.map(dateOption => <div key={dateOption.type} className={cn("p-4 border rounded-lg cursor-pointer transition-colors", selectedPickupDate === dateOption.type ? "border-leaf-green bg-leaf-green/5" : "border-gray-200 hover:border-gray-300")} onClick={() => setSelectedPickupDate(dateOption.type)}>
                       <div className="flex items-center space-x-3">
-                        <div className={cn(
-                          "w-4 h-4 rounded-full border-2",
-                          selectedPickupDate === dateOption.type 
-                            ? "border-leaf-green bg-leaf-green" 
-                            : "border-gray-300"
-                        )} />
+                        <div className={cn("w-4 h-4 rounded-full border-2", selectedPickupDate === dateOption.type ? "border-leaf-green bg-leaf-green" : "border-gray-300")} />
                         <div>
                           <p className="font-medium">{dateOption.label}</p>
                           <p className="text-sm text-gray-500">
-                            {format(dateOption.date, "PPPP", { locale: fr })} à {dateOption.hour}h{dateOption.minute}
+                            {format(dateOption.date, "PPPP", {
+                        locale: fr
+                      })} à {dateOption.hour}h{dateOption.minute}
                           </p>
                         </div>
                       </div>
-                    </div>
-                  ))}
-                </div>
-              );
-            })()}
+                    </div>)}
+                </div>;
+          })()}
           </div>
           
           <DialogFooter className="flex flex-col sm:flex-row gap-2">
             <Button variant="outline" onClick={() => setShowPickupDateModal(false)}>
               Annuler
             </Button>
-            {getValidPickupDates().length > 0 && (
-              <Button className="bg-leaf-green hover:bg-dark-green" onClick={handleConfirmPickup}>
+            {getValidPickupDates().length > 0 && <Button className="bg-leaf-green hover:bg-dark-green" onClick={handleConfirmPickup}>
                 Confirmer et continuer
-              </Button>
-            )}
+              </Button>}
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </>
-  );
+    </>;
 };
-
 export default Hero;
