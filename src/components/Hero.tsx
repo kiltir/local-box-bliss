@@ -47,31 +47,10 @@ const Hero = () => {
   const canPlanPurchase = arrivalDate && departureDate;
 
   // Generate hours (00-23)
-  const hours = Array.from({
-    length: 24
-  }, (_, i) => i.toString().padStart(2, '0'));
+  const hours = Array.from({ length: 24 }, (_, i) => i.toString().padStart(2, '0'));
 
   // Generate minutes (00, 15, 30, 45)
   const minutes = ['00', '15', '30', '45'];
-
-  const getSelectedPickupDetails = () => {
-    if (selectedPickupDate === 'arrival' && arrivalDate) {
-      return {
-        date: arrivalDate,
-        hour: arrivalHour,
-        minute: arrivalMinute,
-        label: 'arrivée'
-      };
-    } else if (selectedPickupDate === 'departure' && departureDate) {
-      return {
-        date: departureDate,
-        hour: departureHour,
-        minute: departureMinute,
-        label: 'départ'
-      };
-    }
-    return null;
-  };
 
   return (
     <>
@@ -106,16 +85,21 @@ const Hero = () => {
                       <PopoverTrigger asChild>
                         <Button variant="outline" className={cn("w-full justify-start text-left font-normal", !arrivalDate && "text-muted-foreground")}>
                           <CalendarIcon className="mr-2 h-4 w-4" />
-                          {arrivalDate ? format(arrivalDate, "PPP", {
-                          locale: fr
-                        }) : "Sélectionner une date"}
+                          {arrivalDate ? format(arrivalDate, "PPP", { locale: fr }) : "Sélectionner une date"}
                         </Button>
                       </PopoverTrigger>
                       <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar mode="single" selected={arrivalDate} onSelect={date => {
-                        setArrivalDate(date);
-                        setShowArrivalPicker(false);
-                      }} disabled={date => date < new Date()} initialFocus className="pointer-events-auto" />
+                        <Calendar 
+                          mode="single" 
+                          selected={arrivalDate} 
+                          onSelect={(date) => {
+                            setArrivalDate(date);
+                            setShowArrivalPicker(false);
+                          }} 
+                          disabled={(date) => date < new Date()} 
+                          initialFocus 
+                          className="pointer-events-auto" 
+                        />
                       </PopoverContent>
                     </Popover>
                     
@@ -131,9 +115,11 @@ const Hero = () => {
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
-                            {hours.map(hour => <SelectItem key={hour} value={hour}>
+                            {hours.map((hour) => (
+                              <SelectItem key={hour} value={hour}>
                                 {hour}h
-                              </SelectItem>)}
+                              </SelectItem>
+                            ))}
                           </SelectContent>
                         </Select>
                         <Select value={arrivalMinute} onValueChange={setArrivalMinute}>
@@ -141,9 +127,11 @@ const Hero = () => {
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
-                            {minutes.map(minute => <SelectItem key={minute} value={minute}>
+                            {minutes.map((minute) => (
+                              <SelectItem key={minute} value={minute}>
                                 {minute}
-                              </SelectItem>)}
+                              </SelectItem>
+                            ))}
                           </SelectContent>
                         </Select>
                       </div>
@@ -159,16 +147,21 @@ const Hero = () => {
                       <PopoverTrigger asChild>
                         <Button variant="outline" className={cn("w-full justify-start text-left font-normal", !departureDate && "text-muted-foreground")}>
                           <CalendarIcon className="mr-2 h-4 w-4" />
-                          {departureDate ? format(departureDate, "PPP", {
-                          locale: fr
-                        }) : "Sélectionner une date"}
+                          {departureDate ? format(departureDate, "PPP", { locale: fr }) : "Sélectionner une date"}
                         </Button>
                       </PopoverTrigger>
                       <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar mode="single" selected={departureDate} onSelect={date => {
-                        setDepartureDate(date);
-                        setShowDeparturePicker(false);
-                      }} disabled={date => date < (arrivalDate || new Date())} initialFocus className="pointer-events-auto" />
+                        <Calendar 
+                          mode="single" 
+                          selected={departureDate} 
+                          onSelect={(date) => {
+                            setDepartureDate(date);
+                            setShowDeparturePicker(false);
+                          }} 
+                          disabled={(date) => date < (arrivalDate || new Date())} 
+                          initialFocus 
+                          className="pointer-events-auto" 
+                        />
                       </PopoverContent>
                     </Popover>
                     
@@ -184,9 +177,11 @@ const Hero = () => {
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
-                            {hours.map(hour => <SelectItem key={hour} value={hour}>
+                            {hours.map((hour) => (
+                              <SelectItem key={hour} value={hour}>
                                 {hour}h
-                              </SelectItem>)}
+                              </SelectItem>
+                            ))}
                           </SelectContent>
                         </Select>
                         <Select value={departureMinute} onValueChange={setDepartureMinute}>
@@ -194,9 +189,11 @@ const Hero = () => {
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
-                            {minutes.map(minute => <SelectItem key={minute} value={minute}>
+                            {minutes.map((minute) => (
+                              <SelectItem key={minute} value={minute}>
                                 {minute}
-                              </SelectItem>)}
+                              </SelectItem>
+                            ))}
                           </SelectContent>
                         </Select>
                       </div>
@@ -204,18 +201,29 @@ const Hero = () => {
                   </div>
                 </div>
 
-                {canPlanPurchase && <div className="border-t pt-6">
+                {canPlanPurchase && (
+                  <div className="border-t pt-6">
                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                      <Button className="bg-leaf-green hover:bg-dark-green text-white px-6 py-3" onClick={handleAirportPickup}>
+                      <Button 
+                        className="bg-leaf-green hover:bg-dark-green text-white px-6 py-3" 
+                        onClick={handleAirportPickup}
+                      >
                         <Plane className="mr-2 h-4 w-4" />
                         Récupérer à l'aéroport de Gillot
                       </Button>
-                      <Button variant="outline" className="border-leaf-green text-leaf-green hover:bg-leaf-green/10 px-6 py-3" onClick={handlePlanPurchase}>Recevoir en Métropole</Button>
+                      <Button 
+                        variant="outline" 
+                        className="border-leaf-green text-leaf-green hover:bg-leaf-green/10 px-6 py-3" 
+                        onClick={handlePlanPurchase}
+                      >
+                        Recevoir en Métropole
+                      </Button>
                     </div>
                     <p className="text-sm text-gray-500 mt-4">
                       Séjour prévu du {arrivalDate ? format(arrivalDate, "dd/MM", { locale: fr }) : ""} à {arrivalHour}h{arrivalMinute} au {departureDate ? format(departureDate, "dd/MM/yyyy", { locale: fr }) : ""} à {departureHour}h{departureMinute}
                     </p>
-                  </div>}
+                  </div>
+                )}
               </div>
 
               {/* Nouvelle phrase d'information importante */}
