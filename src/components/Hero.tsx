@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -22,9 +21,48 @@ const Hero = () => {
   const [showPickupDateModal, setShowPickupDateModal] = useState(false);
   const [selectedPickupDate, setSelectedPickupDate] = useState<'arrival' | 'departure'>('arrival');
 
+  // Fonction pour vérifier si une date est valide pour la récupération (15 jours minimum)
+  const isValidPickupDate = (date: Date) => {
+    const today = new Date();
+    const minDate = new Date(today);
+    minDate.setDate(today.getDate() + 15);
+    return date >= minDate;
+  };
+
+  // Fonction pour obtenir les dates valides pour la récupération
+  const getValidPickupDates = () => {
+    const validDates = [];
+    
+    if (arrivalDate && isValidPickupDate(arrivalDate)) {
+      validDates.push({
+        type: 'arrival' as const,
+        date: arrivalDate,
+        hour: arrivalHour,
+        minute: arrivalMinute,
+        label: 'Date d\'arrivée'
+      });
+    }
+    
+    if (departureDate && isValidPickupDate(departureDate)) {
+      validDates.push({
+        type: 'departure' as const,
+        date: departureDate,
+        hour: departureHour,
+        minute: departureMinute,
+        label: 'Date de départ'
+      });
+    }
+    
+    return validDates;
+  };
+
   const handleAirportPickup = () => {
     if (arrivalDate && departureDate) {
-      setShowPickupDateModal(true);
+      const validDates = getValidPickupDates();
+      if (validDates.length > 0) {
+        setSelectedPickupDate(validDates[0].type);
+        setShowPickupDateModal(true);
+      }
     }
   };
 
@@ -246,70 +284,63 @@ const Hero = () => {
               À quelle date souhaitez-vous récupérer votre box à l'aéroport de Gillot ?
             </p>
             
-            <div className="space-y-3">
-              {arrivalDate && (
-                <div 
-                  className={cn(
-                    "p-4 border rounded-lg cursor-pointer transition-colors",
-                    selectedPickupDate === 'arrival' 
-                      ? "border-leaf-green bg-leaf-green/5" 
-                      : "border-gray-200 hover:border-gray-300"
-                  )}
-                  onClick={() => setSelectedPickupDate('arrival')}
-                >
-                  <div className="flex items-center space-x-3">
-                    <div className={cn(
-                      "w-4 h-4 rounded-full border-2",
-                      selectedPickupDate === 'arrival' 
-                        ? "border-leaf-green bg-leaf-green" 
-                        : "border-gray-300"
-                    )} />
-                    <div>
-                      <p className="font-medium">Date d'arrivée</p>
-                      <p className="text-sm text-gray-500">
-                        {format(arrivalDate, "PPPP", { locale: fr })} à {arrivalHour}h{arrivalMinute}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              )}
+            {(() => {
+              const validDates = getValidPickupDates();
               
-              {departureDate && (
-                <div 
-                  className={cn(
-                    "p-4 border rounded-lg cursor-pointer transition-colors",
-                    selectedPickupDate === 'departure' 
-                      ? "border-leaf-green bg-leaf-green/5" 
-                      : "border-gray-200 hover:border-gray-300"
-                  )}
-                  onClick={() => setSelectedPickupDate('departure')}
-                >
-                  <div className="flex items-center space-x-3">
-                    <div className={cn(
-                      "w-4 h-4 rounded-full border-2",
-                      selectedPickupDate === 'departure' 
-                        ? "border-leaf-green bg-leaf-green" 
-                        : "border-gray-300"
-                    )} />
-                    <div>
-                      <p className="font-medium">Date de départ</p>
-                      <p className="text-sm text-gray-500">
-                        {format(departureDate, "PPPP", { locale: fr })} à {departureHour}h{departureMinute}
-                      </p>
-                    </div>
+              if (validDates.length === 0) {
+                return (
+                  <div className="p-4 bg-amber-50 border border-amber-200 rounded-lg">
+                    <p className="text-sm text-amber-800">
+                      Aucune de vos dates de voyage ne permet la récupération à l'aéroport. 
+                      La récupération ne peut se faire que 15 jours après la date d'aujourd'hui.
+                    </p>
                   </div>
+                );
+              }
+              
+              return (
+                <div className="space-y-3">
+                  {validDates.map((dateOption) => (
+                    <div 
+                      key={dateOption.type}
+                      className={cn(
+                        "p-4 border rounded-lg cursor-pointer transition-colors",
+                        selectedPickupDate === dateOption.type 
+                          ? "border-leaf-green bg-leaf-green/5" 
+                          : "border-gray-200 hover:border-gray-300"
+                      )}
+                      onClick={() => setSelectedPickupDate(dateOption.type)}
+                    >
+                      <div className="flex items-center space-x-3">
+                        <div className={cn(
+                          "w-4 h-4 rounded-full border-2",
+                          selectedPickupDate === dateOption.type 
+                            ? "border-leaf-green bg-leaf-green" 
+                            : "border-gray-300"
+                        )} />
+                        <div>
+                          <p className="font-medium">{dateOption.label}</p>
+                          <p className="text-sm text-gray-500">
+                            {format(dateOption.date, "PPPP", { locale: fr })} à {dateOption.hour}h{dateOption.minute}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              )}
-            </div>
+              );
+            })()}
           </div>
           
           <DialogFooter className="flex flex-col sm:flex-row gap-2">
             <Button variant="outline" onClick={() => setShowPickupDateModal(false)}>
               Annuler
             </Button>
-            <Button className="bg-leaf-green hover:bg-dark-green" onClick={handleConfirmPickup}>
-              Confirmer et continuer
-            </Button>
+            {getValidPickupDates().length > 0 && (
+              <Button className="bg-leaf-green hover:bg-dark-green" onClick={handleConfirmPickup}>
+                Confirmer et continuer
+              </Button>
+            )}
           </DialogFooter>
         </DialogContent>
       </Dialog>
