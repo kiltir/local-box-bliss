@@ -22,7 +22,7 @@ const BoxThemeSelector: React.FC<BoxThemeSelectorProps> = ({ selectedTheme, onTh
       value: 'Bourbon', 
       label: 'Bourbon', 
       icon: <Wine className="h-4 w-4 mr-2" />,
-      description: 'Des produits de caractère et d\'identité'
+      description: 'Pour accompagner vos spiritueux'
     },
     { 
       value: 'Tradition', 
@@ -52,7 +52,7 @@ const BoxThemeSelector: React.FC<BoxThemeSelectorProps> = ({ selectedTheme, onTh
       </Tabs>
       
       <div className="mt-4 text-center text-gray-600">
-        <p>Des produits de caractère et d'identité</p>
+        <p>{themes.find(t => t.value === selectedTheme)?.description}</p>
       </div>
     </div>
   );

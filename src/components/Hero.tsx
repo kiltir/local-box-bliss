@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -8,6 +9,7 @@ import { CalendarIcon, Plane, MapPin, Clock } from "lucide-react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { cn } from "@/lib/utils";
+
 const Hero = () => {
   const [arrivalDate, setArrivalDate] = useState<Date>();
   const [departureDate, setDepartureDate] = useState<Date>();
@@ -20,47 +22,12 @@ const Hero = () => {
   const [showPickupDateModal, setShowPickupDateModal] = useState(false);
   const [selectedPickupDate, setSelectedPickupDate] = useState<'arrival' | 'departure'>('arrival');
 
-  // Helper function to check if a date is at least 15 days from today
-  const isDateValidForPickup = (date: Date) => {
-    const today = new Date();
-    const fifteenDaysFromNow = new Date();
-    fifteenDaysFromNow.setDate(today.getDate() + 15);
-    return date >= fifteenDaysFromNow;
-  };
-
-  // Get valid pickup dates
-  const getValidPickupDates = () => {
-    const validDates = [];
-    if (arrivalDate && isDateValidForPickup(arrivalDate)) {
-      validDates.push({
-        type: 'arrival' as const,
-        date: arrivalDate,
-        hour: arrivalHour,
-        minute: arrivalMinute,
-        label: 'arrivée'
-      });
-    }
-    if (departureDate && isDateValidForPickup(departureDate)) {
-      validDates.push({
-        type: 'departure' as const,
-        date: departureDate,
-        hour: departureHour,
-        minute: departureMinute,
-        label: 'départ'
-      });
-    }
-    return validDates;
-  };
   const handleAirportPickup = () => {
     if (arrivalDate && departureDate) {
-      const validDates = getValidPickupDates();
-      if (validDates.length > 0) {
-        // Set the first valid date as selected by default
-        setSelectedPickupDate(validDates[0].type);
-        setShowPickupDateModal(true);
-      }
+      setShowPickupDateModal(true);
     }
   };
+
   const handleConfirmPickup = () => {
     setShowPickupDateModal(false);
     // Procéder à l'achat avec la date sélectionnée
@@ -68,6 +35,7 @@ const Hero = () => {
       behavior: 'smooth'
     });
   };
+
   const handlePlanPurchase = () => {
     if (arrivalDate && departureDate) {
       document.getElementById('boxes')?.scrollIntoView({
@@ -75,6 +43,7 @@ const Hero = () => {
       });
     }
   };
+  
   const canPlanPurchase = arrivalDate && departureDate;
 
   // Generate hours (00-23)
@@ -84,6 +53,7 @@ const Hero = () => {
 
   // Generate minutes (00, 15, 30, 45)
   const minutes = ['00', '15', '30', '45'];
+
   const getSelectedPickupDetails = () => {
     if (selectedPickupDate === 'arrival' && arrivalDate) {
       return {
@@ -102,11 +72,12 @@ const Hero = () => {
     }
     return null;
   };
-  const validPickupDates = getValidPickupDates();
-  return <>
+
+  return (
+    <>
       <section style={{
-      backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('/lovable-uploads/53d8e975-3996-441a-9ccd-8e5874f90880.png')`
-    }} className="hero-section md:py-24 relative bg-cover bg-center bg-no-repeat py-[40px]">
+        backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('/lovable-uploads/53d8e975-3996-441a-9ccd-8e5874f90880.png')`
+      }} className="hero-section md:py-24 relative bg-cover bg-center bg-no-repeat py-[40px]">
         <div className="container-section py-[15px]">
           <div className="max-w-3xl mx-auto text-center slide-in py-[10px]">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 mx-[16px]">
@@ -242,18 +213,14 @@ const Hero = () => {
                       <Button variant="outline" className="border-leaf-green text-leaf-green hover:bg-leaf-green/10 px-6 py-3" onClick={handlePlanPurchase}>Recevoir en Métropole</Button>
                     </div>
                     <p className="text-sm text-gray-500 mt-4">
-                      Séjour prévu du {arrivalDate ? format(arrivalDate, "dd/MM", {
-                    locale: fr
-                  }) : ""} à {arrivalHour}h{arrivalMinute} au {departureDate ? format(departureDate, "dd/MM/yyyy", {
-                    locale: fr
-                  }) : ""} à {departureHour}h{departureMinute}
+                      Séjour prévu du {arrivalDate ? format(arrivalDate, "dd/MM", { locale: fr }) : ""} à {arrivalHour}h{arrivalMinute} au {departureDate ? format(departureDate, "dd/MM/yyyy", { locale: fr }) : ""} à {departureHour}h{departureMinute}
                     </p>
                   </div>}
               </div>
 
               {/* Nouvelle phrase d'information importante */}
               <div className="max-w-2xl mx-auto mb-8">
-                <p className="text-sm backdrop-blur-sm px-6 rounded-lg text-slate-50 py-[10px]">*Une commande de box à récupérer sur place à l'aéroport de Gillot sur l'île de la Réunion ne peut se faire que 15 jours avant un vol aller ou retour. Dans le cas contraire, une adresse de Métropole vous sera demandée pour la livraison.</p>
+                <p className="text-sm backdrop-blur-sm px-6 rounded-lg text-slate-50 py-[10px]">*Une commande de box à récupérer sur place à l'île de la Réunion ne peut se faire que 15 jours avant un vol aller ou retour. Dans le cas contraire, la livraison à votre adresse de résidence en Métropole vous sera proposée automatiquement.</p>
               </div>
             </div>
           </div>
@@ -271,38 +238,75 @@ const Hero = () => {
               À quelle date souhaitez-vous récupérer votre box à l'aéroport de Gillot ?
             </p>
             
-            {validPickupDates.length > 0 ? <div className="space-y-3">
-                {validPickupDates.map(dateOption => <div key={dateOption.type} className={cn("p-4 border rounded-lg cursor-pointer transition-colors", selectedPickupDate === dateOption.type ? "border-leaf-green bg-leaf-green/5" : "border-gray-200 hover:border-gray-300")} onClick={() => setSelectedPickupDate(dateOption.type)}>
-                    <div className="flex items-center space-x-3">
-                      <div className={cn("w-4 h-4 rounded-full border-2", selectedPickupDate === dateOption.type ? "border-leaf-green bg-leaf-green" : "border-gray-300")} />
-                      <div>
-                        <p className="font-medium">Date d'{dateOption.label}</p>
-                        <p className="text-sm text-gray-500">
-                          {format(dateOption.date, "PPPP", {
-                      locale: fr
-                    })} à {dateOption.hour}h{dateOption.minute}
-                        </p>
-                      </div>
+            <div className="space-y-3">
+              {arrivalDate && (
+                <div 
+                  className={cn(
+                    "p-4 border rounded-lg cursor-pointer transition-colors",
+                    selectedPickupDate === 'arrival' 
+                      ? "border-leaf-green bg-leaf-green/5" 
+                      : "border-gray-200 hover:border-gray-300"
+                  )}
+                  onClick={() => setSelectedPickupDate('arrival')}
+                >
+                  <div className="flex items-center space-x-3">
+                    <div className={cn(
+                      "w-4 h-4 rounded-full border-2",
+                      selectedPickupDate === 'arrival' 
+                        ? "border-leaf-green bg-leaf-green" 
+                        : "border-gray-300"
+                    )} />
+                    <div>
+                      <p className="font-medium">Date d'arrivée</p>
+                      <p className="text-sm text-gray-500">
+                        {format(arrivalDate, "PPPP", { locale: fr })} à {arrivalHour}h{arrivalMinute}
+                      </p>
                     </div>
-                  </div>)}
-              </div> : <div className="text-center py-6">
-                <p className="text-gray-500 mb-2">Aucune date de récupération disponible</p>
-                <p className="text-sm text-gray-400">
-                  La récupération doit se faire au minimum 15 jours après aujourd'hui
-                </p>
-              </div>}
+                  </div>
+                </div>
+              )}
+              
+              {departureDate && (
+                <div 
+                  className={cn(
+                    "p-4 border rounded-lg cursor-pointer transition-colors",
+                    selectedPickupDate === 'departure' 
+                      ? "border-leaf-green bg-leaf-green/5" 
+                      : "border-gray-200 hover:border-gray-300"
+                  )}
+                  onClick={() => setSelectedPickupDate('departure')}
+                >
+                  <div className="flex items-center space-x-3">
+                    <div className={cn(
+                      "w-4 h-4 rounded-full border-2",
+                      selectedPickupDate === 'departure' 
+                        ? "border-leaf-green bg-leaf-green" 
+                        : "border-gray-300"
+                    )} />
+                    <div>
+                      <p className="font-medium">Date de départ</p>
+                      <p className="text-sm text-gray-500">
+                        {format(departureDate, "PPPP", { locale: fr })} à {departureHour}h{departureMinute}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
           
           <DialogFooter className="flex flex-col sm:flex-row gap-2">
             <Button variant="outline" onClick={() => setShowPickupDateModal(false)}>
               Annuler
             </Button>
-            {validPickupDates.length > 0 && <Button className="bg-leaf-green hover:bg-dark-green" onClick={handleConfirmPickup}>
-                Confirmer et continuer
-              </Button>}
+            <Button className="bg-leaf-green hover:bg-dark-green" onClick={handleConfirmPickup}>
+              Confirmer et continuer
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </>;
+    </>
+  );
 };
+
 export default Hero;
