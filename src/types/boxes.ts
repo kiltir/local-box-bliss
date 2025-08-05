@@ -32,4 +32,6 @@ export interface BoxData {
   weightLimit: number; // Limite de poids en kg
   theme: BoxTheme; // Thème principal de la box
   products: BoxProduct[];
+  rating: number; // Note sur 5 étoiles
+  reviewCount?: number; // Nombre d'avis (optionnel)
 }

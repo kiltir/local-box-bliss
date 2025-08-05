@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { Button } from "@/components/ui/button";
+import StarRating from './StarRating';
 
 interface BoxCardProps {
   title: string;
@@ -9,10 +10,12 @@ interface BoxCardProps {
   image: string;
   items: number;
   theme: 'Découverte' | 'Bourbon' | 'Tradition' | 'Saison';
+  rating: number;
+  reviewCount?: number;
   onClick: () => void;
 }
 
-const BoxCard = ({ title, price, description, image, items, theme, onClick }: BoxCardProps) => {
+const BoxCard = ({ title, price, description, image, items, theme, rating, reviewCount, onClick }: BoxCardProps) => {
   const getBadgeColor = () => {
     switch (theme) {
       case 'Découverte':
@@ -46,6 +49,16 @@ const BoxCard = ({ title, price, description, image, items, theme, onClick }: Bo
       
       <div className="p-6">
         <h3 className="text-xl font-bold mb-2">{title}</h3>
+        
+        {/* Ajout de la notation */}
+        <div className="mb-3">
+          <StarRating 
+            rating={rating} 
+            reviewCount={reviewCount}
+            size={18}
+          />
+        </div>
+        
         <div className="flex items-center justify-between mb-4">
           <span className="text-2xl font-bold text-leaf-green">{price.toFixed(2)}€</span>
           <span className="text-gray-600">{items} produits</span>
