@@ -46,9 +46,9 @@ const BoxDetailsModal = ({
             <div className="border-b">
               <div className="px-3 sm:px-6 pt-4 sm:pt-6">
                 <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2 sm:gap-4 mb-3 sm:mb-4 pr-8 sm:pr-0">
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:gap-3">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:gap-6">
                     <h2 className="text-xl sm:text-2xl font-bold leading-tight">{title}</h2>
-                    <div className="text-lg sm:text-xl font-bold text-leaf-green mt-1 sm:mt-0">
+                    <div className="text-xl sm:text-2xl font-bold text-leaf-green mt-1 sm:mt-0">
                       {price.toFixed(2)}€
                     </div>
                   </div>
