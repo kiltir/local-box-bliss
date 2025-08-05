@@ -1,4 +1,3 @@
-
 import { BoxData } from '@/types/boxes';
 
 export const traditionBox: BoxData = {
@@ -7,6 +6,11 @@ export const traditionBox: BoxData = {
   price: 27.99,
   description: "Des produits authentiques issus de recettes traditionnelles créoles transmises de génération en génération.",
   image: "https://source.unsplash.com/472396961693-142e6e269027",
+  images: [
+    "https://source.unsplash.com/472396961693-142e6e269027",
+    "/lovable-uploads/22c73fc8-f3d1-4290-8d99-f0bd76e3ea8f.png",
+    "/lovable-uploads/1e5534c0-a5e1-4153-829c-02324011758e.png"
+  ],
   items: 4,
   size: 'unique',
   weightLimit: 4,

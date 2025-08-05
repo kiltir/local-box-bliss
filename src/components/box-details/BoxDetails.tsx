@@ -21,6 +21,7 @@ export const BoxDetails = ({ onClose, boxId, onBoxChange }: BoxDetailsProps) => 
       price={selectedBox.price}
       description={selectedBox.description}
       image={selectedBox.image}
+      images={selectedBox.images}
       products={selectedBox.products}
       onClose={onClose}
       boxSize={selectedBox.size}

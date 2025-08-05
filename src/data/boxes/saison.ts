@@ -1,4 +1,3 @@
-
 import { BoxData } from '@/types/boxes';
 
 export const saisonBox: BoxData = {
@@ -7,6 +6,11 @@ export const saisonBox: BoxData = {
   price: 26.99,
   description: "Une sélection de produits frais adaptés à la saison, mettant en valeur les fruits et légumes du moment.",
   image: "/lovable-uploads/ac03653a-7722-48c5-a6c8-0a25a453791b.png",
+  images: [
+    "/lovable-uploads/ac03653a-7722-48c5-a6c8-0a25a453791b.png",
+    "/lovable-uploads/22c73fc8-f3d1-4290-8d99-f0bd76e3ea8f.png",
+    "/lovable-uploads/1e5534c0-a5e1-4153-829c-02324011758e.png"
+  ],
   items: 4,
   size: 'unique',
   weightLimit: 4,

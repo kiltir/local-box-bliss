@@ -27,6 +27,7 @@ export interface BoxData {
   price: number;
   description: string;
   image: string;
+  images?: string[]; // Tableau d'images pour le carrousel
   items: number;
   size: BoxSize;
   weightLimit: number; // Limite de poids en kg

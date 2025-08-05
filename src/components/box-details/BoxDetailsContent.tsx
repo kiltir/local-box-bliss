@@ -6,23 +6,28 @@ import { BoxProduct } from '@/types/boxes';
 import { useBoxCalculations } from './useBoxCalculations';
 import ProductList from './ProductList';
 import AddToCartButton from './AddToCartButton';
+import BoxImageCarousel from './BoxImageCarousel';
 
 interface BoxDetailsContentProps {
   isActive: boolean;
   products: BoxProduct[];
   image: string;
+  images?: string[];
   boxTheme: 'Découverte' | 'Bourbon' | 'Tradition' | 'Saison';
   boxId: number;
   onBoxChange?: (boxId: number) => void;
+  title: string;
 }
 
 const BoxDetailsContent = ({
   isActive,
   products,
   image,
+  images,
   boxTheme,
   boxId,
-  onBoxChange
+  onBoxChange,
+  title
 }: BoxDetailsContentProps) => {
   const {
     selectedProductIds,
@@ -36,16 +41,15 @@ const BoxDetailsContent = ({
     volumePercentage
   } = useBoxCalculations(products, boxTheme, boxId, onBoxChange);
 
+  // Utilise le tableau d'images s'il existe, sinon utilise l'image principale
+  const carouselImages = images && images.length > 0 ? images : [image];
+
   return (
     <TabsContent value="details" className="p-3 sm:p-6 pt-3 sm:pt-4">
       <div className="flex flex-col">
-        {/* Image de la box - optimisée pour mobile */}
+        {/* Carrousel d'images de la box - responsive */}
         <div className="mb-4 sm:mb-6">
-          <img 
-            src={image} 
-            alt="Box" 
-            className="w-full h-32 sm:h-40 md:h-52 object-cover rounded-md"
-          />
+          <BoxImageCarousel images={carouselImages} title={title} />
         </div>
         
         {/* Informations sur la box */}

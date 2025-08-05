@@ -11,6 +11,7 @@ interface BoxDetailsModalProps {
   price: number;
   description: string;
   image: string;
+  images?: string[];
   products: BoxProduct[];
   onClose: () => void;
   boxSize: 'unique';
@@ -23,6 +24,7 @@ const BoxDetailsModal = ({
   price, 
   description, 
   image, 
+  images,
   products, 
   onClose, 
   boxSize, 
@@ -69,9 +71,11 @@ const BoxDetailsModal = ({
               isActive={activeTab === "details"}
               products={products}
               image={image}
+              images={images}
               boxTheme={products.length > 0 ? 'Découverte' : 'Découverte'}
               boxId={boxId}
               onBoxChange={onBoxChange}
+              title={title}
             />
             
             <BoxDetails3DView 
