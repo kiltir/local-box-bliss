@@ -1,3 +1,4 @@
+
 import { BoxData } from '@/types/boxes';
 
 export const decouverteBox: BoxData = {
@@ -10,6 +11,8 @@ export const decouverteBox: BoxData = {
   size: 'unique',
   weightLimit: 4,
   theme: 'Découverte',
+  rating: 4.5,
+  reviewCount: 23,
   products: [
     { 
       name: "Pot de miel de letchis", 

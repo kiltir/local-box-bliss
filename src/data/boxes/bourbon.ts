@@ -11,6 +11,8 @@ export const bourbonBox: BoxData = {
   size: 'unique',
   weightLimit: 4,
   theme: 'Bourbon',
+  rating: 4.8,
+  reviewCount: 15,
   products: [
     { 
       name: "Chocolats assortis péi", 

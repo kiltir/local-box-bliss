@@ -11,6 +11,8 @@ export const saisonBox: BoxData = {
   size: 'unique',
   weightLimit: 4,
   theme: 'Saison',
+  rating: 4.6,
+  reviewCount: 18,
   products: [
     { 
       name: "Thé de saison", 

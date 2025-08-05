@@ -11,6 +11,8 @@ export const traditionBox: BoxData = {
   size: 'unique',
   weightLimit: 4,
   theme: 'Tradition',
+  rating: 4.2,
+  reviewCount: 31,
   products: [
     { 
       name: "Miel de baies roses", 

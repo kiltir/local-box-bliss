@@ -17,9 +17,12 @@ const StarRating = ({
   size = 16,
   className = ""
 }: StarRatingProps) => {
-  const fullStars = Math.floor(rating);
-  const hasHalfStar = rating % 1 !== 0;
-  const emptyStars = maxRating - Math.ceil(rating);
+  // Sécurisation pour éviter les erreurs si rating est undefined
+  const safeRating = rating || 0;
+  
+  const fullStars = Math.floor(safeRating);
+  const hasHalfStar = safeRating % 1 !== 0;
+  const emptyStars = maxRating - Math.ceil(safeRating);
 
   return (
     <div className={`flex items-center gap-1 ${className}`}>
@@ -42,7 +45,7 @@ const StarRating = ({
             />
             <div 
               className="absolute top-0 left-0 overflow-hidden"
-              style={{ width: `${(rating % 1) * 100}%` }}
+              style={{ width: `${(safeRating % 1) * 100}%` }}
             >
               <Star
                 size={size}
@@ -63,7 +66,7 @@ const StarRating = ({
       </div>
       
       <span className="text-sm text-gray-600 ml-1">
-        {rating.toFixed(1)}
+        {safeRating.toFixed(1)}
         {reviewCount && (
           <span className="text-gray-400 ml-1">({reviewCount})</span>
         )}
