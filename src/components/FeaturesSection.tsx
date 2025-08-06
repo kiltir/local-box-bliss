@@ -13,7 +13,7 @@ const FeaturesSection = () => {
               <span className="text-white text-2xl font-bold">1</span>
             </div>
             <h3 className="text-xl font-bold mb-3">Choisissez votre box</h3>
-            <p className="text-gray-600">Sélectionnez la thématique de box et les produits qui la composent parmi une sélection selon vos goûts et vos envies.</p>
+            <p className="text-gray-600">Sélectionnez la thématique de box et la quantité des produits qui la composent parmi une sélection selon vos goûts et vos envies.</p>
           </div>
           
           <div className="text-center">
