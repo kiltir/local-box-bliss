@@ -1,11 +1,10 @@
-
 import React from 'react';
 
 const HeroDescription = () => {
   return <section 
     className="bg-white my-0 py-0 relative"
     style={{
-      backgroundImage: 'url(/lovable-uploads/2a3f119e-b178-4842-9f68-2e42f38ec9f9.png)',
+      backgroundImage: 'url(/lovable-uploads/02cf73f6-d1b8-4605-b6a2-2a03a6f42de1.png)',
       backgroundSize: 'cover',
       backgroundPosition: 'center',
       backgroundRepeat: 'no-repeat'
