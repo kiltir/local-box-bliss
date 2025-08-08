@@ -7,7 +7,7 @@ const HeroDescription = () => {
     backgroundRepeat: 'no-repeat'
   }}>
     {/* Overlay pour améliorer la lisibilité */}
-    <div className="absolute inset-0 bg-white/80"></div>
+    <div className="absolute inset-0 bg-white/80 py-0 my-0"></div>
     
     <div className="container-section py-[30px] relative z-10">
       <div className="max-w-3xl mx-auto text-center">
