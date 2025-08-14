@@ -1,6 +1,15 @@
 import React from 'react';
 import { ShoppingBag } from "lucide-react";
+import { Link } from "react-router-dom";
+
 const Footer = () => {
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return <footer className="bg-gray-900 text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
@@ -28,15 +37,23 @@ const Footer = () => {
             <h3 className="text-lg font-semibold mb-4">Informations</h3>
             <ul className="space-y-2">
               <li>
-                <a href="#" className="text-gray-400 hover:text-white transition-colors">Notre Histoire</a>
+                <Link to="/notre-histoire" className="text-gray-400 hover:text-white transition-colors">Notre Histoire</Link>
               </li>
               <li>
-                <a href="#" className="text-gray-400 hover:text-white transition-colors">
+                <button 
+                  onClick={() => scrollToSection('features')}
+                  className="text-gray-400 hover:text-white transition-colors text-left"
+                >
                   Comment ça marche
-                </a>
+                </button>
               </li>
               <li>
-                <a href="#" className="text-gray-400 hover:text-white transition-colors">Nos Partenaires</a>
+                <button 
+                  onClick={() => scrollToSection('producers')}
+                  className="text-gray-400 hover:text-white transition-colors text-left"
+                >
+                  Nos Partenaires
+                </button>
               </li>
               <li>
                 <a href="#" className="text-gray-400 hover:text-white transition-colors">
