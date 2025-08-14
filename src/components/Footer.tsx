@@ -9,9 +9,7 @@ const Footer = () => {
               <ShoppingBag className="h-8 w-8 text-leaf-green mr-2" />
               <span className="text-xl font-bold text-yellow-400">KiltirBox</span>
             </div>
-            <p className="text-gray-400 mb-4">
-              Des produits frais et locaux, livrés directement chez vous.
-            </p>
+            <p className="text-gray-400 mb-4">Des box réunissant un savoir-faire, des traditions et la culture réunionnaise.</p>
             <div className="flex space-x-4">
               <a href="#" className="text-gray-400 hover:text-white transition-colors">
                 <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
