@@ -8,6 +8,10 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import BoxManagement3D from "./pages/BoxManagement3D";
 import NotreHistoire from "./pages/NotreHistoire";
+import NousContacter from "./pages/NousContacter";
+import FAQ from "./pages/FAQ";
+import ConditionsGenerales from "./pages/ConditionsGenerales";
+import PolitiqueConfidentialite from "./pages/PolitiqueConfidentialite";
 
 const queryClient = new QueryClient();
 
@@ -21,6 +25,10 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/box-management" element={<BoxManagement3D />} />
           <Route path="/notre-histoire" element={<NotreHistoire />} />
+          <Route path="/nous-contacter" element={<NousContacter />} />
+          <Route path="/faq" element={<FAQ />} />
+          <Route path="/conditions-generales" element={<ConditionsGenerales />} />
+          <Route path="/politique-confidentialite" element={<PolitiqueConfidentialite />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

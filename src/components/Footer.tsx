@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { ShoppingBag } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -67,24 +68,24 @@ const Footer = () => {
             <h3 className="text-lg font-semibold mb-4">Service Client</h3>
             <ul className="space-y-2">
               <li>
-                <a href="#" className="text-gray-400 hover:text-white transition-colors">
+                <Link to="/nous-contacter" className="text-gray-400 hover:text-white transition-colors">
                   Nous contacter
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="text-gray-400 hover:text-white transition-colors">
+                <Link to="/faq" className="text-gray-400 hover:text-white transition-colors">
                   FAQ
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="text-gray-400 hover:text-white transition-colors">
+                <Link to="/conditions-generales" className="text-gray-400 hover:text-white transition-colors">
                   Conditions générales
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="text-gray-400 hover:text-white transition-colors">
+                <Link to="/politique-confidentialite" className="text-gray-400 hover:text-white transition-colors">
                   Politique de confidentialité
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
