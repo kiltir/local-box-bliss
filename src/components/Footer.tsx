@@ -1,14 +1,23 @@
-
 import React from 'react';
 import { ShoppingBag } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Footer = () => {
+  const navigate = useNavigate();
+
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
     }
+  };
+
+  const navigateToPage = (path: string) => {
+    navigate(path);
+    // Scroll to top after navigation
+    setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 100);
   };
 
   return <footer className="bg-gray-900 text-white">
@@ -68,24 +77,36 @@ const Footer = () => {
             <h3 className="text-lg font-semibold mb-4">Service Client</h3>
             <ul className="space-y-2">
               <li>
-                <Link to="/nous-contacter" className="text-gray-400 hover:text-white transition-colors">
+                <button 
+                  onClick={() => navigateToPage('/nous-contacter')}
+                  className="text-gray-400 hover:text-white transition-colors text-left"
+                >
                   Nous contacter
-                </Link>
+                </button>
               </li>
               <li>
-                <Link to="/faq" className="text-gray-400 hover:text-white transition-colors">
+                <button 
+                  onClick={() => navigateToPage('/faq')}
+                  className="text-gray-400 hover:text-white transition-colors text-left"
+                >
                   FAQ
-                </Link>
+                </button>
               </li>
               <li>
-                <Link to="/conditions-generales" className="text-gray-400 hover:text-white transition-colors">
+                <button 
+                  onClick={() => navigateToPage('/conditions-generales')}
+                  className="text-gray-400 hover:text-white transition-colors text-left"
+                >
                   Conditions générales
-                </Link>
+                </button>
               </li>
               <li>
-                <Link to="/politique-confidentialite" className="text-gray-400 hover:text-white transition-colors">
+                <button 
+                  onClick={() => navigateToPage('/politique-confidentialite')}
+                  className="text-gray-400 hover:text-white transition-colors text-left"
+                >
                   Politique de confidentialité
-                </Link>
+                </button>
               </li>
             </ul>
           </div>
@@ -117,4 +138,5 @@ const Footer = () => {
       </div>
     </footer>;
 };
+
 export default Footer;
