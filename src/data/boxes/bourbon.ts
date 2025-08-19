@@ -1,3 +1,4 @@
+
 import { BoxData } from '@/types/boxes';
 
 export const bourbonBox: BoxData = {
@@ -11,7 +12,7 @@ export const bourbonBox: BoxData = {
     "/lovable-uploads/22c73fc8-f3d1-4290-8d99-f0bd76e3ea8f.png",
     "/lovable-uploads/1e5534c0-a5e1-4153-829c-02324011758e.png"
   ],
-  items: 6,
+  items: 5,
   size: 'unique',
   weightLimit: 4,
   theme: 'Bourbon',
@@ -19,18 +20,11 @@ export const bourbonBox: BoxData = {
   reviewCount: 15,
   products: [
     { 
-      name: "Chocolats assortis péi", 
-      quantity: "120g", 
-      producer: "Chocolaterie Artisanale",
-      dimensions: { width: 12, height: 3, depth: 8 },
-      weight: 0.12
-    },
-    { 
-      name: "Piment confit", 
-      quantity: "100g", 
-      producer: "Épices Bourbon",
-      dimensions: { width: 6, height: 8, depth: 6 },
-      weight: 0.12
+      name: "Bocal baies roses", 
+      quantity: "25g", 
+      producer: "Epicerie péi",
+      dimensions: { width: 11, height: 5, depth: 5 },
+      weight: 0.025
     },
     { 
       name: "3 gousses de vanille Bourbon", 
