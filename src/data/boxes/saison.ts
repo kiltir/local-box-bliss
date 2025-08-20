@@ -1,3 +1,4 @@
+
 import { BoxData } from '@/types/boxes';
 
 export const saisonBox: BoxData = {
@@ -26,7 +27,7 @@ export const saisonBox: BoxData = {
       weight: 0.08
     },
     { 
-      name: "Biscuits aux fruits du moment", 
+      name: "Biscuits aux fruits", 
       quantity: "150g", 
       producer: "Boulangerie Traditionnelle",
       dimensions: { width: 15, height: 3, depth: 8 },
