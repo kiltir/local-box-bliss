@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -6,16 +5,12 @@ import { ArrowLeft } from "lucide-react";
 import Box3DViewer from '@/components/Box3DViewer';
 import ProductSelector from '@/components/ProductSelector';
 import { Product, BoxSize } from '@/types/box';
+import { BOX_DIMENSIONS } from '@/utils/box/constants';
 
 const BoxManagement3D = () => {
   const navigate = useNavigate();
   const [selectedProducts, setSelectedProducts] = useState<Product[]>([]);
   const [currentBoxSize, setCurrentBoxSize] = useState<BoxSize>('unique');
-  
-  // Dimensions de la box unique en cm
-  const boxDimensions = {
-    unique: { width: 24, height: 17, depth: 8 }
-  };
 
   const handleAddProduct = (product: Product) => {
     setSelectedProducts([...selectedProducts, product]);
@@ -33,9 +28,9 @@ const BoxManagement3D = () => {
     return totalVolume;
   };
 
-  const boxVolume = boxDimensions[currentBoxSize].width * 
-                    boxDimensions[currentBoxSize].height * 
-                    boxDimensions[currentBoxSize].depth;
+  const boxVolume = BOX_DIMENSIONS.unique.width * 
+                    BOX_DIMENSIONS.unique.height * 
+                    BOX_DIMENSIONS.unique.depth;
   
   const volumeUsedPercentage = (calculateVolume() / boxVolume) * 100;
   const isBoxOverfilled = volumeUsedPercentage > 100;
@@ -59,7 +54,7 @@ const BoxManagement3D = () => {
           <Box3DViewer 
             products={selectedProducts} 
             boxSize={currentBoxSize}
-            boxDimensions={boxDimensions[currentBoxSize]}
+            boxDimensions={BOX_DIMENSIONS.unique}
           />
         </div>
         
@@ -73,7 +68,7 @@ const BoxManagement3D = () => {
                 variant="default"
                 disabled
               >
-                Format Unique (24×17×8 cm)
+                Format Unique ({BOX_DIMENSIONS.unique.width}×{BOX_DIMENSIONS.unique.height}×{BOX_DIMENSIONS.unique.depth} cm)
               </Button>
             </div>
           </div>
