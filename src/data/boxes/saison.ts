@@ -30,7 +30,7 @@ export const saisonBox: BoxData = {
       name: "Biscuits aux fruits", 
       quantity: "150g", 
       producer: "Boulangerie Traditionnelle",
-      dimensions: { width: 15, height: 3, depth: 8 },
+      dimensions: { width: 15, height: 8, depth: 3 },
       weight: 0.15
     },
     { 
