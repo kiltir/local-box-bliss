@@ -1,10 +1,10 @@
 
 import React from 'react';
-import { X, Box } from 'lucide-react';
+import { X, Lightbulb } from 'lucide-react';
 import { BoxProduct } from '@/types/boxes';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import BoxDetailsContent from './BoxDetailsContent';
-import BoxDetails3DView from './BoxDetails3DView';
+import BoxDetailsAdvice from './BoxDetailsAdvice';
 
 interface BoxDetailsModalProps {
   title: string;
@@ -31,7 +31,7 @@ const BoxDetailsModal = ({
   boxId,
   onBoxChange 
 }: BoxDetailsModalProps) => {
-  const [activeTab, setActiveTab] = React.useState<"details" | "3d">("details");
+  const [activeTab, setActiveTab] = React.useState<"details" | "advice">("details");
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-2 sm:p-4">
@@ -44,7 +44,7 @@ const BoxDetailsModal = ({
             <X className="h-5 w-5 sm:h-6 sm:w-6" />
           </button>
           
-          <Tabs value={activeTab} onValueChange={(val) => setActiveTab(val as "details" | "3d")} className="w-full">
+          <Tabs value={activeTab} onValueChange={(val) => setActiveTab(val as "details" | "advice")} className="w-full">
             <div className="border-b">
               <div className="px-3 sm:px-6 pt-4 sm:pt-6">
                 <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2 sm:gap-4 mb-3 sm:mb-4 pr-8 sm:pr-0">
@@ -58,10 +58,10 @@ const BoxDetailsModal = ({
                 <p className="text-sm sm:text-base text-gray-600 mb-4 sm:mb-6 leading-relaxed">{description}</p>
                 <TabsList className="grid w-full grid-cols-2 mb-3 sm:mb-4">
                   <TabsTrigger value="details" className="text-sm">Détails</TabsTrigger>
-                  <TabsTrigger value="3d" className="flex items-center gap-1 sm:gap-2 text-sm">
-                    <Box className="h-3 w-3 sm:h-4 sm:w-4" />
-                    <span className="hidden sm:inline">Visualisation 3D</span>
-                    <span className="sm:hidden">3D</span>
+                  <TabsTrigger value="advice" className="flex items-center gap-1 sm:gap-2 text-sm">
+                    <Lightbulb className="h-3 w-3 sm:h-4 sm:w-4" />
+                    <span className="hidden sm:inline">Conseils</span>
+                    <span className="sm:hidden">Conseils</span>
                   </TabsTrigger>
                 </TabsList>
               </div>
@@ -78,12 +78,9 @@ const BoxDetailsModal = ({
               title={title}
             />
             
-            <BoxDetails3DView 
-              isActive={activeTab === "3d"}
+            <BoxDetailsAdvice 
               products={products}
               boxTheme={products.length > 0 ? 'Découverte' : 'Découverte'}
-              boxId={boxId}
-              onBoxChange={onBoxChange}
             />
           </Tabs>
         </div>
