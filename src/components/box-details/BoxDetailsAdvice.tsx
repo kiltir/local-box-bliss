@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { TabsContent } from "@/components/ui/tabs";
 import { BoxProduct } from '@/types/boxes';
@@ -101,8 +100,8 @@ const BoxDetailsAdvice = ({ products, boxTheme }: BoxDetailsAdviceProps) => {
         };
       case 'Saison':
         return {
-          title: "Produits de saison",
-          advice: "Profitez de ces produits frais de saison. Leur qualité est optimale et leurs saveurs reflètent le terroir local."
+          title: "Informations",
+          advice: "A la Réunion, il n'y a que 2 saisons :\n- l'été austral, saison chaude et humide, de novembre à avril\n- l'hiver austral, saison fraîche et sèche, de mai à octobre"
         };
       default:
         return {
@@ -123,7 +122,7 @@ const BoxDetailsAdvice = ({ products, boxTheme }: BoxDetailsAdviceProps) => {
             <Lightbulb className="h-6 w-6 text-leaf-green" />
             <h3 className="text-lg font-semibold text-leaf-green">{themeAdvice.title}</h3>
           </div>
-          <p className="text-gray-700 leading-relaxed">{themeAdvice.advice}</p>
+          <p className="text-gray-700 leading-relaxed whitespace-pre-line">{themeAdvice.advice}</p>
         </div>
 
         {/* Conseils spécifiques par produit */}
