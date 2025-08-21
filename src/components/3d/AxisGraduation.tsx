@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Text } from '@react-three/drei';
 
@@ -117,9 +116,54 @@ const AxisGraduation: React.FC<AxisGraduationProps> = ({ boxDimensions }) => {
       </mesh>
     );
   };
+
+  // Fonction pour créer les labels des sommets de la box
+  const createBoxVertexLabels = () => {
+    const vertices = [
+      // Face avant (bottom)
+      { label: 'A', position: [-width/2, -height/2, depth/2] as [number, number, number] },
+      { label: 'B', position: [width/2, -height/2, depth/2] as [number, number, number] },
+      { label: 'C', position: [width/2, -height/2, -depth/2] as [number, number, number] },
+      { label: 'D', position: [-width/2, -height/2, -depth/2] as [number, number, number] },
+      // Face avant (top)
+      { label: 'E', position: [-width/2, height/2, depth/2] as [number, number, number] },
+      { label: 'F', position: [width/2, height/2, depth/2] as [number, number, number] },
+      { label: 'G', position: [width/2, height/2, -depth/2] as [number, number, number] },
+      { label: 'H', position: [-width/2, height/2, -depth/2] as [number, number, number] },
+    ];
+
+    return vertices.map(vertex => (
+      <group key={vertex.label}>
+        {/* Point visible pour marquer le sommet */}
+        <mesh position={vertex.position}>
+          <sphereGeometry args={[0.1, 8, 8]} />
+          <meshStandardMaterial color="#ff0000" />
+        </mesh>
+        
+        {/* Label du sommet */}
+        <Text
+          position={[
+            vertex.position[0] + (vertex.position[0] > 0 ? 0.3 : -0.3),
+            vertex.position[1] + (vertex.position[1] > 0 ? 0.3 : -0.3),
+            vertex.position[2] + (vertex.position[2] > 0 ? 0.3 : -0.3)
+          ]}
+          fontSize={0.4}
+          color="#ff0000"
+          anchorX="center"
+          anchorY="middle"
+          fontWeight="bold"
+        >
+          {vertex.label}
+        </Text>
+      </group>
+    ));
+  };
   
   return (
     <group>
+      {/* Labels des sommets de la box */}
+      {createBoxVertexLabels()}
+      
       {/* Axe X (Largeur - L) */}
       {createAxisLine(
         [-width/2, -height/2 - 1, depth/2 + 1],
