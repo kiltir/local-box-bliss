@@ -13,10 +13,25 @@ interface AxisGraduationProps {
 const AxisGraduation: React.FC<AxisGraduationProps> = ({ boxDimensions }) => {
   const { width, height, depth } = boxDimensions;
   
-  // Fonction pour créer les graduations d'un axe
+  // Fonction pour créer les graduations d'un axe avec des intervalles adaptés
   const createGraduations = (length: number, axis: 'x' | 'y' | 'z') => {
     const graduations = [];
-    const step = 10; // Graduations tous les 10 cm
+    
+    // Définir les intervalles de graduation selon l'axe et la dimension
+    let step: number;
+    switch (axis) {
+      case 'x': // Largeur (L) - 30 cm, graduations tous les 5 cm
+        step = 5;
+        break;
+      case 'y': // Hauteur (H) - 18 cm, graduations tous les 3 cm
+        step = 3;
+        break;
+      case 'z': // Profondeur (P) - 8 cm, graduations tous les 2 cm
+        step = 2;
+        break;
+      default:
+        step = 5;
+    }
     
     for (let i = 0; i <= length; i += step) {
       let position: [number, number, number];
@@ -54,7 +69,7 @@ const AxisGraduation: React.FC<AxisGraduationProps> = ({ boxDimensions }) => {
               position[2] + (axis === 'z' ? -0.5 : 0)
             ]}
             rotation={rotation}
-            fontSize={0.3}
+            fontSize={0.25}
             color="#333"
             anchorX="center"
             anchorY="middle"
@@ -121,7 +136,7 @@ const AxisGraduation: React.FC<AxisGraduationProps> = ({ boxDimensions }) => {
         anchorX="center"
         anchorY="middle"
       >
-        L (cm)
+        L = {width} cm
       </Text>
       
       {/* Axe Y (Hauteur - H) */}
@@ -141,7 +156,7 @@ const AxisGraduation: React.FC<AxisGraduationProps> = ({ boxDimensions }) => {
         anchorX="center"
         anchorY="middle"
       >
-        H (cm)
+        H = {height} cm
       </Text>
       
       {/* Axe Z (Profondeur - P) */}
@@ -161,7 +176,7 @@ const AxisGraduation: React.FC<AxisGraduationProps> = ({ boxDimensions }) => {
         anchorX="center"
         anchorY="middle"
       >
-        P (cm)
+        P = {depth} cm
       </Text>
     </group>
   );
