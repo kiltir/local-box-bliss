@@ -1,7 +1,5 @@
 
 import React from 'react';
-import { Checkbox } from "@/components/ui/checkbox";
-import { Minus, Plus } from 'lucide-react';
 import { BoxProduct } from '@/types/boxes';
 
 interface ProductItemProps {
@@ -72,14 +70,6 @@ const ProductItem = ({
   return (
     <li className="py-3 border-b border-gray-100 last:border-b-0">
       <div className="flex items-start gap-3">
-        <div className="flex-shrink-0 pt-1">
-          <Checkbox 
-            id={`product-${index}`}
-            checked={isSelected}
-            onCheckedChange={(checked) => onToggle(index.toString(), checked === true)}
-          />
-        </div>
-        
         <img 
           src={getProductImage(product.name)}
           alt={product.name}
@@ -93,53 +83,26 @@ const ProductItem = ({
         <div className="flex-1 min-w-0">
           <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2">
             <div className="flex-1 min-w-0">
-              <label 
-                htmlFor={`product-${index}`}
-                className="font-medium cursor-pointer block text-sm sm:text-base leading-tight"
-              >
+              <div className="font-medium block text-sm sm:text-base leading-tight">
                 {product.name}
-              </label>
+              </div>
               <div className="text-xs sm:text-sm text-gray-500 mt-1 leading-tight">
                 {product.producer}
               </div>
               {product.weight && (
                 <div className="text-xs sm:text-sm text-gray-500 mt-1">
-                  {product.weight.toFixed(2)} kg {isSelected && quantity > 1 && 
-                    `× ${quantity} = ${(product.weight * quantity).toFixed(2)} kg`}
+                  {product.weight.toFixed(2)} kg
                 </div>
               )}
               {product.dimensions && (
                 <div className="text-xs sm:text-sm text-gray-500 mt-1">
                   {product.dimensions.width}×{product.dimensions.height}×{product.dimensions.depth} cm
-                  {isSelected && quantity > 1 && (
-                    <span className="block">
-                      Vol: {(calculateProductVolume(product) * quantity).toFixed(0)} cm³
-                    </span>
-                  )}
                 </div>
               )}
             </div>
             
-            <div className="flex items-center justify-between sm:justify-end gap-3 sm:ml-4 flex-shrink-0">
+            <div className="flex items-center justify-end flex-shrink-0">
               <span className="text-gray-600 text-xs sm:text-sm">{product.quantity}</span>
-              {isSelected && (
-                <div className="flex items-center border rounded-md bg-white">
-                  <button 
-                    className="px-2 py-1 hover:bg-gray-100 touch-manipulation"
-                    onClick={() => onQuantityChange(index.toString(), -1)}
-                    disabled={quantity <= 1}
-                  >
-                    <Minus className="h-3 w-3 sm:h-4 sm:w-4" />
-                  </button>
-                  <span className="px-2 py-1 text-sm select-none min-w-[2rem] text-center">{quantity}</span>
-                  <button 
-                    className="px-2 py-1 hover:bg-gray-100 touch-manipulation"
-                    onClick={() => onQuantityChange(index.toString(), 1)}
-                  >
-                    <Plus className="h-3 w-3 sm:h-4 sm:w-4" />
-                  </button>
-                </div>
-              )}
             </div>
           </div>
         </div>
