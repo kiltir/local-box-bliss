@@ -2,17 +2,17 @@ import React from 'react';
 import { TabsContent } from "@/components/ui/tabs";
 import { BoxProduct } from '@/types/boxes';
 import { Lightbulb, Coffee, Leaf, Sparkles } from 'lucide-react';
-
 interface BoxDetailsAdviceProps {
   products: BoxProduct[];
   boxTheme: 'Découverte' | 'Bourbon' | 'Tradition' | 'Saison';
 }
-
-const BoxDetailsAdvice = ({ products, boxTheme }: BoxDetailsAdviceProps) => {
+const BoxDetailsAdvice = ({
+  products,
+  boxTheme
+}: BoxDetailsAdviceProps) => {
   // Conseils spécifiques par type de produit
   const getProductAdvice = (productName: string) => {
     const name = productName.toLowerCase();
-    
     if (name.includes('café')) {
       return {
         icon: <Coffee className="h-5 w-5 text-amber-600" />,
@@ -20,7 +20,6 @@ const BoxDetailsAdvice = ({ products, boxTheme }: BoxDetailsAdviceProps) => {
         advice: "Conservez votre café dans un endroit sec et frais, à l'abri de la lumière. Une fois ouvert, consommez-le dans les 2-3 semaines pour préserver tous ses arômes."
       };
     }
-    
     if (name.includes('thé')) {
       return {
         icon: <Leaf className="h-5 w-5 text-green-600" />,
@@ -28,7 +27,6 @@ const BoxDetailsAdvice = ({ products, boxTheme }: BoxDetailsAdviceProps) => {
         advice: "Infusez 2-3 minutes dans une eau à 85°C pour les thés verts, 95°C pour les thés noirs. Utilisez 1 cuillère à café par tasse."
       };
     }
-    
     if (name.includes('vanille')) {
       return {
         icon: <Sparkles className="h-5 w-5 text-purple-600" />,
@@ -36,7 +34,6 @@ const BoxDetailsAdvice = ({ products, boxTheme }: BoxDetailsAdviceProps) => {
         advice: "Fendez la gousse en deux et grattez les graines avec un couteau. Conservez la gousse dans du sucre pour l'aromatiser naturellement."
       };
     }
-    
     if (name.includes('miel')) {
       return {
         icon: <Lightbulb className="h-5 w-5 text-yellow-600" />,
@@ -44,7 +41,6 @@ const BoxDetailsAdvice = ({ products, boxTheme }: BoxDetailsAdviceProps) => {
         advice: "Le miel se conserve indéfiniment à température ambiante. S'il cristallise, réchauffez-le doucement au bain-marie pour retrouver sa texture liquide."
       };
     }
-    
     if (name.includes('chocolat')) {
       return {
         icon: <Sparkles className="h-5 w-5 text-brown-600" />,
@@ -52,7 +48,6 @@ const BoxDetailsAdvice = ({ products, boxTheme }: BoxDetailsAdviceProps) => {
         advice: "Laissez fondre le chocolat sur votre langue pour révéler tous ses arômes. Conservez-le entre 16-18°C à l'abri de l'humidité."
       };
     }
-    
     if (name.includes('bière')) {
       return {
         icon: <Coffee className="h-5 w-5 text-amber-700" />,
@@ -60,7 +55,6 @@ const BoxDetailsAdvice = ({ products, boxTheme }: BoxDetailsAdviceProps) => {
         advice: "Servez bien fraîche (6-8°C) dans un verre propre légèrement incliné. Versez lentement pour obtenir une mousse crémeuse."
       };
     }
-    
     if (name.includes('biscuit') || name.includes('sablé')) {
       return {
         icon: <Lightbulb className="h-5 w-5 text-orange-600" />,
@@ -68,7 +62,6 @@ const BoxDetailsAdvice = ({ products, boxTheme }: BoxDetailsAdviceProps) => {
         advice: "Conservez dans une boîte hermétique pour garder le croustillant. Parfaits avec un thé ou un café pour le goûter."
       };
     }
-    
     if (name.includes('confiture')) {
       return {
         icon: <Leaf className="h-5 w-5 text-red-600" />,
@@ -76,7 +69,6 @@ const BoxDetailsAdvice = ({ products, boxTheme }: BoxDetailsAdviceProps) => {
         advice: "Une fois ouverte, conservez au réfrigérateur et consommez dans le mois. Utilisez une cuillère propre à chaque utilisation."
       };
     }
-    
     return null;
   };
 
@@ -110,11 +102,8 @@ const BoxDetailsAdvice = ({ products, boxTheme }: BoxDetailsAdviceProps) => {
         };
     }
   };
-
   const themeAdvice = getThemeAdvice();
-
-  return (
-    <TabsContent value="advice" className="p-3 sm:p-6 pt-3 sm:pt-4">
+  return <TabsContent value="advice" className="p-3 sm:p-6 pt-3 sm:pt-4">
       <div className="space-y-6">
         {/* Conseil général du thème */}
         <div className="bg-leaf-green/5 border border-leaf-green/20 rounded-lg p-4">
@@ -130,11 +119,9 @@ const BoxDetailsAdvice = ({ products, boxTheme }: BoxDetailsAdviceProps) => {
           <h3 className="text-lg font-semibold mb-4">Conseils par produit</h3>
           <div className="space-y-4">
             {products.map((product, index) => {
-              const advice = getProductAdvice(product.name);
-              if (!advice) return null;
-              
-              return (
-                <div key={index} className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+            const advice = getProductAdvice(product.name);
+            if (!advice) return null;
+            return <div key={index} className="bg-gray-50 border border-gray-200 rounded-lg p-4">
                   <div className="flex items-start gap-3">
                     <div className="flex-shrink-0 mt-1">
                       {advice.icon}
@@ -145,9 +132,8 @@ const BoxDetailsAdvice = ({ products, boxTheme }: BoxDetailsAdviceProps) => {
                       <p className="text-sm text-gray-600 leading-relaxed">{advice.advice}</p>
                     </div>
                   </div>
-                </div>
-              );
-            })}
+                </div>;
+          })}
           </div>
         </div>
 
@@ -155,7 +141,7 @@ const BoxDetailsAdvice = ({ products, boxTheme }: BoxDetailsAdviceProps) => {
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
           <div className="flex items-center gap-3 mb-3">
             <Sparkles className="h-5 w-5 text-blue-600" />
-            <h3 className="text-base font-medium text-blue-900">Conseils de dégustation</h3>
+            <h3 className="text-base font-medium text-blue-900">Pourquoi &quot;Saison&quot; ?</h3>
           </div>
           <ul className="text-sm text-blue-800 space-y-1">
             <li>• Dégustez dans le calme pour apprécier tous les arômes</li>
@@ -165,8 +151,6 @@ const BoxDetailsAdvice = ({ products, boxTheme }: BoxDetailsAdviceProps) => {
           </ul>
         </div>
       </div>
-    </TabsContent>
-  );
+    </TabsContent>;
 };
-
 export default BoxDetailsAdvice;
