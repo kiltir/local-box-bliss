@@ -17,6 +17,7 @@ interface BoxDetailsModalProps {
   boxSize: 'unique';
   boxId: number;
   onBoxChange?: (boxId: number) => void;
+  boxTheme: 'Découverte' | 'Bourbon' | 'Tradition' | 'Saison';
 }
 
 const BoxDetailsModal = ({ 
@@ -29,7 +30,8 @@ const BoxDetailsModal = ({
   onClose, 
   boxSize, 
   boxId,
-  onBoxChange 
+  onBoxChange,
+  boxTheme
 }: BoxDetailsModalProps) => {
   const [activeTab, setActiveTab] = React.useState<"details" | "advice">("details");
 
@@ -72,7 +74,7 @@ const BoxDetailsModal = ({
               products={products}
               image={image}
               images={images}
-              boxTheme={products.length > 0 ? 'Découverte' : 'Découverte'}
+              boxTheme={boxTheme}
               boxId={boxId}
               onBoxChange={onBoxChange}
               title={title}
@@ -80,7 +82,7 @@ const BoxDetailsModal = ({
             
             <BoxDetailsAdvice 
               products={products}
-              boxTheme={products.length > 0 ? 'Découverte' : 'Découverte'}
+              boxTheme={boxTheme}
             />
           </Tabs>
         </div>

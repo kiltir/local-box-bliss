@@ -27,6 +27,7 @@ export const BoxDetails = ({ onClose, boxId, onBoxChange }: BoxDetailsProps) => 
       boxSize={selectedBox.size}
       boxId={boxId}
       onBoxChange={onBoxChange}
+      boxTheme={selectedBox.theme}
     />
   );
 };
