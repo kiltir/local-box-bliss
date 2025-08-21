@@ -87,7 +87,7 @@ const BoxDetailsAdvice = ({ products, boxTheme }: BoxDetailsAdviceProps) => {
       case 'Découverte':
         return {
           title: "Informations",
-          advice: "Prenez le temps de déguster chaque produit séparément avant de les associer. Notez vos impressions pour créer vos propres accords."
+          advice: "Avant de s'appeler Réunion, l'île fût appelée Ile Bourbon, c'est pour cela que beaucoup de nos produits possèdent cette appellation historique et culturelle."
         };
       case 'Bourbon':
         return {
