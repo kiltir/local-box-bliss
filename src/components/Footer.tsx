@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { ShoppingBag } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
@@ -8,7 +9,13 @@ const Footer = () => {
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
+      const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+      const offsetPosition = elementPosition - 80; // Offset for sticky navbar
+      
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      });
     }
   };
 
@@ -31,12 +38,12 @@ const Footer = () => {
   const navigateToHomeAndScrollToFeatures = () => {
     // If we're already on the home page, just scroll to features
     if (window.location.pathname === '/') {
-      scrollToSection('features');
+      scrollToSection('features-title');
     } else {
       // Navigate to home page first, then scroll to features
       navigate('/');
       setTimeout(() => {
-        scrollToSection('features');
+        scrollToSection('features-title');
       }, 100);
     }
   };
@@ -44,12 +51,12 @@ const Footer = () => {
   const navigateToHomeAndScrollToProducers = () => {
     // If we're already on the home page, just scroll to producers
     if (window.location.pathname === '/') {
-      scrollToSection('producers');
+      scrollToSection('producers-title');
     } else {
       // Navigate to home page first, then scroll to producers
       navigate('/');
       setTimeout(() => {
-        scrollToSection('producers');
+        scrollToSection('producers-title');
       }, 100);
     }
   };

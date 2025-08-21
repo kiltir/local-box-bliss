@@ -1,9 +1,10 @@
+
 import React from 'react';
 const FeaturesSection = () => {
   return <section id="concept" className="bg-soft-beige/30 my-0 py-0">
       <div className="container-section my-0 py-[30px]">
         <div className="text-center mb-12 fade-in">
-          <h2 className="text-3xl font-bold mb-4 py-[15px]">Comment ça marche ?</h2>
+          <h2 id="features-title" className="text-3xl font-bold mb-4 py-[15px]">Comment ça marche ?</h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto py-0 my-0">Choisissez, commandez, recevez.</p>
         </div>
         
