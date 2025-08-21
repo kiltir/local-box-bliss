@@ -16,7 +16,7 @@ const AxisGraduation: React.FC<AxisGraduationProps> = ({ boxDimensions }) => {
   // Fonction pour créer les graduations d'un axe
   const createGraduations = (length: number, axis: 'x' | 'y' | 'z') => {
     const graduations = [];
-    const step = Math.max(1, Math.ceil(length / 10)); // Graduations tous les cm ou plus selon la taille
+    const step = 10; // Graduations tous les 10 cm
     
     for (let i = 0; i <= length; i += step) {
       let position: [number, number, number];
