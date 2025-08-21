@@ -86,7 +86,7 @@ const BoxDetailsAdvice = ({ products, boxTheme }: BoxDetailsAdviceProps) => {
     switch (boxTheme) {
       case 'Découverte':
         return {
-          title: "Conseils pour votre découverte",
+          title: "Informations",
           advice: "Prenez le temps de déguster chaque produit séparément avant de les associer. Notez vos impressions pour créer vos propres accords."
         };
       case 'Bourbon':
