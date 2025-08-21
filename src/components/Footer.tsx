@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { ShoppingBag } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
@@ -14,6 +15,14 @@ const Footer = () => {
 
   const navigateToPage = (path: string) => {
     navigate(path);
+    // Scroll to top after navigation
+    setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 100);
+  };
+
+  const navigateToNotreHistoire = () => {
+    navigate('/notre-histoire');
     // Scroll to top after navigation
     setTimeout(() => {
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -47,7 +56,12 @@ const Footer = () => {
             <h3 className="text-lg font-semibold mb-4">Informations</h3>
             <ul className="space-y-2">
               <li>
-                <Link to="/notre-histoire" className="text-gray-400 hover:text-white transition-colors">Notre Histoire</Link>
+                <button 
+                  onClick={navigateToNotreHistoire}
+                  className="text-gray-400 hover:text-white transition-colors text-left"
+                >
+                  Notre Histoire
+                </button>
               </li>
               <li>
                 <button 
