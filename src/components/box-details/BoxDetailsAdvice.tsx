@@ -2,10 +2,12 @@ import React from 'react';
 import { TabsContent } from "@/components/ui/tabs";
 import { BoxProduct } from '@/types/boxes';
 import { Lightbulb, Coffee, Leaf, Sparkles } from 'lucide-react';
+
 interface BoxDetailsAdviceProps {
   products: BoxProduct[];
   boxTheme: 'Découverte' | 'Bourbon' | 'Tradition' | 'Saison';
 }
+
 const BoxDetailsAdvice = ({
   products,
   boxTheme
@@ -102,8 +104,43 @@ const BoxDetailsAdvice = ({
         };
     }
   };
+
+  // Explication du nom de la box par thème
+  const getBoxNameExplanation = () => {
+    switch (boxTheme) {
+      case 'Saison':
+        return {
+          title: 'Pourquoi "Saison" ?',
+          explanation: "La Box Saison adapte ses produits selon la saison, c'est un gage de qualité, de fraîcheur et d'authenticité pour les produits."
+        };
+      case 'Tradition':
+        return {
+          title: 'Pourquoi "Tradition" ?',
+          explanation: "La Box Tradition fait appel aux souvenirs des traditions, coutumes et recettes réunionnaises."
+        };
+      case 'Bourbon':
+        return {
+          title: 'Pourquoi "Bourbon" ?',
+          explanation: "La Box Bourbon est le résultat de l'histoire, du savoir-faire et de la qualité des produits d'un territoire d'exception."
+        };
+      case 'Découverte':
+        return {
+          title: 'Pourquoi "Découverte" ?',
+          explanation: "La Box Découverte est vouée à faire connaître de nouveaux produits et de nouvelles saveurs de l'île de la Réunion."
+        };
+      default:
+        return {
+          title: 'Pourquoi cette box ?',
+          explanation: "Chaque box a été pensée avec soin pour vous offrir une expérience unique."
+        };
+    }
+  };
+
   const themeAdvice = getThemeAdvice();
-  return <TabsContent value="advice" className="p-3 sm:p-6 pt-3 sm:pt-4">
+  const boxNameExplanation = getBoxNameExplanation();
+
+  return (
+    <TabsContent value="advice" className="p-3 sm:p-6 pt-3 sm:pt-4">
       <div className="space-y-6">
         {/* Conseil général du thème */}
         <div className="bg-leaf-green/5 border border-leaf-green/20 rounded-lg p-4">
@@ -119,9 +156,10 @@ const BoxDetailsAdvice = ({
           <h3 className="text-lg font-semibold mb-4">Conseils par produit</h3>
           <div className="space-y-4">
             {products.map((product, index) => {
-            const advice = getProductAdvice(product.name);
-            if (!advice) return null;
-            return <div key={index} className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+              const advice = getProductAdvice(product.name);
+              if (!advice) return null;
+              return (
+                <div key={index} className="bg-gray-50 border border-gray-200 rounded-lg p-4">
                   <div className="flex items-start gap-3">
                     <div className="flex-shrink-0 mt-1">
                       {advice.icon}
@@ -132,25 +170,23 @@ const BoxDetailsAdvice = ({
                       <p className="text-sm text-gray-600 leading-relaxed">{advice.advice}</p>
                     </div>
                   </div>
-                </div>;
-          })}
+                </div>
+              );
+            })}
           </div>
         </div>
 
-        {/* Conseils généraux de dégustation */}
+        {/* Explication du nom de la box */}
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
           <div className="flex items-center gap-3 mb-3">
             <Sparkles className="h-5 w-5 text-blue-600" />
-            <h3 className="text-base font-medium text-blue-900">Pourquoi &quot;Saison&quot; ?</h3>
+            <h3 className="text-base font-medium text-blue-900">{boxNameExplanation.title}</h3>
           </div>
-          <ul className="text-sm text-blue-800 space-y-1">
-            <li>• Dégustez dans le calme pour apprécier tous les arômes</li>
-            <li>• Commencez par les saveurs les plus délicates</li>
-            <li>• Prenez des notes pour vous souvenir de vos préférences</li>
-            <li>• Partagez ces moments avec vos proches</li>
-          </ul>
+          <p className="text-sm text-blue-800 leading-relaxed">{boxNameExplanation.explanation}</p>
         </div>
       </div>
-    </TabsContent>;
+    </TabsContent>
+  );
 };
+
 export default BoxDetailsAdvice;
