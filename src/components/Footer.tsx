@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { ShoppingBag } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
@@ -38,6 +37,19 @@ const Footer = () => {
       navigate('/');
       setTimeout(() => {
         scrollToSection('features');
+      }, 100);
+    }
+  };
+
+  const navigateToHomeAndScrollToProducers = () => {
+    // If we're already on the home page, just scroll to producers
+    if (window.location.pathname === '/') {
+      scrollToSection('producers');
+    } else {
+      // Navigate to home page first, then scroll to producers
+      navigate('/');
+      setTimeout(() => {
+        scrollToSection('producers');
       }, 100);
     }
   };
@@ -86,7 +98,7 @@ const Footer = () => {
               </li>
               <li>
                 <button 
-                  onClick={() => scrollToSection('producers')}
+                  onClick={navigateToHomeAndScrollToProducers}
                   className="text-gray-400 hover:text-white transition-colors text-left"
                 >
                   Nos Partenaires
