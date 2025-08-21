@@ -29,6 +29,19 @@ const Footer = () => {
     }, 100);
   };
 
+  const navigateToHomeAndScrollToFeatures = () => {
+    // If we're already on the home page, just scroll to features
+    if (window.location.pathname === '/') {
+      scrollToSection('features');
+    } else {
+      // Navigate to home page first, then scroll to features
+      navigate('/');
+      setTimeout(() => {
+        scrollToSection('features');
+      }, 100);
+    }
+  };
+
   return <footer className="bg-gray-900 text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
@@ -65,7 +78,7 @@ const Footer = () => {
               </li>
               <li>
                 <button 
-                  onClick={() => scrollToSection('features')}
+                  onClick={navigateToHomeAndScrollToFeatures}
                   className="text-gray-400 hover:text-white transition-colors text-left"
                 >
                   Comment ça marche
