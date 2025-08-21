@@ -20,7 +20,7 @@ const ProducerSection = () => {
       <div className="container-section py-[15px]">
         <div className="text-center mb-12 fade-in">
           <h2 className="text-3xl font-bold mb-4">Nos Partenaires</h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">Rencontrez nos artisans/producteurs passionnés qui travaillent chaque jour pour vous offrir le meilleur du territoire.</p>
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto">Découvrez nos artisans/producteurs passionnés qui travaillent chaque jour pour offrir le meilleur du territoire.</p>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 fade-in">
