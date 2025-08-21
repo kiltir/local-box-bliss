@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Text } from '@react-three/drei';
 
@@ -13,39 +12,26 @@ interface AxisGraduationProps {
 const AxisGraduation: React.FC<AxisGraduationProps> = ({ boxDimensions }) => {
   const { width, height, depth } = boxDimensions;
   
-  // Fonction pour créer les graduations d'un axe avec des intervalles adaptés
+  // Fonction pour créer les graduations d'un axe avec des intervalles uniformes de 1 cm
   const createGraduations = (length: number, axis: 'x' | 'y' | 'z') => {
     const graduations = [];
     
-    // Définir les intervalles de graduation selon l'axe et la dimension
-    let step: number;
-    switch (axis) {
-      case 'x': // Largeur (L) - 30 cm, graduations tous les 5 cm
-        step = 5;
-        break;
-      case 'y': // Hauteur (H) - 18 cm, graduations tous les 3 cm
-        step = 3;
-        break;
-      case 'z': // Profondeur (P) - 8 cm, graduations tous les 2 cm
-        step = 2;
-        break;
-      default:
-        step = 5;
-    }
+    // Graduations tous les 1 cm pour tous les axes
+    const step = 1;
     
     for (let i = 0; i <= length; i += step) {
       let position: [number, number, number];
       let rotation: [number, number, number] = [0, 0, 0];
       
       switch (axis) {
-        case 'x': // Largeur (L) - à partir du point A
+        case 'x': // Largeur (L) - à partir du point A, AB = 30 cm
           position = [-width/2 + i, -height/2 - 1, depth/2 + 1];
           break;
-        case 'y': // Hauteur (H) - à partir du point A
+        case 'y': // Hauteur (H) - à partir du point A, AE = 18 cm
           position = [-width/2 - 1, -height/2 + i, depth/2 + 1];
           rotation = [0, 0, Math.PI/2];
           break;
-        case 'z': // Profondeur (P) - à partir du point A
+        case 'z': // Profondeur (P) - à partir du point A, AD = 8 cm
           position = [-width/2 - 1, -height/2 - 1, depth/2 - i];
           rotation = [0, Math.PI/2, 0];
           break;
@@ -61,21 +47,23 @@ const AxisGraduation: React.FC<AxisGraduationProps> = ({ boxDimensions }) => {
             <meshStandardMaterial color="#333" />
           </mesh>
           
-          {/* Texte de la graduation */}
-          <Text
-            position={[
-              position[0] + (axis === 'y' ? -0.5 : 0),
-              position[1] + (axis === 'x' ? -0.3 : axis === 'z' ? -0.3 : 0),
-              position[2] + (axis === 'z' ? -0.5 : 0)
-            ]}
-            rotation={rotation}
-            fontSize={0.25}
-            color="#333"
-            anchorX="center"
-            anchorY="middle"
-          >
-            {i}
-          </Text>
+          {/* Texte de la graduation - afficher seulement les valeurs importantes */}
+          {(i % 5 === 0 || i === length) && (
+            <Text
+              position={[
+                position[0] + (axis === 'y' ? -0.5 : 0),
+                position[1] + (axis === 'x' ? -0.3 : axis === 'z' ? -0.3 : 0),
+                position[2] + (axis === 'z' ? -0.5 : 0)
+              ]}
+              rotation={rotation}
+              fontSize={0.25}
+              color="#333"
+              anchorX="center"
+              anchorY="middle"
+            >
+              {i}
+            </Text>
+          )}
         </group>
       );
     }
@@ -164,7 +152,7 @@ const AxisGraduation: React.FC<AxisGraduationProps> = ({ boxDimensions }) => {
       {/* Labels des sommets de la box */}
       {createBoxVertexLabels()}
       
-      {/* Axe X (Largeur - L) - commence au point A */}
+      {/* Axe X (Largeur - L) - commence au point A, AB = 30 cm */}
       {createAxisLine(
         [-width/2, -height/2 - 1, depth/2 + 1],
         [width/2, -height/2 - 1, depth/2 + 1],
@@ -180,10 +168,10 @@ const AxisGraduation: React.FC<AxisGraduationProps> = ({ boxDimensions }) => {
         anchorX="center"
         anchorY="middle"
       >
-        L = {width} cm (depuis A)
+        AB = {width} cm
       </Text>
       
-      {/* Axe Y (Hauteur - H) - commence au point A */}
+      {/* Axe Y (Hauteur - H) - commence au point A, AE = 18 cm */}
       {createAxisLine(
         [-width/2 - 1, -height/2, depth/2 + 1],
         [-width/2 - 1, height/2, depth/2 + 1],
@@ -200,10 +188,10 @@ const AxisGraduation: React.FC<AxisGraduationProps> = ({ boxDimensions }) => {
         anchorX="center"
         anchorY="middle"
       >
-        H = {height} cm (depuis A)
+        AE = {height} cm
       </Text>
       
-      {/* Axe Z (Profondeur - P) - commence au point A */}
+      {/* Axe Z (Profondeur - P) - commence au point A, AD = 8 cm */}
       {createAxisLine(
         [-width/2 - 1, -height/2 - 1, depth/2],
         [-width/2 - 1, -height/2 - 1, -depth/2],
@@ -220,7 +208,7 @@ const AxisGraduation: React.FC<AxisGraduationProps> = ({ boxDimensions }) => {
         anchorX="center"
         anchorY="middle"
       >
-        P = {depth} cm (depuis A)
+        AD = {depth} cm
       </Text>
     </group>
   );
