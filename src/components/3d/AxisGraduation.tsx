@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Text } from '@react-three/drei';
 
@@ -37,15 +38,15 @@ const AxisGraduation: React.FC<AxisGraduationProps> = ({ boxDimensions }) => {
       let rotation: [number, number, number] = [0, 0, 0];
       
       switch (axis) {
-        case 'x': // Largeur (L)
-          position = [i - length/2, -height/2 - 1, depth/2 + 1];
+        case 'x': // Largeur (L) - à partir du point A
+          position = [-width/2 + i, -height/2 - 1, depth/2 + 1];
           break;
-        case 'y': // Hauteur (H)
-          position = [-width/2 - 1, i - height/2, depth/2 + 1];
+        case 'y': // Hauteur (H) - à partir du point A
+          position = [-width/2 - 1, -height/2 + i, depth/2 + 1];
           rotation = [0, 0, Math.PI/2];
           break;
-        case 'z': // Profondeur (P)
-          position = [width/2 + 1, -height/2 - 1, i - depth/2];
+        case 'z': // Profondeur (P) - à partir du point A
+          position = [-width/2 - 1, -height/2 - 1, depth/2 - i];
           rotation = [0, Math.PI/2, 0];
           break;
         default:
@@ -120,7 +121,7 @@ const AxisGraduation: React.FC<AxisGraduationProps> = ({ boxDimensions }) => {
   // Fonction pour créer les labels des sommets de la box
   const createBoxVertexLabels = () => {
     const vertices = [
-      // Face avant (bottom)
+      // Face avant (bottom) - A est maintenant le point de référence (0,0,0)
       { label: 'A', position: [-width/2, -height/2, depth/2] as [number, number, number] },
       { label: 'B', position: [width/2, -height/2, depth/2] as [number, number, number] },
       { label: 'C', position: [width/2, -height/2, -depth/2] as [number, number, number] },
@@ -163,7 +164,7 @@ const AxisGraduation: React.FC<AxisGraduationProps> = ({ boxDimensions }) => {
       {/* Labels des sommets de la box */}
       {createBoxVertexLabels()}
       
-      {/* Axe X (Largeur - L) */}
+      {/* Axe X (Largeur - L) - commence au point A */}
       {createAxisLine(
         [-width/2, -height/2 - 1, depth/2 + 1],
         [width/2, -height/2 - 1, depth/2 + 1],
@@ -179,10 +180,10 @@ const AxisGraduation: React.FC<AxisGraduationProps> = ({ boxDimensions }) => {
         anchorX="center"
         anchorY="middle"
       >
-        L = {width} cm
+        L = {width} cm (depuis A)
       </Text>
       
-      {/* Axe Y (Hauteur - H) */}
+      {/* Axe Y (Hauteur - H) - commence au point A */}
       {createAxisLine(
         [-width/2 - 1, -height/2, depth/2 + 1],
         [-width/2 - 1, height/2, depth/2 + 1],
@@ -199,27 +200,27 @@ const AxisGraduation: React.FC<AxisGraduationProps> = ({ boxDimensions }) => {
         anchorX="center"
         anchorY="middle"
       >
-        H = {height} cm
+        H = {height} cm (depuis A)
       </Text>
       
-      {/* Axe Z (Profondeur - P) */}
+      {/* Axe Z (Profondeur - P) - commence au point A */}
       {createAxisLine(
-        [width/2 + 1, -height/2 - 1, -depth/2],
-        [width/2 + 1, -height/2 - 1, depth/2],
+        [-width/2 - 1, -height/2 - 1, depth/2],
+        [-width/2 - 1, -height/2 - 1, -depth/2],
         'z'
       )}
       {createGraduations(depth, 'z')}
       
       {/* Label axe Z */}
       <Text
-        position={[width/2 + 1, -height/2 - 2, 0]}
+        position={[-width/2 - 2, -height/2 - 2, 0]}
         rotation={[0, Math.PI/2, 0]}
         fontSize={0.4}
         color="#333"
         anchorX="center"
         anchorY="middle"
       >
-        P = {depth} cm
+        P = {depth} cm (depuis A)
       </Text>
     </group>
   );
