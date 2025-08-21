@@ -151,7 +151,6 @@ const AxisGraduation: React.FC<AxisGraduationProps> = ({ boxDimensions }) => {
           color="#ff0000"
           anchorX="center"
           anchorY="middle"
-          fontWeight="bold"
         >
           {vertex.label}
         </Text>
