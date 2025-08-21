@@ -6,6 +6,7 @@ import { useThree } from '@react-three/fiber';
 import Box3D from './Box3D';
 import SideGrid from './SideGrid';
 import ProductMesh from './ProductMesh';
+import AxisGraduation from './AxisGraduation';
 import { packProducts } from '@/utils/3d/packingAlgorithm';
 
 const Scene: React.FC<SceneProps> = ({ products, boxDimensions }) => {
@@ -62,6 +63,9 @@ const Scene: React.FC<SceneProps> = ({ products, boxDimensions }) => {
         }
         return null;
       })}
+      
+      {/* Graduation des axes */}
+      <AxisGraduation boxDimensions={scaledBox} />
       
       {/* Bottom grid */}
       <Grid 
