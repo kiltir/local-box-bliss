@@ -1,7 +1,6 @@
 
 import React from 'react';
 import { Text } from '@react-three/drei';
-import * as THREE from 'three';
 
 interface AxisGraduationProps {
   boxDimensions: {
@@ -69,15 +68,38 @@ const AxisGraduation: React.FC<AxisGraduationProps> = ({ boxDimensions }) => {
     return graduations;
   };
   
-  // Créer les lignes d'axes
-  const createAxisLine = (start: [number, number, number], end: [number, number, number]) => {
-    const points = [new THREE.Vector3(...start), new THREE.Vector3(...end)];
-    const geometry = new THREE.BufferGeometry().setFromPoints(points);
+  // Créer les lignes d'axes avec des cylindres
+  const createAxisLine = (start: [number, number, number], end: [number, number, number], axis: 'x' | 'y' | 'z') => {
+    const length = Math.sqrt(
+      Math.pow(end[0] - start[0], 2) + 
+      Math.pow(end[1] - start[1], 2) + 
+      Math.pow(end[2] - start[2], 2)
+    );
+    
+    const midpoint: [number, number, number] = [
+      (start[0] + end[0]) / 2,
+      (start[1] + end[1]) / 2,
+      (start[2] + end[2]) / 2
+    ];
+    
+    let rotation: [number, number, number] = [0, 0, 0];
+    switch (axis) {
+      case 'x':
+        rotation = [0, 0, Math.PI/2];
+        break;
+      case 'y':
+        rotation = [0, 0, 0];
+        break;
+      case 'z':
+        rotation = [Math.PI/2, 0, 0];
+        break;
+    }
     
     return (
-      <line geometry={geometry}>
-        <lineBasicMaterial color="#666" linewidth={2} />
-      </line>
+      <mesh position={midpoint} rotation={rotation}>
+        <cylinderGeometry args={[0.02, 0.02, length, 8]} />
+        <meshStandardMaterial color="#666" />
+      </mesh>
     );
   };
   
@@ -86,7 +108,8 @@ const AxisGraduation: React.FC<AxisGraduationProps> = ({ boxDimensions }) => {
       {/* Axe X (Largeur - L) */}
       {createAxisLine(
         [-width/2, -height/2 - 1, depth/2 + 1],
-        [width/2, -height/2 - 1, depth/2 + 1]
+        [width/2, -height/2 - 1, depth/2 + 1],
+        'x'
       )}
       {createGraduations(width, 'x')}
       
@@ -104,7 +127,8 @@ const AxisGraduation: React.FC<AxisGraduationProps> = ({ boxDimensions }) => {
       {/* Axe Y (Hauteur - H) */}
       {createAxisLine(
         [-width/2 - 1, -height/2, depth/2 + 1],
-        [-width/2 - 1, height/2, depth/2 + 1]
+        [-width/2 - 1, height/2, depth/2 + 1],
+        'y'
       )}
       {createGraduations(height, 'y')}
       
@@ -123,7 +147,8 @@ const AxisGraduation: React.FC<AxisGraduationProps> = ({ boxDimensions }) => {
       {/* Axe Z (Profondeur - P) */}
       {createAxisLine(
         [width/2 + 1, -height/2 - 1, -depth/2],
-        [width/2 + 1, -height/2 - 1, depth/2]
+        [width/2 + 1, -height/2 - 1, depth/2],
+        'z'
       )}
       {createGraduations(depth, 'z')}
       
