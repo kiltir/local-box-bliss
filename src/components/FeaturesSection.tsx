@@ -20,7 +20,7 @@ const FeaturesSection = () => {
             <div className="w-16 h-16 bg-leaf-green rounded-full flex items-center justify-center mx-auto mb-6">
               <span className="text-white text-2xl font-bold">2</span>
             </div>
-            <h3 className="text-xl font-bold mb-3">Toutes nos box sont élaborées et préparées avec soin pour vous offrir la meilleure expérience possible.</h3>
+            <h3 className="text-xl font-bold mb-3">Nous préparons votre commande</h3>
             <p className="text-gray-600">Toutes nos box sont le résultat du savoir-faire de nos partenaires locaux engagés et passionnés.</p>
           </div>
           
