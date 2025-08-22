@@ -90,7 +90,7 @@ const BoxDetailsAdvice = ({
         };
       case 'Tradition':
         return {
-          title: "Saveurs traditionnelles",
+          title: "Informations",
           advice: "Ces produits traditionnels racontent une histoire. Savourez-les en famille ou entre amis pour partager ces saveurs authentiques."
         };
       case 'Saison':
