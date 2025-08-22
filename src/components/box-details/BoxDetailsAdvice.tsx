@@ -154,7 +154,7 @@ const BoxDetailsAdvice = ({
 
         {/* Conseils spécifiques par produit */}
         <div>
-          <h3 className="text-lg font-semibold mb-4">Informations</h3>
+          <h3 className="text-lg font-semibold mb-4">Conseils par produit</h3>
           <div className="space-y-4">
             {products.map((product, index) => {
               const advice = getProductAdvice(product.name);
