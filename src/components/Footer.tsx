@@ -1,4 +1,6 @@
+
 import React from 'react';
+import { ShoppingBag } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 
 const Footer = () => {
@@ -64,11 +66,8 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
           <div>
             <div className="flex items-center mb-4">
-              <img 
-                src="/lovable-uploads/3f05a8b0-01b9-4e90-a92c-901b9d59163a.png" 
-                alt="KiltirBox Logo" 
-                className="h-12 w-auto"
-              />
+              <ShoppingBag className="h-8 w-8 text-leaf-green mr-2" />
+              <span className="text-xl font-bold text-yellow-400">KiltirBox</span>
             </div>
             <p className="text-gray-400 mb-4">Des box réunissant un savoir-faire, des traditions et la culture réunionnaise.</p>
             <div className="flex space-x-4">
