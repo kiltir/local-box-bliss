@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { X, Lightbulb } from 'lucide-react';
 import { BoxProduct } from '@/types/boxes';
@@ -50,14 +51,23 @@ const BoxDetailsModal = ({
                   </div>
                 </div>
                 <p className="text-sm sm:text-base text-gray-600 mb-4 sm:mb-6 leading-relaxed">{description}</p>
-                <TabsList className="grid w-full grid-cols-2 mb-3 sm:mb-4">
-                  <TabsTrigger value="details" className="text-sm">Détails</TabsTrigger>
-                  <TabsTrigger value="advice" className="flex items-center gap-1 sm:gap-2 text-sm">
-                    
-                    <span className="hidden sm:inline">Conseils</span>
-                    <span className="sm:hidden">Conseils</span>
-                  </TabsTrigger>
-                </TabsList>
+                <div className="mb-3 sm:mb-4">
+                  <TabsList className="grid w-full grid-cols-2 h-12 bg-gray-100 p-1 rounded-lg">
+                    <TabsTrigger 
+                      value="details" 
+                      className="text-sm font-semibold px-4 py-2 rounded-md transition-all duration-200 data-[state=active]:bg-leaf-green data-[state=active]:text-white data-[state=active]:shadow-sm hover:bg-leaf-green/10"
+                    >
+                      Détails
+                    </TabsTrigger>
+                    <TabsTrigger 
+                      value="advice" 
+                      className="flex items-center justify-center gap-1 sm:gap-2 text-sm font-semibold px-4 py-2 rounded-md transition-all duration-200 data-[state=active]:bg-leaf-green data-[state=active]:text-white data-[state=active]:shadow-sm hover:bg-leaf-green/10"
+                    >
+                      <Lightbulb className="h-4 w-4" />
+                      <span>Conseils</span>
+                    </TabsTrigger>
+                  </TabsList>
+                </div>
               </div>
             </div>
             
