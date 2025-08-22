@@ -1,6 +1,7 @@
+
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
-import { Menu, X, ShoppingBag } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { useNavigate } from 'react-router-dom';
 
 const Navbar = () => {
@@ -45,8 +46,11 @@ const Navbar = () => {
         <div className="flex justify-between items-center">
           <div className="flex items-center">
             <a href="/" className="flex items-center">
-              <ShoppingBag className="h-8 w-8 text-leaf-green mr-2" />
-              <span className="text-xl font-bold text-yellow-400">KiltirBox</span>
+              <img 
+                src="/lovable-uploads/3f05a8b0-01b9-4e90-a92c-901b9d59163a.png" 
+                alt="KiltirBox Logo" 
+                className="h-12 w-auto"
+              />
             </a>
           </div>
           
