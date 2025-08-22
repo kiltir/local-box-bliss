@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { TabsContent } from "@/components/ui/tabs";
 import { BoxProduct } from '@/types/boxes';
@@ -84,8 +85,8 @@ const BoxDetailsAdvice = ({
         };
       case 'Bourbon':
         return {
-          title: "L'art de la dégustation Bourbon",
-          advice: "Les produits Bourbon se marient parfaitement ensemble. Commencez par les arômes les plus subtils avant les plus intenses."
+          title: "Informations",
+          advice: "Avant de s'appeler Réunion, l'île fût appelée Ile Bourbon, c'est pour cela que beaucoup de nos produits possèdent cette appellation historique et culturelle."
         };
       case 'Tradition':
         return {
