@@ -21,7 +21,7 @@ const FeaturesSection = () => {
               <span className="text-white text-2xl font-bold">2</span>
             </div>
             <h3 className="text-xl font-bold mb-3">Nous préparons votre commande</h3>
-            <p className="text-gray-600">Toutes nos box sont le résultat du savoir-faire de nos partenaires locaux engagés et passionnés.</p>
+            <p className="text-gray-600">Toutes nos box sont élaborées et préparées avec soin pour vous offrir la meilleure expérience possible.</p>
           </div>
           
           <div className="text-center">
