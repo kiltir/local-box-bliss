@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { TabsContent } from "@/components/ui/tabs";
 import { BoxProduct } from '@/types/boxes';
@@ -121,7 +122,7 @@ const BoxDetailsAdvice = ({
       case 'Bourbon':
         return {
           title: 'Pourquoi "Bourbon" ?',
-          explanation: "La Box Bourbon est le résultat de l'histoire, du savoir-faire et de la qualité des produits d'un territoire d'exception."
+          explanation: "La Box Bourbon est née de l'histoire, du savoir-faire et de la qualité des produits d'un territoire d'exception."
         };
       case 'Découverte':
         return {
