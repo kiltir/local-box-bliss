@@ -8,6 +8,7 @@ import { CalendarIcon, Plane, MapPin, Clock } from "lucide-react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { cn } from "@/lib/utils";
+
 const Hero = () => {
   const [arrivalDate, setArrivalDate] = useState<Date>();
   const [departureDate, setDepartureDate] = useState<Date>();
@@ -217,7 +218,7 @@ const Hero = () => {
                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
                       <Button className="bg-leaf-green hover:bg-dark-green text-white px-6 py-3" onClick={handleAirportPickup}>
                         <Plane className="mr-2 h-4 w-4" />
-                        Récupérer à l'aéroport de Gillot
+                        Récupérer à l'aéroport
                       </Button>
                       <Button variant="outline" className="border-leaf-green text-leaf-green hover:bg-leaf-green/10 px-6 py-3" onClick={handlePlanPurchase}>
                         Recevoir en Métropole
@@ -293,4 +294,5 @@ const Hero = () => {
       </Dialog>
     </>;
 };
+
 export default Hero;
