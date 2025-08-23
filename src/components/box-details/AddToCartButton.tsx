@@ -1,18 +1,48 @@
 
 import React from 'react';
 import { Button } from "@/components/ui/button";
+import { useCart } from '@/hooks/useCart';
+import { toast } from 'sonner';
 
 interface AddToCartButtonProps {
   weightExceeded: boolean;
   weightLimit: number;
+  boxData?: {
+    id: number;
+    baseTitle: string;
+    price: number;
+    description: string;
+    image: string;
+    items: number;
+    theme: 'Découverte' | 'Bourbon' | 'Tradition' | 'Saison';
+    rating: number;
+    reviewCount?: number;
+    size: 'unique';
+    weightLimit: number;
+    products: any[];
+  };
 }
 
-const AddToCartButton = ({ weightExceeded, weightLimit }: AddToCartButtonProps) => {
+const AddToCartButton = ({ weightExceeded, weightLimit, boxData }: AddToCartButtonProps) => {
+  const { addToCart } = useCart();
+
+  const handleAddToCart = () => {
+    if (weightExceeded) return;
+    
+    if (boxData) {
+      addToCart(boxData);
+      toast.success(`${boxData.baseTitle} ajouté au panier !`);
+    } else {
+      toast.error('Erreur lors de l\'ajout au panier');
+    }
+  };
+
   return (
     <>
       <Button 
         className={`w-full ${weightExceeded ? 'bg-gray-400 cursor-not-allowed' : 'bg-leaf-green hover:bg-dark-green'} text-white`}
         disabled={weightExceeded}
+        onClick={handleAddToCart}
       >
         {weightExceeded ? 'Poids maximum dépassé' : 'Ajouter au panier'}
       </Button>

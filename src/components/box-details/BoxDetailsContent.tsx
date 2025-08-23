@@ -17,6 +17,11 @@ interface BoxDetailsContentProps {
   boxId: number;
   onBoxChange?: (boxId: number) => void;
   title: string;
+  price: number;
+  description: string;
+  items: number;
+  rating: number;
+  reviewCount?: number;
 }
 
 const BoxDetailsContent = ({
@@ -27,7 +32,12 @@ const BoxDetailsContent = ({
   boxTheme,
   boxId,
   onBoxChange,
-  title
+  title,
+  price,
+  description,
+  items,
+  rating,
+  reviewCount
 }: BoxDetailsContentProps) => {
   const {
     selectedProductIds,
@@ -43,6 +53,22 @@ const BoxDetailsContent = ({
 
   // Utilise le tableau d'images s'il existe, sinon utilise l'image principale
   const carouselImages = images && images.length > 0 ? images : [image];
+
+  // Créer l'objet boxData pour le panier
+  const boxData = {
+    id: boxId,
+    baseTitle: title,
+    price,
+    description,
+    image,
+    items,
+    theme: boxTheme,
+    rating,
+    reviewCount,
+    size: 'unique' as const,
+    weightLimit,
+    products,
+  };
 
   return (
     <TabsContent value="details" className="p-3 sm:p-6 pt-3 sm:pt-4">
@@ -78,7 +104,8 @@ const BoxDetailsContent = ({
       
       <AddToCartButton 
         weightExceeded={weightExceeded} 
-        weightLimit={weightLimit} 
+        weightLimit={weightLimit}
+        boxData={boxData}
       />
     </TabsContent>
   );

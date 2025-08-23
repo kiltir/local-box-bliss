@@ -1,9 +1,11 @@
+
 import React from 'react';
 import { X, Lightbulb } from 'lucide-react';
 import { BoxProduct } from '@/types/boxes';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import BoxDetailsContent from './BoxDetailsContent';
 import BoxDetailsAdvice from './BoxDetailsAdvice';
+
 interface BoxDetailsModalProps {
   title: string;
   price: number;
@@ -16,7 +18,11 @@ interface BoxDetailsModalProps {
   boxId: number;
   onBoxChange?: (boxId: number) => void;
   boxTheme: 'Découverte' | 'Bourbon' | 'Tradition' | 'Saison';
+  items: number;
+  rating: number;
+  reviewCount?: number;
 }
+
 const BoxDetailsModal = ({
   title,
   price,
@@ -28,13 +34,21 @@ const BoxDetailsModal = ({
   boxSize,
   boxId,
   onBoxChange,
-  boxTheme
+  boxTheme,
+  items,
+  rating,
+  reviewCount
 }: BoxDetailsModalProps) => {
   const [activeTab, setActiveTab] = React.useState<"details" | "advice">("details");
-  return <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-2 sm:p-4">
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-2 sm:p-4">
       <div className="bg-white rounded-lg max-w-5xl w-full h-full sm:h-auto sm:max-h-[90vh] overflow-y-auto">
         <div className="relative">
-          <button onClick={onClose} className="absolute top-3 right-3 sm:top-4 sm:right-4 text-gray-500 hover:text-gray-700 z-10 bg-white rounded-full p-1 shadow-sm">
+          <button 
+            onClick={onClose} 
+            className="absolute top-3 right-3 sm:top-4 sm:right-4 text-gray-500 hover:text-gray-700 z-10 bg-white rounded-full p-1 shadow-sm"
+          >
             <X className="h-5 w-5 sm:h-6 sm:w-6" />
           </button>
           
@@ -56,7 +70,6 @@ const BoxDetailsModal = ({
                       Détails
                     </TabsTrigger>
                     <TabsTrigger value="advice" className="flex items-center justify-center gap-1 sm:gap-2 text-sm font-semibold px-4 py-2 rounded-md transition-all duration-200 data-[state=active]:bg-leaf-green data-[state=active]:text-white data-[state=active]:shadow-sm hover:bg-leaf-green/10">
-                      
                       <span>Conseils</span>
                     </TabsTrigger>
                   </TabsList>
@@ -64,12 +77,28 @@ const BoxDetailsModal = ({
               </div>
             </div>
             
-            <BoxDetailsContent isActive={activeTab === "details"} products={products} image={image} images={images} boxTheme={boxTheme} boxId={boxId} onBoxChange={onBoxChange} title={title} />
+            <BoxDetailsContent 
+              isActive={activeTab === "details"} 
+              products={products} 
+              image={image} 
+              images={images} 
+              boxTheme={boxTheme} 
+              boxId={boxId} 
+              onBoxChange={onBoxChange} 
+              title={title}
+              price={price}
+              description={description}
+              items={items}
+              rating={rating}
+              reviewCount={reviewCount}
+            />
             
             <BoxDetailsAdvice products={products} boxTheme={boxTheme} />
           </Tabs>
         </div>
       </div>
-    </div>;
+    </div>
+  );
 };
+
 export default BoxDetailsModal;

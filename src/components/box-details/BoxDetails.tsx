@@ -28,6 +28,9 @@ export const BoxDetails = ({ onClose, boxId, onBoxChange }: BoxDetailsProps) => 
       boxId={boxId}
       onBoxChange={onBoxChange}
       boxTheme={selectedBox.theme}
+      items={selectedBox.items}
+      rating={selectedBox.rating}
+      reviewCount={selectedBox.reviewCount}
     />
   );
 };

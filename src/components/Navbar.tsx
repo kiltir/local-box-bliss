@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Menu, X, ShoppingBag, User, LogOut } from "lucide-react";
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
+import CartIcon from './CartIcon';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -89,6 +90,9 @@ const Navbar = () => {
             </button>
             <a href="/notre-histoire" className="text-gray-600 hover:text-leaf-green transition-colors">Notre Histoire</a>
             
+            {/* Cart Icon */}
+            <CartIcon />
+            
             {/* Auth Section */}
             {loading ? (
               <div className="w-24 h-10 bg-gray-200 animate-pulse rounded"></div>
@@ -129,7 +133,8 @@ const Navbar = () => {
           </div>
           
           {/* Mobile Menu Button */}
-          <div className="md:hidden flex items-center">
+          <div className="md:hidden flex items-center space-x-2">
+            <CartIcon />
             <button onClick={() => setIsOpen(!isOpen)} className="text-gray-600 focus:outline-none">
               {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </button>
