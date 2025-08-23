@@ -20,13 +20,7 @@ function Calendar({
     <DayPicker
       showOutsideDays={showOutsideDays}
       locale={locale}
-      labels={{
-        labelMonthDropdown: () => "Mois",
-        labelYearDropdown: () => "Année",
-        labelNext: () => "Mois suivant",
-        labelPrevious: () => "Mois précédent",
-      }}
-      className={cn("p-3 pointer-events-auto", className)}
+      className={cn("p-3", className)}
       classNames={{
         months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
         month: "space-y-4",
