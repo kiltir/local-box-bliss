@@ -10,9 +10,10 @@ import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import Navbar from '@/components/Navbar';
 
 const MesInformations = () => {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
@@ -27,12 +28,14 @@ const MesInformations = () => {
   });
 
   useEffect(() => {
-    if (!user) {
+    if (!loading && !user) {
       navigate('/auth');
       return;
     }
-    fetchProfile();
-  }, [user, navigate]);
+    if (user) {
+      fetchProfile();
+    }
+  }, [user, loading, navigate]);
 
   const fetchProfile = async () => {
     try {
@@ -107,8 +110,23 @@ const MesInformations = () => {
     }));
   };
 
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-leaf-green/5 to-yellow-400/5">
+        <Navbar />
+        <div className="flex items-center justify-center pt-20">
+          <div className="text-center">
+            <User className="h-12 w-12 text-leaf-green mx-auto mb-4 animate-pulse" />
+            <p className="text-gray-600">Chargement...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-leaf-green/5 to-yellow-400/5">
+      <Navbar />
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-2xl mx-auto">
           {/* Header */}

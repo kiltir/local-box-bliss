@@ -8,6 +8,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import Navbar from '@/components/Navbar';
 
 interface OrderItem {
   id: string;
@@ -30,19 +31,21 @@ interface Order {
 }
 
 const MesCommandes = () => {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
   const [orders, setOrders] = useState<Order[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (!user) {
+    if (!loading && !user) {
       navigate('/auth');
       return;
     }
-    fetchOrders();
-  }, [user, navigate]);
+    if (user) {
+      fetchOrders();
+    }
+  }, [user, loading, navigate]);
 
   const fetchOrders = async () => {
     try {
@@ -109,12 +112,15 @@ const MesCommandes = () => {
     }).format(price);
   };
 
-  if (isLoading) {
+  if (loading || isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-leaf-green/5 to-yellow-400/5 flex items-center justify-center">
-        <div className="text-center">
-          <Package className="h-12 w-12 text-leaf-green mx-auto mb-4 animate-pulse" />
-          <p className="text-gray-600">Chargement de vos commandes...</p>
+      <div className="min-h-screen bg-gradient-to-br from-leaf-green/5 to-yellow-400/5">
+        <Navbar />
+        <div className="flex items-center justify-center pt-20">
+          <div className="text-center">
+            <Package className="h-12 w-12 text-leaf-green mx-auto mb-4 animate-pulse" />
+            <p className="text-gray-600">Chargement de vos commandes...</p>
+          </div>
         </div>
       </div>
     );
@@ -122,6 +128,7 @@ const MesCommandes = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-leaf-green/5 to-yellow-400/5">
+      <Navbar />
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto">
           {/* Header */}
