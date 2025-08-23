@@ -5,16 +5,14 @@ import { Button } from "@/components/ui/button";
 interface AddToCartButtonProps {
   weightExceeded: boolean;
   weightLimit: number;
-  onClick?: () => void;
 }
 
-const AddToCartButton = ({ weightExceeded, weightLimit, onClick }: AddToCartButtonProps) => {
+const AddToCartButton = ({ weightExceeded, weightLimit }: AddToCartButtonProps) => {
   return (
     <>
       <Button 
         className={`w-full ${weightExceeded ? 'bg-gray-400 cursor-not-allowed' : 'bg-leaf-green hover:bg-dark-green'} text-white`}
         disabled={weightExceeded}
-        onClick={onClick}
       >
         {weightExceeded ? 'Poids maximum dépassé' : 'Ajouter au panier'}
       </Button>

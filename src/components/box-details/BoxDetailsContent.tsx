@@ -4,8 +4,6 @@ import { TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { BoxProduct } from '@/types/boxes';
 import { useBoxCalculations } from './useBoxCalculations';
-import { useCart } from '@/hooks/useCart';
-import { boxes } from '@/data/boxes';
 import ProductList from './ProductList';
 import AddToCartButton from './AddToCartButton';
 import BoxImageCarousel from './BoxImageCarousel';
@@ -31,7 +29,6 @@ const BoxDetailsContent = ({
   onBoxChange,
   title
 }: BoxDetailsContentProps) => {
-  const { addItem } = useCart();
   const {
     selectedProductIds,
     productQuantities,
@@ -43,20 +40,6 @@ const BoxDetailsContent = ({
     totalVolume,
     volumePercentage
   } = useBoxCalculations(products, boxTheme, boxId, onBoxChange);
-
-  // Get box data to retrieve price
-  const boxData = boxes.find(box => box.id === boxId);
-  const boxPrice = boxData?.price || 0;
-
-  const handleAddToCart = () => {
-    if (boxData) {
-      addItem({
-        boxType: boxData.baseTitle,
-        unitPrice: boxData.price,
-        quantity: 1
-      });
-    }
-  };
 
   // Utilise le tableau d'images s'il existe, sinon utilise l'image principale
   const carouselImages = images && images.length > 0 ? images : [image];
@@ -95,8 +78,7 @@ const BoxDetailsContent = ({
       
       <AddToCartButton 
         weightExceeded={weightExceeded} 
-        weightLimit={weightLimit}
-        onClick={handleAddToCart}
+        weightLimit={weightLimit} 
       />
     </TabsContent>
   );

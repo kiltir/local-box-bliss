@@ -1,7 +1,6 @@
 
 import React from 'react';
 import { Button } from "@/components/ui/button";
-import { useCart } from '@/hooks/useCart';
 import StarRating from './StarRating';
 
 interface BoxCardProps {
@@ -17,8 +16,6 @@ interface BoxCardProps {
 }
 
 const BoxCard = ({ title, price, description, image, items, theme, rating, reviewCount, onClick }: BoxCardProps) => {
-  const { addItem } = useCart();
-
   const getBadgeColor = () => {
     switch (theme) {
       case 'Découverte':
@@ -32,15 +29,6 @@ const BoxCard = ({ title, price, description, image, items, theme, rating, revie
       default:
         return 'bg-gray-100 text-gray-800';
     }
-  };
-
-  const handleAddToCart = (e: React.MouseEvent) => {
-    e.stopPropagation(); // Prevent opening the details modal
-    addItem({
-      boxType: title,
-      unitPrice: price,
-      quantity: 1
-    });
   };
 
   // Utiliser la nouvelle image téléchargée "kb1"
@@ -86,10 +74,7 @@ const BoxCard = ({ title, price, description, image, items, theme, rating, revie
           >
             Détails
           </Button>
-          <Button 
-            className="flex-1 bg-leaf-green hover:bg-dark-green text-white"
-            onClick={handleAddToCart}
-          >
+          <Button className="flex-1 bg-leaf-green hover:bg-dark-green text-white">
             Ajouter
           </Button>
         </div>
