@@ -185,7 +185,7 @@ const Auth = () => {
                     <Input
                       id="signup-name"
                       type="text"
-                      placeholder="Jean Dupont"
+                      placeholder="Edmond Albius"
                       value={fullName}
                       onChange={(e) => setFullName(e.target.value)}
                       className="border-gray-200 focus:border-leaf-green focus:ring-leaf-green"
