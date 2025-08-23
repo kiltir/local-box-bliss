@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
@@ -255,6 +254,9 @@ const MesInformations = () => {
                                 date > new Date() || date < new Date("1900-01-01")
                               }
                               initialFocus
+                              captionLayout="dropdown-buttons"
+                              fromYear={1900}
+                              toYear={new Date().getFullYear()}
                               className={cn("p-3 pointer-events-auto")}
                             />
                           </PopoverContent>
