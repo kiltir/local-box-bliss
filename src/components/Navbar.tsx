@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { ShoppingBag, Menu, X, User, LogOut, Settings, Package, ShoppingCart } from "lucide-react";
 import { useAuth } from '@/hooks/useAuth';
+import { useCart } from '@/hooks/useCart';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   DropdownMenu,
@@ -15,11 +16,16 @@ import {
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { user, signOut } = useAuth();
+  const { itemCount } = useCart();
   const navigate = useNavigate();
 
   const handleSignOut = async () => {
     await signOut();
     navigate('/');
+  };
+
+  const handleCartClick = () => {
+    navigate('/mes-commandes');
   };
 
   const menuItems = [
@@ -52,11 +58,11 @@ const Navbar = () => {
             
             <div className="flex items-center space-x-4">
               {/* Panier */}
-              <Button variant="ghost" className="relative">
+              <Button variant="ghost" className="relative" onClick={handleCartClick}>
                 <ShoppingCart className="h-5 w-5 text-gray-700" />
                 {/* Badge pour le nombre d'articles */}
                 <span className="absolute -top-1 -right-1 bg-leaf-green text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                  0
+                  {itemCount}
                 </span>
               </Button>
 
@@ -126,11 +132,18 @@ const Navbar = () => {
               
               {/* Panier mobile */}
               <div className="px-3 py-2">
-                <Button variant="ghost" className="w-full justify-start relative">
+                <Button 
+                  variant="ghost" 
+                  className="w-full justify-start relative"
+                  onClick={() => {
+                    handleCartClick();
+                    setIsOpen(false);
+                  }}
+                >
                   <ShoppingCart className="h-4 w-4 mr-2" />
                   Mon panier
                   <span className="absolute right-3 bg-leaf-green text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                    0
+                    {itemCount}
                   </span>
                 </Button>
               </div>
