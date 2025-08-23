@@ -24,22 +24,12 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import { Calendar } from '@/components/ui/calendar';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
-import { CalendarIcon } from 'lucide-react';
-import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
-import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 
 interface ProfileFormData {
   full_name: string;
   username: string;
-  date_of_birth: Date | null;
+  date_of_birth: string;
   gender: string;
   billing_address_street: string;
   billing_address_city: string;
@@ -72,7 +62,7 @@ const MesInformations = () => {
     defaultValues: {
       full_name: '',
       username: '',
-      date_of_birth: null,
+      date_of_birth: '',
       gender: '',
       billing_address_street: '',
       billing_address_city: '',
@@ -114,7 +104,7 @@ const MesInformations = () => {
         form.reset({
           full_name: profileData.full_name || '',
           username: profileData.username || '',
-          date_of_birth: profileData.date_of_birth ? new Date(profileData.date_of_birth) : null,
+          date_of_birth: profileData.date_of_birth || '',
           gender: profileData.gender || '',
           billing_address_street: profileData.billing_address_street || '',
           billing_address_city: profileData.billing_address_city || '',
@@ -136,7 +126,7 @@ const MesInformations = () => {
         id: user.id,
         full_name: data.full_name,
         username: data.username,
-        date_of_birth: data.date_of_birth?.toISOString().split('T')[0] || null,
+        date_of_birth: data.date_of_birth || null,
         gender: data.gender,
         billing_address_street: data.billing_address_street,
         billing_address_city: data.billing_address_city,
@@ -225,40 +215,14 @@ const MesInformations = () => {
                     control={form.control}
                     name="date_of_birth"
                     render={({ field }) => (
-                      <FormItem className="flex flex-col">
+                      <FormItem>
                         <FormLabel>Date de naissance</FormLabel>
-                        <Popover>
-                          <PopoverTrigger asChild>
-                            <FormControl>
-                              <Button
-                                variant="outline"
-                                className={cn(
-                                  "pl-3 text-left font-normal",
-                                  !field.value && "text-muted-foreground"
-                                )}
-                              >
-                                {field.value ? (
-                                  format(field.value, "PPP", { locale: fr })
-                                ) : (
-                                  <span>Sélectionner une date</span>
-                                )}
-                                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                              </Button>
-                            </FormControl>
-                          </PopoverTrigger>
-                          <PopoverContent className="w-auto p-0" align="start">
-                            <Calendar
-                              mode="single"
-                              selected={field.value || undefined}
-                              onSelect={field.onChange}
-                              disabled={(date) =>
-                                date > new Date() || date < new Date("1900-01-01")
-                              }
-                              initialFocus
-                              className={cn("p-3 pointer-events-auto")}
-                            />
-                          </PopoverContent>
-                        </Popover>
+                        <FormControl>
+                          <Input 
+                            placeholder="jj/mm/aaaa" 
+                            {...field} 
+                          />
+                        </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
