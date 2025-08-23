@@ -99,12 +99,22 @@ export const useCart = () => {
 
       if (itemError) throw itemError;
 
+      // Get current total amount to calculate new total
+      const { data: currentOrder, error: fetchError } = await supabase
+        .from('orders')
+        .select('total_amount')
+        .eq('id', orderId)
+        .single();
+
+      if (fetchError) throw fetchError;
+
+      const newTotalAmount = Number(currentOrder.total_amount) + (unitPrice * quantity);
+
       // Update total amount
-      const totalAddition = unitPrice * quantity;
       const { error: updateError } = await supabase
         .from('orders')
         .update({
-          total_amount: supabase.sql`total_amount + ${totalAddition}`,
+          total_amount: newTotalAmount,
           updated_at: new Date().toISOString()
         })
         .eq('id', orderId);
