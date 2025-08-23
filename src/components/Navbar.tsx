@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Menu, X, ShoppingBag, User, LogOut } from "lucide-react";
@@ -94,6 +93,13 @@ const Navbar = () => {
                     {user.user_metadata?.full_name || user.email}
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => navigate('/mes-informations')}>
+                    Mes informations
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate('/mes-commandes')}>
+                    Mes commandes
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={handleSignOut} className="text-red-600">
                     <LogOut className="h-4 w-4 mr-2" />
                     Se déconnecter
@@ -143,7 +149,27 @@ const Navbar = () => {
                   </div>
                   <Button 
                     variant="outline" 
-                    className="w-full text-red-600 border-red-200 hover:bg-red-50"
+                    className="w-full justify-start"
+                    onClick={() => {
+                      navigate('/mes-informations');
+                      setIsOpen(false);
+                    }}
+                  >
+                    Mes informations
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    className="w-full justify-start"
+                    onClick={() => {
+                      navigate('/mes-commandes');
+                      setIsOpen(false);
+                    }}
+                  >
+                    Mes commandes
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    className="w-full text-red-600 border-red-200 hover:bg-red-50 justify-start"
                     onClick={handleSignOut}
                   >
                     <LogOut className="h-4 w-4 mr-2" />
