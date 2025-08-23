@@ -2,11 +2,9 @@ import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Menu, X, ShoppingBag } from "lucide-react";
 import { useNavigate } from 'react-router-dom';
-
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
-
   const handleNavigation = (section: string) => {
     if (window.location.pathname !== '/') {
       // Si on n'est pas sur la page d'accueil, naviguer vers la page d'accueil puis vers la section
@@ -17,9 +15,9 @@ const Navbar = () => {
           // Scroll avec un offset pour s'assurer que le titre est bien visible
           const headerHeight = 80; // Hauteur approximative du header sticky
           const elementTop = element.offsetTop - headerHeight;
-          window.scrollTo({ 
-            top: elementTop, 
-            behavior: 'smooth' 
+          window.scrollTo({
+            top: elementTop,
+            behavior: 'smooth'
           });
         }
       }, 100);
@@ -30,17 +28,15 @@ const Navbar = () => {
         // Scroll avec un offset pour s'assurer que le titre est bien visible
         const headerHeight = 80; // Hauteur approximative du header sticky
         const elementTop = element.offsetTop - headerHeight;
-        window.scrollTo({ 
-          top: elementTop, 
-          behavior: 'smooth' 
+        window.scrollTo({
+          top: elementTop,
+          behavior: 'smooth'
         });
       }
     }
     setIsOpen(false);
   };
-
-  return (
-    <nav className="bg-white border-b border-gray-200 py-4 sticky top-0 z-50">
+  return <nav className="bg-white border-b border-gray-200 py-4 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center">
           <div className="flex items-center">
@@ -52,28 +48,17 @@ const Navbar = () => {
           
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
-            <button 
-              onClick={() => handleNavigation('concept')} 
-              className="text-gray-600 hover:text-leaf-green transition-colors cursor-pointer"
-            >
+            <button onClick={() => handleNavigation('concept')} className="text-gray-600 hover:text-leaf-green transition-colors cursor-pointer">
               Mode d'emploi
             </button>
-            <button 
-              onClick={() => handleNavigation('boxes')} 
-              className="text-gray-600 hover:text-leaf-green transition-colors cursor-pointer"
-            >
+            <button onClick={() => handleNavigation('boxes')} className="text-gray-600 hover:text-leaf-green transition-colors cursor-pointer">
               Nos Box
             </button>
-            <button 
-              onClick={() => handleNavigation('producers')} 
-              className="text-gray-600 hover:text-leaf-green transition-colors cursor-pointer"
-            >
+            <button onClick={() => handleNavigation('producers')} className="text-gray-600 hover:text-leaf-green transition-colors cursor-pointer">
               Nos Partenaires
             </button>
             <a href="/notre-histoire" className="text-gray-600 hover:text-leaf-green transition-colors">Notre Histoire</a>
-            <Button className="bg-leaf-green hover:bg-dark-green text-white">
-              Commander
-            </Button>
+            <Button className="bg-leaf-green hover:bg-dark-green text-white">Se connecter</Button>
           </div>
           
           {/* Mobile Menu Button */}
@@ -85,24 +70,14 @@ const Navbar = () => {
         </div>
         
         {/* Mobile Navigation */}
-        {isOpen && (
-          <div className="md:hidden mt-4 py-2 space-y-4">
-            <button 
-              onClick={() => handleNavigation('concept')} 
-              className="block text-gray-600 hover:text-leaf-green py-2 transition-colors text-left w-full"
-            >
+        {isOpen && <div className="md:hidden mt-4 py-2 space-y-4">
+            <button onClick={() => handleNavigation('concept')} className="block text-gray-600 hover:text-leaf-green py-2 transition-colors text-left w-full">
               Mode d'emploi
             </button>
-            <button 
-              onClick={() => handleNavigation('boxes')} 
-              className="block text-gray-600 hover:text-leaf-green py-2 transition-colors text-left w-full"
-            >
+            <button onClick={() => handleNavigation('boxes')} className="block text-gray-600 hover:text-leaf-green py-2 transition-colors text-left w-full">
               Nos Box
             </button>
-            <button 
-              onClick={() => handleNavigation('producers')} 
-              className="block text-gray-600 hover:text-leaf-green py-2 transition-colors text-left w-full"
-            >
+            <button onClick={() => handleNavigation('producers')} className="block text-gray-600 hover:text-leaf-green py-2 transition-colors text-left w-full">
               Nos Partenaires
             </button>
             <a href="/notre-histoire" className="block text-gray-600 hover:text-leaf-green py-2 transition-colors" onClick={() => setIsOpen(false)}>
@@ -111,11 +86,8 @@ const Navbar = () => {
             <Button className="w-full bg-leaf-green hover:bg-dark-green text-white">
               Commander
             </Button>
-          </div>
-        )}
+          </div>}
       </div>
-    </nav>
-  );
+    </nav>;
 };
-
 export default Navbar;
