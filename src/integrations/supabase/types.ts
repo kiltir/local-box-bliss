@@ -14,27 +14,122 @@ export type Database = {
   }
   public: {
     Tables: {
+      order_items: {
+        Row: {
+          box_type: string
+          created_at: string
+          id: string
+          order_id: string
+          quantity: number
+          unit_price: number
+        }
+        Insert: {
+          box_type: string
+          created_at?: string
+          id?: string
+          order_id: string
+          quantity?: number
+          unit_price: number
+        }
+        Update: {
+          box_type?: string
+          created_at?: string
+          id?: string
+          order_id?: string
+          quantity?: number
+          unit_price?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_items_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      orders: {
+        Row: {
+          created_at: string
+          id: string
+          order_number: string
+          shipping_address_city: string | null
+          shipping_address_country: string | null
+          shipping_address_postal_code: string | null
+          shipping_address_street: string | null
+          status: string
+          total_amount: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          order_number: string
+          shipping_address_city?: string | null
+          shipping_address_country?: string | null
+          shipping_address_postal_code?: string | null
+          shipping_address_street?: string | null
+          status?: string
+          total_amount: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          order_number?: string
+          shipping_address_city?: string | null
+          shipping_address_country?: string | null
+          shipping_address_postal_code?: string | null
+          shipping_address_street?: string | null
+          status?: string
+          total_amount?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
+          billing_address_city: string | null
+          billing_address_country: string | null
+          billing_address_postal_code: string | null
+          billing_address_street: string | null
           created_at: string
+          date_of_birth: string | null
           full_name: string | null
+          gender: string | null
           id: string
           updated_at: string
           username: string | null
         }
         Insert: {
           avatar_url?: string | null
+          billing_address_city?: string | null
+          billing_address_country?: string | null
+          billing_address_postal_code?: string | null
+          billing_address_street?: string | null
           created_at?: string
+          date_of_birth?: string | null
           full_name?: string | null
+          gender?: string | null
           id: string
           updated_at?: string
           username?: string | null
         }
         Update: {
           avatar_url?: string | null
+          billing_address_city?: string | null
+          billing_address_country?: string | null
+          billing_address_postal_code?: string | null
+          billing_address_street?: string | null
           created_at?: string
+          date_of_birth?: string | null
           full_name?: string | null
+          gender?: string | null
           id?: string
           updated_at?: string
           username?: string | null

@@ -47,11 +47,26 @@ interface ProfileFormData {
   billing_address_country: string;
 }
 
+interface ProfileData {
+  id: string;
+  full_name: string | null;
+  username: string | null;
+  avatar_url: string | null;
+  date_of_birth: string | null;
+  gender: string | null;
+  billing_address_street: string | null;
+  billing_address_city: string | null;
+  billing_address_postal_code: string | null;
+  billing_address_country: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
 const MesInformations = () => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
-  const [profile, setProfile] = useState<any>(null);
+  const [profile, setProfile] = useState<ProfileData | null>(null);
 
   const form = useForm<ProfileFormData>({
     defaultValues: {
@@ -94,16 +109,17 @@ const MesInformations = () => {
       }
 
       if (data) {
-        setProfile(data);
+        const profileData = data as ProfileData;
+        setProfile(profileData);
         form.reset({
-          full_name: data.full_name || '',
-          username: data.username || '',
-          date_of_birth: data.date_of_birth ? new Date(data.date_of_birth) : null,
-          gender: data.gender || '',
-          billing_address_street: data.billing_address_street || '',
-          billing_address_city: data.billing_address_city || '',
-          billing_address_postal_code: data.billing_address_postal_code || '',
-          billing_address_country: data.billing_address_country || 'France',
+          full_name: profileData.full_name || '',
+          username: profileData.username || '',
+          date_of_birth: profileData.date_of_birth ? new Date(profileData.date_of_birth) : null,
+          gender: profileData.gender || '',
+          billing_address_street: profileData.billing_address_street || '',
+          billing_address_city: profileData.billing_address_city || '',
+          billing_address_postal_code: profileData.billing_address_postal_code || '',
+          billing_address_country: profileData.billing_address_country || 'France',
         });
       }
     } catch (error) {
