@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
-import { ShoppingBag, Menu, X, User, LogOut, Settings, Package } from "lucide-react";
+import { ShoppingBag, Menu, X, User, LogOut, Settings, Package, ShoppingCart } from "lucide-react";
 import { useAuth } from '@/hooks/useAuth';
 import { Link, useNavigate } from 'react-router-dom';
 import {
@@ -50,41 +50,52 @@ const Navbar = () => {
               </Link>
             ))}
             
-            {user ? (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="flex items-center space-x-2">
-                    <User className="h-4 w-4" />
-                    <span>Mon compte</span>
+            <div className="flex items-center space-x-4">
+              {/* Panier */}
+              <Button variant="ghost" className="relative">
+                <ShoppingCart className="h-5 w-5 text-gray-700" />
+                {/* Badge pour le nombre d'articles */}
+                <span className="absolute -top-1 -right-1 bg-leaf-green text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                  0
+                </span>
+              </Button>
+
+              {user ? (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" className="flex items-center space-x-2">
+                      <User className="h-4 w-4" />
+                      <span>Mon compte</span>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-56">
+                    <DropdownMenuItem asChild>
+                      <Link to="/mes-informations" className="flex items-center">
+                        <Settings className="h-4 w-4 mr-2" />
+                        Mes informations
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link to="/mes-commandes" className="flex items-center">
+                        <Package className="h-4 w-4 mr-2" />
+                        Mes commandes
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={handleSignOut} className="text-red-600">
+                      <LogOut className="h-4 w-4 mr-2" />
+                      Se déconnecter
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              ) : (
+                <Link to="/auth">
+                  <Button className="bg-leaf-green hover:bg-dark-green text-white">
+                    Se connecter
                   </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56">
-                  <DropdownMenuItem asChild>
-                    <Link to="/mes-informations" className="flex items-center">
-                      <Settings className="h-4 w-4 mr-2" />
-                      Mes informations
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link to="/mes-commandes" className="flex items-center">
-                      <Package className="h-4 w-4 mr-2" />
-                      Mes commandes
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={handleSignOut} className="text-red-600">
-                    <LogOut className="h-4 w-4 mr-2" />
-                    Se déconnecter
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            ) : (
-              <Link to="/auth">
-                <Button className="bg-leaf-green hover:bg-dark-green text-white">
-                  Se connecter
-                </Button>
-              </Link>
-            )}
+                </Link>
+              )}
+            </div>
           </div>
 
           {/* Menu mobile */}
@@ -112,6 +123,17 @@ const Navbar = () => {
                   {item.label}
                 </Link>
               ))}
+              
+              {/* Panier mobile */}
+              <div className="px-3 py-2">
+                <Button variant="ghost" className="w-full justify-start relative">
+                  <ShoppingCart className="h-4 w-4 mr-2" />
+                  Mon panier
+                  <span className="absolute right-3 bg-leaf-green text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                    0
+                  </span>
+                </Button>
+              </div>
               
               {user ? (
                 <div className="space-y-1">
