@@ -20,7 +20,7 @@ const BoxesSection = () => {
   const filteredBoxes = boxes.filter(box => box.theme === selectedTheme);
 
   return (
-    <section id="boxes" className="py-[15px]">
+    <section id="boxes" className="py-[15px] scroll-mt-[88px] md:scroll-mt-[80px]">
       <div className="container-section py-[15px]">
         <div className="text-center mb-12 fade-in">
           <h2 className="text-3xl font-bold mb-4">Découvrez nos box</h2>

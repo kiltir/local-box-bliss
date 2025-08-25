@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Menu, X, ShoppingBag, User, LogOut } from "lucide-react";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import CartIcon from './CartIcon';
 import {
@@ -16,38 +16,27 @@ import {
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
   const { user, signOut, loading } = useAuth();
 
   const handleNavigation = (section: string) => {
-    if (window.location.pathname !== '/') {
-      // Si on n'est pas sur la page d'accueil, naviguer vers la page d'accueil puis vers la section
-      navigate('/');
-      setTimeout(() => {
-        const element = document.getElementById(section.replace('#', ''));
-        if (element) {
-          // Scroll avec un offset pour s'assurer que le titre est bien visible
-          const headerHeight = 80; // Hauteur approximative du header sticky
-          const elementTop = element.offsetTop - headerHeight;
-          window.scrollTo({
-            top: elementTop,
-            behavior: 'smooth'
-          });
-        }
-      }, 100);
-    } else {
-      // Si on est déjà sur la page d'accueil, juste scroller vers la section
-      const element = document.getElementById(section.replace('#', ''));
-      if (element) {
-        // Scroll avec un offset pour s'assurer que le titre est bien visible
-        const headerHeight = 80; // Hauteur approximative du header sticky
-        const elementTop = element.offsetTop - headerHeight;
-        window.scrollTo({
-          top: elementTop,
-          behavior: 'smooth'
-        });
-      }
-    }
+    const sectionId = section.replace('#', '');
+    
+    // Fermer le menu mobile immédiatement
     setIsOpen(false);
+    
+    if (location.pathname !== '/') {
+      // Si on n'est pas sur la page d'accueil, naviguer avec hash
+      navigate(`/#${sectionId}`);
+    } else {
+      // Si on est déjà sur la page d'accueil, scroller directement après un délai
+      setTimeout(() => {
+        const element = document.getElementById(sectionId);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 250);
+    }
   };
 
   const handleSignOut = async () => {

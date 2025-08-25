@@ -1,6 +1,7 @@
+
 import React from 'react';
 const FeaturesSection = () => {
-  return <section id="concept" className="bg-soft-beige/30 my-0 py-0">
+  return <section id="concept" className="bg-soft-beige/30 my-0 py-0 scroll-mt-[88px] md:scroll-mt-[80px]">
       <div className="container-section my-0 py-[30px]">
         <div className="text-center mb-12 fade-in">
           <h2 id="features-title" className="text-3xl font-bold mb-4 py-[15px]">Comment ça marche ?</h2>
