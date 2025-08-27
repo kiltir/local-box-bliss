@@ -56,8 +56,8 @@ const BoxCard = ({ title, price, description, image, items, theme, rating, revie
     toast.success(`${title} ajouté au panier !`);
   };
 
-  // Utiliser la nouvelle image téléchargée "kb1"
-  const boxImage = "/lovable-uploads/bbbefcf8-6fc3-45be-9a11-df15e8ecd5eb.png";
+  // Utiliser la nouvelle image téléchargée "KitirBox"
+  const boxImage = "/lovable-uploads/c3069f51-0eec-4ebc-b702-b987e85233e0.png";
 
   return (
     <div className="bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300">
