@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
-import { Menu, X, User, LogOut } from "lucide-react";
+import { Menu, X, ShoppingBag, User, LogOut } from "lucide-react";
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import CartIcon from './CartIcon';
@@ -61,11 +61,8 @@ const Navbar = () => {
         <div className="flex justify-between items-center">
           <div className="flex items-center">
             <a href="/" className="flex items-center">
-              <img 
-                src="/lovable-uploads/905c7055-0a09-4360-814f-7d56c2b3b684.png" 
-                alt="KiltirBox Logo" 
-                className="h-10 w-auto"
-              />
+              <ShoppingBag className="h-8 w-8 text-leaf-green mr-2" />
+              <span className="text-xl font-bold text-yellow-400">KiltirBox</span>
             </a>
           </div>
           
