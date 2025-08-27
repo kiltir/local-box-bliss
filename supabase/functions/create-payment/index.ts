@@ -14,6 +14,22 @@ const logStep = (step: string, details?: any) => {
   console.log(`[CREATE-PAYMENT] ${step}${detailsStr}`);
 };
 
+// Utility function to normalize URLs
+const toAbsoluteUrl = (url: string, origin: string): string | null => {
+  try {
+    // If already absolute, return as is
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+      return url;
+    }
+    // Convert relative URL to absolute
+    const absoluteUrl = new URL(url, origin).href;
+    return absoluteUrl;
+  } catch (error) {
+    logStep("Failed to normalize URL", { url, origin, error: error.message });
+    return null;
+  }
+};
+
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === "OPTIONS") {
@@ -28,6 +44,10 @@ serve(async (req) => {
       throw new Error("STRIPE_SECRET_KEY is not set");
     }
     logStep("Stripe key verified");
+
+    // Get origin early for URL normalization
+    const origin = req.headers.get("origin") || "http://localhost:3000";
+    logStep("Origin detected", { origin });
 
     // Parse request body
     const { items, currency = 'eur' } = await req.json();
@@ -80,24 +100,37 @@ serve(async (req) => {
       }
     }
 
-    // Build line items from cart
+    // Build line items from cart with normalized image URLs
     const lineItems = items.map((item: any) => {
       const unitAmount = Math.round(item.box.price * 100); // Convert to cents
+      
+      // Normalize image URL
+      const originalImage = item.box.image;
+      const normalizedImage = toAbsoluteUrl(originalImage, origin);
+      
       logStep("Processing item", { 
         title: item.box.baseTitle, 
         price: item.box.price, 
         quantity: item.quantity,
-        unitAmount 
+        unitAmount,
+        originalImage,
+        normalizedImage
       });
       
+      const productData: any = {
+        name: item.box.baseTitle,
+        description: item.box.description || `Box ${item.box.theme}`,
+      };
+
+      // Only add images if we have a valid normalized URL
+      if (normalizedImage) {
+        productData.images = [normalizedImage];
+      }
+
       return {
         price_data: {
           currency: currency,
-          product_data: {
-            name: item.box.baseTitle,
-            description: item.box.description || `Box ${item.box.theme}`,
-            images: item.box.image ? [item.box.image] : [],
-          },
+          product_data: productData,
           unit_amount: unitAmount,
         },
         quantity: item.quantity,
@@ -106,9 +139,6 @@ serve(async (req) => {
 
     logStep("Line items created", { count: lineItems.length });
 
-    // Get origin for redirect URLs
-    const origin = req.headers.get("origin") || "http://localhost:3000";
-    
     // Create checkout session
     const sessionConfig: any = {
       line_items: lineItems,
