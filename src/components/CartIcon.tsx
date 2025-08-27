@@ -3,6 +3,7 @@ import React from 'react';
 import { ShoppingCart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useCart } from '@/hooks/useCart';
+import { useNavigate } from 'react-router-dom';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,7 +14,12 @@ import {
 
 const CartIcon = () => {
   const { items, getTotalItems, getTotalPrice, removeFromCart, clearCart } = useCart();
+  const navigate = useNavigate();
   const totalItems = getTotalItems();
+
+  const handleCheckout = () => {
+    navigate('/checkout');
+  };
 
   return (
     <DropdownMenu>
@@ -62,7 +68,10 @@ const CartIcon = () => {
                 <span>{getTotalPrice().toFixed(2)}€</span>
               </div>
               <div className="space-y-2">
-                <Button className="w-full bg-leaf-green hover:bg-dark-green text-white">
+                <Button 
+                  className="w-full bg-leaf-green hover:bg-dark-green text-white"
+                  onClick={handleCheckout}
+                >
                   Finaliser la commande
                 </Button>
                 <Button

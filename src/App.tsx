@@ -17,6 +17,9 @@ import PolitiqueConfidentialite from "./pages/PolitiqueConfidentialite";
 import NosEngagements from "./pages/NosEngagements";
 import MesInformations from "./pages/MesInformations";
 import MesCommandes from "./pages/MesCommandes";
+import Checkout from "./pages/Checkout";
+import PaymentSuccess from "./pages/PaymentSuccess";
+import PaymentCanceled from "./pages/PaymentCanceled";
 
 const queryClient = new QueryClient();
 
@@ -30,6 +33,9 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
+            <Route path="/checkout" element={<Checkout />} />
+            <Route path="/payment-success" element={<PaymentSuccess />} />
+            <Route path="/payment-canceled" element={<PaymentCanceled />} />
             <Route path="/box-management" element={<BoxManagement3D />} />
             <Route path="/notre-histoire" element={<NotreHistoire />} />
             <Route path="/nous-contacter" element={<NousContacter />} />
