@@ -1,6 +1,7 @@
+
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
-import { Menu, X, User, LogOut } from "lucide-react";
+import { Menu, X, ShoppingBag, User, LogOut } from "lucide-react";
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import CartIcon from './CartIcon';
@@ -11,7 +12,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ShoppingBag } from "lucide-react";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -61,11 +61,8 @@ const Navbar = () => {
         <div className="flex justify-between items-center">
           <div className="flex items-center">
             <a href="/" className="flex items-center">
-              <img 
-                src="/lovable-uploads/c762a75b-79c9-4a34-aa68-f628984010a7.png" 
-                alt="KiltirBox" 
-                className="h-8 mr-2"
-              />
+              <ShoppingBag className="h-8 w-8 text-leaf-green mr-2" />
+              <span className="text-xl font-bold text-yellow-400">KiltirBox</span>
             </a>
           </div>
           
