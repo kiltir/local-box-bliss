@@ -1,9 +1,10 @@
+
 import { BoxData } from '@/types/boxes';
 
 export const saisonBox: BoxData = {
   id: 4,
   baseTitle: "Box Saison",
-  price: 26.99,
+  price: 59.90,
   description: "Une sélection de produits de saison mettant en valeur les fruits et légumes du moment.",
   image: "/lovable-uploads/ac03653a-7722-48c5-a6c8-0a25a453791b.png",
   images: [
