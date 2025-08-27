@@ -64,7 +64,7 @@ const Navbar = () => {
               <img 
                 src="/lovable-uploads/63cc4716-b9b9-4651-9eb6-6555818994a6.png" 
                 alt="KiltirBox" 
-                className="h-8 mr-2"
+                className="h-10 mr-2"
               />
             </a>
           </div>
