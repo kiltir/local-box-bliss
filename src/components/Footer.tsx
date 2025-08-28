@@ -1,38 +1,39 @@
 import React from 'react';
 import { Link, useNavigate } from "react-router-dom";
-
 const Footer = () => {
   const navigate = useNavigate();
-
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
       const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
       const offsetPosition = elementPosition - 80; // Offset for sticky navbar
-      
+
       window.scrollTo({
         top: offsetPosition,
         behavior: 'smooth'
       });
     }
   };
-
   const navigateToPage = (path: string) => {
     navigate(path);
     // Scroll to top after navigation
     setTimeout(() => {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
     }, 100);
   };
-
   const navigateToNotreHistoire = () => {
     navigate('/notre-histoire');
     // Scroll to top after navigation
     setTimeout(() => {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
     }, 100);
   };
-
   const navigateToHomeAndScrollToFeatures = () => {
     // If we're already on the home page, just scroll to features
     if (window.location.pathname === '/') {
@@ -45,7 +46,6 @@ const Footer = () => {
       }, 100);
     }
   };
-
   const navigateToHomeAndScrollToProducers = () => {
     // If we're already on the home page, just scroll to producers
     if (window.location.pathname === '/') {
@@ -58,17 +58,12 @@ const Footer = () => {
       }, 100);
     }
   };
-
   return <footer className="bg-gray-900 text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
           <div>
             <div className="flex items-center mb-4">
-              <img 
-                src="/lovable-uploads/63cc4716-b9b9-4651-9eb6-6555818994a6.png" 
-                alt="KiltirBox" 
-                className="h-10 mr-2"
-              />
+              <img src="/lovable-uploads/63cc4716-b9b9-4651-9eb6-6555818994a6.png" alt="KiltirBox" className="h-12 mr-2" />
             </div>
             <p className="text-gray-400 mb-4">Des box réunissant un savoir-faire, des traditions et la culture réunionnaise.</p>
             <div className="flex space-x-4">
@@ -89,34 +84,22 @@ const Footer = () => {
             <h3 className="text-lg font-semibold mb-4">Informations</h3>
             <ul className="space-y-2">
               <li>
-                <button 
-                  onClick={navigateToNotreHistoire}
-                  className="text-gray-400 hover:text-white transition-colors text-left"
-                >
+                <button onClick={navigateToNotreHistoire} className="text-gray-400 hover:text-white transition-colors text-left">
                   Notre Histoire
                 </button>
               </li>
               <li>
-                <button 
-                  onClick={navigateToHomeAndScrollToFeatures}
-                  className="text-gray-400 hover:text-white transition-colors text-left"
-                >
+                <button onClick={navigateToHomeAndScrollToFeatures} className="text-gray-400 hover:text-white transition-colors text-left">
                   Comment ça marche
                 </button>
               </li>
               <li>
-                <button 
-                  onClick={navigateToHomeAndScrollToProducers}
-                  className="text-gray-400 hover:text-white transition-colors text-left"
-                >
+                <button onClick={navigateToHomeAndScrollToProducers} className="text-gray-400 hover:text-white transition-colors text-left">
                   Nos Partenaires
                 </button>
               </li>
               <li>
-                <button 
-                  onClick={() => navigateToPage('/nos-engagements')}
-                  className="text-gray-400 hover:text-white transition-colors text-left"
-                >
+                <button onClick={() => navigateToPage('/nos-engagements')} className="text-gray-400 hover:text-white transition-colors text-left">
                   Nos engagements
                 </button>
               </li>
@@ -127,34 +110,22 @@ const Footer = () => {
             <h3 className="text-lg font-semibold mb-4">Service Client</h3>
             <ul className="space-y-2">
               <li>
-                <button 
-                  onClick={() => navigateToPage('/nous-contacter')}
-                  className="text-gray-400 hover:text-white transition-colors text-left"
-                >
+                <button onClick={() => navigateToPage('/nous-contacter')} className="text-gray-400 hover:text-white transition-colors text-left">
                   Nous contacter
                 </button>
               </li>
               <li>
-                <button 
-                  onClick={() => navigateToPage('/faq')}
-                  className="text-gray-400 hover:text-white transition-colors text-left"
-                >
+                <button onClick={() => navigateToPage('/faq')} className="text-gray-400 hover:text-white transition-colors text-left">
                   FAQ
                 </button>
               </li>
               <li>
-                <button 
-                  onClick={() => navigateToPage('/conditions-generales')}
-                  className="text-gray-400 hover:text-white transition-colors text-left"
-                >
+                <button onClick={() => navigateToPage('/conditions-generales')} className="text-gray-400 hover:text-white transition-colors text-left">
                   Conditions générales
                 </button>
               </li>
               <li>
-                <button 
-                  onClick={() => navigateToPage('/politique-confidentialite')}
-                  className="text-gray-400 hover:text-white transition-colors text-left"
-                >
+                <button onClick={() => navigateToPage('/politique-confidentialite')} className="text-gray-400 hover:text-white transition-colors text-left">
                   Politique de confidentialité
                 </button>
               </li>
@@ -188,5 +159,4 @@ const Footer = () => {
       </div>
     </footer>;
 };
-
 export default Footer;
