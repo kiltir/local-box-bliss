@@ -43,13 +43,13 @@ const NotreHistoire = () => {
                   <h2 className="text-3xl font-semibold text-leaf-green mb-6">3 cultures en 1 box</h2>
                   <div className="grid md:grid-cols-3 gap-6">
                     <div className="bg-white p-6 rounded-lg shadow-md">
-                      <p className="text-gray-700">La culture au sens de l'agriculture</p>
+                      <p className="text-gray-700 text-center">La culture au sens de l'agriculture</p>
                     </div>
                     <div className="bg-white p-6 rounded-lg shadow-md">
-                      <p className="text-gray-700">La culture au sens des savoirs et des connaissances</p>
+                      <p className="text-gray-700 text-center">La culture au sens des savoirs et des connaissances</p>
                     </div>
                     <div className="bg-white p-6 rounded-lg shadow-md">
-                      <p className="text-gray-700">La culture comme culture d'entreprise</p>
+                      <p className="text-gray-700 text-center">La culture comme culture d'entreprise</p>
                     </div>
                   </div>
                 </section>
