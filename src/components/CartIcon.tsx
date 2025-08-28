@@ -21,6 +21,14 @@ const CartIcon = () => {
     navigate('/checkout');
   };
 
+  const getItemDisplayName = (item: any) => {
+    if (item.subscriptionType) {
+      const subscriptionLabel = item.subscriptionType === '6months' ? '6 mois' : '1 an';
+      return `${item.box.baseTitle.replace(/ - Abonnement.*/, '')} - Abonnement ${subscriptionLabel}`;
+    }
+    return item.box.baseTitle;
+  };
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -42,18 +50,23 @@ const CartIcon = () => {
           <>
             <div className="p-2">
               <h3 className="font-semibold mb-2">Mon Panier ({totalItems} article{totalItems > 1 ? 's' : ''})</h3>
-              {items.map((item) => (
-                <div key={item.box.id} className="flex justify-between items-center py-2 border-b">
+              {items.map((item, index) => (
+                <div key={`${item.box.id}-${item.subscriptionType || 'single'}`} className="flex justify-between items-center py-2 border-b">
                   <div className="flex-1">
-                    <p className="font-medium text-sm">{item.box.baseTitle}</p>
+                    <p className="font-medium text-sm">{getItemDisplayName(item)}</p>
                     <p className="text-xs text-gray-500">
                       {item.quantity} x {item.box.price.toFixed(2)}€
                     </p>
+                    {item.subscriptionType && (
+                      <p className="text-xs text-amber-600 font-medium">
+                        Abonnement {item.subscriptionType === '6months' ? '6 mois' : '1 an'}
+                      </p>
+                    )}
                   </div>
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => removeFromCart(item.box.id)}
+                    onClick={() => removeFromCart(item.box.id, item.subscriptionType)}
                     className="text-red-600 hover:text-red-800"
                   >
                     ×

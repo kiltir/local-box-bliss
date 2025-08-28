@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Separator } from "@/components/ui/separator";
-import { ShoppingCart, CreditCard, ArrowLeft } from 'lucide-react';
+import { ShoppingCart, CreditCard, ArrowLeft, Crown } from 'lucide-react';
 import { useCart } from '@/hooks/useCart';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
@@ -50,6 +50,21 @@ const Checkout = () => {
     } finally {
       setIsProcessing(false);
     }
+  };
+
+  const getItemDisplayName = (item: any) => {
+    if (item.subscriptionType) {
+      const subscriptionLabel = item.subscriptionType === '6months' ? '6 mois' : '1 an';
+      return `${item.box.baseTitle.replace(/ - Abonnement.*/, '')} - Abonnement ${subscriptionLabel}`;
+    }
+    return item.box.baseTitle;
+  };
+
+  const getItemDescription = (item: any) => {
+    if (item.subscriptionType) {
+      return `Abonnement ${item.subscriptionType === '6months' ? '6 mois' : '1 an'}`;
+    }
+    return item.box.theme;
   };
 
   if (items.length === 0) {
@@ -111,18 +126,23 @@ const Checkout = () => {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {items.map((item) => (
-                      <TableRow key={item.box.id}>
+                    {items.map((item, index) => (
+                      <TableRow key={`${item.box.id}-${item.subscriptionType || 'single'}-${index}`}>
                         <TableCell>
                           <div className="flex items-center space-x-3">
-                            <img 
-                              src="/lovable-uploads/bbbefcf8-6fc3-45be-9a11-df15e8ecd5eb.png" 
-                              alt={item.box.baseTitle}
-                              className="w-12 h-12 object-contain rounded"
-                            />
+                            <div className="relative">
+                              <img 
+                                src="/lovable-uploads/bbbefcf8-6fc3-45be-9a11-df15e8ecd5eb.png" 
+                                alt={item.box.baseTitle}
+                                className="w-12 h-12 object-contain rounded"
+                              />
+                              {item.subscriptionType && (
+                                <Crown className="absolute -top-1 -right-1 h-4 w-4 text-amber-500" />
+                              )}
+                            </div>
                             <div>
-                              <p className="font-medium">{item.box.baseTitle}</p>
-                              <p className="text-sm text-gray-500">{item.box.theme}</p>
+                              <p className="font-medium">{getItemDisplayName(item)}</p>
+                              <p className="text-sm text-gray-500">{getItemDescription(item)}</p>
                             </div>
                           </div>
                         </TableCell>

@@ -36,7 +36,7 @@ const SubscriptionCard: React.FC<SubscriptionCardProps> = ({ subscription, onCli
   const handleAddToCart = () => {
     // Créer un objet pour l'abonnement dans le panier
     const subscriptionItem = {
-      id: subscription.id + 1000, // Différencier des achats uniques
+      id: subscription.id + 1000 + (selectedOption.duration === '6months' ? 0 : 100), // ID unique pour chaque type
       baseTitle: `${subscription.baseTitle} - Abonnement ${selectedOption.label}`,
       price: selectedOption.totalPrice,
       description: subscription.description,
@@ -50,7 +50,7 @@ const SubscriptionCard: React.FC<SubscriptionCardProps> = ({ subscription, onCli
       products: [],
     };
     
-    addToCart(subscriptionItem);
+    addToCart(subscriptionItem, 1, selectedOption.duration);
     toast.success(`Abonnement ${subscription.baseTitle} ${selectedOption.label} ajouté au panier !`);
   };
 
