@@ -1,11 +1,8 @@
-
 import React from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-
 const NotreHistoire = () => {
-  return (
-    <div className="min-h-screen flex flex-col">
+  return <div className="min-h-screen flex flex-col">
       <Navbar />
       <main className="flex-1">
         <div className="bg-gradient-to-b from-[#FEF7CD]/50 to-white py-16">
@@ -23,7 +20,7 @@ const NotreHistoire = () => {
                     
                     <p>Néanmoins, j'ai appris une chose très importante : le voyage est surtout une affaire de partage. Je pensais en apprendre beaucoup des autres mais je n'imaginais pas autant leurs apprendre de moi et de l'île.</p>
                     
-                    <p>Quelques années plus tard, à mon retour sur l'île, plongé dans la réalité économique et sociale du territoire, le constat restait amer mais l'envie de changer les choses restait présente.</p>
+                    <p>Quelques années plus tard, à mon retour sur l'île, plongé dans la réalité économique et sociale du territoire, le constat restait amer mais l'envie et la possibilité de changer les choses devenaient réelles.</p>
                     
                     <p>Et c'est pourquoi j'ai crée KiltirBox.</p>
                     
@@ -81,8 +78,6 @@ const NotreHistoire = () => {
         </div>
       </main>
       <Footer />
-    </div>
-  );
+    </div>;
 };
-
 export default NotreHistoire;
