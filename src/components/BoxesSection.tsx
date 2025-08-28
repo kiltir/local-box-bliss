@@ -1,9 +1,13 @@
 
 import React from 'react';
 import BoxCard from './BoxCard';
+import SubscriptionCard from './SubscriptionCard';
 import BoxDetails from './BoxDetails';
 import { useBoxes } from '@/hooks/useBoxes';
+import { usePurchaseType } from '@/hooks/usePurchaseType';
 import BoxThemeSelector from './BoxThemeSelector';
+import PurchaseTypeSelector from './PurchaseTypeSelector';
+import { subscriptions } from '@/data/subscriptions';
 
 const BoxesSection = () => {
   const {
@@ -16,8 +20,11 @@ const BoxesSection = () => {
     handleBoxChange
   } = useBoxes();
 
+  const { purchaseType, handlePurchaseTypeChange } = usePurchaseType();
+
   // Filtrer les boxes selon le thème sélectionné
   const filteredBoxes = boxes.filter(box => box.theme === selectedTheme);
+  const filteredSubscriptions = subscriptions.filter(sub => sub.theme === selectedTheme);
 
   return (
     <section id="boxes" className="py-[15px] scroll-mt-[88px] md:scroll-mt-[80px]">
@@ -31,23 +38,35 @@ const BoxesSection = () => {
           <div className="flex justify-center mb-8">
             <BoxThemeSelector selectedTheme={selectedTheme} onThemeChange={handleThemeChange} />
           </div>
+
+          {/* Sélecteur de type d'achat */}
+          <PurchaseTypeSelector selectedType={purchaseType} onTypeChange={handlePurchaseTypeChange} />
         </div>
           
         <div className="grid grid-cols-1 md:grid-cols-1 gap-8 fade-in max-w-md mx-auto">
-          {filteredBoxes.map(box => (
-            <BoxCard 
-              key={box.id} 
-              title={box.baseTitle} 
-              price={box.price} 
-              description={box.description} 
-              image={box.image} 
-              items={box.items} 
-              theme={box.theme}
-              rating={box.rating}
-              reviewCount={box.reviewCount}
-              onClick={() => handleBoxClick(box.id)} 
-            />
-          ))}
+          {purchaseType === 'one-time' 
+            ? filteredBoxes.map(box => (
+                <BoxCard 
+                  key={box.id} 
+                  title={box.baseTitle} 
+                  price={box.price} 
+                  description={box.description} 
+                  image={box.image} 
+                  items={box.items} 
+                  theme={box.theme}
+                  rating={box.rating}
+                  reviewCount={box.reviewCount}
+                  onClick={() => handleBoxClick(box.id)} 
+                />
+              ))
+            : filteredSubscriptions.map(subscription => (
+                <SubscriptionCard
+                  key={subscription.id}
+                  subscription={subscription}
+                  onClick={() => handleBoxClick(subscription.id)}
+                />
+              ))
+          }
         </div>
       </div>
 
