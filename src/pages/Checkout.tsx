@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -193,7 +192,7 @@ const Checkout = () => {
                   ) : (
                     <>
                       <CreditCard className="h-5 w-5 mr-2" />
-                      Payer avec Stripe
+                      Payer
                     </>
                   )}
                 </Button>
