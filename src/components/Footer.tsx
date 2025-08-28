@@ -68,6 +68,9 @@ const Footer = () => {
                 src="/lovable-uploads/63cc4716-b9b9-4651-9eb6-6555818994a6.png" 
                 alt="KiltirBox" 
                 className="h-10 mr-2"
+                style={{
+                  filter: 'brightness(0) saturate(100%) invert(75%) sepia(100%) saturate(1000%) hue-rotate(5deg) brightness(110%) contrast(100%)'
+                }}
               />
             </div>
             <p className="text-gray-400 mb-4">Des box réunissant un savoir-faire, des traditions et la culture réunionnaise.</p>
