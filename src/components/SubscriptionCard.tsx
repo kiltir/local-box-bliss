@@ -97,47 +97,30 @@ const SubscriptionCard: React.FC<SubscriptionCardProps> = ({ subscription, onCli
         <div className="space-y-2">
           <h4 className="font-semibold text-sm">Choisissez votre formule :</h4>
           <div className="grid grid-cols-2 gap-2">
-            {subscription.options.map((option) => {
-              const isSelected = selectedOption.duration === option.duration;
-              const isOtherSelected = !isSelected && selectedOption;
-              
-              return (
-                <button
-                  key={option.duration}
-                  onClick={() => setSelectedOption(option)}
-                  className={`p-3 rounded-lg border-2 transition-all duration-200 text-left ${
-                    isSelected
-                      ? 'border-amber-500 bg-amber-50'
-                      : isOtherSelected
-                      ? 'border-gray-200 bg-gray-50 opacity-50 cursor-not-allowed'
-                      : 'border-gray-200 hover:border-amber-300'
-                  }`}
-                  disabled={isOtherSelected}
-                >
-                  <div className="flex items-center justify-between mb-1">
-                    <span className={`font-semibold text-sm ${isOtherSelected ? 'text-gray-400' : ''}`}>
-                      {option.label}
-                    </span>
-                    <Badge 
-                      variant="secondary" 
-                      className={`text-xs ${
-                        isOtherSelected 
-                          ? 'bg-gray-100 text-gray-400' 
-                          : 'bg-green-100 text-green-700'
-                      }`}
-                    >
-                      -{option.discount}%
-                    </Badge>
-                  </div>
-                  <div className={`text-xs ${isOtherSelected ? 'text-gray-400' : 'text-gray-600'}`}>
-                    {option.monthlyPrice.toFixed(2)}€/mois
-                  </div>
-                  <div className={`font-bold ${isOtherSelected ? 'text-gray-400' : 'text-amber-600'}`}>
-                    {option.totalPrice.toFixed(2)}€
-                  </div>
-                </button>
-              );
-            })}
+            {subscription.options.map((option) => (
+              <button
+                key={option.duration}
+                onClick={() => setSelectedOption(option)}
+                className={`p-3 rounded-lg border-2 transition-all duration-200 text-left ${
+                  selectedOption.duration === option.duration
+                    ? 'border-amber-500 bg-amber-50'
+                    : 'border-gray-200 hover:border-amber-300'
+                }`}
+              >
+                <div className="flex items-center justify-between mb-1">
+                  <span className="font-semibold text-sm">{option.label}</span>
+                  <Badge variant="secondary" className="text-xs bg-green-100 text-green-700">
+                    -{option.discount}%
+                  </Badge>
+                </div>
+                <div className="text-xs text-gray-600">
+                  {option.monthlyPrice.toFixed(2)}€/mois
+                </div>
+                <div className="font-bold text-amber-600">
+                  {option.totalPrice.toFixed(2)}€
+                </div>
+              </button>
+            ))}
           </div>
         </div>
 
