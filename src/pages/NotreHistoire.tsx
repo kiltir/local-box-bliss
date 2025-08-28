@@ -1,3 +1,4 @@
+
 import React from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -68,7 +69,7 @@ const NotreHistoire = () => {
                     <p>Sincèrement, je vous remercie pour votre soutien dans ce projet.</p>
                     
                     <div className="bg-leaf-green/10 p-6 rounded-lg mt-8 text-center">
-                      <h3 className="text-2xl font-bold text-leaf-green italic">"Oubli pa nou, oubli pa ou !"</h3>
+                      <h3 className="text-2xl font-bold text-sky-400 italic">"Oubli pa nou, oubli pa ou !"</h3>
                     </div>
                   </div>
                 </section>
