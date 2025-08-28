@@ -63,7 +63,7 @@ const NotreHistoire = () => {
                     
                     <p>Vous y retrouverez des saveurs, des parfums et des émotions et des histoires faisant partie de notre héritage culturel.</p>
                     
-                    <p>Ne perdons pas cette richesse et partageons la ! qu'elle voyage, qu'elle réconforte, qu'elle soigne la solitude et qu'elle apporte la solidarité.</p>
+                    <p>Ne perdons pas cette richesse et partageons-la ! Qu'elle voyage, qu'elle réconforte, qu'elle soigne la solitude et qu'elle apporte la solidarité.</p>
                     
                     <p>Sincèrement, je vous remercie pour votre soutien dans ce projet.</p>
                     
