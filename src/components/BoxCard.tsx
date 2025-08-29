@@ -89,7 +89,7 @@ const BoxCard = ({ title, price, description, image, items, theme, rating, revie
       </div>
       
       <div className="p-6">
-        <div className="flex items-center gap-2 mb-2">
+        <div className="flex items-center justify-between mb-2">
           <h3 className="text-xl font-bold">{title}</h3>
           {React.createElement(getThemeIcon(), { className: "h-5 w-5 text-leaf-green" })}
         </div>
