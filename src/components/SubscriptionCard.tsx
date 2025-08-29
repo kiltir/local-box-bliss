@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -7,7 +6,7 @@ import { useCart } from '@/hooks/useCart';
 import { toast } from 'sonner';
 import StarRating from './StarRating';
 import { SubscriptionData, SubscriptionOption } from '@/types/subscription';
-import { Crown, Gift } from 'lucide-react';
+import { Crown, Package } from 'lucide-react';
 
 interface SubscriptionCardProps {
   subscription: SubscriptionData;
@@ -80,7 +79,7 @@ const SubscriptionCard: React.FC<SubscriptionCardProps> = ({ subscription, onCli
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between mb-2">
           <h3 className="text-xl font-bold">{subscription.baseTitle}</h3>
-          <Gift className="h-5 w-5 text-amber-500" />
+          <Package className="h-5 w-5 text-amber-500" />
         </div>
         
         <StarRating 
