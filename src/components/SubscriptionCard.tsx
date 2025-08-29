@@ -6,7 +6,7 @@ import { useCart } from '@/hooks/useCart';
 import { toast } from 'sonner';
 import StarRating from './StarRating';
 import { SubscriptionData, SubscriptionOption } from '@/types/subscription';
-import { Crown, Package, Search, Coffee, Heart, Flower } from 'lucide-react';
+import { Crown, Package, Compass, Wine, BookOpen, Leaf } from 'lucide-react';
 
 interface SubscriptionCardProps {
   subscription: SubscriptionData;
@@ -35,13 +35,13 @@ const SubscriptionCard: React.FC<SubscriptionCardProps> = ({ subscription, onCli
   const getThemeIcon = () => {
     switch (subscription.theme) {
       case 'Découverte':
-        return Search;
+        return Compass;
       case 'Bourbon':
-        return Coffee;
+        return Wine;
       case 'Tradition':
-        return Heart;
+        return BookOpen;
       case 'Saison':
-        return Flower;
+        return Leaf;
       default:
         return Package;
     }
