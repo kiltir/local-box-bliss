@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useCart } from '@/hooks/useCart';
 import { toast } from 'sonner';
 import StarRating from './StarRating';
+import { Compass, Wine, BookOpen, Leaf, Package } from 'lucide-react';
 
 interface BoxCardProps {
   title: string;
@@ -32,6 +33,21 @@ const BoxCard = ({ title, price, description, image, items, theme, rating, revie
         return 'bg-purple-100 text-purple-800';
       default:
         return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  const getThemeIcon = () => {
+    switch (theme) {
+      case 'Découverte':
+        return Compass;
+      case 'Bourbon':
+        return Wine;
+      case 'Tradition':
+        return BookOpen;
+      case 'Saison':
+        return Leaf;
+      default:
+        return Package;
     }
   };
 
@@ -73,7 +89,10 @@ const BoxCard = ({ title, price, description, image, items, theme, rating, revie
       </div>
       
       <div className="p-6">
-        <h3 className="text-xl font-bold mb-2">{title}</h3>
+        <div className="flex items-center gap-2 mb-2">
+          <h3 className="text-xl font-bold">{title}</h3>
+          {React.createElement(getThemeIcon(), { className: "h-5 w-5 text-leaf-green" })}
+        </div>
         
         {/* Ajout de la notation */}
         <div className="mb-3">
