@@ -3,19 +3,66 @@ import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { CalendarIcon, Plane, MapPin, Clock } from "lucide-react";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
+import { CalendarIcon, Plane, MapPin, Clock, Package, Truck } from "lucide-react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { cn } from "@/lib/utils";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
+import { toast } from "sonner";
 const TouristDatesSection = () => {
+  const { user } = useAuth();
   const [arrivalDate, setArrivalDate] = useState<Date>();
   const [departureDate, setDepartureDate] = useState<Date>();
   const [arrivalHour, setArrivalHour] = useState<string>('12');
   const [arrivalMinute, setArrivalMinute] = useState<string>('00');
   const [departureHour, setDepartureHour] = useState<string>('14');
   const [departureMinute, setDepartureMinute] = useState<string>('00');
+  const [deliveryPreference, setDeliveryPreference] = useState<string>('airport_pickup');
   const [showDeparturePicker, setShowDeparturePicker] = useState(false);
   const [showArrivalPicker, setShowArrivalPicker] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const saveTravelInfo = async () => {
+    if (!user) {
+      toast.error("Vous devez être connecté pour sauvegarder vos informations de voyage");
+      return;
+    }
+
+    if (!arrivalDate || !departureDate) {
+      toast.error("Veuillez sélectionner vos dates d'arrivée et de départ");
+      return;
+    }
+
+    setSaving(true);
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .upsert({
+          id: user.id,
+          arrival_date_reunion: arrivalDate.toISOString().split('T')[0],
+          departure_date_reunion: departureDate.toISOString().split('T')[0],
+          arrival_time_reunion: `${arrivalHour}:${arrivalMinute}:00`,
+          departure_time_reunion: `${departureHour}:${departureMinute}:00`,
+          delivery_preference: deliveryPreference,
+        });
+
+      if (error) {
+        toast.error("Erreur lors de la sauvegarde de vos informations");
+        console.error('Error saving travel info:', error);
+        return;
+      }
+
+      toast.success("Informations de voyage sauvegardées avec succès !");
+    } catch (error) {
+      toast.error("Erreur lors de la sauvegarde");
+      console.error('Error:', error);
+    } finally {
+      setSaving(false);
+    }
+  };
+
   const handlePlanPurchase = () => {
     if (arrivalDate && departureDate) {
       // Logic for planning purchase - could scroll to boxes section or show a modal
@@ -150,6 +197,48 @@ const TouristDatesSection = () => {
                   </div>
                 </div>
               </div>
+            </div>
+
+            {/* Options de livraison */}
+            <div className="border-t pt-6">
+              <label className="block text-sm font-medium text-gray-700 mb-4">
+                Mode de récupération souhaité
+              </label>
+              <RadioGroup value={deliveryPreference} onValueChange={setDeliveryPreference} className="space-y-3">
+                <div className="flex items-center space-x-3 p-3 border rounded-lg">
+                  <RadioGroupItem value="airport_pickup" id="airport_pickup" />
+                  <Label htmlFor="airport_pickup" className="flex items-center space-x-2 cursor-pointer flex-1">
+                    <Package className="h-4 w-4 text-leaf-green" />
+                    <span>Récupérer à l'aéroport Roland Garros</span>
+                  </Label>
+                </div>
+                <div className="flex items-center space-x-3 p-3 border rounded-lg">
+                  <RadioGroupItem value="mainland_delivery" id="mainland_delivery" />
+                  <Label htmlFor="mainland_delivery" className="flex items-center space-x-2 cursor-pointer flex-1">
+                    <Truck className="h-4 w-4 text-leaf-green" />
+                    <span>Recevoir en Métropole</span>
+                  </Label>
+                </div>
+              </RadioGroup>
+            </div>
+
+            {/* Boutons d'action */}
+            <div className="border-t pt-6">
+              {user ? (
+                <div className="flex flex-col gap-4">
+                  <Button 
+                    onClick={saveTravelInfo}
+                    disabled={!arrivalDate || !departureDate || saving}
+                    className="w-full bg-leaf-green hover:bg-dark-green text-white"
+                  >
+                    {saving ? "Sauvegarde..." : "Sauvegarder mes informations de voyage"}
+                  </Button>
+                </div>
+              ) : (
+                <p className="text-center text-gray-600 mb-4">
+                  Connectez-vous pour sauvegarder vos informations de voyage
+                </p>
+              )}
             </div>
 
             {canPlanPurchase && <div className="border-t pt-6">
