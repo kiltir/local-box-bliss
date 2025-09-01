@@ -13,10 +13,7 @@ const NousContacter = () => {
             <div className="grid md:grid-cols-2 gap-12">
               <div>
                 <h2 className="text-2xl font-semibold text-leaf-green mb-6">Contactez-nous</h2>
-                <p className="text-gray-700 mb-8">
-                  Vous avez une question, une suggestion ou souhaitez en savoir plus sur nos box ? 
-                  N'hésitez pas à nous contacter, notre équipe sera ravie de vous répondre.
-                </p>
+                <p className="text-gray-700 mb-8">Vous avez une question, un problème, une suggestion ou souhaitez en savoir plus sur nos box ? N'hésitez pas à nous contacter, notre équipe sera ravie de vous répondre.</p>
                 
                 <div className="space-y-6">
                   <div className="flex items-center">
