@@ -153,7 +153,7 @@ const Footer = () => {
         
         <div className="border-t border-gray-800 pt-8">
           <p className="text-center text-gray-500">
-            &copy; {new Date().getFullYear()} LocalBox - Tous droits réservés
+            &copy; {new Date().getFullYear()} KiltirBox - Tous droits réservés
           </p>
         </div>
       </div>
