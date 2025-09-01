@@ -24,7 +24,7 @@ const FAQ = () => {
     },
     {
       question: "Quelle est la durée de conservation des produits ?",
-      answer: "La durée de conservation varie selon les produits. Chaque box contient des informations détaillées sur la conservation et la consommation optimale de chaque produit."
+      answer: "La durée de conservation varie selon les produits. Chaque box contient des informations détaillées sur la conservation et la consommation optimale de chaque produit. La durée de conservation est un des critères principaux de notre sélection. Donc les produits sont facilement conservables."
     },
     {
       question: "Comment puis-je suivre ma commande ?",
