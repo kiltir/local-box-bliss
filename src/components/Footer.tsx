@@ -1,7 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 const Footer = () => {
   const navigate = useNavigate();
+  const { toast } = useToast();
+  const [email, setEmail] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
@@ -58,6 +63,64 @@ const Footer = () => {
       }, 100);
     }
   };
+
+  const handleNewsletterSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!email.trim()) {
+      toast({
+        title: "Email requis",
+        description: "Veuillez saisir votre adresse email.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      toast({
+        title: "Email invalide",
+        description: "Veuillez saisir une adresse email valide.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const { error } = await supabase
+        .from('newsletter_subscriptions')
+        .insert([{ email: email.trim().toLowerCase() }]);
+
+      if (error) {
+        if (error.code === '23505') { // Unique constraint violation
+          toast({
+            title: "Déjà inscrit",
+            description: "Cette adresse email est déjà inscrite à notre newsletter.",
+            variant: "destructive",
+          });
+        } else {
+          throw error;
+        }
+      } else {
+        toast({
+          title: "Inscription réussie !",
+          description: "Merci de vous être inscrit à notre newsletter.",
+        });
+        setEmail('');
+      }
+    } catch (error) {
+      console.error('Error subscribing to newsletter:', error);
+      toast({
+        title: "Erreur",
+        description: "Une erreur est survenue. Veuillez réessayer.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return <footer className="bg-gray-900 text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
@@ -137,11 +200,22 @@ const Footer = () => {
             <p className="text-gray-400 mb-4">
               Inscrivez-vous pour recevoir nos offres et actualités.
             </p>
-            <form>
+            <form onSubmit={handleNewsletterSubmit}>
               <div className="flex mb-2">
-                <input type="email" placeholder="Votre email" className="bg-gray-800 text-white px-4 py-2 rounded-l-lg w-full focus:outline-none" />
-                <button type="submit" className="bg-leaf-green hover:bg-dark-green text-white px-4 rounded-r-lg">
-                  OK
+                <input 
+                  type="email" 
+                  placeholder="Votre email" 
+                  className="bg-gray-800 text-white px-4 py-2 rounded-l-lg w-full focus:outline-none" 
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  disabled={isSubmitting}
+                />
+                <button 
+                  type="submit" 
+                  className="bg-leaf-green hover:bg-dark-green text-white px-4 rounded-r-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? '...' : 'OK'}
                 </button>
               </div>
               <div className="text-xs text-gray-500">
