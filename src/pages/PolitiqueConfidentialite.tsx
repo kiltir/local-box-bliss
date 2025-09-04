@@ -12,6 +12,10 @@ const PolitiqueConfidentialite = () => {
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             <h1 className="text-4xl font-bold text-gray-900 mb-8 text-center">Politique de confidentialité</h1>
             
+            <div className="text-gray-700 leading-relaxed mb-4">
+              En date du 01/09/2025
+            </div>
+            
             <div className="prose prose-lg max-w-none space-y-8">
               <section>
                 <h2 className="text-2xl font-semibold text-leaf-green mb-4">1. Introduction</h2>
@@ -25,7 +29,7 @@ const PolitiqueConfidentialite = () => {
               <section>
                 <h2 className="text-2xl font-semibold text-leaf-green mb-4">2. Données collectées</h2>
                 <p className="text-gray-700 leading-relaxed mb-4">
-                  Nous collectons les types de données suivants :
+                  Nous collectons les données suivantes :
                 </p>
                 <ul className="list-disc list-inside text-gray-700 space-y-2">
                   <li>Informations d'identification (nom, prénom, email, téléphone)</li>
@@ -39,13 +43,15 @@ const PolitiqueConfidentialite = () => {
               <section>
                 <h2 className="text-2xl font-semibold text-leaf-green mb-4">3. Utilisation des données</h2>
                 <p className="text-gray-700 leading-relaxed mb-4">
-                  Vos données personnelles sont utilisées pour :
+                  La collecte de ces données personnelles a pour but de :
                 </p>
                 <ul className="list-disc list-inside text-gray-700 space-y-2">
                   <li>Traiter et livrer vos commandes</li>
-                  <li>Vous contacter concernant vos commandes</li>
+                  <li>Vous communiquer les informations liées à vos commandes</li>
+                  <li>Traiter vos demandes, les litiges, les réclamations, etc</li>
                   <li>Améliorer nos services et personnaliser votre expérience</li>
-                  <li>Vous envoyer des informations marketing (avec votre consentement)</li>
+                  <li>Vous faire parvenir notre Newsletter</li>
+                  <li>Vous communiquer des offres commerciales (avec votre consentement)</li>
                   <li>Respecter nos obligations légales</li>
                 </ul>
               </section>
@@ -53,12 +59,16 @@ const PolitiqueConfidentialite = () => {
               <section>
                 <h2 className="text-2xl font-semibold text-leaf-green mb-4">4. Partage des données</h2>
                 <p className="text-gray-700 leading-relaxed mb-4">
-                  Nous ne vendons, n'échangeons ni ne louons vos données personnelles à des tiers. 
-                  Nous pouvons partager vos données uniquement avec :
+                  KiltirBox est le seul propriétaire des données collectées. Nous ne vendons, n'échangeons 
+                  ni ne louons vos données personnelles identifiables à des tiers.
+                </p>
+                <p className="text-gray-700 leading-relaxed mb-4">
+                  Nous partageons vos données uniquement avec des tiers de confiance :
                 </p>
                 <ul className="list-disc list-inside text-gray-700 space-y-2">
                   <li>Nos partenaires de livraison pour assurer la livraison de vos commandes</li>
                   <li>Nos prestataires de paiement pour traiter les transactions</li>
+                  <li>Nos prestataires informatiques</li>
                   <li>Les autorités compétentes si requis par la loi</li>
                 </ul>
               </section>
@@ -80,13 +90,12 @@ const PolitiqueConfidentialite = () => {
                 <ul className="list-disc list-inside text-gray-700 space-y-2">
                   <li>Droit d'accès à vos données personnelles</li>
                   <li>Droit de rectification en cas d'inexactitude</li>
-                  <li>Droit à l'effacement dans certaines conditions</li>
+                  <li>Droit à la suppression dans certaines conditions</li>
                   <li>Droit à la limitation du traitement</li>
-                  <li>Droit à la portabilité des données</li>
                   <li>Droit d'opposition au traitement</li>
                 </ul>
                 <p className="text-gray-700 leading-relaxed mt-4">
-                  Pour exercer ces droits, contactez-nous à : contact@kiltirbox.re
+                  Pour exercer vos droits, contactez-nous à : contact@kiltirbox.com
                 </p>
               </section>
 
@@ -112,7 +121,7 @@ const PolitiqueConfidentialite = () => {
                 <h2 className="text-2xl font-semibold text-leaf-green mb-4">9. Contact</h2>
                 <p className="text-gray-700 leading-relaxed">
                   Pour toute question concernant cette politique de confidentialité ou le traitement 
-                  de vos données personnelles, vous pouvez nous contacter à : contact@kiltirbox.re
+                  de vos données personnelles, vous pouvez nous contacter à : contact@kiltirbox.com
                 </p>
               </section>
 
@@ -122,6 +131,13 @@ const PolitiqueConfidentialite = () => {
                   Cette politique de confidentialité peut être mise à jour occasionnellement. 
                   Nous vous informerons de tout changement significatif en publiant la nouvelle 
                   politique sur cette page.
+                </p>
+              </section>
+
+              <section>
+                <h2 className="text-2xl font-semibold text-leaf-green mb-4">11. Consentement</h2>
+                <p className="text-gray-700 leading-relaxed">
+                  En utilisant notre site et nos services, vous consentez à notre politique de confidentialité.
                 </p>
               </section>
             </div>
