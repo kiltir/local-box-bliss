@@ -181,7 +181,7 @@ const Footer = () => {
                 </button>
               </li>
               <li>
-                <button onClick={() => navigateToPage('/conditions-generales')} className="text-gray-400 hover:text-white transition-colors text-left">Conditions générales de vente </button>
+                <button onClick={() => navigateToPage('/conditions-generales')} className="text-gray-400 hover:text-white transition-colors text-left">Conditions Générales de Vente </button>
               </li>
               <li>
                 <button onClick={() => navigateToPage('/mentions-legales')} className="text-gray-400 hover:text-white transition-colors text-left">
