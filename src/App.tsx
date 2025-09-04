@@ -14,6 +14,7 @@ import NousContacter from "./pages/NousContacter";
 import FAQ from "./pages/FAQ";
 import ConditionsGenerales from "./pages/ConditionsGenerales";
 import PolitiqueConfidentialite from "./pages/PolitiqueConfidentialite";
+import MentionsLegales from "./pages/MentionsLegales";
 import NosEngagements from "./pages/NosEngagements";
 import MesInformations from "./pages/MesInformations";
 import MesCommandes from "./pages/MesCommandes";
@@ -42,6 +43,7 @@ const App = () => (
             <Route path="/faq" element={<FAQ />} />
             <Route path="/conditions-generales" element={<ConditionsGenerales />} />
             <Route path="/politique-confidentialite" element={<PolitiqueConfidentialite />} />
+            <Route path="/mentions-legales" element={<MentionsLegales />} />
             <Route path="/nos-engagements" element={<NosEngagements />} />
             <Route path="/mes-informations" element={<MesInformations />} />
             <Route path="/mes-commandes" element={<MesCommandes />} />
