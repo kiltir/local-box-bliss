@@ -1,4 +1,3 @@
-
 import React from 'react';
 const FeaturesSection = () => {
   return <section id="concept" className="bg-soft-beige/30 my-0 py-0 scroll-mt-[88px] md:scroll-mt-[80px]">
@@ -30,7 +29,7 @@ const FeaturesSection = () => {
               <span className="text-white text-2xl font-bold">3</span>
             </div>
             <h3 className="text-xl font-bold mb-3">Recevez vos produits</h3>
-            <p className="text-gray-600">Récupérez votre box à l'aéroport de Roland Garros de avant ou après votre vol ou directement en Métropole.</p>
+            <p className="text-gray-600">Récupérez votre box à l'aéroport de Roland Garros avant/après votre vol ou directement en Métropole.</p>
           </div>
         </div>
         
