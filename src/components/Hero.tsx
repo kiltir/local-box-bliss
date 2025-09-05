@@ -8,7 +8,6 @@ import { CalendarIcon, Plane, MapPin, Clock } from "lucide-react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { cn } from "@/lib/utils";
-
 const Hero = () => {
   const [arrivalDate, setArrivalDate] = useState<Date>();
   const [departureDate, setDepartureDate] = useState<Date>();
@@ -250,9 +249,7 @@ const Hero = () => {
             <DialogTitle>Choisir la date de récupération</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
-            <p className="text-sm text-gray-600">
-              À quelle date souhaitez-vous récupérer votre box à l'aéroport de Gillot ?
-            </p>
+            <p className="text-sm text-gray-600">À quelle date souhaitez-vous récupérer votre box à l'aéroport de Roland Garros ?</p>
             
             {(() => {
             const validDates = getValidPickupDates();
@@ -294,5 +291,4 @@ const Hero = () => {
       </Dialog>
     </>;
 };
-
 export default Hero;
