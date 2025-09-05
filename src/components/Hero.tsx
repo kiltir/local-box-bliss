@@ -8,6 +8,7 @@ import { CalendarIcon, Plane, MapPin, Clock } from "lucide-react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { cn } from "@/lib/utils";
+
 const Hero = () => {
   const [arrivalDate, setArrivalDate] = useState<Date>();
   const [departureDate, setDepartureDate] = useState<Date>();
@@ -84,9 +85,9 @@ const Hero = () => {
   // Generate minutes (00, 15, 30, 45)
   const minutes = ['00', '15', '30', '45'];
   return <>
-    <section style={{
+      <section style={{
       backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('/lovable-uploads/53d8e975-3996-441a-9ccd-8e5874f90880.png')`
-    }} className="hero-section md:py-24 relative bg-cover bg-center md:bg-center -bottom-0 bg-no-repeat py-[40px]">
+    }} className="hero-section md:py-24 relative bg-cover bg-center bg-no-repeat py-[40px]">
         <div className="container-section py-[15px]">
           <div className="max-w-3xl mx-auto text-center slide-in py-[10px]">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 mx-[16px]">
@@ -293,4 +294,5 @@ const Hero = () => {
       </Dialog>
     </>;
 };
+
 export default Hero;
