@@ -8,7 +8,6 @@ import { CalendarIcon, Plane, MapPin, Clock } from "lucide-react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { cn } from "@/lib/utils";
-
 const Hero = () => {
   const [arrivalDate, setArrivalDate] = useState<Date>();
   const [departureDate, setDepartureDate] = useState<Date>();
@@ -87,7 +86,7 @@ const Hero = () => {
   return <>
     <section style={{
       backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('/lovable-uploads/53d8e975-3996-441a-9ccd-8e5874f90880.png')`
-    }} className="hero-section md:py-24 relative bg-cover bg-center md:bg-center bg-[center_top_30%] bg-no-repeat py-[40px]">
+    }} className="hero-section md:py-24 relative bg-cover bg-center md:bg-center bg-[center_top_50%] bg-no-repeat py-[40px]">
         <div className="container-section py-[15px]">
           <div className="max-w-3xl mx-auto text-center slide-in py-[10px]">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 mx-[16px]">
@@ -294,5 +293,4 @@ const Hero = () => {
       </Dialog>
     </>;
 };
-
 export default Hero;
