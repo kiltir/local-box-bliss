@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { siteConfig } from "@/config/site";
 const Footer = () => {
   const navigate = useNavigate();
   const {
@@ -124,7 +125,7 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
           <div>
             <div className="flex items-center mb-4">
-              <img src="/lovable-uploads/63cc4716-b9b9-4651-9eb6-6555818994a6.png" alt="KiltirBox" className="h-12 mr-2" />
+              <img src="/lovable-uploads/63cc4716-b9b9-4651-9eb6-6555818994a6.png" alt={siteConfig.brandName} className="h-12 mr-2" />
             </div>
             <p className="text-gray-400 mb-4">Des box nées du savoir-faire, des traditions et de la culture réunionnaise.</p>
             <div className="flex space-x-4">
@@ -217,7 +218,7 @@ const Footer = () => {
         
         <div className="border-t border-gray-800 pt-8">
           <p className="text-center text-gray-500">
-            &copy; {new Date().getFullYear()} KiltirBox - Tous droits réservés
+            &copy; {new Date().getFullYear()} {siteConfig.brandName} - Tous droits réservés
           </p>
         </div>
       </div>

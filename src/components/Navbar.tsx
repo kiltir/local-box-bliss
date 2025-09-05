@@ -5,6 +5,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import CartIcon from './CartIcon';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { siteConfig } from "@/config/site";
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
@@ -54,7 +55,7 @@ const Navbar = () => {
         <div className="flex justify-between items-center">
           <div className="flex items-center">
             <a href="/" className="flex items-center">
-              <img src="/lovable-uploads/63cc4716-b9b9-4651-9eb6-6555818994a6.png" alt="KiltirBox" className="h-12 mr-2" />
+              <img src="/lovable-uploads/63cc4716-b9b9-4651-9eb6-6555818994a6.png" alt={siteConfig.brandName} className="h-12 mr-2" />
             </a>
           </div>
           
