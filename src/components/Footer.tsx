@@ -125,7 +125,7 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
           <div>
             <div className="flex items-center mb-4">
-              <img src="/lovable-uploads/63cc4716-b9b9-4651-9eb6-6555818994a6.png" alt={siteConfig.brandName} className="h-12 mr-2" />
+              <img src="/lovable-uploads/cdff195d-0b44-4736-b58c-90f79b339022.png" alt={siteConfig.brandName} className="h-12 mr-2" />
             </div>
             <p className="text-gray-400 mb-4">Des box nées du savoir-faire, des traditions et de la culture réunionnaise.</p>
             <div className="flex space-x-4">
