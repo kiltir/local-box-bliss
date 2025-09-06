@@ -55,7 +55,7 @@ const Navbar = () => {
         <div className="flex justify-between items-center">
           <div className="flex items-center">
             <a href="/" className="flex items-center">
-              <img src="/lovable-uploads/63cc4716-b9b9-4651-9eb6-6555818994a6.png" alt={siteConfig.brandName} className="h-12 mr-2" />
+              <img src="/lovable-uploads/cdff195d-0b44-4736-b58c-90f79b339022.png" alt={siteConfig.brandName} className="h-12 mr-2" />
             </a>
           </div>
           
