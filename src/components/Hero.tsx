@@ -102,7 +102,7 @@ const Hero = () => {
                 </h2>
               </div>
               
-              <p className="text-xl text-white mb-8 font-normal">Renseignez vos dates 15 jours avant votre vol et profitez d'un service sur-mesure.*</p>
+              <p className="text-xl text-white mb-8 font-normal">Renseignez vos dates de séjour 15 jours avant un vol et profitez d'un service sur-mesure* ou recevez votre commande en Métropole.</p>
 
               <div className="bg-white p-8 rounded-xl shadow-lg max-w-2xl mx-auto mb-8">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
