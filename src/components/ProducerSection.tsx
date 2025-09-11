@@ -2,7 +2,7 @@
 import React from 'react';
 const ProducerSection = () => {
   const producers = [{
-    name: "Ferme des Trois Chênes",
+    name: "Les Trésors de Mamie Céliane",
     specialty: "Légumes bio",
     image: "https://source.unsplash.com/1472396961693-142e6e269027",
     description: "Marie cultive des légumes bio depuis plus de 15 ans sur ses terres familiales."
