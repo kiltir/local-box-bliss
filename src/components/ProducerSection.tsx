@@ -31,7 +31,7 @@ const ProducerSection = () => {
               </div>
               <div className="p-6">
                 <div className="inline-block px-3 py-1 bg-leaf-green/10 text-leaf-green rounded-full text-sm font-medium mb-3">
-                  {producer.specialty}
+                  Produit bio
                 </div>
                 <h3 className="text-xl font-bold mb-2">{producer.name}</h3>
                 <p className="text-gray-600">{producer.description}</p>
