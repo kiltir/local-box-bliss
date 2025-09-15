@@ -139,7 +139,7 @@ serve(async (req) => {
 
     logStep("Line items created", { count: lineItems.length });
 
-    // Create checkout session
+    // Create checkout session with metadata for webhook processing
     const sessionConfig: any = {
       line_items: lineItems,
       mode: "payment",
@@ -149,6 +149,10 @@ serve(async (req) => {
       billing_address_collection: 'required',
       shipping_address_collection: {
         allowed_countries: ['FR', 'BE', 'CH', 'DE', 'ES', 'IT', 'NL', 'LU'],
+      },
+      metadata: {
+        user_id: user?.id || 'guest',
+        items: JSON.stringify(items),
       },
     };
 
