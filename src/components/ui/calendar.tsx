@@ -16,11 +16,35 @@ function Calendar({
   locale = fr,
   ...props
 }: CalendarProps) {
+  // Calculate the 16th day from today for airport pickup reference
+  const today = new Date();
+  const minPickupDate = new Date(today);
+  minPickupDate.setDate(today.getDate() + 16);
+  
+  const modifiers = {
+    minPickupDate: minPickupDate,
+    ...props.modifiers
+  };
+
+  const modifiersStyles = {
+    minPickupDate: {
+      position: 'relative' as const,
+    },
+    ...props.modifiersStyles
+  };
+  const modifiersClassNames = {
+    minPickupDate: "relative after:content-['✈️'] after:absolute after:top-0 after:right-0 after:text-xs after:leading-none after:transform after:translate-x-1 after:-translate-y-1 after:z-10",
+    ...props.modifiersClassNames
+  };
+
   return (
     <DayPicker
       showOutsideDays={showOutsideDays}
       locale={locale}
-      className={cn("p-3", className)}
+      modifiers={modifiers}
+      modifiersStyles={modifiersStyles}
+      modifiersClassNames={modifiersClassNames}
+      className={cn("p-3 pointer-events-auto", className)}
       classNames={{
         months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
         month: "space-y-4",
