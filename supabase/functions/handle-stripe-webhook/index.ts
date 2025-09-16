@@ -123,21 +123,34 @@ serve(async (req) => {
 
       logStep('Order created successfully', { orderId: orderData.id });
 
-      // Create order items with validation
+      // Create order items with validation - handle nested box structure
       const orderItems = items
         .filter((item: any) => {
-          if (!item || typeof item.id !== 'string' || typeof item.price !== 'number' || typeof item.quantity !== 'number') {
+          // Handle both direct item format and nested box format
+          const boxData = item.box || item;
+          const quantity = item.quantity || 1;
+          const price = item.box?.price || item.price;
+          
+          if (!boxData || !quantity || typeof quantity !== 'number' || !price || typeof price !== 'number') {
             logStep('Invalid item skipped', { item });
             return false;
           }
           return true;
         })
-        .map((item: any) => ({
-          order_id: orderData.id,
-          box_type: item.id,
-          quantity: item.quantity,
-          unit_price: item.price,
-        }));
+        .map((item: any) => {
+          // Handle both direct item format and nested box format
+          const boxData = item.box || item;
+          const boxId = boxData.id?.toString() || boxData.baseTitle || 'Unknown';
+          const quantity = item.quantity || 1;
+          const price = item.box?.price || item.price;
+          
+          return {
+            order_id: orderData.id,
+            box_type: boxData.baseTitle || boxId,
+            quantity: quantity,
+            unit_price: price,
+          };
+        });
 
       const { error: itemsError } = await supabase
         .from('order_items')
