@@ -123,32 +123,21 @@ serve(async (req) => {
 
       logStep('Order created successfully', { orderId: orderData.id });
 
-      // Create order items with validation - handle nested box structure
+      // Create order items from simplified metadata format
       const orderItems = items
         .filter((item: any) => {
-          // Handle both direct item format and nested box format
-          const boxData = item.box || item;
-          const quantity = item.quantity || 1;
-          const price = item.box?.price || item.price;
-          
-          if (!boxData || !quantity || typeof quantity !== 'number' || !price || typeof price !== 'number') {
+          if (!item || !item.quantity || typeof item.quantity !== 'number' || !item.price || typeof item.price !== 'number') {
             logStep('Invalid item skipped', { item });
             return false;
           }
           return true;
         })
         .map((item: any) => {
-          // Handle both direct item format and nested box format
-          const boxData = item.box || item;
-          const boxId = boxData.id?.toString() || boxData.baseTitle || 'Unknown';
-          const quantity = item.quantity || 1;
-          const price = item.box?.price || item.price;
-          
           return {
             order_id: orderData.id,
-            box_type: boxData.baseTitle || boxId,
-            quantity: quantity,
-            unit_price: price,
+            box_type: item.title || item.id?.toString() || 'Unknown',
+            quantity: item.quantity,
+            unit_price: item.price,
           };
         });
 
