@@ -139,6 +139,15 @@ serve(async (req) => {
 
     logStep("Line items created", { count: lineItems.length });
 
+    // Create simplified metadata to stay under 500 character limit
+    const simplifiedItems = items.map((item: any) => ({
+      id: item.box.id,
+      title: item.box.baseTitle,
+      price: item.box.price,
+      quantity: item.quantity,
+      ...(item.subscriptionType && { subscriptionType: item.subscriptionType })
+    }));
+
     // Create checkout session with metadata for webhook processing
     const sessionConfig: any = {
       line_items: lineItems,
@@ -152,7 +161,7 @@ serve(async (req) => {
       },
       metadata: {
         user_id: user?.id || 'guest',
-        items: JSON.stringify(items),
+        items: JSON.stringify(simplifiedItems),
       },
     };
 
