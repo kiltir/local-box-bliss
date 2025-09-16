@@ -142,10 +142,10 @@ const MesCommandes = () => {
 
   const getStatusBadge = (status: string) => {
     const statusConfig = {
-      'en_attente': { label: 'En cours', variant: 'secondary' as const },
-      'confirmee': { label: 'En cours', variant: 'secondary' as const },
-      'expediee': { label: 'Livraison imminente', variant: 'default' as const },
-      'livree': { label: 'Livrée', variant: 'outline' as const },
+      'en_attente': { label: 'En cours', variant: 'success' as const },
+      'confirmee': { label: 'En cours', variant: 'success' as const },
+      'expediee': { label: 'Livraison imminente', variant: 'warning' as const },
+      'livree': { label: 'Livrée', variant: 'default' as const },
       'interrompue': { label: 'Interrompue', variant: 'destructive' as const },
     };
     
