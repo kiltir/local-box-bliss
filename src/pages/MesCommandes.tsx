@@ -203,7 +203,7 @@ const MesCommandes = () => {
                     <div onClick={() => setSelectedOrder(order)}>
                       <CardHeader className="pb-4">
                         <div className="flex flex-col lg:flex-row lg:items-start gap-6">
-                          {/* Image du produit */}
+                          {/* Image */}
                           <div className="flex-shrink-0">
                             {boxData?.image ? (
                               <img 
@@ -224,7 +224,7 @@ const MesCommandes = () => {
                               <div className="space-y-2">
                                 <div className="flex items-center gap-2">
                                   <CardTitle className="text-lg font-semibold text-foreground">
-                                    {boxData?.baseTitle || firstItem?.box_type || 'Produit'}
+                                    {boxData?.baseTitle || firstItem?.box_type || 'Commande'}
                                   </CardTitle>
                                   <span className="text-sm text-muted-foreground">#{order.order_number}</span>
                                 </div>
