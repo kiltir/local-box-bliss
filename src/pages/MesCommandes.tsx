@@ -145,7 +145,7 @@ const MesCommandes = () => {
       'en_attente': { label: 'En cours', variant: 'success' as const },
       'confirmee': { label: 'En cours', variant: 'success' as const },
       'expediee': { label: 'Livraison imminente', variant: 'warning' as const },
-      'livree': { label: 'Livrée', variant: 'default' as const },
+      'livree': { label: 'Livrée', variant: 'delivered' as const },
       'interrompue': { label: 'Interrompue', variant: 'destructive' as const },
     };
     

@@ -29,10 +29,16 @@
     --destructive-foreground: 60 33% 96%;
 
     --success: 142 76% 36%;
-    --success-foreground: 60 33% 96%;
+    --success-foreground: 142 76% 36%;
+    --success-background: 142 76% 95%;
 
     --warning: 262 83% 58%;
-    --warning-foreground: 60 33% 96%;
+    --warning-foreground: 262 83% 58%;
+    --warning-background: 262 83% 95%;
+    
+    --delivered: 45 93% 47%;
+    --delivered-foreground: 45 93% 47%;
+    --delivered-background: 45 93% 95%;
 
     --border: 20 5.9% 90%;
     --input: 20 5.9% 90%;
