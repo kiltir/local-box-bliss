@@ -123,13 +123,21 @@ serve(async (req) => {
 
       logStep('Order created successfully', { orderId: orderData.id });
 
-      // Create order items
-      const orderItems = items.map((item: any) => ({
-        order_id: orderData.id,
-        box_type: item.box.id,
-        quantity: item.quantity,
-        unit_price: item.box.price,
-      }));
+      // Create order items with validation
+      const orderItems = items
+        .filter((item: any) => {
+          if (!item || typeof item.id !== 'string' || typeof item.price !== 'number' || typeof item.quantity !== 'number') {
+            logStep('Invalid item skipped', { item });
+            return false;
+          }
+          return true;
+        })
+        .map((item: any) => ({
+          order_id: orderData.id,
+          box_type: item.id,
+          quantity: item.quantity,
+          unit_price: item.price,
+        }));
 
       const { error: itemsError } = await supabase
         .from('order_items')
