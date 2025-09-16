@@ -104,7 +104,7 @@ serve(async (req) => {
           user_id: userId,
           order_number: orderNumber,
           total_amount: totalAmount,
-          status: 'confirmee',
+          status: 'En cours',
           shipping_address_street: session.customer_details?.address?.line1 || null,
           shipping_address_city: session.customer_details?.address?.city || null,
           shipping_address_postal_code: session.customer_details?.address?.postal_code || null,

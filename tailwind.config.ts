@@ -57,15 +57,15 @@ export default {
 					foreground: 'hsl(var(--success-foreground))',
 					background: 'hsl(var(--success-background))'
 				},
-				warning: {
-					DEFAULT: 'hsl(var(--warning))',
-					foreground: 'hsl(var(--warning-foreground))',
-					background: 'hsl(var(--warning-background))'
+				purple: {
+					DEFAULT: 'hsl(var(--purple))',
+					foreground: 'hsl(var(--purple-foreground))',
+					background: 'hsl(var(--purple-background))'
 				},
-				delivered: {
-					DEFAULT: 'hsl(var(--delivered))',
-					foreground: 'hsl(var(--delivered-foreground))',
-					background: 'hsl(var(--delivered-background))'
+				yellow: {
+					DEFAULT: 'hsl(var(--yellow))',
+					foreground: 'hsl(var(--yellow-foreground))',
+					background: 'hsl(var(--yellow-background))'
 				},
 				sidebar: {
 					DEFAULT: 'hsl(var(--sidebar-background))',

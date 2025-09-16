@@ -36,9 +36,13 @@
     --warning-foreground: 262 83% 58%;
     --warning-background: 262 83% 95%;
     
-    --delivered: 45 93% 47%;
-    --delivered-foreground: 45 93% 47%;
-    --delivered-background: 45 93% 95%;
+    --purple: 262 83% 58%;
+    --purple-foreground: 262 83% 58%;
+    --purple-background: 262 83% 95%;
+
+    --yellow: 45 93% 47%;
+    --yellow-foreground: 45 93% 47%;
+    --yellow-background: 45 93% 95%;
 
     --border: 20 5.9% 90%;
     --input: 20 5.9% 90%;
