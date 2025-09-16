@@ -5,7 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ShoppingBag, Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff } from "lucide-react";
+import kiltirboxLogo from "@/assets/kiltirbox-logo.png";
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from "@/hooks/use-toast";
@@ -111,8 +112,11 @@ const Auth = () => {
         {/* Logo and title */}
         <div className="text-center mb-8">
           <div className="flex items-center justify-center mb-4">
-            <ShoppingBag className="h-12 w-12 text-leaf-green mr-3" />
-            <span className="text-3xl font-bold text-yellow-400">KiltirBox</span>
+            <img 
+              src={kiltirboxLogo} 
+              alt="KiltirBox Logo" 
+              className="h-16 w-auto"
+            />
           </div>
           <p className="text-gray-600">Découvrez les saveurs authentiques de La Réunion</p>
         </div>
