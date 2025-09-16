@@ -5,11 +5,13 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import { Package, Calendar, MapPin, Plane, Truck, Eye, ChevronRight } from 'lucide-react';
+import { Package, Calendar, MapPin, Plane, Truck, Eye, ChevronRight, Crown } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Separator } from '@/components/ui/separator';
 import { boxes } from '@/data/boxes';
 
 interface Order {
@@ -112,8 +114,32 @@ const MesCommandes = () => {
   const getBoxData = (boxType: string) => {
     return boxes.find(box => 
       boxType.toLowerCase().includes(box.theme.toLowerCase()) ||
-      boxType.toLowerCase().includes(box.baseTitle.toLowerCase())
+      boxType.toLowerCase().includes(box.baseTitle.toLowerCase()) ||
+      box.id.toString() === boxType
     );
+  };
+
+  const getItemDisplayName = (item: OrderItem) => {
+    const boxData = getBoxData(item.box_type);
+    // Si c'est un abonnement (détecté par le prix ou le nom)
+    if (item.box_type.toLowerCase().includes('abonnement') || item.box_type.toLowerCase().includes('subscription')) {
+      const subscriptionLabel = item.box_type.includes('6') ? '6 mois' : '1 an';
+      return `${boxData?.baseTitle || item.box_type.replace(/ - Abonnement.*/, '')} - Abonnement ${subscriptionLabel}`;
+    }
+    return boxData?.baseTitle || item.box_type;
+  };
+
+  const getItemDescription = (item: OrderItem) => {
+    const boxData = getBoxData(item.box_type);
+    if (item.box_type.toLowerCase().includes('abonnement') || item.box_type.toLowerCase().includes('subscription')) {
+      const subscriptionLabel = item.box_type.includes('6') ? '6 mois' : '1 an';
+      return `Abonnement ${subscriptionLabel}`;
+    }
+    return boxData?.theme || boxData?.description?.substring(0, 50) + '...' || 'Box réunionnaise';
+  };
+
+  const isSubscriptionItem = (item: OrderItem) => {
+    return item.box_type.toLowerCase().includes('abonnement') || item.box_type.toLowerCase().includes('subscription');
   };
 
   const getOrderType = (items: OrderItem[]) => {
@@ -339,40 +365,80 @@ const MesCommandes = () => {
 
                       {/* Articles détaillés */}
                       <div>
-                        <h4 className="font-semibold text-foreground mb-3">Articles commandés</h4>
-                        <div className="space-y-3">
-                          {getItemsForOrder(selectedOrder.id).map((item) => {
-                            const boxData = getBoxData(item.box_type);
-                            return (
-                              <div key={item.id} className="flex items-center gap-4 p-4 border border-border rounded-lg">
-                                {boxData?.image ? (
-                                  <img 
-                                    src={boxData.image} 
-                                    alt={boxData.baseTitle}
-                                    className="w-16 h-16 object-cover rounded-lg"
-                                  />
-                                ) : (
-                                  <div className="w-16 h-16 bg-muted rounded-lg flex items-center justify-center">
-                                    <Package className="h-6 w-6 text-muted-foreground" />
-                                  </div>
-                                )}
-                                
-                                <div className="flex-1">
-                                  <h5 className="font-medium text-foreground">{item.box_type}</h5>
-                                  <div className="text-sm text-muted-foreground">
-                                    Quantité: {item.quantity} • Prix unitaire: {Number(item.unit_price).toFixed(2)} €
-                                  </div>
-                                </div>
-                                
-                                <div className="text-right">
-                                  <div className="font-semibold text-foreground">
-                                    {(Number(item.unit_price) * item.quantity).toFixed(2)} €
-                                  </div>
-                                </div>
+                        <h4 className="font-semibold text-foreground mb-4 flex items-center">
+                          <Package className="h-5 w-5 mr-2" />
+                          Articles commandés
+                        </h4>
+                        
+                        {getItemsForOrder(selectedOrder.id).length === 0 ? (
+                          <div className="text-center py-8 text-muted-foreground">
+                            <Package className="h-12 w-12 mx-auto mb-2 opacity-50" />
+                            <p>Aucun article trouvé pour cette commande</p>
+                          </div>
+                        ) : (
+                          <div className="border border-border rounded-lg overflow-hidden">
+                            <Table>
+                              <TableHeader>
+                                <TableRow>
+                                  <TableHead>Produit</TableHead>
+                                  <TableHead className="text-center">Quantité</TableHead>
+                                  <TableHead className="text-right">Prix unitaire</TableHead>
+                                  <TableHead className="text-right">Total</TableHead>
+                                </TableRow>
+                              </TableHeader>
+                              <TableBody>
+                                {getItemsForOrder(selectedOrder.id).map((item) => {
+                                  const boxData = getBoxData(item.box_type);
+                                  const isSubscription = isSubscriptionItem(item);
+                                  
+                                  return (
+                                    <TableRow key={item.id}>
+                                      <TableCell>
+                                        <div className="flex items-center space-x-3">
+                                          <div className="relative">
+                                            {boxData?.image ? (
+                                              <img 
+                                                src={boxData.image} 
+                                                alt={getItemDisplayName(item)}
+                                                className="w-12 h-12 object-cover rounded"
+                                              />
+                                            ) : (
+                                              <div className="w-12 h-12 bg-muted rounded flex items-center justify-center">
+                                                <Package className="h-6 w-6 text-muted-foreground" />
+                                              </div>
+                                            )}
+                                            {isSubscription && (
+                                              <Crown className="absolute -top-1 -right-1 h-4 w-4 text-amber-500" />
+                                            )}
+                                          </div>
+                                          <div>
+                                            <p className="font-medium text-foreground">{getItemDisplayName(item)}</p>
+                                            <p className="text-sm text-muted-foreground">{getItemDescription(item)}</p>
+                                          </div>
+                                        </div>
+                                      </TableCell>
+                                      <TableCell className="text-center">{item.quantity}</TableCell>
+                                      <TableCell className="text-right">{Number(item.unit_price).toFixed(2)}€</TableCell>
+                                      <TableCell className="text-right font-medium">
+                                        {(Number(item.unit_price) * item.quantity).toFixed(2)}€
+                                      </TableCell>
+                                    </TableRow>
+                                  );
+                                })}
+                              </TableBody>
+                            </Table>
+                            
+                            {/* Total de la commande */}
+                            <div className="border-t border-border p-4 bg-muted/20">
+                              <div className="flex justify-between items-center">
+                                <span className="font-semibold text-foreground">Total de la commande</span>
+                                <span className="font-bold text-lg text-foreground">
+                                  {selectedOrder.total_amount.toFixed(2)}€
+                                </span>
                               </div>
-                            );
-                          })}
-                        </div>
+                            </div>
+                          </div>
+                        )}
                       </div>
                     </div>
                   )}
