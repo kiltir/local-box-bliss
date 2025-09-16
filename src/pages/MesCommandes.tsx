@@ -235,10 +235,12 @@ const MesCommandes = () => {
                                     {new Date(order.created_at).toLocaleDateString('fr-FR')}
                                   </div>
                                   
-                                  <div className="flex items-center gap-1">
-                                    <DeliveryIcon className="h-4 w-4" />
-                                    {deliveryInfo.type}
-                                  </div>
+                                  {deliveryInfo.type !== 'Non défini' && (
+                                    <div className="flex items-center gap-1">
+                                      <DeliveryIcon className="h-4 w-4" />
+                                      {deliveryInfo.type}
+                                    </div>
+                                  )}
 
                                   {deliveryInfo.date && (
                                     <div className="flex items-center gap-1">
