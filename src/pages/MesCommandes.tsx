@@ -248,9 +248,6 @@ const MesCommandes = () => {
                                 </div>
 
                                 <div className="flex items-center gap-3">
-                                  <Badge variant="outline" className="text-xs">
-                                    {getOrderType(items)}
-                                  </Badge>
                                   {getStatusBadge(order.status)}
                                 </div>
                               </div>
@@ -311,11 +308,12 @@ const MesCommandes = () => {
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                           <h4 className="font-semibold text-foreground mb-2">Informations générales</h4>
-                          <div className="space-y-2 text-sm">
-                            <div><span className="text-muted-foreground">Date:</span> {new Date(selectedOrder.created_at).toLocaleDateString('fr-FR')}</div>
-                            <div><span className="text-muted-foreground">Statut:</span> {getStatusBadge(selectedOrder.status)}</div>
-                            <div><span className="text-muted-foreground">Total:</span> <span className="font-semibold">{selectedOrder.total_amount.toFixed(2)} €</span></div>
-                          </div>
+                           <div className="space-y-2 text-sm">
+                             <div><span className="text-muted-foreground">Date:</span> {new Date(selectedOrder.created_at).toLocaleDateString('fr-FR')}</div>
+                             <div><span className="text-muted-foreground">Type:</span> {getOrderType(getItemsForOrder(selectedOrder.id))}</div>
+                             <div><span className="text-muted-foreground">Statut:</span> {getStatusBadge(selectedOrder.status)}</div>
+                             <div><span className="text-muted-foreground">Total:</span> <span className="font-semibold">{selectedOrder.total_amount.toFixed(2)} €</span></div>
+                           </div>
                         </div>
 
                         <div>
