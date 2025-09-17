@@ -244,12 +244,12 @@ const MesCommandes = () => {
                           <div className="flex-1 min-w-0">
                             <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
                               <div className="space-y-2">
-                                <div className="flex items-center gap-2">
-                                  <CardTitle className="text-lg font-semibold text-foreground">
-                                    {boxData?.baseTitle || firstItem?.box_type || 'Commande'}
-                                  </CardTitle>
-                                  <span className="text-sm text-muted-foreground">#{order.order_number}</span>
-                                </div>
+                                 <div className="flex items-center gap-2">
+                                   <CardTitle className="text-lg font-semibold text-foreground">
+                                     Commande
+                                   </CardTitle>
+                                   <span className="text-sm text-muted-foreground">#{order.order_number}</span>
+                                 </div>
 
                                 <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
                                   <div className="flex items-center gap-1">
