@@ -55,6 +55,7 @@ serve(async (req) => {
       throw new Error("No items provided in cart");
     }
     logStep("Items received", { itemCount: items.length, currency });
+    logStep("Travel info received", { hasTravelInfo: !!travelInfo, travelInfo });
 
     // Initialize Stripe
     const stripe = new Stripe(stripeKey, {

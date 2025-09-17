@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -24,6 +24,31 @@ const TouristDatesSection = () => {
   const [showDeparturePicker, setShowDeparturePicker] = useState(false);
   const [showArrivalPicker, setShowArrivalPicker] = useState(false);
   const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem('travelInfo');
+      if (stored) {
+        const t = JSON.parse(stored);
+        if (t.arrival_date_reunion) setArrivalDate(new Date(t.arrival_date_reunion));
+        if (t.departure_date_reunion) setDepartureDate(new Date(t.departure_date_reunion));
+        if (t.arrival_time_reunion) {
+          const [h, m] = t.arrival_time_reunion.split(':');
+          if (h) setArrivalHour(h.padStart(2, '0'));
+          if (m) setArrivalMinute(m.padStart(2, '0'));
+        }
+        if (t.departure_time_reunion) {
+          const [h, m] = t.departure_time_reunion.split(':');
+          if (h) setDepartureHour(h.padStart(2, '0'));
+          if (m) setDepartureMinute(m.padStart(2, '0'));
+        }
+        if (t.delivery_preference) setDeliveryPreference(t.delivery_preference);
+      }
+    } catch (e) {
+      console.error('Failed to parse stored travelInfo', e);
+    }
+  }, []);
+
   const saveTravelInfo = async () => {
     if (!arrivalDate || !departureDate) {
       toast.error("Veuillez sélectionner vos dates d'arrivée et de départ");
