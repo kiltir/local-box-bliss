@@ -167,21 +167,16 @@ const MesCommandes = () => {
   };
 
   const getStatusBadge = (status: string) => {
-    const getVariant = (status: string) => {
-      switch(status) {
-        case 'En cours': return 'success';
-        case 'Expédiée': return 'purple';
-        case 'Livrée': return 'yellow';
-        case 'Interrompue': return 'destructive';
-        default: return 'secondary';
-      }
+    const statusConfig = {
+      'en_attente': { label: 'En cours', variant: 'success' as const },
+      'confirmee': { label: 'En cours', variant: 'success' as const },
+      'expediee': { label: 'Expédiée', variant: 'purple' as const },
+      'livree': { label: 'Livrée', variant: 'yellow' as const },
+      'interrompue': { label: 'Interrompue', variant: 'destructive' as const },
     };
     
-    return (
-      <Badge variant={getVariant(status) as any}>
-        {status}
-      </Badge>
-    );
+    const config = statusConfig[status as keyof typeof statusConfig] || { label: 'En cours', variant: 'secondary' as const };
+    return <Badge variant={config.variant}>{config.label}</Badge>;
   };
 
   if (loading || isLoadingOrders) {
