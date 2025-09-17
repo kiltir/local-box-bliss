@@ -146,18 +146,20 @@ const MesCommandes = () => {
   const getDeliveryInfo = () => {
     if (!userProfile?.delivery_preference) return { type: 'Non défini', icon: Package };
     
-    if (userProfile.delivery_preference === 'airport') {
+    if (userProfile.delivery_preference === 'airport_pickup') {
       return { 
-        type: 'Récupération à l\'aéroport', 
+        type: 'Aéroport', 
         icon: Plane,
         date: userProfile.arrival_date_reunion 
       };
-    } else {
+    } else if (userProfile.delivery_preference === 'mainland_delivery') {
       return { 
-        type: 'Livraison en métropole', 
+        type: 'Métropole', 
         icon: Truck,
         date: null 
       };
+    } else {
+      return { type: 'Non défini', icon: Package };
     }
   };
 
