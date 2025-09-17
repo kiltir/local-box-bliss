@@ -144,6 +144,7 @@ const MesCommandes = () => {
 
 
   const getDeliveryInfo = () => {
+    console.log('delivery_preference value:', userProfile?.delivery_preference);
     if (!userProfile?.delivery_preference) return { type: 'Non défini', icon: Package };
     
     if (userProfile.delivery_preference === 'airport_pickup') {
