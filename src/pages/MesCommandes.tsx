@@ -21,6 +21,7 @@ interface Order {
   status: string;
   created_at: string;
   user_id: string;
+  delivery_preference?: string;
   shipping_address_street?: string;
   shipping_address_city?: string;
   shipping_address_postal_code?: string;
@@ -143,19 +144,18 @@ const MesCommandes = () => {
   };
 
 
-  const getDeliveryInfo = () => {
-    console.log('delivery_preference value:', userProfile?.delivery_preference);
-    if (!userProfile?.delivery_preference) return { type: 'Non défini', icon: Package };
+  const getDeliveryInfo = (order: Order) => {
+    if (!order.delivery_preference) return { type: 'Non défini', icon: Package };
     
-    if (userProfile.delivery_preference === 'airport_pickup') {
+    if (order.delivery_preference === 'airport_pickup') {
       return { 
-        type: 'Aéroport', 
+        type: 'Récupération Aéroport', 
         icon: Plane,
-        date: userProfile.arrival_date_reunion 
+        date: userProfile?.arrival_date_reunion 
       };
-    } else if (userProfile.delivery_preference === 'mainland_delivery') {
+    } else if (order.delivery_preference === 'mainland_delivery') {
       return { 
-        type: 'Métropole', 
+        type: 'Livraison Métropole', 
         icon: Truck,
         date: null 
       };
@@ -220,7 +220,7 @@ const MesCommandes = () => {
                   const items = getItemsForOrder(order.id);
                   const firstItem = items[0];
                   const boxData = firstItem ? getBoxData(firstItem.box_type) : null;
-                  const deliveryInfo = getDeliveryInfo();
+                  const deliveryInfo = getDeliveryInfo(order);
                   const DeliveryIcon = deliveryInfo.icon;
 
                   return (
@@ -346,8 +346,8 @@ const MesCommandes = () => {
                           <h4 className="font-semibold text-foreground mb-2">Livraison</h4>
                           <div className="space-y-2 text-sm">
                             <div className="flex items-center gap-2">
-                              {React.createElement(getDeliveryInfo().icon, { className: "h-4 w-4" })}
-                              <span>{getDeliveryInfo().type}</span>
+                              {React.createElement(getDeliveryInfo(selectedOrder).icon, { className: "h-4 w-4" })}
+                              <span>{getDeliveryInfo(selectedOrder).type}</span>
                             </div>
                             {selectedOrder.shipping_address_street && (
                               <div className="text-muted-foreground">

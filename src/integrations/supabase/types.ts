@@ -73,6 +73,7 @@ export type Database = {
       orders: {
         Row: {
           created_at: string
+          delivery_preference: string | null
           id: string
           order_number: string
           shipping_address_city: string | null
@@ -86,6 +87,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          delivery_preference?: string | null
           id?: string
           order_number: string
           shipping_address_city?: string | null
@@ -99,6 +101,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          delivery_preference?: string | null
           id?: string
           order_number?: string
           shipping_address_city?: string | null
