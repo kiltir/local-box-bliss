@@ -22,6 +22,10 @@ interface Order {
   created_at: string;
   user_id: string;
   delivery_preference?: string;
+  arrival_date_reunion?: string;
+  departure_date_reunion?: string;
+  arrival_time_reunion?: string;
+  departure_time_reunion?: string;
   shipping_address_street?: string;
   shipping_address_city?: string;
   shipping_address_postal_code?: string;
@@ -151,7 +155,7 @@ const MesCommandes = () => {
       return { 
         type: 'Récupération Aéroport', 
         icon: Plane,
-        date: userProfile?.arrival_date_reunion 
+        date: order.arrival_date_reunion 
       };
     } else if (order.delivery_preference === 'mainland_delivery') {
       return { 

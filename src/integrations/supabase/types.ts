@@ -72,8 +72,12 @@ export type Database = {
       }
       orders: {
         Row: {
+          arrival_date_reunion: string | null
+          arrival_time_reunion: string | null
           created_at: string
           delivery_preference: string | null
+          departure_date_reunion: string | null
+          departure_time_reunion: string | null
           id: string
           order_number: string
           shipping_address_city: string | null
@@ -86,8 +90,12 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          arrival_date_reunion?: string | null
+          arrival_time_reunion?: string | null
           created_at?: string
           delivery_preference?: string | null
+          departure_date_reunion?: string | null
+          departure_time_reunion?: string | null
           id?: string
           order_number: string
           shipping_address_city?: string | null
@@ -100,8 +108,12 @@ export type Database = {
           user_id: string
         }
         Update: {
+          arrival_date_reunion?: string | null
+          arrival_time_reunion?: string | null
           created_at?: string
           delivery_preference?: string | null
+          departure_date_reunion?: string | null
+          departure_time_reunion?: string | null
           id?: string
           order_number?: string
           shipping_address_city?: string | null
