@@ -50,7 +50,7 @@ serve(async (req) => {
     logStep("Origin detected", { origin });
 
     // Parse request body
-    const { items, currency = 'eur' } = await req.json();
+    const { items, currency = 'eur', travelInfo } = await req.json();
     if (!items || !Array.isArray(items) || items.length === 0) {
       throw new Error("No items provided in cart");
     }
@@ -162,6 +162,13 @@ serve(async (req) => {
       metadata: {
         user_id: user?.id || 'guest',
         items: JSON.stringify(simplifiedItems),
+        ...(travelInfo && {
+          delivery_preference: travelInfo.delivery_preference || '',
+          arrival_date_reunion: travelInfo.arrival_date_reunion || '',
+          departure_date_reunion: travelInfo.departure_date_reunion || '',
+          arrival_time_reunion: travelInfo.arrival_time_reunion || '',
+          departure_time_reunion: travelInfo.departure_time_reunion || '',
+        }),
       },
     };
 

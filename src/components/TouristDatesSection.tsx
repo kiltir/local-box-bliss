@@ -25,11 +25,6 @@ const TouristDatesSection = () => {
   const [showArrivalPicker, setShowArrivalPicker] = useState(false);
   const [saving, setSaving] = useState(false);
   const saveTravelInfo = async () => {
-    if (!user) {
-      toast.error("Vous devez être connecté pour sauvegarder vos informations de voyage");
-      return;
-    }
-
     if (!arrivalDate || !departureDate) {
       toast.error("Veuillez sélectionner vos dates d'arrivée et de départ");
       return;
@@ -37,23 +32,15 @@ const TouristDatesSection = () => {
 
     setSaving(true);
     try {
-      const { error } = await supabase
-        .from('profiles')
-        .upsert({
-          id: user.id,
-          arrival_date_reunion: arrivalDate.toISOString().split('T')[0],
-          departure_date_reunion: departureDate.toISOString().split('T')[0],
-          arrival_time_reunion: `${arrivalHour}:${arrivalMinute}:00`,
-          departure_time_reunion: `${departureHour}:${departureMinute}:00`,
-          delivery_preference: deliveryPreference,
-        });
-
-      if (error) {
-        toast.error("Erreur lors de la sauvegarde de vos informations");
-        console.error('Error saving travel info:', error);
-        return;
-      }
-
+      const travelInfo = {
+        arrival_date_reunion: arrivalDate.toISOString().split('T')[0],
+        departure_date_reunion: departureDate.toISOString().split('T')[0],
+        arrival_time_reunion: `${arrivalHour}:${arrivalMinute}:00`,
+        departure_time_reunion: `${departureHour}:${departureMinute}:00`,
+        delivery_preference: deliveryPreference,
+      };
+      
+      localStorage.setItem('travelInfo', JSON.stringify(travelInfo));
       toast.success("Informations de voyage sauvegardées avec succès !");
     } catch (error) {
       toast.error("Erreur lors de la sauvegarde");
@@ -224,21 +211,15 @@ const TouristDatesSection = () => {
 
             {/* Boutons d'action */}
             <div className="border-t pt-6">
-              {user ? (
-                <div className="flex flex-col gap-4">
-                  <Button 
-                    onClick={saveTravelInfo}
-                    disabled={!arrivalDate || !departureDate || saving}
-                    className="w-full bg-leaf-green hover:bg-dark-green text-white"
-                  >
-                    {saving ? "Sauvegarde..." : "Sauvegarder mes informations de voyage"}
-                  </Button>
-                </div>
-              ) : (
-                <p className="text-center text-gray-600 mb-4">
-                  Connectez-vous pour sauvegarder vos informations de voyage
-                </p>
-              )}
+              <div className="flex flex-col gap-4">
+                <Button 
+                  onClick={saveTravelInfo}
+                  disabled={!arrivalDate || !departureDate || saving}
+                  className="w-full bg-leaf-green hover:bg-dark-green text-white"
+                >
+                  {saving ? "Sauvegarde..." : "Sauvegarder mes informations de voyage"}
+                </Button>
+              </div>
             </div>
 
             {canPlanPurchase && <div className="border-t pt-6">
