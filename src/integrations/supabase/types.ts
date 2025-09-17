@@ -129,8 +129,6 @@ export type Database = {
       }
       profiles: {
         Row: {
-          arrival_date_reunion: string | null
-          arrival_time_reunion: string | null
           avatar_url: string | null
           billing_address_city: string | null
           billing_address_country: string | null
@@ -138,9 +136,6 @@ export type Database = {
           billing_address_street: string | null
           created_at: string
           date_of_birth: string | null
-          delivery_preference: string | null
-          departure_date_reunion: string | null
-          departure_time_reunion: string | null
           full_name: string | null
           gender: string | null
           id: string
@@ -148,8 +143,6 @@ export type Database = {
           username: string | null
         }
         Insert: {
-          arrival_date_reunion?: string | null
-          arrival_time_reunion?: string | null
           avatar_url?: string | null
           billing_address_city?: string | null
           billing_address_country?: string | null
@@ -157,9 +150,6 @@ export type Database = {
           billing_address_street?: string | null
           created_at?: string
           date_of_birth?: string | null
-          delivery_preference?: string | null
-          departure_date_reunion?: string | null
-          departure_time_reunion?: string | null
           full_name?: string | null
           gender?: string | null
           id: string
@@ -167,8 +157,6 @@ export type Database = {
           username?: string | null
         }
         Update: {
-          arrival_date_reunion?: string | null
-          arrival_time_reunion?: string | null
           avatar_url?: string | null
           billing_address_city?: string | null
           billing_address_country?: string | null
@@ -176,9 +164,6 @@ export type Database = {
           billing_address_street?: string | null
           created_at?: string
           date_of_birth?: string | null
-          delivery_preference?: string | null
-          departure_date_reunion?: string | null
-          departure_time_reunion?: string | null
           full_name?: string | null
           gender?: string | null
           id?: string
