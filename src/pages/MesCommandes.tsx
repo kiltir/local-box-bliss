@@ -81,7 +81,16 @@ const MesCommandes = () => {
 
       if (ordersError) throw ordersError;
 
-      // Note: Travel info is now stored per order, not in profiles
+      // Fetch user profile for delivery preferences
+      const { data: profileData, error: profileError } = await supabase
+        .from('profiles')
+        .select('delivery_preference, arrival_date_reunion, departure_date_reunion, arrival_time_reunion, departure_time_reunion')
+        .eq('id', user?.id)
+        .single();
+
+      if (!profileError) {
+        setUserProfile(profileData);
+      }
 
       if (ordersData && ordersData.length > 0) {
         setOrders(ordersData);

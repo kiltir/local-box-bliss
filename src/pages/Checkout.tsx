@@ -10,7 +10,6 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import TouristDatesSection from '@/components/TouristDatesSection';
 
 const Checkout = () => {
   const navigate = useNavigate();
@@ -28,12 +27,8 @@ const Checkout = () => {
     try {
       console.log('Starting payment process with items:', items);
       
-      // Get travel info from localStorage
-      const travelInfo = localStorage.getItem('travelInfo') ? JSON.parse(localStorage.getItem('travelInfo')!) : null;
-      console.log('Travel info from localStorage:', travelInfo);
-      
       const { data, error } = await supabase.functions.invoke('create-payment', {
-        body: { items, currency: 'eur', travelInfo }
+        body: { items, currency: 'eur' }
       });
 
       if (error) {
@@ -109,9 +104,6 @@ const Checkout = () => {
           <p className="text-gray-600 mt-2">Vérifiez votre panier et procédez au paiement sécurisé</p>
         </div>
 
-        <div className="mb-8">
-          <TouristDatesSection />
-        </div>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Cart Summary */}
           <div className="lg:col-span-2">
