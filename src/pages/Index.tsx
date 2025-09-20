@@ -4,6 +4,7 @@ import { useLocation } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import Hero from '@/components/Hero';
 import HeroDescription from '@/components/HeroDescription';
+import TouristDatesSection from '@/components/TouristDatesSection';
 import FeaturesSection from '@/components/FeaturesSection';
 import BoxesSection from '@/components/BoxesSection';
 import ProducerSection from '@/components/ProducerSection';
@@ -35,6 +36,7 @@ const Index = () => {
       <main>
         <Hero />
         <HeroDescription />
+        <TouristDatesSection />
         <FeaturesSection />
         <BoxesSection />
         <ProducerSection />

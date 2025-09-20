@@ -32,13 +32,6 @@ interface Order {
   shipping_address_country?: string;
 }
 
-interface Profile {
-  delivery_preference?: string;
-  arrival_date_reunion?: string;
-  departure_date_reunion?: string;
-  arrival_time_reunion?: string;
-  departure_time_reunion?: string;
-}
 
 interface OrderItem {
   id: string;
@@ -53,7 +46,7 @@ const MesCommandes = () => {
   const navigate = useNavigate();
   const [orders, setOrders] = useState<Order[]>([]);
   const [orderItems, setOrderItems] = useState<OrderItem[]>([]);
-  const [userProfile, setUserProfile] = useState<Profile | null>(null);
+  
   const [isLoadingOrders, setIsLoadingOrders] = useState(true);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
 
@@ -81,16 +74,6 @@ const MesCommandes = () => {
 
       if (ordersError) throw ordersError;
 
-      // Fetch user profile for delivery preferences
-      const { data: profileData, error: profileError } = await supabase
-        .from('profiles')
-        .select('delivery_preference, arrival_date_reunion, departure_date_reunion, arrival_time_reunion, departure_time_reunion')
-        .eq('id', user?.id)
-        .single();
-
-      if (!profileError) {
-        setUserProfile(profileData);
-      }
 
       if (ordersData && ordersData.length > 0) {
         setOrders(ordersData);

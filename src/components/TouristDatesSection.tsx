@@ -5,7 +5,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import { CalendarIcon, Plane, MapPin, Clock, Package, Truck } from "lucide-react";
+import { CalendarIcon, MapPin, Clock, X, ShoppingCart } from "lucide-react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { cn } from "@/lib/utils";
@@ -13,65 +13,49 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 const TouristDatesSection = () => {
-  const { user } = useAuth();
   const [arrivalDate, setArrivalDate] = useState<Date>();
   const [departureDate, setDepartureDate] = useState<Date>();
   const [arrivalHour, setArrivalHour] = useState<string>('12');
   const [arrivalMinute, setArrivalMinute] = useState<string>('00');
   const [departureHour, setDepartureHour] = useState<string>('14');
   const [departureMinute, setDepartureMinute] = useState<string>('00');
-  const [deliveryPreference, setDeliveryPreference] = useState<string>('airport_pickup');
+  const [selectedPickupDate, setSelectedPickupDate] = useState<'arrival' | 'departure' | null>(null);
   const [showDeparturePicker, setShowDeparturePicker] = useState(false);
   const [showArrivalPicker, setShowArrivalPicker] = useState(false);
-  const [saving, setSaving] = useState(false);
-  const saveTravelInfo = async () => {
-    if (!user) {
-      toast.error("Vous devez être connecté pour sauvegarder vos informations de voyage");
+  const saveTravelInfoToLocalStorage = () => {
+    if (!arrivalDate || !departureDate || !selectedPickupDate) {
+      toast.error("Veuillez sélectionner vos dates et votre préférence de récupération");
       return;
     }
 
-    if (!arrivalDate || !departureDate) {
-      toast.error("Veuillez sélectionner vos dates d'arrivée et de départ");
-      return;
-    }
+    const travelInfo = {
+      arrival_date_reunion: arrivalDate.toISOString().split('T')[0],
+      departure_date_reunion: departureDate.toISOString().split('T')[0],
+      arrival_time_reunion: `${arrivalHour}:${arrivalMinute}:00`,
+      departure_time_reunion: `${departureHour}:${departureMinute}:00`,
+      delivery_preference: selectedPickupDate === 'arrival' ? 'airport_pickup_arrival' : 'airport_pickup_departure',
+    };
 
-    setSaving(true);
-    try {
-      const { error } = await supabase
-        .from('profiles')
-        .upsert({
-          id: user.id,
-          arrival_date_reunion: arrivalDate.toISOString().split('T')[0],
-          departure_date_reunion: departureDate.toISOString().split('T')[0],
-          arrival_time_reunion: `${arrivalHour}:${arrivalMinute}:00`,
-          departure_time_reunion: `${departureHour}:${departureMinute}:00`,
-          delivery_preference: deliveryPreference,
-        });
-
-      if (error) {
-        toast.error("Erreur lors de la sauvegarde de vos informations");
-        console.error('Error saving travel info:', error);
-        return;
-      }
-
-      toast.success("Informations de voyage sauvegardées avec succès !");
-    } catch (error) {
-      toast.error("Erreur lors de la sauvegarde");
-      console.error('Error:', error);
-    } finally {
-      setSaving(false);
-    }
+    localStorage.setItem('travelInfo', JSON.stringify(travelInfo));
+    toast.success("Dates de séjour enregistrées !");
   };
 
-  const handlePlanPurchase = () => {
-    if (arrivalDate && departureDate) {
-      // Logic for planning purchase - could scroll to boxes section or show a modal
-      document.getElementById('boxes')?.scrollIntoView({
-        behavior: 'smooth'
-      });
-    }
+  const handleCommander = () => {
+    saveTravelInfoToLocalStorage();
+    document.getElementById('boxes')?.scrollIntoView({
+      behavior: 'smooth'
+    });
   };
-  const canPlanPurchase = arrivalDate && departureDate;
+
+  const handleAnnuler = () => {
+    setArrivalDate(undefined);
+    setDepartureDate(undefined);
+    setSelectedPickupDate(null);
+    localStorage.removeItem('travelInfo');
+    toast.info("Sélection de dates annulée");
+  };
+
+  const canProceed = arrivalDate && departureDate && selectedPickupDate;
 
   // Generate hours (00-23)
   const hours = Array.from({
@@ -199,66 +183,55 @@ const TouristDatesSection = () => {
               </div>
             </div>
 
-            {/* Options de livraison */}
-            <div className="border-t pt-6">
-              <label className="block text-sm font-medium text-gray-700 mb-4">
-                Mode de récupération souhaité
-              </label>
-              <RadioGroup value={deliveryPreference} onValueChange={setDeliveryPreference} className="space-y-3">
-                <div className="flex items-center space-x-3 p-3 border rounded-lg">
-                  <RadioGroupItem value="airport_pickup" id="airport_pickup" />
-                  <Label htmlFor="airport_pickup" className="flex items-center space-x-2 cursor-pointer flex-1">
-                    <Package className="h-4 w-4 text-leaf-green" />
-                    <span>Récupérer à l'aéroport Roland Garros</span>
-                  </Label>
-                </div>
-                <div className="flex items-center space-x-3 p-3 border rounded-lg">
-                  <RadioGroupItem value="mainland_delivery" id="mainland_delivery" />
-                  <Label htmlFor="mainland_delivery" className="flex items-center space-x-2 cursor-pointer flex-1">
-                    <Truck className="h-4 w-4 text-leaf-green" />
-                    <span>Recevoir en Métropole</span>
-                  </Label>
-                </div>
-              </RadioGroup>
-            </div>
+            {/* Sélection de la date de récupération */}
+            {arrivalDate && departureDate && (
+              <div className="border-t pt-6">
+                <label className="block text-sm font-medium text-gray-700 mb-4">
+                  Quelle date souhaitez-vous pour récupérer votre commande à l'aéroport ?
+                </label>
+                <RadioGroup value={selectedPickupDate || ''} onValueChange={(value) => setSelectedPickupDate(value as 'arrival' | 'departure')} className="space-y-3">
+                  <div className="flex items-center space-x-3 p-3 border rounded-lg">
+                    <RadioGroupItem value="arrival" id="pickup_arrival" />
+                    <Label htmlFor="pickup_arrival" className="flex items-center space-x-2 cursor-pointer flex-1">
+                      <span>Récupérer le {format(arrivalDate, "dd/MM/yyyy", { locale: fr })} à {arrivalHour}h{arrivalMinute} (arrivée)</span>
+                    </Label>
+                  </div>
+                  <div className="flex items-center space-x-3 p-3 border rounded-lg">
+                    <RadioGroupItem value="departure" id="pickup_departure" />
+                    <Label htmlFor="pickup_departure" className="flex items-center space-x-2 cursor-pointer flex-1">
+                      <span>Récupérer le {format(departureDate, "dd/MM/yyyy", { locale: fr })} à {departureHour}h{departureMinute} (départ)</span>
+                    </Label>
+                  </div>
+                </RadioGroup>
+              </div>
+            )}
 
             {/* Boutons d'action */}
             <div className="border-t pt-6">
-              {user ? (
-                <div className="flex flex-col gap-4">
-                  <Button 
-                    onClick={saveTravelInfo}
-                    disabled={!arrivalDate || !departureDate || saving}
-                    className="w-full bg-leaf-green hover:bg-dark-green text-white"
-                  >
-                    {saving ? "Sauvegarde..." : "Sauvegarder mes informations de voyage"}
-                  </Button>
-                </div>
-              ) : (
-                <p className="text-center text-gray-600 mb-4">
-                  Connectez-vous pour sauvegarder vos informations de voyage
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Button 
+                  onClick={handleCommander}
+                  disabled={!canProceed}
+                  className="bg-leaf-green hover:bg-dark-green text-white px-6 py-3"
+                >
+                  <ShoppingCart className="mr-2 h-4 w-4" />
+                  Commander
+                </Button>
+                <Button 
+                  variant="outline" 
+                  onClick={handleAnnuler}
+                  className="border-gray-300 text-gray-600 hover:bg-gray-50 px-6 py-3"
+                >
+                  <X className="mr-2 h-4 w-4" />
+                  Annuler
+                </Button>
+              </div>
+              {!canProceed && (arrivalDate || departureDate) && (
+                <p className="text-sm text-gray-500 mt-4 text-center">
+                  Veuillez sélectionner vos dates de séjour et votre préférence de récupération
                 </p>
               )}
             </div>
-
-            {canPlanPurchase && <div className="border-t pt-6">
-                <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                  <Button className="bg-leaf-green hover:bg-dark-green text-white px-6 py-3" onClick={handlePlanPurchase}>
-                    <Plane className="mr-2 h-4 w-4" />
-                    Acheter maintenant
-                  </Button>
-                  <Button variant="outline" className="border-leaf-green text-leaf-green hover:bg-leaf-green/10 px-6 py-3" onClick={handlePlanPurchase}>
-                    Programmer pour le retour
-                  </Button>
-                </div>
-                <p className="text-sm text-gray-500 mt-4">
-                  Séjour prévu du {format(arrivalDate!, "dd/MM", {
-                locale: fr
-              })} à {arrivalHour}h{arrivalMinute} au {format(departureDate!, "dd/MM/yyyy", {
-                locale: fr
-              })} à {departureHour}h{departureMinute}
-                </p>
-              </div>}
           </div>
         </div>
       </div>
