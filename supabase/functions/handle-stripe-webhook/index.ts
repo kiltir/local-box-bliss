@@ -109,16 +109,15 @@ serve(async (req) => {
 
       logStep('Creating order', { userId, orderNumber, totalAmount, itemsCount: items.length, hasTravelInfo: !!travelInfo });
 
-      // Determine delivery preference based on travel info
-      let deliveryPreference = 'ship_to_metropole'; // Default
-      if (travelInfo?.selectedPickupDate) {
-        deliveryPreference = travelInfo.selectedPickupDate;
-      }
+      // Determine delivery preference using travel info if provided
+      let deliveryPreference = travelInfo?.delivery_preference || 'ship_to_metropole';
 
       logStep('Travel info processed', { 
         deliveryPreference,
-        arrivalDate: travelInfo?.arrivalDate,
-        departureDate: travelInfo?.departureDate 
+        arrival_date_reunion: travelInfo?.arrival_date_reunion,
+        departure_date_reunion: travelInfo?.departure_date_reunion,
+        arrival_time_reunion: travelInfo?.arrival_time_reunion,
+        departure_time_reunion: travelInfo?.departure_time_reunion
       });
 
       // Create the order
@@ -130,10 +129,10 @@ serve(async (req) => {
           total_amount: totalAmount,
           status: 'confirmee',
           delivery_preference: deliveryPreference,
-          arrival_date_reunion: travelInfo?.arrivalDate || null,
-          departure_date_reunion: travelInfo?.departureDate || null,
-          arrival_time_reunion: travelInfo?.arrivalTime || null,
-          departure_time_reunion: travelInfo?.departureTime || null,
+          arrival_date_reunion: travelInfo?.arrival_date_reunion || null,
+          departure_date_reunion: travelInfo?.departure_date_reunion || null,
+          arrival_time_reunion: travelInfo?.arrival_time_reunion || null,
+          departure_time_reunion: travelInfo?.departure_time_reunion || null,
           shipping_address_street: session.customer_details?.address?.line1 || null,
           shipping_address_city: session.customer_details?.address?.city || null,
           shipping_address_postal_code: session.customer_details?.address?.postal_code || null,
