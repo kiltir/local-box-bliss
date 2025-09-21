@@ -69,6 +69,7 @@ serve(async (req) => {
       // Extract metadata from the session
       const userId = session.metadata?.user_id;
       const itemsData = session.metadata?.items;
+      const travelInfoData = session.metadata?.travel_info;
 
       if (!userId || !itemsData) {
         logStep('Missing required metadata', { userId, hasItems: !!itemsData });
@@ -89,25 +90,35 @@ serve(async (req) => {
         });
       }
 
+      // Parse travel info if available
+      let travelInfo = null;
+      if (travelInfoData) {
+        try {
+          travelInfo = JSON.parse(travelInfoData);
+        } catch (err) {
+          logStep('Failed to parse travel info metadata', { error: err.message });
+          // Don't fail the entire request for travel info parsing errors
+        }
+      }
+
       // Generate order number
       const orderNumber = `CMD-${Date.now()}-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
 
       // Calculate total amount from session
       const totalAmount = session.amount_total / 100; // Convert from cents
 
-      logStep('Creating order', { userId, orderNumber, totalAmount, itemsCount: items.length });
+      logStep('Creating order', { userId, orderNumber, totalAmount, itemsCount: items.length, hasTravelInfo: !!travelInfo });
 
-      // Get user's profile information including delivery preference and dates
-      const { data: profileData } = await supabase
-        .from('profiles')
-        .select('delivery_preference, arrival_date_reunion, departure_date_reunion, arrival_time_reunion, departure_time_reunion')
-        .eq('id', userId)
-        .single();
+      // Determine delivery preference based on travel info
+      let deliveryPreference = 'ship_to_metropole'; // Default
+      if (travelInfo?.selectedPickupDate) {
+        deliveryPreference = travelInfo.selectedPickupDate;
+      }
 
-      logStep('User profile data', { 
-        delivery_preference: profileData?.delivery_preference,
-        arrival_date: profileData?.arrival_date_reunion,
-        departure_date: profileData?.departure_date_reunion 
+      logStep('Travel info processed', { 
+        deliveryPreference,
+        arrivalDate: travelInfo?.arrivalDate,
+        departureDate: travelInfo?.departureDate 
       });
 
       // Create the order
@@ -118,11 +129,11 @@ serve(async (req) => {
           order_number: orderNumber,
           total_amount: totalAmount,
           status: 'confirmee',
-          delivery_preference: profileData?.delivery_preference || null,
-          arrival_date_reunion: profileData?.arrival_date_reunion || null,
-          departure_date_reunion: profileData?.departure_date_reunion || null,
-          arrival_time_reunion: profileData?.arrival_time_reunion || null,
-          departure_time_reunion: profileData?.departure_time_reunion || null,
+          delivery_preference: deliveryPreference,
+          arrival_date_reunion: travelInfo?.arrivalDate || null,
+          departure_date_reunion: travelInfo?.departureDate || null,
+          arrival_time_reunion: travelInfo?.arrivalTime || null,
+          departure_time_reunion: travelInfo?.departureTime || null,
           shipping_address_street: session.customer_details?.address?.line1 || null,
           shipping_address_city: session.customer_details?.address?.city || null,
           shipping_address_postal_code: session.customer_details?.address?.postal_code || null,

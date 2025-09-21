@@ -50,11 +50,11 @@ serve(async (req) => {
     logStep("Origin detected", { origin });
 
     // Parse request body
-    const { items, currency = 'eur' } = await req.json();
+    const { items, currency = 'eur', travelInfo } = await req.json();
     if (!items || !Array.isArray(items) || items.length === 0) {
       throw new Error("No items provided in cart");
     }
-    logStep("Items received", { itemCount: items.length, currency });
+    logStep("Items received", { itemCount: items.length, currency, hasTravelInfo: !!travelInfo });
 
     // Initialize Stripe
     const stripe = new Stripe(stripeKey, {
@@ -162,6 +162,7 @@ serve(async (req) => {
       metadata: {
         user_id: user?.id || 'guest',
         items: JSON.stringify(simplifiedItems),
+        ...(travelInfo && { travel_info: JSON.stringify(travelInfo) }),
       },
     };
 

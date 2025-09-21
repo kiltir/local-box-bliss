@@ -27,8 +27,19 @@ const Checkout = () => {
     try {
       console.log('Starting payment process with items:', items);
       
+      // Get travel information from localStorage
+      const travelInfo = localStorage.getItem('travelInfo');
+      let parsedTravelInfo = null;
+      if (travelInfo) {
+        try {
+          parsedTravelInfo = JSON.parse(travelInfo);
+        } catch (error) {
+          console.warn('Failed to parse travel info from localStorage:', error);
+        }
+      }
+      
       const { data, error } = await supabase.functions.invoke('create-payment', {
-        body: { items, currency: 'eur' }
+        body: { items, currency: 'eur', travelInfo: parsedTravelInfo }
       });
 
       if (error) {
