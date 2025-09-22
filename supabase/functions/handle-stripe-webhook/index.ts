@@ -120,6 +120,24 @@ serve(async (req) => {
         departure_time_reunion: travelInfo?.departure_time_reunion
       });
 
+      // Calculate pickup date and time based on delivery preference
+      let pickupDate = null;
+      let pickupTime = null;
+      
+      if (deliveryPreference === 'airport_pickup_arrival') {
+        pickupDate = travelInfo?.arrival_date_reunion || null;
+        pickupTime = travelInfo?.arrival_time_reunion || null;
+      } else if (deliveryPreference === 'airport_pickup_departure') {
+        pickupDate = travelInfo?.departure_date_reunion || null;
+        pickupTime = travelInfo?.departure_time_reunion || null;
+      }
+
+      logStep('Pickup preferences calculated', {
+        deliveryPreference,
+        pickupDate,
+        pickupTime,
+      });
+
       // Create the order
       const { data: orderData, error: orderError } = await supabase
         .from('orders')
@@ -133,8 +151,8 @@ serve(async (req) => {
           departure_date_reunion: travelInfo?.departure_date_reunion || null,
           arrival_time_reunion: travelInfo?.arrival_time_reunion || null,
           departure_time_reunion: travelInfo?.departure_time_reunion || null,
-          date_preference: travelInfo?.selectedPickupDate || null,
-          time_preference: travelInfo?.selectedPickupTime || null,
+          date_preference: pickupDate,
+          time_preference: pickupTime,
           shipping_address_street: session.customer_details?.address?.line1 || null,
           shipping_address_city: session.customer_details?.address?.city || null,
           shipping_address_postal_code: session.customer_details?.address?.postal_code || null,
