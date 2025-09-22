@@ -133,6 +133,8 @@ serve(async (req) => {
           departure_date_reunion: travelInfo?.departure_date_reunion || null,
           arrival_time_reunion: travelInfo?.arrival_time_reunion || null,
           departure_time_reunion: travelInfo?.departure_time_reunion || null,
+          date_preference: travelInfo?.selectedPickupDate || null,
+          time_preference: travelInfo?.selectedPickupTime || null,
           shipping_address_street: session.customer_details?.address?.line1 || null,
           shipping_address_city: session.customer_details?.address?.city || null,
           shipping_address_postal_code: session.customer_details?.address?.postal_code || null,

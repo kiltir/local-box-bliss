@@ -75,6 +75,7 @@ export type Database = {
           arrival_date_reunion: string | null
           arrival_time_reunion: string | null
           created_at: string
+          date_preference: string | null
           delivery_preference: string | null
           departure_date_reunion: string | null
           departure_time_reunion: string | null
@@ -85,6 +86,7 @@ export type Database = {
           shipping_address_postal_code: string | null
           shipping_address_street: string | null
           status: string
+          time_preference: string | null
           total_amount: number
           updated_at: string
           user_id: string
@@ -93,6 +95,7 @@ export type Database = {
           arrival_date_reunion?: string | null
           arrival_time_reunion?: string | null
           created_at?: string
+          date_preference?: string | null
           delivery_preference?: string | null
           departure_date_reunion?: string | null
           departure_time_reunion?: string | null
@@ -103,6 +106,7 @@ export type Database = {
           shipping_address_postal_code?: string | null
           shipping_address_street?: string | null
           status?: string
+          time_preference?: string | null
           total_amount: number
           updated_at?: string
           user_id: string
@@ -111,6 +115,7 @@ export type Database = {
           arrival_date_reunion?: string | null
           arrival_time_reunion?: string | null
           created_at?: string
+          date_preference?: string | null
           delivery_preference?: string | null
           departure_date_reunion?: string | null
           departure_time_reunion?: string | null
@@ -121,6 +126,7 @@ export type Database = {
           shipping_address_postal_code?: string | null
           shipping_address_street?: string | null
           status?: string
+          time_preference?: string | null
           total_amount?: number
           updated_at?: string
           user_id?: string
