@@ -54,7 +54,16 @@ const Hero = () => {
     toast.info("Sélection de dates annulée");
   };
 
-  const canProceed = arrivalDate && departureDate && selectedPickupDate;
+  // Calcul pour déterminer si les options d'aéroport sont disponibles
+  const today = new Date();
+  const minPickupDate = new Date(today);
+  minPickupDate.setDate(today.getDate() + 15);
+  
+  const isArrivalTooSoon = arrivalDate && arrivalDate < minPickupDate;
+  const isDepartureTooSoon = departureDate && departureDate < minPickupDate;
+  const allOptionsDisabled = isArrivalTooSoon && isDepartureTooSoon;
+  
+  const canProceed = arrivalDate && departureDate && (selectedPickupDate || allOptionsDisabled);
 
   // Generate hours (00-23)
   const hours = Array.from({
@@ -208,6 +217,12 @@ const Hero = () => {
                         const isArrivalTooSoon = arrivalDate < minPickupDate;
                         const isDepartureTooSoon = departureDate < minPickupDate;
                         
+                        // Si toutes les options sont désactivées, réinitialiser la sélection
+                        const allOptionsDisabled = isArrivalTooSoon && isDepartureTooSoon;
+                        if (allOptionsDisabled && selectedPickupDate) {
+                          setSelectedPickupDate(null);
+                        }
+                        
                         return (
                           <>
                             <div className={cn(
@@ -254,6 +269,15 @@ const Hero = () => {
                                 </span>
                               </Label>
                             </div>
+                            
+                            {allOptionsDisabled && (
+                              <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                                <p className="text-blue-800 text-sm">
+                                  <strong>Aucune récupération à l'aéroport possible</strong> - Vos dates sont trop proches (moins de 15 jours). 
+                                  Votre commande sera livrée en Métropole.
+                                </p>
+                              </div>
+                            )}
                           </>
                         );
                       })()}
@@ -270,7 +294,7 @@ const Hero = () => {
                       className="bg-leaf-green hover:bg-dark-green text-white px-6 py-3"
                     >
                       <ShoppingCart className="mr-2 h-4 w-4" />
-                      Commander
+                      {allOptionsDisabled ? "Commander (livraison Métropole)" : "Commander"}
                     </Button>
                     <Button 
                       variant="outline" 
