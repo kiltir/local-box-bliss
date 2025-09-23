@@ -9,6 +9,12 @@ import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Calendar } from '@/components/ui/calendar';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
 import {
   Select,
   SelectContent,
@@ -25,11 +31,15 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { toast } from 'sonner';
+import { format, parse, isValid } from 'date-fns';
+import { fr } from 'date-fns/locale';
+import { CalendarIcon } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface ProfileFormData {
   full_name: string;
   username: string;
-  date_of_birth: string;
+  date_of_birth: Date | null;
   gender: string;
   billing_address_street: string;
   billing_address_city: string;
@@ -58,11 +68,30 @@ const MesInformations = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [profile, setProfile] = useState<ProfileData | null>(null);
 
+  // Fonction utilitaire pour parser une date depuis la base de données
+  const parseDateFromDB = (dateString: string | null): Date | null => {
+    if (!dateString) return null;
+    
+    // Gérer le format ISO (YYYY-MM-DD) depuis la DB
+    if (dateString.includes('-') && dateString.length === 10) {
+      const date = new Date(dateString + 'T00:00:00');
+      return isValid(date) ? date : null;
+    }
+    
+    // Gérer l'ancien format DD/MM/YYYY si présent
+    if (dateString.includes('/')) {
+      const date = parse(dateString, 'dd/MM/yyyy', new Date());
+      return isValid(date) ? date : null;
+    }
+    
+    return null;
+  };
+
   const form = useForm<ProfileFormData>({
     defaultValues: {
       full_name: '',
       username: '',
-      date_of_birth: '',
+      date_of_birth: null,
       gender: '',
       billing_address_street: '',
       billing_address_city: '',
@@ -104,7 +133,7 @@ const MesInformations = () => {
         form.reset({
           full_name: profileData.full_name || '',
           username: profileData.username || '',
-          date_of_birth: profileData.date_of_birth || '',
+          date_of_birth: parseDateFromDB(profileData.date_of_birth),
           gender: profileData.gender || '',
           billing_address_street: profileData.billing_address_street || '',
           billing_address_city: profileData.billing_address_city || '',
@@ -126,7 +155,7 @@ const MesInformations = () => {
         id: user.id,
         full_name: data.full_name,
         username: data.username,
-        date_of_birth: data.date_of_birth || null,
+        date_of_birth: data.date_of_birth ? format(data.date_of_birth, 'yyyy-MM-dd') : null,
         gender: data.gender,
         billing_address_street: data.billing_address_street,
         billing_address_city: data.billing_address_city,
@@ -215,14 +244,41 @@ const MesInformations = () => {
                     control={form.control}
                     name="date_of_birth"
                     render={({ field }) => (
-                      <FormItem>
+                      <FormItem className="flex flex-col">
                         <FormLabel>Date de naissance</FormLabel>
-                        <FormControl>
-                          <Input 
-                            placeholder="jj/mm/aaaa" 
-                            {...field} 
-                          />
-                        </FormControl>
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <FormControl>
+                              <Button
+                                variant={"outline"}
+                                className={cn(
+                                  "w-full pl-3 text-left font-normal",
+                                  !field.value && "text-muted-foreground"
+                                )}
+                              >
+                                {field.value ? (
+                                  format(field.value, "dd/MM/yyyy", { locale: fr })
+                                ) : (
+                                  <span>Sélectionner une date</span>
+                                )}
+                                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                              </Button>
+                            </FormControl>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-auto p-0" align="start">
+                            <Calendar
+                              mode="single"
+                              selected={field.value || undefined}
+                              onSelect={field.onChange}
+                              disabled={(date) =>
+                                date > new Date() || date < new Date("1900-01-01")
+                              }
+                              initialFocus
+                              locale={fr}
+                              className="pointer-events-auto"
+                            />
+                          </PopoverContent>
+                        </Popover>
                         <FormMessage />
                       </FormItem>
                     )}
