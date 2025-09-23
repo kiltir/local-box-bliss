@@ -200,18 +200,63 @@ const Hero = () => {
                       Quelle date souhaitez-vous pour récupérer votre commande à l'aéroport ?
                     </label>
                     <RadioGroup value={selectedPickupDate || ''} onValueChange={(value) => setSelectedPickupDate(value as 'arrival' | 'departure')} className="space-y-3">
-                      <div className="flex items-center space-x-3 p-3 border rounded-lg">
-                        <RadioGroupItem value="arrival" id="pickup_arrival" />
-                        <Label htmlFor="pickup_arrival" className="flex items-center space-x-2 cursor-pointer flex-1">
-                          <span>Récupérer le {format(arrivalDate, "dd/MM/yyyy", { locale: fr })} à {arrivalHour}h{arrivalMinute} (arrivée)</span>
-                        </Label>
-                      </div>
-                      <div className="flex items-center space-x-3 p-3 border rounded-lg">
-                        <RadioGroupItem value="departure" id="pickup_departure" />
-                        <Label htmlFor="pickup_departure" className="flex items-center space-x-2 cursor-pointer flex-1">
-                          <span>Récupérer le {format(departureDate, "dd/MM/yyyy", { locale: fr })} à {departureHour}h{departureMinute} (départ)</span>
-                        </Label>
-                      </div>
+                      {(() => {
+                        const today = new Date();
+                        const minPickupDate = new Date(today);
+                        minPickupDate.setDate(today.getDate() + 15);
+                        
+                        const isArrivalTooSoon = arrivalDate < minPickupDate;
+                        const isDepartureTooSoon = departureDate < minPickupDate;
+                        
+                        return (
+                          <>
+                            <div className={cn(
+                              "flex items-center space-x-3 p-3 border rounded-lg",
+                              isArrivalTooSoon && "opacity-50 bg-gray-50"
+                            )}>
+                              <RadioGroupItem 
+                                value="arrival" 
+                                id="pickup_arrival" 
+                                disabled={isArrivalTooSoon}
+                              />
+                              <Label 
+                                htmlFor="pickup_arrival" 
+                                className={cn(
+                                  "flex items-center space-x-2 flex-1",
+                                  isArrivalTooSoon ? "cursor-not-allowed text-gray-400" : "cursor-pointer"
+                                )}
+                              >
+                                <span>
+                                  Récupérer le {format(arrivalDate, "dd/MM/yyyy", { locale: fr })} à {arrivalHour}h{arrivalMinute} (arrivée)
+                                  {isArrivalTooSoon && " - Trop proche (< 15 jours)"}
+                                </span>
+                              </Label>
+                            </div>
+                            <div className={cn(
+                              "flex items-center space-x-3 p-3 border rounded-lg",
+                              isDepartureTooSoon && "opacity-50 bg-gray-50"
+                            )}>
+                              <RadioGroupItem 
+                                value="departure" 
+                                id="pickup_departure" 
+                                disabled={isDepartureTooSoon}
+                              />
+                              <Label 
+                                htmlFor="pickup_departure" 
+                                className={cn(
+                                  "flex items-center space-x-2 flex-1",
+                                  isDepartureTooSoon ? "cursor-not-allowed text-gray-400" : "cursor-pointer"
+                                )}
+                              >
+                                <span>
+                                  Récupérer le {format(departureDate, "dd/MM/yyyy", { locale: fr })} à {departureHour}h{departureMinute} (départ)
+                                  {isDepartureTooSoon && " - Trop proche (< 15 jours)"}
+                                </span>
+                              </Label>
+                            </div>
+                          </>
+                        );
+                      })()}
                     </RadioGroup>
                   </div>
                 )}
