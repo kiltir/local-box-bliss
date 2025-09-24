@@ -69,6 +69,7 @@ serve(async (req) => {
 
     let user = null;
     let customerEmail = "guest@example.com";
+    let userProfile = null;
     
     const authHeader = req.headers.get("Authorization");
     if (authHeader) {
@@ -79,6 +80,20 @@ serve(async (req) => {
         if (user?.email) {
           customerEmail = user.email;
           logStep("Authenticated user found", { userId: user.id, email: user.email });
+          
+          // Fetch user profile for billing address
+          const { data: profile, error: profileError } = await supabaseClient
+            .from('profiles')
+            .select('full_name, billing_address_street, billing_address_city, billing_address_postal_code, billing_address_country')
+            .eq('id', user.id)
+            .single();
+          
+          if (profile && !profileError) {
+            userProfile = profile;
+            logStep("User profile found", { hasAddress: !!(profile.billing_address_street && profile.billing_address_city) });
+          } else if (profileError) {
+            logStep("Profile fetch error", { error: profileError.message });
+          }
         }
       } catch (error) {
         logStep("Auth header present but invalid, proceeding as guest", { error: error.message });
@@ -148,6 +163,13 @@ serve(async (req) => {
       ...(item.subscriptionType && { subscriptionType: item.subscriptionType })
     }));
 
+    // Determine if we have complete billing address
+    const hasCompleteAddress = userProfile && 
+      userProfile.billing_address_street && 
+      userProfile.billing_address_city && 
+      userProfile.billing_address_postal_code && 
+      userProfile.billing_address_country;
+
     // Create checkout session with metadata for webhook processing
     const sessionConfig: any = {
       line_items: lineItems,
@@ -155,7 +177,7 @@ serve(async (req) => {
       success_url: `${origin}/payment-success`,
       cancel_url: `${origin}/payment-canceled`,
       automatic_tax: { enabled: false },
-      billing_address_collection: 'required',
+      billing_address_collection: hasCompleteAddress ? 'auto' : 'required',
       shipping_address_collection: {
         allowed_countries: ['FR', 'BE', 'CH', 'DE', 'ES', 'IT', 'NL', 'LU'],
       },
@@ -165,6 +187,23 @@ serve(async (req) => {
         ...(travelInfo && { travel_info: JSON.stringify(travelInfo) }),
       },
     };
+
+    // Pre-fill customer details if we have complete profile information
+    if (hasCompleteAddress) {
+      sessionConfig.customer_details = {
+        address: {
+          line1: userProfile.billing_address_street,
+          city: userProfile.billing_address_city,
+          postal_code: userProfile.billing_address_postal_code,
+          country: userProfile.billing_address_country?.toUpperCase() || 'FR',
+        },
+        name: userProfile.full_name || customerEmail,
+      };
+      logStep("Pre-filling customer details", { 
+        hasName: !!userProfile.full_name,
+        country: userProfile.billing_address_country 
+      });
+    }
 
     // Add customer info
     if (customerId) {
