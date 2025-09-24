@@ -177,10 +177,32 @@ serve(async (req) => {
       success_url: `${origin}/payment-success`,
       cancel_url: `${origin}/payment-canceled`,
       automatic_tax: { enabled: false },
-      billing_address_collection: hasCompleteAddress ? 'auto' : 'required',
+      billing_address_collection: 'required',
       shipping_address_collection: {
         allowed_countries: ['FR', 'BE', 'CH', 'DE', 'ES', 'IT', 'NL', 'LU'],
       },
+      shipping_options: [
+        {
+          shipping_rate_data: {
+            type: 'fixed_amount',
+            fixed_amount: {
+              amount: 0,
+              currency: 'eur',
+            },
+            display_name: 'Livraison standard',
+            delivery_estimate: {
+              minimum: {
+                unit: 'business_day',
+                value: 3,
+              },
+              maximum: {
+                unit: 'business_day',
+                value: 7,
+              },
+            },
+          },
+        },
+      ],
       metadata: {
         user_id: user?.id || 'guest',
         items: JSON.stringify(simplifiedItems),
