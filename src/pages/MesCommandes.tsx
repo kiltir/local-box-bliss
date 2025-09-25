@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import { Package, Calendar, MapPin, Plane, Truck, Eye, ChevronRight, Crown } from 'lucide-react';
+import { Package, Calendar, MapPin, Plane, Truck, Eye, ChevronRight, Crown, CreditCard } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -32,6 +32,13 @@ interface Order {
   shipping_address_country?: string;
 }
 
+interface UserProfile {
+  billing_address_street?: string;
+  billing_address_city?: string;
+  billing_address_postal_code?: string;
+  billing_address_country?: string;
+}
+
 
 interface OrderItem {
   id: string;
@@ -46,6 +53,7 @@ const MesCommandes = () => {
   const navigate = useNavigate();
   const [orders, setOrders] = useState<Order[]>([]);
   const [orderItems, setOrderItems] = useState<OrderItem[]>([]);
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   
   const [isLoadingOrders, setIsLoadingOrders] = useState(true);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
@@ -74,6 +82,18 @@ const MesCommandes = () => {
 
       if (ordersError) throw ordersError;
 
+      // Fetch user profile for billing address
+      const { data: profileData, error: profileError } = await supabase
+        .from('profiles')
+        .select('billing_address_street, billing_address_city, billing_address_postal_code, billing_address_country')
+        .eq('id', user?.id)
+        .single();
+
+      if (profileError && profileError.code !== 'PGRST116') {
+        console.error('Erreur lors du chargement du profil:', profileError);
+      } else if (profileData) {
+        setUserProfile(profileData);
+      }
 
       if (ordersData && ordersData.length > 0) {
         setOrders(ordersData);
@@ -319,7 +339,7 @@ const MesCommandes = () => {
                   {selectedOrder && (
                     <div className="space-y-6">
                       {/* Informations générales */}
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div>
                           <h4 className="font-semibold text-foreground mb-2">Informations générales</h4>
                             <div className="space-y-2 text-sm">
@@ -341,6 +361,27 @@ const MesCommandes = () => {
                                 {selectedOrder.shipping_address_street}<br />
                                 {selectedOrder.shipping_address_postal_code} {selectedOrder.shipping_address_city}<br />
                                 {selectedOrder.shipping_address_country}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+
+                        <div>
+                          <h4 className="font-semibold text-foreground mb-2">Facturation</h4>
+                          <div className="space-y-2 text-sm">
+                            <div className="flex items-center gap-2">
+                              <CreditCard className="h-4 w-4" />
+                              <span>Adresse de facturation</span>
+                            </div>
+                            {userProfile && userProfile.billing_address_street ? (
+                              <div className="text-muted-foreground">
+                                {userProfile.billing_address_street}<br />
+                                {userProfile.billing_address_postal_code} {userProfile.billing_address_city}<br />
+                                {userProfile.billing_address_country}
+                              </div>
+                            ) : (
+                              <div className="text-muted-foreground">
+                                Aucune adresse de facturation renseignée
                               </div>
                             )}
                           </div>
