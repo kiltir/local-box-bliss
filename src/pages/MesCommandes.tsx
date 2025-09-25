@@ -30,6 +30,10 @@ interface Order {
   shipping_address_city?: string;
   shipping_address_postal_code?: string;
   shipping_address_country?: string;
+  billing_address_street?: string;
+  billing_address_city?: string;
+  billing_address_postal_code?: string;
+  billing_address_country?: string;
 }
 
 interface UserProfile {
@@ -152,23 +156,30 @@ const MesCommandes = () => {
 
 
   const getDeliveryInfo = (order: Order) => {
-    if (!order.delivery_preference) return { type: 'Non défini', icon: Package };
-    
-    if (order.delivery_preference === 'airport_pickup') {
-      return { 
-        type: 'Récupération Aéroport', 
+    const pref = order.delivery_preference;
+    if (!pref) return { type: 'Non défini', icon: Package };
+
+    if (pref === 'airport_pickup_arrival') {
+      return {
+        type: 'Récupération Aéroport (Arrivée)',
         icon: Plane,
-        date: order.arrival_date_reunion 
+        date: order.arrival_date_reunion || null,
       };
-    } else if (order.delivery_preference === 'mainland_delivery') {
-      return { 
-        type: 'Livraison Métropole', 
-        icon: Truck,
-        date: null 
-      };
-    } else {
-      return { type: 'Non défini', icon: Package };
     }
+    if (pref === 'airport_pickup_departure') {
+      return {
+        type: 'Récupération Aéroport (Départ)',
+        icon: Plane,
+        date: order.departure_date_reunion || null,
+      };
+    }
+    if (pref === 'airport_pickup') {
+      return { type: 'Récupération Aéroport', icon: Plane, date: order.arrival_date_reunion || null };
+    }
+    if (pref === 'ship_to_metropole' || pref === 'mainland_delivery') {
+      return { type: 'Livraison Métropole', icon: Truck, date: null };
+    }
+    return { type: 'Non défini', icon: Package };
   };
 
   const getStatusBadge = (status: string) => {
@@ -373,7 +384,13 @@ const MesCommandes = () => {
                               <CreditCard className="h-4 w-4" />
                               <span>Adresse de facturation</span>
                             </div>
-                            {userProfile && userProfile.billing_address_street ? (
+                            {selectedOrder.billing_address_street ? (
+                              <div className="text-muted-foreground">
+                                {selectedOrder.billing_address_street}<br />
+                                {selectedOrder.billing_address_postal_code} {selectedOrder.billing_address_city}<br />
+                                {selectedOrder.billing_address_country}
+                              </div>
+                            ) : userProfile && userProfile.billing_address_street ? (
                               <div className="text-muted-foreground">
                                 {userProfile.billing_address_street}<br />
                                 {userProfile.billing_address_postal_code} {userProfile.billing_address_city}<br />

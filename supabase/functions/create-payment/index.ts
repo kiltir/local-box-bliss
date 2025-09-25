@@ -25,7 +25,8 @@ const toAbsoluteUrl = (url: string, origin: string): string | null => {
     const absoluteUrl = new URL(url, origin).href;
     return absoluteUrl;
   } catch (error) {
-    logStep("Failed to normalize URL", { url, origin, error: error.message });
+    const msg = error instanceof Error ? error.message : String(error);
+    logStep("Failed to normalize URL", { url, origin, error: msg });
     return null;
   }
 };
@@ -96,22 +97,50 @@ serve(async (req) => {
           }
         }
       } catch (error) {
-        logStep("Auth header present but invalid, proceeding as guest", { error: error.message });
+        const msg = error instanceof Error ? error.message : String(error);
+        logStep("Auth header present but invalid, proceeding as guest", { error: msg });
       }
     } else {
       logStep("No auth header, proceeding as guest checkout");
     }
 
-    // Check if customer exists in Stripe
+    // Upsert Stripe customer (prefill Checkout via customer)
     let customerId;
     if (customerEmail !== "guest@example.com") {
-      const customers = await stripe.customers.list({ 
-        email: customerEmail, 
-        limit: 1 
-      });
+      const customers = await stripe.customers.list({ email: customerEmail, limit: 1 });
+
+      const addressData = (userProfile && userProfile.billing_address_street && userProfile.billing_address_city && userProfile.billing_address_postal_code && userProfile.billing_address_country)
+        ? {
+            line1: userProfile.billing_address_street,
+            city: userProfile.billing_address_city,
+            postal_code: userProfile.billing_address_postal_code,
+            country: (userProfile.billing_address_country as string).toUpperCase(),
+          }
+        : undefined;
+      const nameData = (userProfile as any)?.full_name || undefined;
+
       if (customers.data.length > 0) {
         customerId = customers.data[0].id;
+        // Update existing customer with latest profile info if available
+        try {
+          await stripe.customers.update(customerId, {
+            ...(nameData ? { name: nameData } : {}),
+            ...(addressData ? { address: addressData } : {}),
+          });
+          logStep("Stripe customer updated", { customerId });
+        } catch (e) {
+          logStep("Stripe customer update failed", { customerId, error: (e as Error).message });
+        }
         logStep("Existing Stripe customer found", { customerId });
+      } else {
+        // Create a new customer so Checkout can prefill
+        const created = await stripe.customers.create({
+          email: customerEmail,
+          ...(nameData ? { name: nameData } : {}),
+          ...(addressData ? { address: addressData } : {}),
+        });
+        customerId = created.id;
+        logStep("Stripe customer created", { customerId });
       }
     }
 
@@ -210,22 +239,7 @@ serve(async (req) => {
       },
     };
 
-    // Pre-fill customer details if we have complete profile information
-    if (hasCompleteAddress) {
-      sessionConfig.customer_details = {
-        address: {
-          line1: userProfile.billing_address_street,
-          city: userProfile.billing_address_city,
-          postal_code: userProfile.billing_address_postal_code,
-          country: userProfile.billing_address_country?.toUpperCase() || 'FR',
-        },
-        name: userProfile.full_name || customerEmail,
-      };
-      logStep("Pre-filling customer details", { 
-        hasName: !!userProfile.full_name,
-        country: userProfile.billing_address_country 
-      });
-    }
+    // Customer details are prefilled via associated Stripe Customer (see upsert above)
 
     // Add customer info
     if (customerId) {

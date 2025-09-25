@@ -74,6 +74,10 @@ export type Database = {
         Row: {
           arrival_date_reunion: string | null
           arrival_time_reunion: string | null
+          billing_address_city: string | null
+          billing_address_country: string | null
+          billing_address_postal_code: string | null
+          billing_address_street: string | null
           created_at: string
           date_preference: string | null
           delivery_preference: string | null
@@ -94,6 +98,10 @@ export type Database = {
         Insert: {
           arrival_date_reunion?: string | null
           arrival_time_reunion?: string | null
+          billing_address_city?: string | null
+          billing_address_country?: string | null
+          billing_address_postal_code?: string | null
+          billing_address_street?: string | null
           created_at?: string
           date_preference?: string | null
           delivery_preference?: string | null
@@ -114,6 +122,10 @@ export type Database = {
         Update: {
           arrival_date_reunion?: string | null
           arrival_time_reunion?: string | null
+          billing_address_city?: string | null
+          billing_address_country?: string | null
+          billing_address_postal_code?: string | null
+          billing_address_street?: string | null
           created_at?: string
           date_preference?: string | null
           delivery_preference?: string | null

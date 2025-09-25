@@ -48,7 +48,8 @@ serve(async (req) => {
       event = await stripe.webhooks.constructEventAsync(body, stripeSignature, webhookSecret);
       logStep('Webhook signature verified', { type: event.type });
     } catch (err) {
-      logStep('Webhook signature verification failed', { error: err.message });
+      const msg = err instanceof Error ? err.message : String(err);
+      logStep('Webhook signature verification failed', { error: msg });
       return new Response(JSON.stringify({ error: 'Webhook signature verification failed' }), {
         status: 400,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -83,7 +84,8 @@ serve(async (req) => {
       try {
         items = JSON.parse(itemsData);
       } catch (err) {
-        logStep('Failed to parse items metadata', { error: err.message });
+        const msg = err instanceof Error ? err.message : String(err);
+        logStep('Failed to parse items metadata', { error: msg });
         return new Response(JSON.stringify({ error: 'Invalid items metadata' }), {
           status: 400,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -96,7 +98,8 @@ serve(async (req) => {
         try {
           travelInfo = JSON.parse(travelInfoData);
         } catch (err) {
-          logStep('Failed to parse travel info metadata', { error: err.message });
+          const msg = err instanceof Error ? err.message : String(err);
+          logStep('Failed to parse travel info metadata', { error: msg });
           // Don't fail the entire request for travel info parsing errors
         }
       }
@@ -153,10 +156,15 @@ serve(async (req) => {
           departure_time_reunion: travelInfo?.departure_time_reunion || null,
           date_preference: pickupDate,
           time_preference: pickupTime,
-          shipping_address_street: session.customer_details?.address?.line1 || null,
-          shipping_address_city: session.customer_details?.address?.city || null,
-          shipping_address_postal_code: session.customer_details?.address?.postal_code || null,
-          shipping_address_country: session.customer_details?.address?.country || 'France',
+          shipping_address_street: session.shipping_details?.address?.line1 || null,
+          shipping_address_city: session.shipping_details?.address?.city || null,
+          shipping_address_postal_code: session.shipping_details?.address?.postal_code || null,
+          shipping_address_country: session.shipping_details?.address?.country || 'France',
+          // Persist billing address separately
+          billing_address_street: session.customer_details?.address?.line1 || null,
+          billing_address_city: session.customer_details?.address?.city || null,
+          billing_address_postal_code: session.customer_details?.address?.postal_code || null,
+          billing_address_country: session.customer_details?.address?.country || 'France',
         })
         .select()
         .single();
@@ -219,7 +227,8 @@ serve(async (req) => {
     });
 
   } catch (error) {
-    logStep('Webhook handler error', { error: error.message });
+    const msg = (error instanceof Error) ? error.message : String(error);
+    logStep('Webhook handler error', { error: msg });
     return new Response(JSON.stringify({ error: 'Internal server error' }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
