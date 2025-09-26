@@ -15,6 +15,8 @@ const PaymentSuccess = () => {
   useEffect(() => {
     // Clear the cart when the user reaches the success page
     clearCart();
+    // Clear travel info from localStorage to prevent reuse in future orders
+    localStorage.removeItem('travelInfo');
   }, [clearCart]);
 
   return (
