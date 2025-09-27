@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
@@ -10,32 +9,14 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Calendar } from '@/components/ui/calendar';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { toast } from 'sonner';
 import { format, parse, isValid } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { CalendarIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
-
 interface ProfileFormData {
   full_name: string;
   username: string;
@@ -46,7 +27,6 @@ interface ProfileFormData {
   billing_address_postal_code: string;
   billing_address_country: string;
 }
-
 interface ProfileData {
   id: string;
   full_name: string | null;
@@ -61,9 +41,11 @@ interface ProfileData {
   created_at: string;
   updated_at: string;
 }
-
 const MesInformations = () => {
-  const { user, loading } = useAuth();
+  const {
+    user,
+    loading
+  } = useAuth();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [profile, setProfile] = useState<ProfileData | null>(null);
@@ -71,22 +53,20 @@ const MesInformations = () => {
   // Fonction utilitaire pour parser une date depuis la base de données
   const parseDateFromDB = (dateString: string | null): Date | null => {
     if (!dateString) return null;
-    
+
     // Gérer le format ISO (YYYY-MM-DD) depuis la DB
     if (dateString.includes('-') && dateString.length === 10) {
       const date = new Date(dateString + 'T00:00:00');
       return isValid(date) ? date : null;
     }
-    
+
     // Gérer l'ancien format DD/MM/YYYY si présent
     if (dateString.includes('/')) {
       const date = parse(dateString, 'dd/MM/yyyy', new Date());
       return isValid(date) ? date : null;
     }
-    
     return null;
   };
-
   const form = useForm<ProfileFormData>({
     defaultValues: {
       full_name: '',
@@ -96,37 +76,30 @@ const MesInformations = () => {
       billing_address_street: '',
       billing_address_city: '',
       billing_address_postal_code: '',
-      billing_address_country: 'France',
+      billing_address_country: 'France'
     }
   });
-
   useEffect(() => {
     if (!loading && !user) {
       navigate('/auth');
     }
   }, [user, loading, navigate]);
-
   useEffect(() => {
     if (user) {
       loadProfile();
     }
   }, [user]);
-
   const loadProfile = async () => {
     if (!user) return;
-
     try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', user.id)
-        .single();
-
+      const {
+        data,
+        error
+      } = await supabase.from('profiles').select('*').eq('id', user.id).single();
       if (error && error.code !== 'PGRST116') {
         console.error('Erreur lors du chargement du profil:', error);
         return;
       }
-
       if (data) {
         const profileData = data as ProfileData;
         setProfile(profileData);
@@ -138,17 +111,15 @@ const MesInformations = () => {
           billing_address_street: profileData.billing_address_street || '',
           billing_address_city: profileData.billing_address_city || '',
           billing_address_postal_code: profileData.billing_address_postal_code || '',
-          billing_address_country: profileData.billing_address_country || 'France',
+          billing_address_country: profileData.billing_address_country || 'France'
         });
       }
     } catch (error) {
       console.error('Erreur lors du chargement du profil:', error);
     }
   };
-
   const onSubmit = async (data: ProfileFormData) => {
     if (!user) return;
-
     setIsLoading(true);
     try {
       const profileData = {
@@ -161,19 +132,16 @@ const MesInformations = () => {
         billing_address_city: data.billing_address_city,
         billing_address_postal_code: data.billing_address_postal_code,
         billing_address_country: data.billing_address_country,
-        updated_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
       };
-
-      const { error } = await supabase
-        .from('profiles')
-        .upsert(profileData);
-
+      const {
+        error
+      } = await supabase.from('profiles').upsert(profileData);
       if (error) {
         console.error('Erreur lors de la sauvegarde:', error);
         toast.error('Erreur lors de la sauvegarde des informations');
         return;
       }
-
       toast.success('Informations sauvegardées avec succès');
       loadProfile();
     } catch (error) {
@@ -183,24 +151,18 @@ const MesInformations = () => {
       setIsLoading(false);
     }
   };
-
   if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+    return <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="w-8 h-8 border-4 border-leaf-green border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
           <p className="text-gray-600">Chargement...</p>
         </div>
-      </div>
-    );
+      </div>;
   }
-
   if (!user) {
     return null;
   }
-
-  return (
-    <div className="min-h-screen bg-gray-50">
+  return <div className="min-h-screen bg-gray-50">
       <Navbar />
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="bg-white rounded-lg shadow-sm p-8">
@@ -212,83 +174,51 @@ const MesInformations = () => {
               <div>
                 <h2 className="text-xl font-semibold text-gray-800 mb-4">Informations personnelles</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <FormField
-                    control={form.control}
-                    name="full_name"
-                    render={({ field }) => (
-                      <FormItem>
+                  <FormField control={form.control} name="full_name" render={({
+                  field
+                }) => <FormItem>
                         <FormLabel>Nom complet</FormLabel>
                         <FormControl>
                           <Input placeholder="Votre nom complet" {...field} />
                         </FormControl>
                         <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                      </FormItem>} />
 
-                  <FormField
-                    control={form.control}
-                    name="username"
-                    render={({ field }) => (
-                      <FormItem>
+                  <FormField control={form.control} name="username" render={({
+                  field
+                }) => <FormItem>
                         <FormLabel>Nom d'utilisateur</FormLabel>
                         <FormControl>
                           <Input placeholder="Votre nom d'utilisateur" {...field} />
                         </FormControl>
                         <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                      </FormItem>} />
 
-                  <FormField
-                    control={form.control}
-                    name="date_of_birth"
-                    render={({ field }) => (
-                      <FormItem className="flex flex-col">
+                  <FormField control={form.control} name="date_of_birth" render={({
+                  field
+                }) => <FormItem className="flex flex-col">
                         <FormLabel>Date de naissance</FormLabel>
                         <Popover>
                           <PopoverTrigger asChild>
                             <FormControl>
-                              <Button
-                                variant={"outline"}
-                                className={cn(
-                                  "w-full pl-3 text-left font-normal",
-                                  !field.value && "text-muted-foreground"
-                                )}
-                              >
-                                {field.value ? (
-                                  format(field.value, "dd/MM/yyyy", { locale: fr })
-                                ) : (
-                                  <span>Sélectionner une date</span>
-                                )}
+                              <Button variant={"outline"} className={cn("w-full pl-3 text-left font-normal", !field.value && "text-muted-foreground")}>
+                                {field.value ? format(field.value, "dd/MM/yyyy", {
+                            locale: fr
+                          }) : <span>Sélectionner une date</span>}
                                 <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                               </Button>
                             </FormControl>
                           </PopoverTrigger>
                           <PopoverContent className="w-auto p-0" align="start">
-                            <Calendar
-                              mode="single"
-                              selected={field.value || undefined}
-                              onSelect={field.onChange}
-                              disabled={(date) =>
-                                date > new Date() || date < new Date("1900-01-01")
-                              }
-                              initialFocus
-                              locale={fr}
-                              className="pointer-events-auto"
-                            />
+                            <Calendar mode="single" selected={field.value || undefined} onSelect={field.onChange} disabled={date => date > new Date() || date < new Date("1900-01-01")} initialFocus locale={fr} className="pointer-events-auto" />
                           </PopoverContent>
                         </Popover>
                         <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                      </FormItem>} />
 
-                  <FormField
-                    control={form.control}
-                    name="gender"
-                    render={({ field }) => (
-                      <FormItem>
+                  <FormField control={form.control} name="gender" render={({
+                  field
+                }) => <FormItem>
                         <FormLabel>Genre</FormLabel>
                         <Select onValueChange={field.onChange} value={field.value}>
                           <FormControl>
@@ -304,63 +234,47 @@ const MesInformations = () => {
                           </SelectContent>
                         </Select>
                         <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                      </FormItem>} />
                 </div>
               </div>
 
               {/* Adresse de facturation */}
               <div>
-                <h2 className="text-xl font-semibold text-gray-800 mb-4">Adresse de facturation</h2>
+                <h2 className="text-xl font-semibold text-gray-800 mb-4">Adresse du domicile</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <FormField
-                    control={form.control}
-                    name="billing_address_street"
-                    render={({ field }) => (
-                      <FormItem className="md:col-span-2">
+                  <FormField control={form.control} name="billing_address_street" render={({
+                  field
+                }) => <FormItem className="md:col-span-2">
                         <FormLabel>Adresse</FormLabel>
                         <FormControl>
                           <Input placeholder="Numéro et nom de rue" {...field} />
                         </FormControl>
                         <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                      </FormItem>} />
 
-                  <FormField
-                    control={form.control}
-                    name="billing_address_city"
-                    render={({ field }) => (
-                      <FormItem>
+                  <FormField control={form.control} name="billing_address_city" render={({
+                  field
+                }) => <FormItem>
                         <FormLabel>Ville</FormLabel>
                         <FormControl>
                           <Input placeholder="Ville" {...field} />
                         </FormControl>
                         <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                      </FormItem>} />
 
-                  <FormField
-                    control={form.control}
-                    name="billing_address_postal_code"
-                    render={({ field }) => (
-                      <FormItem>
+                  <FormField control={form.control} name="billing_address_postal_code" render={({
+                  field
+                }) => <FormItem>
                         <FormLabel>Code postal</FormLabel>
                         <FormControl>
                           <Input placeholder="Code postal" {...field} />
                         </FormControl>
                         <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                      </FormItem>} />
 
-                  <FormField
-                    control={form.control}
-                    name="billing_address_country"
-                    render={({ field }) => (
-                      <FormItem className="md:col-span-2">
+                  <FormField control={form.control} name="billing_address_country" render={({
+                  field
+                }) => <FormItem className="md:col-span-2">
                         <FormLabel>Pays</FormLabel>
                         <Select onValueChange={field.onChange} value={field.value}>
                           <FormControl>
@@ -376,9 +290,7 @@ const MesInformations = () => {
                           </SelectContent>
                         </Select>
                         <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                      </FormItem>} />
                 </div>
               </div>
 
@@ -406,8 +318,6 @@ const MesInformations = () => {
         </div>
       </div>
       <Footer />
-    </div>
-  );
+    </div>;
 };
-
 export default MesInformations;
