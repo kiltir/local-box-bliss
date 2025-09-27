@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Menu, X, User, LogOut } from "lucide-react";
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
+import { useProfile } from '@/hooks/useProfile';
 import CartIcon from './CartIcon';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { siteConfig } from "@/config/site";
@@ -15,6 +16,7 @@ const Navbar = () => {
     signOut,
     loading
   } = useAuth();
+  const { profile, loading: profileLoading } = useProfile();
   const handleNavigation = (section: string) => {
     const sectionId = section.replace('#', '');
 
@@ -45,10 +47,8 @@ const Navbar = () => {
   const getUserDisplayName = () => {
     if (!user) return '';
 
-    // Priority: username > full_name > email
-    const username = user.user_metadata?.username;
-    const fullName = user.user_metadata?.full_name;
-    return username || fullName || user.email || '';
+    // Priority: profile.username > profile.full_name > user.email
+    return profile?.username || profile?.full_name || user.email || '';
   };
   return <nav className="bg-white border-b border-gray-200 py-4 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -76,7 +76,7 @@ const Navbar = () => {
             <CartIcon />
             
             {/* Auth Section */}
-            {loading ? <div className="w-24 h-10 bg-gray-200 animate-pulse rounded"></div> : user ? <DropdownMenu>
+            {loading || profileLoading ? <div className="w-24 h-10 bg-gray-200 animate-pulse rounded"></div> : user ? <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="outline" className="flex items-center space-x-2">
                     <User className="h-4 w-4" />
@@ -130,7 +130,7 @@ const Navbar = () => {
             </a>
             
             {/* Mobile Auth Section */}
-            {!loading && (user ? <div className="space-y-2 pt-2 border-t border-gray-200">
+            {!loading && !profileLoading && (user ? <div className="space-y-2 pt-2 border-t border-gray-200">
                   <div className="text-sm text-gray-500 py-2">
                     {getUserDisplayName()}
                   </div>
