@@ -85,7 +85,7 @@ const Navbar = () => {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                   <DropdownMenuItem className="font-medium">
-                    {user.user_metadata?.full_name || user.email}
+                    {getUserDisplayName()}
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={() => navigate('/mes-informations')}>
