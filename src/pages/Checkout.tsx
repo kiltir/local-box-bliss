@@ -77,6 +77,25 @@ const Checkout = () => {
     return item.box.theme;
   };
 
+  const getDeliveryTypeLabel = () => {
+    const travelInfo = localStorage.getItem('travelInfo');
+    if (!travelInfo) return 'Livrée en métropole';
+    
+    try {
+      const parsed = JSON.parse(travelInfo);
+      switch (parsed.delivery_preference) {
+        case 'airport_pickup_arrival':
+          return 'Récupération à l\'aéroport (Arrivée)';
+        case 'airport_pickup_departure':
+          return 'Récupération à l\'aéroport (Départ)';
+        default:
+          return 'Livrée en métropole';
+      }
+    } catch {
+      return 'Livrée en métropole';
+    }
+  };
+
   if (items.length === 0) {
     return (
       <div className="min-h-screen bg-gray-50">
@@ -176,6 +195,11 @@ const Checkout = () => {
                 <CardTitle>Résumé de la commande</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
+                <div className="flex justify-between text-sm">
+                  <span>Type de livraison</span>
+                  <span className="font-medium text-leaf-green">{getDeliveryTypeLabel()}</span>
+                </div>
+                <Separator />
                 <div className="flex justify-between text-sm">
                   <span>Sous-total</span>
                   <span>{getTotalPrice().toFixed(2)}€</span>
