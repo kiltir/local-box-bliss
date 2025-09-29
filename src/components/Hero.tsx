@@ -20,32 +20,27 @@ const Hero = () => {
   const [showDeparturePicker, setShowDeparturePicker] = useState(false);
   const [showArrivalPicker, setShowArrivalPicker] = useState(false);
   const [selectedPickupDate, setSelectedPickupDate] = useState<'arrival' | 'departure' | null>(null);
-
   const saveTravelInfoToLocalStorage = () => {
     if (!arrivalDate || !departureDate || !selectedPickupDate) {
       toast.error("Veuillez sélectionner vos dates et votre préférence de récupération");
       return;
     }
-
     const travelInfo = {
       arrival_date_reunion: arrivalDate.toISOString().split('T')[0],
       departure_date_reunion: departureDate.toISOString().split('T')[0],
       arrival_time_reunion: `${arrivalHour}:${arrivalMinute}:00`,
       departure_time_reunion: `${departureHour}:${departureMinute}:00`,
-      delivery_preference: selectedPickupDate === 'arrival' ? 'airport_pickup_arrival' : 'airport_pickup_departure',
+      delivery_preference: selectedPickupDate === 'arrival' ? 'airport_pickup_arrival' : 'airport_pickup_departure'
     };
-
     localStorage.setItem('travelInfo', JSON.stringify(travelInfo));
     toast.success("Dates de séjour enregistrées !");
   };
-
   const handleCommander = () => {
     saveTravelInfoToLocalStorage();
     document.getElementById('boxes')?.scrollIntoView({
       behavior: 'smooth'
     });
   };
-
   const handleAnnuler = () => {
     setArrivalDate(undefined);
     setDepartureDate(undefined);
@@ -58,11 +53,9 @@ const Hero = () => {
   const today = new Date();
   const minPickupDate = new Date(today);
   minPickupDate.setDate(today.getDate() + 15);
-  
   const isArrivalTooSoon = arrivalDate && arrivalDate < minPickupDate;
   const isDepartureTooSoon = departureDate && departureDate < minPickupDate;
   const allOptionsDisabled = isArrivalTooSoon && isDepartureTooSoon;
-  
   const canProceed = arrivalDate && departureDate && (selectedPickupDate || allOptionsDisabled);
 
   // Generate hours (00-23)
@@ -111,9 +104,9 @@ const Hero = () => {
                       </PopoverTrigger>
                       <PopoverContent className="w-auto p-0" align="start">
                         <Calendar mode="single" selected={arrivalDate} onSelect={date => {
-                          setArrivalDate(date);
-                          setShowArrivalPicker(false);
-                        }} disabled={date => date < new Date()} initialFocus className="pointer-events-auto" />
+                        setArrivalDate(date);
+                        setShowArrivalPicker(false);
+                      }} disabled={date => date < new Date()} initialFocus className="pointer-events-auto" />
                       </PopoverContent>
                     </Popover>
                     
@@ -164,9 +157,9 @@ const Hero = () => {
                       </PopoverTrigger>
                       <PopoverContent className="w-auto p-0" align="start">
                         <Calendar mode="single" selected={departureDate} onSelect={date => {
-                          setDepartureDate(date);
-                          setShowDeparturePicker(false);
-                        }} disabled={date => date < (arrivalDate || new Date())} initialFocus className="pointer-events-auto" />
+                        setDepartureDate(date);
+                        setShowDeparturePicker(false);
+                      }} disabled={date => date < (arrivalDate || new Date())} initialFocus className="pointer-events-auto" />
                       </PopoverContent>
                     </Popover>
                     
@@ -203,119 +196,79 @@ const Hero = () => {
                 </div>
 
                 {/* Sélection de la date de récupération */}
-                {arrivalDate && departureDate && (
-                  <div className="border-t pt-6">
+                {arrivalDate && departureDate && <div className="border-t pt-6">
                     <label className="block text-sm font-medium text-gray-700 mb-4">
                       Quelle date souhaitez-vous pour récupérer votre commande à l'aéroport ?
                     </label>
-                    <RadioGroup value={selectedPickupDate || ''} onValueChange={(value) => setSelectedPickupDate(value as 'arrival' | 'departure')} className="space-y-3">
+                    <RadioGroup value={selectedPickupDate || ''} onValueChange={value => setSelectedPickupDate(value as 'arrival' | 'departure')} className="space-y-3">
                       {(() => {
-                        const today = new Date();
-                        const minPickupDate = new Date(today);
-                        minPickupDate.setDate(today.getDate() + 15);
-                        
-                        const isArrivalTooSoon = arrivalDate < minPickupDate;
-                        const isDepartureTooSoon = departureDate < minPickupDate;
-                        
-                        // Si toutes les options sont désactivées, réinitialiser la sélection
-                        const allOptionsDisabled = isArrivalTooSoon && isDepartureTooSoon;
-                        if (allOptionsDisabled && selectedPickupDate) {
-                          setSelectedPickupDate(null);
-                        }
-                        
-                        return (
-                          <>
-                            <div className={cn(
-                              "flex items-center space-x-3 p-3 border rounded-lg",
-                              isArrivalTooSoon && "opacity-50 bg-gray-50"
-                            )}>
-                              <RadioGroupItem 
-                                value="arrival" 
-                                id="pickup_arrival" 
-                                disabled={isArrivalTooSoon}
-                              />
-                              <Label 
-                                htmlFor="pickup_arrival" 
-                                className={cn(
-                                  "flex items-center space-x-2 flex-1",
-                                  isArrivalTooSoon ? "cursor-not-allowed text-gray-400" : "cursor-pointer"
-                                )}
-                              >
+                    const today = new Date();
+                    const minPickupDate = new Date(today);
+                    minPickupDate.setDate(today.getDate() + 15);
+                    const isArrivalTooSoon = arrivalDate < minPickupDate;
+                    const isDepartureTooSoon = departureDate < minPickupDate;
+
+                    // Si toutes les options sont désactivées, réinitialiser la sélection
+                    const allOptionsDisabled = isArrivalTooSoon && isDepartureTooSoon;
+                    if (allOptionsDisabled && selectedPickupDate) {
+                      setSelectedPickupDate(null);
+                    }
+                    return <>
+                            <div className={cn("flex items-center space-x-3 p-3 border rounded-lg", isArrivalTooSoon && "opacity-50 bg-gray-50")}>
+                              <RadioGroupItem value="arrival" id="pickup_arrival" disabled={isArrivalTooSoon} />
+                              <Label htmlFor="pickup_arrival" className={cn("flex items-center space-x-2 flex-1", isArrivalTooSoon ? "cursor-not-allowed text-gray-400" : "cursor-pointer")}>
                                 <span>
-                                  Récupérer le {format(arrivalDate, "dd/MM/yyyy", { locale: fr })} à {arrivalHour}h{arrivalMinute} (arrivée)
+                                  Récupérer le {format(arrivalDate, "dd/MM/yyyy", {
+                              locale: fr
+                            })} à {arrivalHour}h{arrivalMinute} (arrivée)
                                   {isArrivalTooSoon && " - Trop proche (< 15 jours)"}
                                 </span>
                               </Label>
                             </div>
-                            <div className={cn(
-                              "flex items-center space-x-3 p-3 border rounded-lg",
-                              isDepartureTooSoon && "opacity-50 bg-gray-50"
-                            )}>
-                              <RadioGroupItem 
-                                value="departure" 
-                                id="pickup_departure" 
-                                disabled={isDepartureTooSoon}
-                              />
-                              <Label 
-                                htmlFor="pickup_departure" 
-                                className={cn(
-                                  "flex items-center space-x-2 flex-1",
-                                  isDepartureTooSoon ? "cursor-not-allowed text-gray-400" : "cursor-pointer"
-                                )}
-                              >
+                            <div className={cn("flex items-center space-x-3 p-3 border rounded-lg", isDepartureTooSoon && "opacity-50 bg-gray-50")}>
+                              <RadioGroupItem value="departure" id="pickup_departure" disabled={isDepartureTooSoon} />
+                              <Label htmlFor="pickup_departure" className={cn("flex items-center space-x-2 flex-1", isDepartureTooSoon ? "cursor-not-allowed text-gray-400" : "cursor-pointer")}>
                                 <span>
-                                  Récupérer le {format(departureDate, "dd/MM/yyyy", { locale: fr })} à {departureHour}h{departureMinute} (départ)
+                                  Récupérer le {format(departureDate, "dd/MM/yyyy", {
+                              locale: fr
+                            })} à {departureHour}h{departureMinute} (départ)
                                   {isDepartureTooSoon && " - Trop proche (< 15 jours)"}
                                 </span>
                               </Label>
                             </div>
                             
-                            {allOptionsDisabled && (
-                              <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                            {allOptionsDisabled && <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
                                 <p className="text-blue-800 text-sm">
                                   <strong>Aucune récupération à l'aéroport possible</strong> - Vos dates sont trop proches (moins de 15 jours). 
                                   Votre commande sera livrée en Métropole.
                                 </p>
-                              </div>
-                            )}
-                          </>
-                        );
-                      })()}
+                              </div>}
+                          </>;
+                  })()}
                     </RadioGroup>
-                  </div>
-                )}
+                  </div>}
 
                 {/* Boutons d'action */}
                 <div className="border-t pt-6">
                   <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                    <Button 
-                      onClick={handleCommander}
-                      disabled={!canProceed}
-                      className="bg-leaf-green hover:bg-dark-green text-white px-6 py-3"
-                    >
+                    <Button onClick={handleCommander} disabled={!canProceed} className="bg-leaf-green hover:bg-dark-green text-white px-6 py-3">
                       <ShoppingCart className="mr-2 h-4 w-4" />
                       {allOptionsDisabled ? "Commander (livraison Métropole)" : "Commander"}
                     </Button>
-                    <Button 
-                      variant="outline" 
-                      onClick={handleAnnuler}
-                      className="border-gray-300 text-gray-600 hover:bg-gray-50 px-6 py-3"
-                    >
+                    <Button variant="outline" onClick={handleAnnuler} className="border-gray-300 text-gray-600 hover:bg-gray-50 px-6 py-3">
                       <X className="mr-2 h-4 w-4" />
                       Réinitialiser
                     </Button>
                   </div>
-                  {!canProceed && (arrivalDate || departureDate) && (
-                    <p className="text-sm text-gray-500 mt-4 text-center">
+                  {!canProceed && (arrivalDate || departureDate) && <p className="text-sm text-gray-500 mt-4 text-center">
                       Veuillez sélectionner vos dates de séjour et votre préférence de récupération
-                    </p>
-                  )}
+                    </p>}
                 </div>
               </div>
 
               {/* Nouvelle phrase d'information importante */}
               <div className="max-w-2xl mx-auto mb-8">
-                <p className="text-sm backdrop-blur-sm px-6 rounded-lg text-slate-50 py-[10px]">*Une commande de box à récupérer sur place à l'aéroport de Roland Garros à la Réunion ne peut se faire que 15 jours avant un vol aller ou retour. Dans le cas contraire, une adresse de Métropole vous sera demandée pour la livraison.</p>
+                <p className="text-sm backdrop-blur-sm px-6 rounded-lg text-slate-50 py-[10px]">*Possibilité de récupérer la 1ère box d'un abonnement sur place à l'aéroport de Roland Garros à la Réunion si la commande a été passée 15 jours avant un vol prévu. Dans le cas contraire, une adresse de Métropole vous sera demandée pour la livraison.</p>
               </div>
             </div>
           </div>
