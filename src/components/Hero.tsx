@@ -302,7 +302,7 @@ const Hero = () => {
                       className="border-gray-300 text-gray-600 hover:bg-gray-50 px-6 py-3"
                     >
                       <X className="mr-2 h-4 w-4" />
-                      Annuler
+                      Réinitialiser
                     </Button>
                   </div>
                   {!canProceed && (arrivalDate || departureDate) && (
