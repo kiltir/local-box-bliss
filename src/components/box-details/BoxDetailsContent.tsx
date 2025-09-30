@@ -15,6 +15,7 @@ interface BoxDetailsContentProps {
   images?: string[];
   boxTheme: 'Découverte' | 'Bourbon' | 'Tradition' | 'Saison';
   boxId: number;
+  onClose?: () => void;
   onBoxChange?: (boxId: number) => void;
   title: string;
   price: number;
@@ -32,6 +33,7 @@ const BoxDetailsContent = ({
   boxTheme,
   boxId,
   onBoxChange,
+  onClose,
   title,
   price,
   description,
@@ -105,6 +107,7 @@ const BoxDetailsContent = ({
       <AddToCartButton 
         weightExceeded={weightExceeded} 
         weightLimit={weightLimit}
+        onClose={onClose}
         boxData={boxData}
       />
     </TabsContent>

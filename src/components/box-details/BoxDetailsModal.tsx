@@ -85,6 +85,7 @@ const BoxDetailsModal = ({
               boxTheme={boxTheme} 
               boxId={boxId} 
               onBoxChange={onBoxChange} 
+              onClose={onClose}
               title={title}
               price={price}
               description={description}

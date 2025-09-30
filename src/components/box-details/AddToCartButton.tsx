@@ -9,6 +9,7 @@ import { toast } from 'sonner';
 interface AddToCartButtonProps {
   weightExceeded: boolean;
   weightLimit: number;
+  onClose?: () => void;
   boxData?: {
     id: number;
     baseTitle: string;
@@ -25,7 +26,7 @@ interface AddToCartButtonProps {
   };
 }
 
-const AddToCartButton = ({ weightExceeded, weightLimit, boxData }: AddToCartButtonProps) => {
+const AddToCartButton = ({ weightExceeded, weightLimit, onClose, boxData }: AddToCartButtonProps) => {
   const { addToCart } = useCart();
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -36,7 +37,8 @@ const AddToCartButton = ({ weightExceeded, weightLimit, boxData }: AddToCartButt
     // Vérifier si l'utilisateur est connecté
     if (!user) {
       toast.error('Vous devez être connecté pour ajouter au panier');
-      navigate('/auth');
+      onClose?.(); // Fermer la modale avant de naviguer
+      setTimeout(() => navigate('/auth'), 100);
       return;
     }
     
