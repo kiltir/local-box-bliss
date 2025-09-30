@@ -22,7 +22,7 @@ const Hero = () => {
   const [selectedPickupDate, setSelectedPickupDate] = useState<'arrival' | 'departure' | null>(null);
   const saveTravelInfoToLocalStorage = () => {
     if (!arrivalDate || !departureDate || !selectedPickupDate) {
-      toast.error("Veuillez sélectionner vos dates et votre préférence de récupération");
+      toast.success("Dates de séjour enregistrées !");
       return;
     }
     const travelInfo = {
