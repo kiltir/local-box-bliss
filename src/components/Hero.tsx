@@ -260,6 +260,9 @@ const Hero = () => {
                       Réinitialiser
                     </Button>
                   </div>
+                  <p className="text-sm text-amber-600 mt-3 text-center font-medium">
+                    ⚠️ Avant toute commande, il est recommandé de réinitialiser.
+                  </p>
                   {!canProceed && (arrivalDate || departureDate) && <p className="text-sm text-gray-500 mt-4 text-center">
                       Veuillez sélectionner vos dates de séjour et votre préférence de récupération
                     </p>}
