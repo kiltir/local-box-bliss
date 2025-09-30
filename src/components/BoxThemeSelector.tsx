@@ -3,7 +3,7 @@ import React from 'react';
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Compass, Wine, BookOpen, Leaf } from "lucide-react";
 
-type BoxTheme = 'Découverte' | 'Bourbon' | 'Tradition' | 'Saison';
+type BoxTheme = 'Découverte' | 'Bourbon' | 'Racine' | 'Saison';
 
 interface BoxThemeSelectorProps {
   selectedTheme: BoxTheme;
@@ -25,8 +25,8 @@ const BoxThemeSelector: React.FC<BoxThemeSelectorProps> = ({ selectedTheme, onTh
       description: 'Des produits avec un caractère et une identité'
     },
     { 
-      value: 'Tradition', 
-      label: 'Tradition', 
+      value: 'Racine', 
+      label: 'Racine', 
       icon: <BookOpen className="h-4 w-4 mr-2" />,
       description: 'Des produits authentiques et traditionnels'
     },

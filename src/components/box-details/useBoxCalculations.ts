@@ -19,7 +19,7 @@ import { mapProductsFor3DViewer } from '@/utils/box/productMappers';
 
 export function useBoxCalculations(
   products: BoxProduct[], 
-  boxTheme: 'Découverte' | 'Bourbon' | 'Tradition' | 'Saison',
+  boxTheme: 'Découverte' | 'Bourbon' | 'Racine' | 'Saison',
   boxId: number,
   onBoxChange?: (boxId: number) => void
 ) {

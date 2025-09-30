@@ -9,7 +9,7 @@ import AddToCartButton from './AddToCartButton';
 interface BoxDetails3DViewProps {
   isActive: boolean;
   products: BoxProduct[];
-  boxTheme: 'Découverte' | 'Bourbon' | 'Tradition' | 'Saison';
+  boxTheme: 'Découverte' | 'Bourbon' | 'Racine' | 'Saison';
   boxId: number;
   onBoxChange?: (boxId: number) => void;
 }

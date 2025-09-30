@@ -17,7 +17,7 @@ interface BoxDetailsModalProps {
   boxSize: 'unique';
   boxId: number;
   onBoxChange?: (boxId: number) => void;
-  boxTheme: 'Découverte' | 'Bourbon' | 'Tradition' | 'Saison';
+  boxTheme: 'Découverte' | 'Bourbon' | 'Racine' | 'Saison';
   items: number;
   rating: number;
   reviewCount?: number;

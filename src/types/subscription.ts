@@ -13,7 +13,7 @@ export interface SubscriptionOption {
 export interface SubscriptionData {
   id: number;
   baseTitle: string;
-  theme: 'Découverte' | 'Bourbon' | 'Tradition' | 'Saison';
+  theme: 'Découverte' | 'Bourbon' | 'Racine' | 'Saison';
   basePrice: number;
   description: string;
   image: string;

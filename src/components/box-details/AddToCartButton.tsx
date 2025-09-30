@@ -17,7 +17,7 @@ interface AddToCartButtonProps {
     description: string;
     image: string;
     items: number;
-    theme: 'Découverte' | 'Bourbon' | 'Tradition' | 'Saison';
+    theme: 'Découverte' | 'Bourbon' | 'Racine' | 'Saison';
     rating: number;
     reviewCount?: number;
     size: 'unique';

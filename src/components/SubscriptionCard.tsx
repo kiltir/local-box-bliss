@@ -23,7 +23,7 @@ const SubscriptionCard: React.FC<SubscriptionCardProps> = ({ subscription, onCli
         return 'bg-blue-100 text-blue-800';
       case 'Bourbon':
         return 'bg-amber-100 text-amber-800';
-      case 'Tradition':
+      case 'Racine':
         return 'bg-green-100 text-green-800';
       case 'Saison':
         return 'bg-purple-100 text-purple-800';
@@ -38,7 +38,7 @@ const SubscriptionCard: React.FC<SubscriptionCardProps> = ({ subscription, onCli
         return Compass;
       case 'Bourbon':
         return Wine;
-      case 'Tradition':
+      case 'Racine':
         return BookOpen;
       case 'Saison':
         return Leaf;

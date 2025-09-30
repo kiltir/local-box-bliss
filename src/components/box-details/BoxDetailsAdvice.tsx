@@ -6,7 +6,7 @@ import { Lightbulb, Coffee, Leaf, Sparkles } from 'lucide-react';
 
 interface BoxDetailsAdviceProps {
   products: BoxProduct[];
-  boxTheme: 'Découverte' | 'Bourbon' | 'Tradition' | 'Saison';
+  boxTheme: 'Découverte' | 'Bourbon' | 'Racine' | 'Saison';
 }
 
 const BoxDetailsAdvice = ({
@@ -88,7 +88,7 @@ const BoxDetailsAdvice = ({
           title: "Informations",
           advice: "Avant de s'appeler Réunion, l'île fût appelée \"Ile Bourbon\", c'est pour cela que beaucoup de produits réunionnais possèdent cette appellation historique et culturelle héritée de la maison royale française du même nom."
         };
-      case 'Tradition':
+      case 'Racine':
         return {
           title: "Informations",
           advice: "Ces produits traditionnels racontent une histoire. Savourez-les en famille ou entre amis pour partager ces saveurs authentiques."
@@ -114,10 +114,10 @@ const BoxDetailsAdvice = ({
           title: 'Pourquoi "Saison" ?',
           explanation: "La Box Saison adapte ses produits selon la saison, c'est un gage de qualité, de fraîcheur et d'authenticité pour les produits."
         };
-      case 'Tradition':
+      case 'Racine':
         return {
-          title: 'Pourquoi "Tradition" ?',
-          explanation: "La Box Tradition fait appel aux souvenirs des traditions, coutumes et recettes réunionnaises."
+          title: 'Pourquoi "Racine" ?',
+          explanation: "La Box Racine fait appel aux souvenirs des traditions, coutumes et recettes réunionnaises."
         };
       case 'Bourbon':
         return {

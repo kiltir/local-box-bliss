@@ -13,7 +13,7 @@ interface BoxDetailsContentProps {
   products: BoxProduct[];
   image: string;
   images?: string[];
-  boxTheme: 'Découverte' | 'Bourbon' | 'Tradition' | 'Saison';
+  boxTheme: 'Découverte' | 'Bourbon' | 'Racine' | 'Saison';
   boxId: number;
   onClose?: () => void;
   onBoxChange?: (boxId: number) => void;

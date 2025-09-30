@@ -47,8 +47,8 @@ export const subscriptions: SubscriptionData[] = [
   },
   {
     id: 3,
-    baseTitle: "Box Tradition",
-    theme: 'Tradition',
+    baseTitle: "Box Racine",
+    theme: 'Racine',
     basePrice: 69.90,
     description: "Recevez chaque mois des produits authentiques issus de recettes traditionnelles créoles transmises de génération en génération.",
     image: "https://source.unsplash.com/472396961693-142e6e269027",

@@ -1,6 +1,6 @@
 
 export type BoxSize = 'unique';
-export type BoxTheme = 'Découverte' | 'Bourbon' | 'Tradition' | 'Saison';
+export type BoxTheme = 'Découverte' | 'Bourbon' | 'Racine' | 'Saison';
 
 export interface Product {
   id: number;
