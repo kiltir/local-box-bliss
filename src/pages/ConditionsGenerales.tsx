@@ -1,11 +1,8 @@
-
 import React from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-
 const ConditionsGenerales = () => {
-  return (
-    <div className="min-h-screen flex flex-col">
+  return <div className="min-h-screen flex flex-col">
       <Navbar />
       <main className="flex-1">
         <div className="bg-gradient-to-b from-[#FEF7CD]/50 to-white py-16">
@@ -97,9 +94,7 @@ const ConditionsGenerales = () => {
                   <li>un abonnement d'une durée de six mois ;</li>
                   <li>un abonnement d'une durée d'un an.</li>
                 </ul>
-                <p className="text-gray-700 leading-relaxed mb-4">
-                  Chaque formule d'abonnement peut être offerte à un tiers.
-                </p>
+                <p className="text-gray-700 leading-relaxed mb-4">Chaque formule d'abonnement peut être offerte à un tiers. Il suffit de renseigner une adresse de livraison (destinataire) différente de l'adresse de facturation (émetteur).</p>
                 <p className="text-gray-700 leading-relaxed mb-4">
                   Le Client accepte d'acheter des produits dont la description précise n'est pas mentionnée sur le Site au moment de la commande.
                 </p>
@@ -343,8 +338,6 @@ const ConditionsGenerales = () => {
         </div>
       </main>
       <Footer />
-    </div>
-  );
+    </div>;
 };
-
 export default ConditionsGenerales;
