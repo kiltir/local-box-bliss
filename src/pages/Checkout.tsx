@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -6,6 +6,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Separator } from "@/components/ui/separator";
 import { ShoppingCart, CreditCard, ArrowLeft, Crown } from 'lucide-react';
 import { useCart } from '@/hooks/useCart';
+import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import Navbar from '@/components/Navbar';
@@ -14,7 +15,16 @@ import Footer from '@/components/Footer';
 const Checkout = () => {
   const navigate = useNavigate();
   const { items, getTotalPrice } = useCart();
+  const { user, loading } = useAuth();
   const [isProcessing, setIsProcessing] = useState(false);
+
+  // Vérifier si l'utilisateur est connecté
+  useEffect(() => {
+    if (!loading && !user) {
+      toast.error('Vous devez être connecté pour accéder à cette page');
+      navigate('/auth');
+    }
+  }, [user, loading, navigate]);
 
   const handlePayment = async () => {
     if (items.length === 0) {
