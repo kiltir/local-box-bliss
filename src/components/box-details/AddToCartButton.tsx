@@ -2,6 +2,8 @@
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import { useCart } from '@/hooks/useCart';
+import { useAuth } from '@/hooks/useAuth';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 
 interface AddToCartButtonProps {
@@ -25,9 +27,18 @@ interface AddToCartButtonProps {
 
 const AddToCartButton = ({ weightExceeded, weightLimit, boxData }: AddToCartButtonProps) => {
   const { addToCart } = useCart();
+  const { user } = useAuth();
+  const navigate = useNavigate();
 
   const handleAddToCart = () => {
     if (weightExceeded) return;
+    
+    // Vérifier si l'utilisateur est connecté
+    if (!user) {
+      toast.error('Vous devez être connecté pour ajouter au panier');
+      navigate('/auth');
+      return;
+    }
     
     if (boxData) {
       addToCart(boxData);
