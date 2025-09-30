@@ -21,7 +21,10 @@ interface CartContextType {
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export const CartProvider = ({ children }: { children: ReactNode }) => {
-  const [items, setItems] = useState<CartItem[]>([]);
+  const [items, setItems] = useState<CartItem[]>(() => {
+    const savedCart = localStorage.getItem('cart');
+    return savedCart ? JSON.parse(savedCart) : [];
+  });
 
   const addToCart = (box: BoxData, quantity = 1, subscriptionType?: '6months' | '1year') => {
     setItems(prevItems => {
@@ -30,22 +33,30 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         item.box.id === box.id && item.subscriptionType === subscriptionType
       );
       
+      let updatedItems;
       if (existingItem) {
-        return prevItems.map(item =>
+        updatedItems = prevItems.map(item =>
           item.box.id === box.id && item.subscriptionType === subscriptionType
             ? { ...item, quantity: item.quantity + quantity }
             : item
         );
+      } else {
+        updatedItems = [...prevItems, { box, quantity, subscriptionType }];
       }
       
-      return [...prevItems, { box, quantity, subscriptionType }];
+      localStorage.setItem('cart', JSON.stringify(updatedItems));
+      return updatedItems;
     });
   };
 
   const removeFromCart = (boxId: number, subscriptionType?: '6months' | '1year') => {
-    setItems(prevItems => prevItems.filter(item => 
-      !(item.box.id === boxId && item.subscriptionType === subscriptionType)
-    ));
+    setItems(prevItems => {
+      const updatedItems = prevItems.filter(item => 
+        !(item.box.id === boxId && item.subscriptionType === subscriptionType)
+      );
+      localStorage.setItem('cart', JSON.stringify(updatedItems));
+      return updatedItems;
+    });
   };
 
   const updateQuantity = (boxId: number, quantity: number, subscriptionType?: '6months' | '1year') => {
@@ -54,17 +65,20 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       return;
     }
     
-    setItems(prevItems =>
-      prevItems.map(item =>
+    setItems(prevItems => {
+      const updatedItems = prevItems.map(item =>
         item.box.id === boxId && item.subscriptionType === subscriptionType
           ? { ...item, quantity }
           : item
-      )
-    );
+      );
+      localStorage.setItem('cart', JSON.stringify(updatedItems));
+      return updatedItems;
+    });
   };
 
   const clearCart = () => {
     setItems([]);
+    localStorage.removeItem('cart');
   };
 
   const getTotalItems = () => {
