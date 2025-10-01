@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
 import { supabase } from '@/integrations/supabase/client';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -12,16 +14,26 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { toast } from 'sonner';
 import { format, parse, isValid } from 'date-fns';
-interface ProfileFormData {
-  full_name: string;
-  username: string;
-  date_of_birth: string;
-  gender: string;
-  billing_address_street: string;
-  billing_address_city: string;
-  billing_address_postal_code: string;
-  billing_address_country: string;
-}
+const profileFormSchema = z.object({
+  full_name: z.string(),
+  username: z.string(),
+  date_of_birth: z.string().refine((val) => {
+    if (!val) return true; // Allow empty
+    const regex = /^\d{2}\/\d{2}\/\d{4}$/;
+    if (!regex.test(val)) return false;
+    const parsedDate = parse(val, 'dd/MM/yyyy', new Date());
+    return isValid(parsedDate);
+  }, {
+    message: "La date doit être au format jj/mm/aaaa (ex: 15/03/1990)"
+  }),
+  gender: z.string(),
+  billing_address_street: z.string(),
+  billing_address_city: z.string(),
+  billing_address_postal_code: z.string(),
+  billing_address_country: z.string()
+});
+
+type ProfileFormData = z.infer<typeof profileFormSchema>;
 interface ProfileData {
   id: string;
   full_name: string | null;
@@ -64,6 +76,7 @@ const MesInformations = () => {
     return '';
   };
   const form = useForm<ProfileFormData>({
+    resolver: zodResolver(profileFormSchema),
     defaultValues: {
       full_name: '',
       username: '',
