@@ -214,9 +214,6 @@ serve(async (req) => {
         shipping_address: {
           message: '(Destinataire)',
         },
-        billing_address: {
-          message: '(Emetteur)',
-        },
       },
       shipping_options: [
         {
