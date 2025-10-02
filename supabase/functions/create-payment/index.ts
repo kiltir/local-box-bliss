@@ -210,6 +210,11 @@ serve(async (req) => {
       shipping_address_collection: {
         allowed_countries: ['FR', 'BE', 'CH', 'DE', 'ES', 'IT', 'NL', 'LU'],
       },
+      custom_text: {
+        shipping_address: {
+          message: '(Destinataire)',
+        },
+      },
       shipping_options: [
         {
           shipping_rate_data: {
