@@ -15,21 +15,53 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { toast } from 'sonner';
 import { format, parse, isValid } from 'date-fns';
 const profileFormSchema = z.object({
-  full_name: z.string(),
-  username: z.string(),
+  full_name: z.string()
+    .max(100, { message: "Le nom ne peut pas dépasser 100 caractères" }),
+  username: z.string()
+    .max(50, { message: "Le nom d'utilisateur ne peut pas dépasser 50 caractères" }),
   date_of_birth: z.string().refine((val) => {
     if (!val) return true; // Allow empty
+    
+    // Validate format
     const regex = /^\d{2}\/\d{2}\/\d{4}$/;
     if (!regex.test(val)) return false;
+    
+    // Parse and validate date
     const parsedDate = parse(val, 'dd/MM/yyyy', new Date());
-    return isValid(parsedDate);
+    if (!isValid(parsedDate)) return false;
+    
+    // Validate age range (0-120 years)
+    const today = new Date();
+    const age = today.getFullYear() - parsedDate.getFullYear();
+    const monthDiff = today.getMonth() - parsedDate.getMonth();
+    const dayDiff = today.getDate() - parsedDate.getDate();
+    
+    // Check if date is not in the future
+    if (parsedDate > today) return false;
+    
+    // Calculate actual age
+    let actualAge = age;
+    if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
+      actualAge--;
+    }
+    
+    return actualAge >= 0 && actualAge <= 120;
   }, {
-    message: "La date doit être au format jj/mm/aaaa (ex: 15/03/1990)"
+    message: "La date doit être au format jj/mm/aaaa, ne pas être dans le futur et représenter un âge valide (0-120 ans)"
   }),
   gender: z.string(),
-  billing_address_street: z.string(),
-  billing_address_city: z.string(),
-  billing_address_postal_code: z.string(),
+  billing_address_street: z.string()
+    .max(200, { message: "L'adresse ne peut pas dépasser 200 caractères" }),
+  billing_address_city: z.string()
+    .max(100, { message: "La ville ne peut pas dépasser 100 caractères" }),
+  billing_address_postal_code: z.string()
+    .refine((val) => {
+      if (!val) return true; // Allow empty
+      // Basic validation for French postal codes (5 digits)
+      return /^\d{5}$/.test(val);
+    }, {
+      message: "Le code postal doit contenir 5 chiffres"
+    }),
   billing_address_country: z.string()
 });
 

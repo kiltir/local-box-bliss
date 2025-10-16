@@ -1,8 +1,73 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { Mail, Phone, MapPin } from 'lucide-react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
+import { supabase } from '@/integrations/supabase/client';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Button } from '@/components/ui/button';
+import { toast } from 'sonner';
+
+const contactFormSchema = z.object({
+  name: z.string()
+    .trim()
+    .min(1, { message: "Le nom est requis" })
+    .max(100, { message: "Le nom ne peut pas dépasser 100 caractères" }),
+  email: z.string()
+    .trim()
+    .email({ message: "Email invalide" })
+    .max(255, { message: "L'email ne peut pas dépasser 255 caractères" }),
+  subject: z.string()
+    .trim()
+    .min(1, { message: "Le sujet est requis" })
+    .max(200, { message: "Le sujet ne peut pas dépasser 200 caractères" }),
+  message: z.string()
+    .trim()
+    .min(1, { message: "Le message est requis" })
+    .max(5000, { message: "Le message ne peut pas dépasser 5000 caractères" })
+});
+
+type ContactFormData = z.infer<typeof contactFormSchema>;
 const NousContacter = () => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const form = useForm<ContactFormData>({
+    resolver: zodResolver(contactFormSchema),
+    defaultValues: {
+      name: '',
+      email: '',
+      subject: '',
+      message: ''
+    }
+  });
+
+  const onSubmit = async (data: ContactFormData) => {
+    setIsSubmitting(true);
+    try {
+      const { data: result, error } = await supabase.functions.invoke('submit-contact-form', {
+        body: data
+      });
+
+      if (error) {
+        console.error('Error submitting contact form:', error);
+        toast.error('Erreur lors de l\'envoi du message. Veuillez réessayer.');
+        return;
+      }
+
+      toast.success('Message envoyé avec succès ! Nous vous répondrons dans les plus brefs délais.');
+      form.reset();
+    } catch (error) {
+      console.error('Error submitting contact form:', error);
+      toast.error('Erreur lors de l\'envoi du message. Veuillez réessayer.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return <div className="min-h-screen flex flex-col">
       <Navbar />
       <main className="flex-1">
@@ -44,39 +109,77 @@ const NousContacter = () => {
               
               <div>
                 <h2 className="text-2xl font-semibold text-leaf-green mb-6">Envoyez-nous un message</h2>
-                <form className="space-y-4">
-                  <div>
-                    <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-                      Nom complet
-                    </label>
-                    <input type="text" id="name" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-leaf-green focus:border-transparent" required />
-                  </div>
-                  
-                  <div>
-                    <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                      Email
-                    </label>
-                    <input type="email" id="email" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-leaf-green focus:border-transparent" required />
-                  </div>
-                  
-                  <div>
-                    <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-1">
-                      Sujet
-                    </label>
-                    <input type="text" id="subject" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-leaf-green focus:border-transparent" required />
-                  </div>
-                  
-                  <div>
-                    <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1">
-                      Message
-                    </label>
-                    <textarea id="message" rows={6} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-leaf-green focus:border-transparent" required />
-                  </div>
-                  
-                  <button type="submit" className="w-full bg-leaf-green hover:bg-dark-green text-white font-semibold py-3 px-6 rounded-lg transition-colors">
-                    Envoyer le message
-                  </button>
-                </form>
+                <Form {...form}>
+                  <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                    <FormField
+                      control={form.control}
+                      name="name"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Nom complet</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Votre nom complet" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    
+                    <FormField
+                      control={form.control}
+                      name="email"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Email</FormLabel>
+                          <FormControl>
+                            <Input type="email" placeholder="votre.email@exemple.com" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    
+                    <FormField
+                      control={form.control}
+                      name="subject"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Sujet</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Objet de votre message" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    
+                    <FormField
+                      control={form.control}
+                      name="message"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Message</FormLabel>
+                          <FormControl>
+                            <Textarea 
+                              placeholder="Votre message..."
+                              rows={6}
+                              {...field} 
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    
+                    <Button 
+                      type="submit" 
+                      className="w-full" 
+                      disabled={isSubmitting}
+                    >
+                      {isSubmitting ? 'Envoi en cours...' : 'Envoyer le message'}
+                    </Button>
+                  </form>
+                </Form>
               </div>
             </div>
           </div>

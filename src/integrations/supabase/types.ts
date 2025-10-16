@@ -14,6 +14,69 @@ export type Database = {
   }
   public: {
     Tables: {
+      contact_rate_limits: {
+        Row: {
+          id: string
+          identifier: string
+          last_submission: string | null
+          submission_count: number | null
+          window_start: string | null
+        }
+        Insert: {
+          id?: string
+          identifier: string
+          last_submission?: string | null
+          submission_count?: number | null
+          window_start?: string | null
+        }
+        Update: {
+          id?: string
+          identifier?: string
+          last_submission?: string | null
+          submission_count?: number | null
+          window_start?: string | null
+        }
+        Relationships: []
+      }
+      contact_submissions: {
+        Row: {
+          admin_notes: string | null
+          created_at: string | null
+          email: string
+          id: string
+          ip_address: string | null
+          message: string
+          name: string
+          status: string | null
+          subject: string
+          user_agent: string | null
+        }
+        Insert: {
+          admin_notes?: string | null
+          created_at?: string | null
+          email: string
+          id?: string
+          ip_address?: string | null
+          message: string
+          name: string
+          status?: string | null
+          subject: string
+          user_agent?: string | null
+        }
+        Update: {
+          admin_notes?: string | null
+          created_at?: string | null
+          email?: string
+          id?: string
+          ip_address?: string | null
+          message?: string
+          name?: string
+          status?: string | null
+          subject?: string
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
       newsletter_subscriptions: {
         Row: {
           email: string
