@@ -4,7 +4,7 @@ import { BoxData } from '@/types/boxes';
 export const decouverteBox: BoxData = {
   id: 1,
   baseTitle: "Box Découverte",
-  price: 59.90,
+  price: 79.99,
   description: "Une sélection variée de douceurs artisanales pour découvrir de nouvelles saveurs authentiques de La Réunion.",
   image: "https://source.unsplash.com/1618160702438-9b02ab6515c9",
   images: [

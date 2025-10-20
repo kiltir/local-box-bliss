@@ -25,13 +25,13 @@ export const subscriptions: SubscriptionData[] = [
     id: 1,
     baseTitle: "Box Découverte",
     theme: 'Découverte',
-    basePrice: 59.90,
+    basePrice: 79.99,
     description: "Recevez chaque mois une sélection variée de douceurs artisanales pour découvrir de nouvelles saveurs authentiques de La Réunion.",
     image: "https://source.unsplash.com/1618160702438-9b02ab6515c9",
     items: 4,
     rating: 4.5,
     reviewCount: 23,
-    options: createSubscriptionOptions(59.90)
+    options: createSubscriptionOptions(79.99)
   },
   {
     id: 2,
