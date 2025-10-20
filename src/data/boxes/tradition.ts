@@ -4,7 +4,7 @@ import { BoxData } from '@/types/boxes';
 export const traditionBox: BoxData = {
   id: 3,
   baseTitle: "Box Racine",
-  price: 69.90,
+  price: 89.99,
   description: "Des produits authentiques issus de recettes traditionnelles créoles transmises de génération en génération.",
   image: "https://source.unsplash.com/472396961693-142e6e269027",
   images: [

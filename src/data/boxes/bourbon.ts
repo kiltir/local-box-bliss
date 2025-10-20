@@ -4,7 +4,7 @@ import { BoxData } from '@/types/boxes';
 export const bourbonBox: BoxData = {
   id: 2,
   baseTitle: "Box Bourbon",
-  price: 89.90,
+  price: 129.99,
   description: "Une sélection raffinée pour vous offrir l'expérience de parfums et saveurs \"lontan\" avec des produits d'exception.",
   image: "/lovable-uploads/dfae2a49-8682-4e2d-b364-efe22d218a5e.png",
   images: [
