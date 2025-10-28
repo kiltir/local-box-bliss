@@ -91,7 +91,7 @@ const BoxDetailsAdvice = ({
       case 'Racine':
         return {
           title: "Informations",
-          advice: "Ces produits traditionnels racontent une histoire. Savourez-les en famille ou entre amis pour partager ces saveurs authentiques."
+          advice: "Chacune des saveurs, goûts et parfums issus de notre gastronomie sont un héritage qui raconte notre histoire."
         };
       case 'Saison':
         return {
