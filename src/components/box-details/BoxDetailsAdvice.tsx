@@ -91,7 +91,7 @@ const BoxDetailsAdvice = ({
       case 'Racine':
         return {
           title: "Informations",
-          advice: "Chacune des saveurs, goûts et parfums issus de notre gastronomie sont un héritage qui raconte notre histoire."
+          advice: "Chacune des saveurs, goûts et parfums issus de notre gastronomie sont un héritage qui raconte une histoire, celle de la Réunion."
         };
       case 'Saison':
         return {
