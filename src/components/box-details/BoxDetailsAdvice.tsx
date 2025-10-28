@@ -117,7 +117,7 @@ const BoxDetailsAdvice = ({
       case 'Racine':
         return {
           title: 'Pourquoi "Racine" ?',
-          explanation: "La Box Racine fait appel aux souvenirs des traditions, coutumes et recettes réunionnaises."
+          explanation: 'La Box Racine fait appel aux souvenirs des traditions, coutumes et recettes réunionnaises héritées de notre histoire et de nos ancêtres, autrement dit "nos racines".'
         };
       case 'Bourbon':
         return {
