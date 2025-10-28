@@ -81,7 +81,7 @@ const BoxDetailsAdvice = ({
       case 'Découverte':
         return {
           title: "Informations",
-          advice: "Avant de s'appeler Réunion, l'île fût appelée Ile Bourbon, c'est pour cela que beaucoup de nos produits possèdent cette appellation historique et culturelle."
+          advice: "L'île regorge de richesses insoupçonnées, que ce soit sa faune, sa flore, son savoir-faire et sa créativité. Son insularité a profondément transformé sa vision et son développement dans un effort commun de préservation de la nature et de l'environnement."
         };
       case 'Bourbon':
         return {
