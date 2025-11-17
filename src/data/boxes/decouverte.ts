@@ -41,11 +41,11 @@ export const decouverteBox: BoxData = {
       weight: 0.15
     },
     { 
-      name: "3 huiles essentielles", 
-      quantity: "30ml", 
-      producer: "Essence péi",
-      dimensions: { width: 3, height: 10, depth: 6 },
-      weight: 0.4
+      name: "Crème de patate douce", 
+      quantity: "250g", 
+      producer: "La Maison Des Délices",
+      dimensions: { width: 7, height: 8, depth: 7 },
+      weight: 0.25
     }
   ]
 };
