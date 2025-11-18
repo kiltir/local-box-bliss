@@ -34,10 +34,10 @@ export const decouverteBox: BoxData = {
       weight: 0.25
     },
     { 
-      name: "Bonbons coco", 
+      name: "Boite de Ti Calicoco", 
       quantity: "150g", 
-      producer: "Confiserie Péi",
-      dimensions: { width: 10, height: 3, depth: 6 },
+      producer: "Calicoco",
+      dimensions: { width: 8, height: 8, depth: 8 },
       weight: 0.15
     },
     { 
