@@ -41,7 +41,7 @@ export const decouverteBox: BoxData = {
       weight: 0.15
     },
     { 
-      name: "Crème de patate douce", 
+      name: "Trio de patate douce", 
       quantity: "250g", 
       producer: "La Maison Des Délices",
       dimensions: { width: 7, height: 8, depth: 7 },
