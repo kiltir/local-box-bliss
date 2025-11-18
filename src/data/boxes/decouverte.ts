@@ -43,7 +43,7 @@ export const decouverteBox: BoxData = {
     { 
       name: "Trio de patate douce", 
       quantity: "250g", 
-      producer: "La Maison Des Délices",
+      producer: "Les Trésors de Mamie Céliane",
       dimensions: { width: 7, height: 8, depth: 7 },
       weight: 0.25
     }
