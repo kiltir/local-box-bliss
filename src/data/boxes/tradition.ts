@@ -20,9 +20,9 @@ export const traditionBox: BoxData = {
   reviewCount: 31,
   products: [
     { 
-      name: "Miel de baies roses", 
+      name: "Achard", 
       quantity: "200g", 
-      producer: "Le Rucher Créole",
+      producer: "Les Trésors de Mamie Céliane",
       dimensions: { width: 7, height: 8, depth: 7 },
       weight: 0.25
     },
