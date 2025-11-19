@@ -20,9 +20,9 @@ export const decouverteBox: BoxData = {
   reviewCount: 23,
   products: [
     { 
-      name: "Pot de miel de letchis", 
+      name: "Kimchi courgette et bringelle", 
       quantity: "200g", 
-      producer: "Le Rucher Créole",
+      producer: "Pot en ciel kréol",
       dimensions: { width: 7, height: 8, depth: 7 },
       weight: 0.25
     },
