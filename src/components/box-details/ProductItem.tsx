@@ -30,6 +30,9 @@ const ProductItem = ({
   const getProductImage = (productName: string) => {
     // Create a simple mapping for product images based on keywords
     const name = productName.toLowerCase();
+    if (name.includes('calicoco')) {
+      return '/lovable-uploads/ti-calicoco-boite.jpg';
+    }
     if (name.includes('miel') || name.includes('honey')) {
       return 'https://images.unsplash.com/photo-1587049633312-d628ae50a8ae?w=120&h=120&fit=crop';
     }
