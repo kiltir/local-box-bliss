@@ -36,6 +36,9 @@ const ProductItem = ({
     if (name.includes('achard')) {
       return '/lovable-uploads/achard-mamie-celiane.jpg';
     }
+    if (name.includes('piment')) {
+      return '/lovable-uploads/piment-pei-mamie-celiane.jpg';
+    }
     if (name.includes('miel') || name.includes('honey')) {
       return 'https://images.unsplash.com/photo-1587049633312-d628ae50a8ae?w=120&h=120&fit=crop';
     }
@@ -44,9 +47,6 @@ const ProductItem = ({
     }
     if (name.includes('tisane') || name.includes('thé')) {
       return 'https://images.unsplash.com/photo-1544787219-7f47ccb76574?w=120&h=120&fit=crop';
-    }
-    if (name.includes('piment')) {
-      return 'https://images.unsplash.com/photo-1583076962938-713add2bf882?w=120&h=120&fit=crop';
     }
     if (name.includes('confiture') || name.includes('jam')) {
       return 'https://images.unsplash.com/photo-1486893732792-ab0085cb2d43?w=120&h=120&fit=crop';
