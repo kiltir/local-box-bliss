@@ -23,6 +23,7 @@ export const decouverteBox: BoxData = {
       name: "Kimchi courgette et bringelle", 
       quantity: "200g", 
       producer: "Pot en ciel kréol",
+      description: "Préparation salée traditionnelle coréenne revisitée façon créole",
       dimensions: { width: 7, height: 8, depth: 7 },
       weight: 0.25
     },
@@ -37,6 +38,7 @@ export const decouverteBox: BoxData = {
       name: "Boite de Ti Calicoco", 
       quantity: "150g", 
       producer: "Calicoco",
+      description: "Friandise née du mélange entre le calisson d'Aix-en-Provence et le bonbon coco réunionnais",
       dimensions: { width: 8, height: 8, depth: 8 },
       weight: 0.15
     },
@@ -44,6 +46,7 @@ export const decouverteBox: BoxData = {
       name: "Trio de patate douce", 
       quantity: "250g", 
       producer: "Les Trésors de Mamie Céliane",
+      description: "Crème de 3 patates douces pour une déclinaison de saveurs et couleurs",
       dimensions: { width: 7, height: 8, depth: 7 },
       weight: 0.25
     }

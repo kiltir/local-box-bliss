@@ -93,7 +93,7 @@ const ProductItem = ({
                 {product.name}
               </div>
               <div className="text-xs sm:text-sm text-gray-500 mt-1 leading-tight">
-                {product.producer}
+                {product.description || product.producer}
               </div>
               {product.weight && (
                 <div className="text-xs sm:text-sm text-gray-500 mt-1">
