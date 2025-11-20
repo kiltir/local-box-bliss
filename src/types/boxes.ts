@@ -11,6 +11,7 @@ export interface BoxProduct {
   name: string;
   quantity: string;
   producer: string;
+  description?: string; // Description du produit (affichée à la place du producteur si présente)
   dimensions?: BoxProductDimensions;
   weight?: number; // Poids en kg
 }
