@@ -29,7 +29,7 @@ const HeroDescription = () => {
           <div className="p-6 rounded-lg shadow-md bg-white">
             <div className="text-leaf-green text-2xl font-bold mb-2">Livraison</div>
             <h3 className="text-lg font-medium mb-2">Sur-mesure</h3>
-            <p className="text-gray-600">Recevez votre box à l'aéroport, en Métropole ou à la Réunion.</p>
+            <p className="text-gray-600">Recevez votre box en Métropole ou à la Réunion.</p>
           </div>
         </div>
       </div>
