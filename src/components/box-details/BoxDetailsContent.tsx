@@ -7,7 +7,6 @@ import { useBoxCalculations } from './useBoxCalculations';
 import ProductList from './ProductList';
 import AddToCartButton from './AddToCartButton';
 import BoxImageCarousel from './BoxImageCarousel';
-import StarRating from '@/components/StarRating';
 
 interface BoxDetailsContentProps {
   isActive: boolean;
@@ -83,10 +82,7 @@ const BoxDetailsContent = ({
         
         {/* Informations sur la box */}
         <div className="mb-4 sm:mb-6">
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="text-lg font-semibold">Contenu de la box</h3>
-            <StarRating rating={rating} reviewCount={reviewCount} size={18} />
-          </div>
+          <h3 className="text-lg font-semibold mb-3">Contenu de la box</h3>
           
           {/* Informations de poids et volume - stack sur mobile */}
           <div className="space-y-1 mb-3">
