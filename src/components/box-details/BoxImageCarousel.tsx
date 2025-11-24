@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Carousel,
   CarouselContent,
@@ -7,6 +7,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import type { CarouselApi } from "@/components/ui/carousel";
 
 interface BoxImageCarouselProps {
   images: string[];
@@ -14,13 +15,30 @@ interface BoxImageCarouselProps {
 }
 
 const BoxImageCarousel = ({ images, title }: BoxImageCarouselProps) => {
+  const [api, setApi] = useState<CarouselApi>();
+  const [current, setCurrent] = useState(0);
+
+  useEffect(() => {
+    if (!api) return;
+
+    setCurrent(api.selectedScrollSnap());
+
+    api.on("select", () => {
+      setCurrent(api.selectedScrollSnap());
+    });
+  }, [api]);
+
+  const scrollTo = useCallback((index: number) => {
+    api?.scrollTo(index);
+  }, [api]);
+
   if (!images || images.length === 0) {
     return null;
   }
 
   return (
     <div className="relative w-full">
-      <Carousel className="w-full">
+      <Carousel className="w-full" setApi={setApi}>
         <CarouselContent>
           {images.map((image, index) => (
             <CarouselItem key={index}>
@@ -46,9 +64,15 @@ const BoxImageCarousel = ({ images, title }: BoxImageCarouselProps) => {
       {images.length > 1 && (
         <div className="flex justify-center mt-3 space-x-2">
           {images.map((_, index) => (
-            <div
+            <button
               key={index}
-              className="w-2 h-2 rounded-full bg-gray-300"
+              onClick={() => scrollTo(index)}
+              className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                index === current 
+                  ? "bg-primary w-6" 
+                  : "bg-muted-foreground/30 hover:bg-muted-foreground/50"
+              }`}
+              aria-label={`Aller à l'image ${index + 1}`}
             />
           ))}
         </div>
