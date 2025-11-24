@@ -10,7 +10,7 @@ interface ReviewsTabProps {
 }
 
 const ReviewsTab = ({ boxId }: ReviewsTabProps) => {
-  const { reviews, stats, loading, userReview, submitReview, deleteReview } = useReviews(boxId);
+  const { reviews, stats, loading, userReview, submitReview } = useReviews(boxId);
 
   return (
     <TabsContent value="reviews" className="p-3 sm:p-6 pt-3 sm:pt-4">
@@ -29,13 +29,11 @@ const ReviewsTab = ({ boxId }: ReviewsTabProps) => {
         {/* Review Form */}
         <div>
           <h3 className="text-lg font-semibold mb-4">
-            {userReview ? 'Modifier mon avis' : 'Laisser un avis'}
+            Laisser un avis
           </h3>
           <ReviewForm
             onSubmit={submitReview}
-            existingRating={userReview?.rating}
-            existingComment={userReview?.comment || ''}
-            onDelete={userReview ? deleteReview : undefined}
+            hasExistingReview={!!userReview}
           />
         </div>
 

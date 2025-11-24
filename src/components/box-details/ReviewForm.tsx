@@ -7,16 +7,14 @@ import { toast } from 'sonner';
 
 interface ReviewFormProps {
   onSubmit: (rating: number, comment: string) => Promise<void>;
-  existingRating?: number;
-  existingComment?: string;
-  onDelete?: () => Promise<void>;
+  hasExistingReview?: boolean;
 }
 
-const ReviewForm = ({ onSubmit, existingRating, existingComment, onDelete }: ReviewFormProps) => {
+const ReviewForm = ({ onSubmit, hasExistingReview }: ReviewFormProps) => {
   const { user } = useAuth();
-  const [rating, setRating] = useState(existingRating || 0);
+  const [rating, setRating] = useState(0);
   const [hoveredRating, setHoveredRating] = useState(0);
-  const [comment, setComment] = useState(existingComment || '');
+  const [comment, setComment] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -30,29 +28,11 @@ const ReviewForm = ({ onSubmit, existingRating, existingComment, onDelete }: Rev
     try {
       setSubmitting(true);
       await onSubmit(rating, comment);
-      toast.success(existingRating ? 'Avis modifié avec succès' : 'Avis publié avec succès');
-      if (!existingRating) {
-        setRating(0);
-        setComment('');
-      }
-    } catch (error) {
-      toast.error('Erreur lors de la soumission de l\'avis');
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
-  const handleDelete = async () => {
-    if (!onDelete) return;
-
-    try {
-      setSubmitting(true);
-      await onDelete();
-      toast.success('Avis supprimé avec succès');
+      toast.success('Avis publié avec succès');
       setRating(0);
       setComment('');
-    } catch (error) {
-      toast.error('Erreur lors de la suppression de l\'avis');
+    } catch (error: any) {
+      toast.error(error.message || 'Erreur lors de la soumission de l\'avis');
     } finally {
       setSubmitting(false);
     }
@@ -62,6 +42,14 @@ const ReviewForm = ({ onSubmit, existingRating, existingComment, onDelete }: Rev
     return (
       <div className="text-center py-8 text-muted-foreground">
         Connectez-vous pour laisser un avis
+      </div>
+    );
+  }
+
+  if (hasExistingReview) {
+    return (
+      <div className="text-center py-8 text-muted-foreground">
+        Vous avez déjà laissé un avis pour cette box. Les avis ne peuvent être modifiés que par un administrateur.
       </div>
     );
   }
@@ -114,19 +102,8 @@ const ReviewForm = ({ onSubmit, existingRating, existingComment, onDelete }: Rev
 
       <div className="flex gap-2">
         <Button type="submit" disabled={submitting || rating === 0}>
-          {submitting ? 'Publication...' : existingRating ? 'Modifier mon avis' : 'Publier mon avis'}
+          {submitting ? 'Publication...' : 'Publier mon avis'}
         </Button>
-        
-        {existingRating && onDelete && (
-          <Button
-            type="button"
-            variant="outline"
-            onClick={handleDelete}
-            disabled={submitting}
-          >
-            Supprimer
-          </Button>
-        )}
       </div>
     </form>
   );
