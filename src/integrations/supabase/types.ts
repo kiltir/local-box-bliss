@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      box_reviews: {
+        Row: {
+          box_id: number
+          comment: string | null
+          created_at: string
+          id: string
+          rating: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          box_id: number
+          comment?: string | null
+          created_at?: string
+          id?: string
+          rating: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          box_id?: number
+          comment?: string | null
+          created_at?: string
+          id?: string
+          rating?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       contact_rate_limits: {
         Row: {
           id: string
