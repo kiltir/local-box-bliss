@@ -89,6 +89,10 @@ export const useReviews = (boxId: number) => {
       throw new Error('Vous devez être connecté pour laisser un avis');
     }
 
+    if (userReview) {
+      throw new Error('Vous avez déjà laissé un avis pour cette box');
+    }
+
     try {
       const reviewData = {
         user_id: user.id,
@@ -97,44 +101,16 @@ export const useReviews = (boxId: number) => {
         comment: comment.trim() || null
       };
 
-      if (userReview) {
-        // Update existing review
-        const { error } = await supabase
-          .from('box_reviews')
-          .update(reviewData)
-          .eq('id', userReview.id);
-
-        if (error) throw error;
-      } else {
-        // Create new review
-        const { error } = await supabase
-          .from('box_reviews')
-          .insert(reviewData);
-
-        if (error) throw error;
-      }
-
-      await fetchReviews();
-    } catch (error) {
-      console.error('Error submitting review:', error);
-      throw error;
-    }
-  };
-
-  const deleteReview = async () => {
-    if (!userReview) return;
-
-    try {
+      // Create new review only
       const { error } = await supabase
         .from('box_reviews')
-        .delete()
-        .eq('id', userReview.id);
+        .insert(reviewData);
 
       if (error) throw error;
 
       await fetchReviews();
     } catch (error) {
-      console.error('Error deleting review:', error);
+      console.error('Error submitting review:', error);
       throw error;
     }
   };
@@ -145,7 +121,6 @@ export const useReviews = (boxId: number) => {
     loading,
     userReview,
     submitReview,
-    deleteReview,
     refreshReviews: fetchReviews
   };
 };
