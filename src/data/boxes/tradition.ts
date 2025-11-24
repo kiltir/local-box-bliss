@@ -23,6 +23,7 @@ export const traditionBox: BoxData = {
       name: "Achard", 
       quantity: "200g", 
       producer: "Les Trésors de Mamie Céliane",
+      description: "Préparation traditionnelle de légumes cuits et marinés dans un mélange d'épices et de vinaigre",
       dimensions: { width: 7, height: 8, depth: 7 },
       weight: 0.25
     },
@@ -30,6 +31,7 @@ export const traditionBox: BoxData = {
       name: "Rhum arrangé miniature", 
       quantity: "50ml", 
       producer: "Distillerie Créole",
+      description: "Alcool traditionnel aromatisé élaboré selon un savoir-faire ancestral",
       dimensions: { width: 4, height: 12, depth: 4 },
       weight: 0.08
     },
@@ -37,6 +39,7 @@ export const traditionBox: BoxData = {
       name: "Tisane de plantes péi", 
       quantity: "60g", 
       producer: "Herboristerie Créole",
+      description: "Préparation traditionnelle de plantes à infuser pour une dégustation thérapeutique",
       dimensions: { width: 12, height: 8, depth: 3 },
       weight: 0.06
     },
@@ -44,6 +47,7 @@ export const traditionBox: BoxData = {
       name: "Piment péi", 
       quantity: "200g", 
       producer: "Verger Payet",
+      description: "Pâte de piment traditionnelle pour relever le goût de tous vos plats",
       dimensions: { width: 7, height: 8, depth: 7 },
       weight: 0.2
     }
