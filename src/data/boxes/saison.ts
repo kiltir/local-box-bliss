@@ -23,6 +23,7 @@ export const saisonBox: BoxData = {
       name: "Thé de saison", 
       quantity: "80g", 
       producer: "Maison du Thé",
+      description: "Préparation pour une infusion savoureusement parfumée",
       dimensions: { width: 10, height: 10, depth: 4 },
       weight: 0.08
     },
@@ -30,6 +31,7 @@ export const saisonBox: BoxData = {
       name: "Biscuits aux fruits", 
       quantity: "150g", 
       producer: "Boulangerie Traditionnelle",
+      description: "Pour un moment gourmand à savourer et à partager",
       dimensions: { width: 15, height: 8, depth: 3 },
       weight: 0.15
     },
@@ -37,6 +39,7 @@ export const saisonBox: BoxData = {
       name: "Miel de fleurs de saison", 
       quantity: "200g", 
       producer: "Le Rucher Créole",
+      description: "Un miel de saison travaillé et récolté au cœur de ruches locales",
       dimensions: { width: 7, height: 8, depth: 7 },
       weight: 0.25
     },
@@ -44,6 +47,7 @@ export const saisonBox: BoxData = {
       name: "Confiture de fruits de saison", 
       quantity: "200g", 
       producer: "Les Délices du Jardin",
+      description: "Une confiture de saison artisanales et locales",
       dimensions: { width: 7, height: 8, depth: 7 },
       weight: 0.25
     }
