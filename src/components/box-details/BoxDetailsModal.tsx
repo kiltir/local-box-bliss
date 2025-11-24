@@ -1,10 +1,11 @@
 
 import React from 'react';
-import { X, Lightbulb } from 'lucide-react';
+import { X, Lightbulb, MessageSquare } from 'lucide-react';
 import { BoxProduct } from '@/types/boxes';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import BoxDetailsContent from './BoxDetailsContent';
 import BoxDetailsAdvice from './BoxDetailsAdvice';
+import ReviewsTab from './ReviewsTab';
 
 interface BoxDetailsModalProps {
   title: string;
@@ -39,7 +40,7 @@ const BoxDetailsModal = ({
   rating,
   reviewCount
 }: BoxDetailsModalProps) => {
-  const [activeTab, setActiveTab] = React.useState<"details" | "advice">("details");
+  const [activeTab, setActiveTab] = React.useState<"details" | "advice" | "reviews">("details");
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-2 sm:p-4">
@@ -52,7 +53,7 @@ const BoxDetailsModal = ({
             <X className="h-5 w-5 sm:h-6 sm:w-6" />
           </button>
           
-          <Tabs value={activeTab} onValueChange={val => setActiveTab(val as "details" | "advice")} className="w-full">
+          <Tabs value={activeTab} onValueChange={val => setActiveTab(val as "details" | "advice" | "reviews")} className="w-full">
             <div className="border-b">
               <div className="px-3 sm:px-6 pt-4 sm:pt-6">
                 <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2 sm:gap-4 mb-3 sm:mb-4 pr-8 sm:pr-0">
@@ -65,12 +66,16 @@ const BoxDetailsModal = ({
                 </div>
                 <p className="text-sm sm:text-base text-gray-600 mb-4 sm:mb-6 leading-relaxed">{description}</p>
                 <div className="mb-3 sm:mb-4">
-                  <TabsList className="grid w-full grid-cols-2 h-12 bg-gray-100 p-1 rounded-lg">
-                    <TabsTrigger value="details" className="text-sm font-semibold px-4 py-2 rounded-md transition-all duration-200 data-[state=active]:bg-leaf-green data-[state=active]:text-white data-[state=active]:shadow-sm hover:bg-leaf-green/10">
+                  <TabsList className="grid w-full grid-cols-3 h-12 bg-gray-100 p-1 rounded-lg">
+                    <TabsTrigger value="details" className="text-sm font-semibold px-2 sm:px-4 py-2 rounded-md transition-all duration-200 data-[state=active]:bg-leaf-green data-[state=active]:text-white data-[state=active]:shadow-sm hover:bg-leaf-green/10">
                       Détails
                     </TabsTrigger>
-                    <TabsTrigger value="advice" className="flex items-center justify-center gap-1 sm:gap-2 text-sm font-semibold px-4 py-2 rounded-md transition-all duration-200 data-[state=active]:bg-leaf-green data-[state=active]:text-white data-[state=active]:shadow-sm hover:bg-leaf-green/10">
+                    <TabsTrigger value="advice" className="flex items-center justify-center gap-1 sm:gap-2 text-sm font-semibold px-2 sm:px-4 py-2 rounded-md transition-all duration-200 data-[state=active]:bg-leaf-green data-[state=active]:text-white data-[state=active]:shadow-sm hover:bg-leaf-green/10">
                       <span>Conseils</span>
+                    </TabsTrigger>
+                    <TabsTrigger value="reviews" className="flex items-center justify-center gap-1 sm:gap-2 text-sm font-semibold px-2 sm:px-4 py-2 rounded-md transition-all duration-200 data-[state=active]:bg-leaf-green data-[state=active]:text-white data-[state=active]:shadow-sm hover:bg-leaf-green/10">
+                      <MessageSquare className="h-4 w-4" />
+                      <span>Avis</span>
                     </TabsTrigger>
                   </TabsList>
                 </div>
@@ -95,6 +100,8 @@ const BoxDetailsModal = ({
             />
             
             <BoxDetailsAdvice products={products} boxTheme={boxTheme} />
+            
+            <ReviewsTab boxId={boxId} />
           </Tabs>
         </div>
       </div>
