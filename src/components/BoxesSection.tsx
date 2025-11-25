@@ -5,6 +5,7 @@ import SubscriptionCard from './SubscriptionCard';
 import BoxDetails from './BoxDetails';
 import { useBoxes } from '@/hooks/useBoxes';
 import { usePurchaseType } from '@/hooks/usePurchaseType';
+import { useBoxesReviews } from '@/hooks/useBoxesReviews';
 import BoxThemeSelector from './BoxThemeSelector';
 import PurchaseTypeSelector from './PurchaseTypeSelector';
 import { subscriptions } from '@/data/subscriptions';
@@ -21,6 +22,7 @@ const BoxesSection = () => {
   } = useBoxes();
 
   const { purchaseType, handlePurchaseTypeChange } = usePurchaseType();
+  const { getBoxStats } = useBoxesReviews();
 
   // Filtrer les boxes selon le thème sélectionné
   const filteredBoxes = boxes.filter(box => box.theme === selectedTheme);
@@ -45,20 +47,23 @@ const BoxesSection = () => {
           
         <div className="grid grid-cols-1 md:grid-cols-1 gap-8 fade-in max-w-md mx-auto">
           {purchaseType === 'one-time' 
-            ? filteredBoxes.map(box => (
-                <BoxCard 
-                  key={box.id} 
-                  title={box.baseTitle} 
-                  price={box.price} 
-                  description={box.description} 
-                  image={box.image} 
-                  items={box.items} 
-                  theme={box.theme}
-                  rating={box.rating}
-                  reviewCount={box.reviewCount}
-                  onClick={() => handleBoxClick(box.id)} 
-                />
-              ))
+            ? filteredBoxes.map(box => {
+                const boxStats = getBoxStats(box.id);
+                return (
+                  <BoxCard 
+                    key={box.id} 
+                    title={box.baseTitle} 
+                    price={box.price} 
+                    description={box.description} 
+                    image={box.image} 
+                    items={box.items} 
+                    theme={box.theme}
+                    rating={boxStats.averageRating}
+                    reviewCount={boxStats.totalReviews}
+                    onClick={() => handleBoxClick(box.id)} 
+                  />
+                );
+              })
             : filteredSubscriptions.map(subscription => (
                 <SubscriptionCard
                   key={subscription.id}
