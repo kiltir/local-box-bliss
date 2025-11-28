@@ -1,5 +1,10 @@
 
 import { BoxData } from '@/types/boxes';
+import baiesRosesImg from '@/assets/products/bourbon/baies-roses.png';
+import vanilleBourbonImg from '@/assets/products/bourbon/vanille-bourbon.png';
+import chocolatBourbonImg from '@/assets/products/bourbon/chocolat-bourbon.png';
+import cafeBourbonImg from '@/assets/products/bourbon/cafe-bourbon.png';
+import biereArtisanaleImg from '@/assets/products/bourbon/biere-artisanale.png';
 
 export const bourbonBox: BoxData = {
   id: 2,
@@ -24,35 +29,40 @@ export const bourbonBox: BoxData = {
       quantity: "25g", 
       producer: "Epicerie péi",
       dimensions: { width: 11, height: 5, depth: 5 },
-      weight: 0.025
+      weight: 0.025,
+      image: baiesRosesImg
     },
     { 
       name: "3 gousses de vanille Bourbon", 
       quantity: "3 gousses", 
       producer: "Vanille de Bourbon",
       dimensions: { width: 15, height: 1, depth: 1 },
-      weight: 0.02
+      weight: 0.02,
+      image: vanilleBourbonImg
     },
     { 
       name: "Tablette de chocolat Bourbon", 
       quantity: "100g", 
       producer: "Chocolaterie Artisanale",
       dimensions: { width: 15, height: 1, depth: 8 },
-      weight: 0.1
+      weight: 0.1,
+      image: chocolatBourbonImg
     },
     { 
       name: "Café de Bourbon", 
       quantity: "250g", 
       producer: "Plantation de Bourbon",
       dimensions: { width: 8, height: 12, depth: 6 },
-      weight: 0.25
+      weight: 0.25,
+      image: cafeBourbonImg
     },
     { 
       name: "Bière artisanale", 
       quantity: "33cl", 
       producer: "Brasserie Locale",
       dimensions: { width: 6, height: 18, depth: 6 },
-      weight: 0.4
+      weight: 0.4,
+      image: biereArtisanaleImg
     }
   ]
 };

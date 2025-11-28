@@ -14,6 +14,7 @@ export interface BoxProduct {
   description?: string; // Description du produit (affichée à la place du producteur si présente)
   dimensions?: BoxProductDimensions;
   weight?: number; // Poids en kg
+  image?: string; // Chemin vers l'image du produit
 }
 
 export interface BoxThemeData {
