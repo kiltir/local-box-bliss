@@ -181,7 +181,7 @@ const ConditionsGenerales = () => {
                   Chaque livraison est réputée effectuée dès la mise à disposition du colis auprès du Client, matérialisée par le système de contrôle utilisé par la Poste ou le transporteur.
                 </p>
                 <p className="text-gray-700 leading-relaxed mb-4">
-                  En cas de non-réception du colis par le Client, le Colis sera renvoyé à l'entreprise KiltirBox. Les frais d'une réexpédition éventuelle seraient à la charge du Client. Le client se doit d'avoir communiqué l'adresse exacte et renseignement complémentaire nécessaire.
+                  En cas de non-réception du colis par le Client, le Colis sera renvoyé à l'entreprise KiltirBox. Les frais de gestion et de réexpédition éventuelle seraient à la charge du Client. Le client se doit d'avoir communiqué l'adresse exacte et les renseignements complémentaires nécessaires.
                 </p>
                 <p className="text-gray-700 leading-relaxed mb-4">
                   En cas de changement d'adresse ou de Point Relais en cours d'abonnement, le Client doit le notifier à l'entreprise KiltirBox au plus tard le premier jour du mois concerné en envoyant un e-mail à contact@kiltirbox.com
