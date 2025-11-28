@@ -1,5 +1,9 @@
 
 import { BoxData } from '@/types/boxes';
+import theSaisonImg from '@/assets/products/saison/the-saison.png';
+import biscuitsFruitsImg from '@/assets/products/saison/biscuits-fruits.png';
+import mielFleursImg from '@/assets/products/saison/miel-fleurs.png';
+import confitureSaisonImg from '@/assets/products/saison/confiture-saison.png';
 
 export const saisonBox: BoxData = {
   id: 4,
@@ -25,7 +29,8 @@ export const saisonBox: BoxData = {
       producer: "Maison du Thé",
       description: "Préparation pour une infusion savoureusement parfumée",
       dimensions: { width: 10, height: 10, depth: 4 },
-      weight: 0.08
+      weight: 0.08,
+      image: theSaisonImg
     },
     { 
       name: "Biscuits aux fruits", 
@@ -33,7 +38,8 @@ export const saisonBox: BoxData = {
       producer: "Boulangerie Traditionnelle",
       description: "Pour un moment gourmand à savourer et à partager",
       dimensions: { width: 15, height: 8, depth: 3 },
-      weight: 0.15
+      weight: 0.15,
+      image: biscuitsFruitsImg
     },
     { 
       name: "Miel de fleurs de saison", 
@@ -41,7 +47,8 @@ export const saisonBox: BoxData = {
       producer: "Le Rucher Créole",
       description: "Un miel de saison travaillé et récolté au cœur de ruches locales",
       dimensions: { width: 7, height: 8, depth: 7 },
-      weight: 0.25
+      weight: 0.25,
+      image: mielFleursImg
     },
     { 
       name: "Confiture de fruits de saison", 
@@ -49,7 +56,8 @@ export const saisonBox: BoxData = {
       producer: "Les Délices du Jardin",
       description: "Une confiture de saison artisanales et locales",
       dimensions: { width: 7, height: 8, depth: 7 },
-      weight: 0.25
+      weight: 0.25,
+      image: confitureSaisonImg
     }
   ]
 };
