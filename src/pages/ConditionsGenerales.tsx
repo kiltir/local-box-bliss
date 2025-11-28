@@ -163,7 +163,7 @@ const ConditionsGenerales = () => {
                 </p>
                 <ul className="list-disc pl-6 mb-4 text-gray-700">
                   <li>à l'aéroport de Roland Garros à l'arrivée ou au départ de votre vol directement auprès des équipes KiltirBox ;</li>
-                  <li>directement à une adresse en France métropolitaine comme pour les abonnements.</li>
+                  <li>directement à une adresse réunionnaise ou métropolitaine comme pour les abonnements.</li>
                 </ul>
                 <p className="text-gray-700 leading-relaxed mb-4">
                   Dans le cas des abonnements, les livraisons sont effectuées par Colissimo La Poste. Par ailleurs, KiltirBox informe ses clients que les délais de livraison ne comprennent ni dimanches, ni les jours fériés. Vous pouvez, à tout moment, consulter l'état de votre commande dans votre espace « Mon Compte ».
