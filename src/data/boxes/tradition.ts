@@ -1,5 +1,9 @@
 
 import { BoxData } from '@/types/boxes';
+import achardImg from '@/assets/products/racine/achard.png';
+import rhumArrangeImg from '@/assets/products/racine/rhum-arrange.png';
+import tisanePeiImg from '@/assets/products/racine/tisane-pei.png';
+import pimentPeiImg from '@/assets/products/racine/piment-pei.png';
 
 export const traditionBox: BoxData = {
   id: 3,
@@ -25,7 +29,8 @@ export const traditionBox: BoxData = {
       producer: "Les Trésors de Mamie Céliane",
       description: "Préparation traditionnelle de légumes cuits et marinés dans un mélange d'épices et de vinaigre",
       dimensions: { width: 7, height: 8, depth: 7 },
-      weight: 0.25
+      weight: 0.25,
+      image: achardImg
     },
     { 
       name: "Rhum arrangé miniature", 
@@ -33,7 +38,8 @@ export const traditionBox: BoxData = {
       producer: "Distillerie Créole",
       description: "Alcool traditionnel aromatisé élaboré selon un savoir-faire ancestral",
       dimensions: { width: 4, height: 12, depth: 4 },
-      weight: 0.08
+      weight: 0.08,
+      image: rhumArrangeImg
     },
     { 
       name: "Tisane de plantes péi", 
@@ -41,7 +47,8 @@ export const traditionBox: BoxData = {
       producer: "Herboristerie Créole",
       description: "Préparation traditionnelle de plantes à infuser pour une dégustation thérapeutique",
       dimensions: { width: 12, height: 8, depth: 3 },
-      weight: 0.06
+      weight: 0.06,
+      image: tisanePeiImg
     },
     { 
       name: "Piment péi", 
@@ -49,7 +56,8 @@ export const traditionBox: BoxData = {
       producer: "Verger Payet",
       description: "Pâte de piment traditionnelle pour relever le goût de tous vos plats",
       dimensions: { width: 7, height: 8, depth: 7 },
-      weight: 0.2
+      weight: 0.2,
+      image: pimentPeiImg
     }
   ]
 };

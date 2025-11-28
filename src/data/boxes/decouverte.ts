@@ -1,5 +1,9 @@
 
 import { BoxData } from '@/types/boxes';
+import kimchiImg from '@/assets/products/decouverte/kimchi.png';
+import confitureGoyaveImg from '@/assets/products/decouverte/confiture-goyave.png';
+import tiCalicocoImg from '@/assets/products/decouverte/ti-calicoco.png';
+import trioPatateDouceImg from '@/assets/products/decouverte/trio-patate-douce.png';
 
 export const decouverteBox: BoxData = {
   id: 1,
@@ -25,14 +29,16 @@ export const decouverteBox: BoxData = {
       producer: "Pot en ciel kréol",
       description: "Préparation salée traditionnelle coréenne revisitée façon créole",
       dimensions: { width: 7, height: 8, depth: 7 },
-      weight: 0.25
+      weight: 0.25,
+      image: kimchiImg
     },
     { 
       name: "Confiture de goyave", 
       quantity: "200g", 
       producer: "Les Délices du Jardin",
       dimensions: { width: 7, height: 8, depth: 7 },
-      weight: 0.25
+      weight: 0.25,
+      image: confitureGoyaveImg
     },
     { 
       name: "Boite de Ti Calicoco", 
@@ -40,7 +46,8 @@ export const decouverteBox: BoxData = {
       producer: "Calicoco",
       description: "Friandise née du mélange entre le calisson d'Aix-en-Provence et le bonbon coco réunionnais",
       dimensions: { width: 8, height: 8, depth: 8 },
-      weight: 0.15
+      weight: 0.15,
+      image: tiCalicocoImg
     },
     { 
       name: "Trio de patate douce", 
@@ -48,7 +55,8 @@ export const decouverteBox: BoxData = {
       producer: "Les Trésors de Mamie Céliane",
       description: "Crème de 3 patates douces pour une déclinaison de saveurs et couleurs",
       dimensions: { width: 7, height: 8, depth: 7 },
-      weight: 0.25
+      weight: 0.25,
+      image: trioPatateDouceImg
     }
   ]
 };
