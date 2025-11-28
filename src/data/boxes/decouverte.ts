@@ -33,7 +33,7 @@ export const decouverteBox: BoxData = {
       image: kimchiImg
     },
     { 
-      name: "Confiture de goyave", 
+      name: "Confiture surprise", 
       quantity: "200g", 
       producer: "Les Délices du Jardin",
       dimensions: { width: 7, height: 8, depth: 7 },
