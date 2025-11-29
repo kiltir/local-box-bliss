@@ -189,6 +189,7 @@ const MesCommandes = () => {
       'expediee': { label: 'Expédiée', variant: 'purple' as const },
       'livree': { label: 'Livrée', variant: 'yellow' as const },
       'interrompue': { label: 'Interrompue', variant: 'destructive' as const },
+      'annulee': { label: 'Annulée', variant: 'destructive' as const },
     };
     
     const config = statusConfig[status as keyof typeof statusConfig] || { label: 'En cours', variant: 'secondary' as const };
