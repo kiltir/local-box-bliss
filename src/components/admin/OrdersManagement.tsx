@@ -91,6 +91,7 @@ export const OrdersManagement = () => {
       en_cours: { label: 'En cours', variant: 'default' },
       expediee: { label: 'Expédiée', variant: 'secondary' },
       livree: { label: 'Livrée', variant: 'default' },
+      annulee: { label: 'Annulée', variant: 'destructive' },
     };
     const { label, variant } = statusMap[status] || { label: status, variant: 'outline' };
     return <Badge variant={variant}>{label}</Badge>;
@@ -132,6 +133,7 @@ export const OrdersManagement = () => {
               <SelectItem value="en_cours">En cours</SelectItem>
               <SelectItem value="expediee">Expédiée</SelectItem>
               <SelectItem value="livree">Livrée</SelectItem>
+              <SelectItem value="annulee">Annulée</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -169,6 +171,7 @@ export const OrdersManagement = () => {
                       <SelectItem value="en_cours">En cours</SelectItem>
                       <SelectItem value="expediee">Expédiée</SelectItem>
                       <SelectItem value="livree">Livrée</SelectItem>
+                      <SelectItem value="annulee">Annulée</SelectItem>
                     </SelectContent>
                   </Select>
                 </TableCell>
