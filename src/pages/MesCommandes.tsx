@@ -190,7 +190,7 @@ const MesCommandes = () => {
       'confirmee': { label: 'En cours', variant: 'success' as const },
       'expediee': { label: 'Expédiée', variant: 'purple' as const },
       'livree': { label: 'Livrée', variant: 'yellow' as const },
-      'interrompue': { label: 'Interrompue', variant: 'destructive' as const },
+      'interrompue': { label: 'Interrompue', variant: 'orange' as const },
       'annulee': { label: 'Annulée', variant: 'destructive' as const },
     };
     

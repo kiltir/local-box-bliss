@@ -92,7 +92,7 @@ export const OrdersManagement = () => {
       expediee: { label: 'Expédiée', variant: 'secondary' },
       livree: { label: 'Livrée', variant: 'default' },
       annulee: { label: 'Annulée', variant: 'destructive' },
-      interrompue: { label: 'Interrompue', variant: 'destructive' },
+      interrompue: { label: 'Interrompue', variant: 'orange' },
     };
     const { label, variant } = statusMap[status] || { label: status, variant: 'outline' };
     return <Badge variant={variant}>{label}</Badge>;
