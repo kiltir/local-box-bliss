@@ -18,7 +18,7 @@ const Navbar = () => {
     loading
   } = useAuth();
   const { profile, loading: profileLoading } = useProfile();
-  const { isAdmin } = useAdminCheck();
+  const { isAdmin, loading: adminLoading } = useAdminCheck();
   const handleNavigation = (section: string) => {
     const sectionId = section.replace('#', '');
 
@@ -96,7 +96,7 @@ const Navbar = () => {
                   <DropdownMenuItem onClick={() => navigate('/mes-commandes')}>
                     Mes commandes
                   </DropdownMenuItem>
-                  {isAdmin && (
+                  {!adminLoading && isAdmin && (
                     <>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem onClick={() => navigate('/admin')}>
@@ -156,7 +156,7 @@ const Navbar = () => {
           }}>
                     Mes commandes
                   </Button>
-                  {isAdmin && (
+                  {!adminLoading && isAdmin && (
                     <Button variant="outline" className="w-full justify-start" onClick={() => {
               navigate('/admin');
               setIsOpen(false);

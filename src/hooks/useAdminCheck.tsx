@@ -9,28 +9,36 @@ export const useAdminCheck = () => {
 
   useEffect(() => {
     const checkAdminRole = async () => {
+      console.log('[useAdminCheck] Checking admin role for user:', user?.id);
+      
       if (!user) {
+        console.log('[useAdminCheck] No user, setting isAdmin to false');
         setIsAdmin(false);
         setLoading(false);
         return;
       }
 
       try {
+        console.log('[useAdminCheck] Querying user_roles for user:', user.id);
         const { data, error } = await supabase
           .from('user_roles')
           .select('role')
           .eq('user_id', user.id)
           .eq('role', 'admin')
-          .single();
+          .maybeSingle();
 
-        if (error && error.code !== 'PGRST116') {
-          console.error('Error checking admin role:', error);
+        console.log('[useAdminCheck] Query result:', { data, error });
+
+        if (error) {
+          console.error('[useAdminCheck] Error checking admin role:', error);
           setIsAdmin(false);
         } else {
-          setIsAdmin(!!data);
+          const hasAdminRole = !!data;
+          console.log('[useAdminCheck] Setting isAdmin to:', hasAdminRole);
+          setIsAdmin(hasAdminRole);
         }
       } catch (error) {
-        console.error('Error checking admin role:', error);
+        console.error('[useAdminCheck] Exception checking admin role:', error);
         setIsAdmin(false);
       } finally {
         setLoading(false);
@@ -38,7 +46,10 @@ export const useAdminCheck = () => {
     };
 
     if (!authLoading) {
+      console.log('[useAdminCheck] Auth loading complete, checking admin role');
       checkAdminRole();
+    } else {
+      console.log('[useAdminCheck] Auth still loading, waiting...');
     }
   }, [user, authLoading]);
 
