@@ -183,6 +183,8 @@ const MesCommandes = () => {
   };
 
   const getStatusBadge = (status: string) => {
+    console.log('🔍 Status reçu:', status, 'Type:', typeof status); // Debug
+    
     const statusConfig = {
       'en_attente': { label: 'En cours', variant: 'success' as const },
       'confirmee': { label: 'En cours', variant: 'success' as const },
@@ -193,6 +195,7 @@ const MesCommandes = () => {
     };
     
     const config = statusConfig[status as keyof typeof statusConfig] || { label: 'En cours', variant: 'secondary' as const };
+    console.log('✅ Config utilisée:', config); // Debug
     return <Badge variant={config.variant}>{config.label}</Badge>;
   };
 
