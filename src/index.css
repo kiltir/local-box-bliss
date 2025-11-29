@@ -44,6 +44,10 @@
     --yellow-foreground: 45 93% 47%;
     --yellow-background: 45 93% 95%;
 
+    --orange: 25 95% 53%;
+    --orange-foreground: 25 95% 53%;
+    --orange-background: 25 95% 95%;
+
     --border: 20 5.9% 90%;
     --input: 20 5.9% 90%;
     --ring: 48 100% 50%;
