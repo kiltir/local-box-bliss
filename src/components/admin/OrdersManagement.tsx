@@ -86,7 +86,7 @@ export const OrdersManagement = () => {
   };
 
   const getStatusBadge = (status: string) => {
-    const statusMap: Record<string, { label: string; variant: 'default' | 'secondary' | 'destructive' | 'outline' }> = {
+    const statusMap: Record<string, { label: string; variant: 'default' | 'secondary' | 'destructive' | 'outline' | 'success' | 'purple' | 'yellow' | 'orange' }> = {
       en_attente: { label: 'En attente', variant: 'outline' },
       en_cours: { label: 'En cours', variant: 'default' },
       expediee: { label: 'Expédiée', variant: 'secondary' },
