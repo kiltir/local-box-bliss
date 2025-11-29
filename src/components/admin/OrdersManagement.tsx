@@ -66,24 +66,6 @@ export const OrdersManagement = () => {
     }
   };
 
-  const updateOrderStatus = async (orderId: string, newStatus: string) => {
-    try {
-      const { error } = await supabase
-        .from('orders')
-        .update({ status: newStatus })
-        .eq('id', orderId);
-
-      if (error) throw error;
-
-      setOrders(orders.map(order => 
-        order.id === orderId ? { ...order, status: newStatus } : order
-      ));
-      toast.success('Statut de la commande mis à jour');
-    } catch (error) {
-      console.error('Error updating order status:', error);
-      toast.error('Erreur lors de la mise à jour du statut');
-    }
-  };
 
   const getStatusBadge = (status: string) => {
     const statusMap: Record<string, { label: string; variant: 'default' | 'secondary' | 'destructive' | 'outline' | 'success' | 'purple' | 'yellow' | 'orange' }> = {
@@ -149,7 +131,6 @@ export const OrdersManagement = () => {
               <TableHead>Date</TableHead>
               <TableHead>Montant</TableHead>
               <TableHead>Statut</TableHead>
-              <TableHead>Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -160,24 +141,6 @@ export const OrdersManagement = () => {
                 <TableCell>{format(new Date(order.created_at), 'dd MMM yyyy', { locale: fr })}</TableCell>
                 <TableCell>{order.total_amount.toFixed(2)} €</TableCell>
                 <TableCell>{getStatusBadge(order.status)}</TableCell>
-                <TableCell>
-                  <Select
-                    value={order.status}
-                    onValueChange={(value) => updateOrderStatus(order.id, value)}
-                  >
-                    <SelectTrigger className="w-[140px]">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="en_attente">En attente</SelectItem>
-                      <SelectItem value="en_cours">En cours</SelectItem>
-                      <SelectItem value="expediee">Expédiée</SelectItem>
-                      <SelectItem value="livree">Livrée</SelectItem>
-                      <SelectItem value="annulee">Annulée</SelectItem>
-                      <SelectItem value="interrompue">Interrompue</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </TableCell>
               </TableRow>
             ))}
           </TableBody>
