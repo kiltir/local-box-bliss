@@ -69,7 +69,6 @@ export const OrdersManagement = () => {
 
   const getStatusBadge = (status: string) => {
     const statusMap: Record<string, { label: string; variant: 'default' | 'secondary' | 'destructive' | 'outline' | 'success' | 'purple' | 'yellow' | 'orange' }> = {
-      en_attente: { label: 'En attente', variant: 'outline' },
       en_cours: { label: 'En cours', variant: 'default' },
       expediee: { label: 'Expédiée', variant: 'secondary' },
       livree: { label: 'Livrée', variant: 'default' },
@@ -112,7 +111,6 @@ export const OrdersManagement = () => {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">Tous les statuts</SelectItem>
-              <SelectItem value="en_attente">En attente</SelectItem>
               <SelectItem value="en_cours">En cours</SelectItem>
               <SelectItem value="expediee">Expédiée</SelectItem>
               <SelectItem value="livree">Livrée</SelectItem>

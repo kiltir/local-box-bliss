@@ -186,7 +186,6 @@ const MesCommandes = () => {
     console.log('🔍 Status reçu:', status, 'Type:', typeof status); // Debug
     
     const statusConfig = {
-      'en_attente': { label: 'En cours', variant: 'success' as const },
       'confirmee': { label: 'En cours', variant: 'success' as const },
       'expediee': { label: 'Expédiée', variant: 'purple' as const },
       'livree': { label: 'Livrée', variant: 'yellow' as const },
