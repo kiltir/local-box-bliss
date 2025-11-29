@@ -4,6 +4,7 @@ import { Menu, X, User, LogOut } from "lucide-react";
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useProfile } from '@/hooks/useProfile';
+import { useAdminCheck } from '@/hooks/useAdminCheck';
 import CartIcon from './CartIcon';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { siteConfig } from "@/config/site";
@@ -17,6 +18,7 @@ const Navbar = () => {
     loading
   } = useAuth();
   const { profile, loading: profileLoading } = useProfile();
+  const { isAdmin } = useAdminCheck();
   const handleNavigation = (section: string) => {
     const sectionId = section.replace('#', '');
 
@@ -94,6 +96,14 @@ const Navbar = () => {
                   <DropdownMenuItem onClick={() => navigate('/mes-commandes')}>
                     Mes commandes
                   </DropdownMenuItem>
+                  {isAdmin && (
+                    <>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem onClick={() => navigate('/admin')}>
+                        Administration
+                      </DropdownMenuItem>
+                    </>
+                  )}
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={handleSignOut} className="text-red-600">
                     <LogOut className="h-4 w-4 mr-2" />
@@ -146,6 +156,14 @@ const Navbar = () => {
           }}>
                     Mes commandes
                   </Button>
+                  {isAdmin && (
+                    <Button variant="outline" className="w-full justify-start" onClick={() => {
+              navigate('/admin');
+              setIsOpen(false);
+            }}>
+                      Administration
+                    </Button>
+                  )}
                   <Button variant="outline" className="w-full text-red-600 border-red-200 hover:bg-red-50 justify-start" onClick={handleSignOut}>
                     <LogOut className="h-4 w-4 mr-2" />
                     Se déconnecter

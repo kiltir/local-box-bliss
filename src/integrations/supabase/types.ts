@@ -14,6 +14,33 @@ export type Database = {
   }
   public: {
     Tables: {
+      box_images: {
+        Row: {
+          box_id: number
+          created_at: string
+          display_order: number
+          id: string
+          image_url: string
+          updated_at: string
+        }
+        Insert: {
+          box_id: number
+          created_at?: string
+          display_order?: number
+          id?: string
+          image_url: string
+          updated_at?: string
+        }
+        Update: {
+          box_id?: number
+          created_at?: string
+          display_order?: number
+          id?: string
+          image_url?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       box_reviews: {
         Row: {
           box_id: number
