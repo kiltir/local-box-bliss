@@ -9,6 +9,11 @@ import { useBoxesReviews } from '@/hooks/useBoxesReviews';
 import BoxThemeSelector from './BoxThemeSelector';
 import PurchaseTypeSelector from './PurchaseTypeSelector';
 import { subscriptions } from '@/data/subscriptions';
+import { BoxTheme } from '@/types/box';
+import decouverteBg from '@/assets/backgrounds/decouverte-bg.jpg';
+import bourbonBg from '@/assets/backgrounds/bourbon-bg.jpg';
+import racineBg from '@/assets/backgrounds/racine-bg.jpg';
+import saisonBg from '@/assets/backgrounds/saison-bg.jpg';
 
 const BoxesSection = () => {
   const {
@@ -28,9 +33,27 @@ const BoxesSection = () => {
   const filteredBoxes = boxes.filter(box => box.theme === selectedTheme);
   const filteredSubscriptions = subscriptions.filter(sub => sub.theme === selectedTheme);
 
+  // Map des fonds d'écran par thème
+  const themeBackgrounds: Record<BoxTheme, string> = {
+    'Découverte': decouverteBg,
+    'Bourbon': bourbonBg,
+    'Racine': racineBg,
+    'Saison': saisonBg
+  };
+
   return (
-    <section id="boxes" className="py-[15px] scroll-mt-[88px] md:scroll-mt-[80px]">
-      <div className="container-section py-[15px]">
+    <section id="boxes" className="py-[15px] scroll-mt-[88px] md:scroll-mt-[80px] relative overflow-hidden">
+      {/* Fond dynamique avec transition */}
+      <div 
+        className="absolute inset-0 bg-cover bg-center transition-all duration-700 ease-in-out"
+        style={{ 
+          backgroundImage: `url(${themeBackgrounds[selectedTheme]})`,
+        }}
+      />
+      {/* Overlay pour améliorer la lisibilité */}
+      <div className="absolute inset-0 bg-background/80 backdrop-blur-sm" />
+      
+      <div className="container-section py-[15px] relative z-10">
         <div className="text-center mb-12 fade-in">
           <h2 className="text-3xl font-bold mb-4">Découvrez nos box</h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
