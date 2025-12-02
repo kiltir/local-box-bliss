@@ -83,7 +83,8 @@ const BoxesSection = () => {
                     theme={box.theme}
                     rating={boxStats.averageRating}
                     reviewCount={boxStats.totalReviews}
-                    onClick={() => handleBoxClick(box.id)} 
+                    onClick={() => handleBoxClick(box.id)}
+                    purchaseType={purchaseType}
                   />
                 );
               })

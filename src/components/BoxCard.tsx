@@ -18,12 +18,13 @@ interface BoxCardProps {
   rating: number;
   reviewCount?: number;
   onClick: () => void;
+  purchaseType?: 'one-time' | 'subscription';
 }
 
-const BoxCard = ({ title, price, description, image, items, theme, rating, reviewCount, onClick }: BoxCardProps) => {
+const BoxCard = ({ title, price, description, image, items, theme, rating, reviewCount, onClick, purchaseType = 'one-time' }: BoxCardProps) => {
   const { addToCart } = useCart();
-  const { isOutOfStock } = useStock();
-  const outOfStock = isOutOfStock(theme);
+  const { isOutOfStockForPurchaseType } = useStock();
+  const outOfStock = isOutOfStockForPurchaseType(theme, purchaseType);
 
   const getBadgeColor = () => {
     switch (theme) {

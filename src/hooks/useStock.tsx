@@ -74,11 +74,30 @@ export const useStock = () => {
     return stock ? stock.available_stock === 0 : false;
   };
 
+  // Vérifier si le stock est suffisant pour un type d'achat donné
+  const isOutOfStockForPurchaseType = (
+    theme: string, 
+    purchaseType: 'one-time' | 'subscription',
+    subscriptionMonths?: number
+  ): boolean => {
+    const stock = getStockByTheme(theme);
+    if (!stock) return true;
+
+    let requiredStock = 1; // Achat unique par défaut
+    
+    if (purchaseType === 'subscription' && subscriptionMonths) {
+      requiredStock = subscriptionMonths;
+    }
+
+    return stock.available_stock < requiredStock;
+  };
+
   return {
     stocks,
     isLoading,
     updateStock: updateStockMutation.mutate,
     getStockByTheme,
     isOutOfStock,
+    isOutOfStockForPurchaseType,
   };
 };
