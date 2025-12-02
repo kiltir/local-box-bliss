@@ -4,7 +4,9 @@ import { Button } from "@/components/ui/button";
 import { useCart } from '@/hooks/useCart';
 import { toast } from 'sonner';
 import StarRating from './StarRating';
-import { Compass, Wine, BookOpen, Leaf, Package } from 'lucide-react';
+import { Compass, Wine, BookOpen, Leaf, Package, AlertTriangle } from 'lucide-react';
+import { useStock } from '@/hooks/useStock';
+import { Badge } from '@/components/ui/badge';
 
 interface BoxCardProps {
   title: string;
@@ -20,6 +22,8 @@ interface BoxCardProps {
 
 const BoxCard = ({ title, price, description, image, items, theme, rating, reviewCount, onClick }: BoxCardProps) => {
   const { addToCart } = useCart();
+  const { isOutOfStock } = useStock();
+  const outOfStock = isOutOfStock(theme);
 
   const getBadgeColor = () => {
     switch (theme) {
@@ -52,6 +56,11 @@ const BoxCard = ({ title, price, description, image, items, theme, rating, revie
   };
 
   const handleAddToCart = () => {
+    if (outOfStock) {
+      toast.error('Cette box est actuellement en rupture de stock');
+      return;
+    }
+    
     // Créer un objet BoxData simplifié pour le panier
     const boxData = {
       id: Math.random(), // En attendant d'avoir un vrai ID
@@ -78,6 +87,14 @@ const BoxCard = ({ title, price, description, image, items, theme, rating, revie
   return (
     <div className="bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300">
       <div className="relative h-56 flex items-center justify-center bg-[#f5eada]">
+        {outOfStock && (
+          <div className="absolute inset-0 bg-black/50 flex items-center justify-center z-10">
+            <Badge variant="destructive" className="text-lg gap-2 px-4 py-2">
+              <AlertTriangle className="h-5 w-5" />
+              Rupture de stock
+            </Badge>
+          </div>
+        )}
         <img 
           src={boxImage} 
           alt={title} 
@@ -121,8 +138,9 @@ const BoxCard = ({ title, price, description, image, items, theme, rating, revie
           <Button 
             className="flex-1 bg-leaf-green hover:bg-dark-green text-white"
             onClick={handleAddToCart}
+            disabled={outOfStock}
           >
-            Ajouter
+            {outOfStock ? 'Indisponible' : 'Ajouter'}
           </Button>
         </div>
       </div>

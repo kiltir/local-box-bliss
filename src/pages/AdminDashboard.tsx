@@ -5,7 +5,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { OrdersManagement } from '@/components/admin/OrdersManagement';
-import { BoxImagesManagement } from '@/components/admin/BoxImagesManagement';
+import { StockManagement } from '@/components/admin/StockManagement';
 import { ReviewsModeration } from '@/components/admin/ReviewsModeration';
 import { UsersManagement } from '@/components/admin/UsersManagement';
 import { Loader2, Shield, LogOut } from 'lucide-react';
@@ -55,7 +55,7 @@ const AdminDashboard = () => {
         <Tabs defaultValue="orders" className="w-full">
           <TabsList className="grid w-full grid-cols-4 mb-8">
             <TabsTrigger value="orders">Commandes</TabsTrigger>
-            <TabsTrigger value="images">Images des box</TabsTrigger>
+            <TabsTrigger value="stock">Gestion des stocks</TabsTrigger>
             <TabsTrigger value="reviews">Avis</TabsTrigger>
             <TabsTrigger value="users">Utilisateurs</TabsTrigger>
           </TabsList>
@@ -64,8 +64,8 @@ const AdminDashboard = () => {
             <OrdersManagement />
           </TabsContent>
 
-          <TabsContent value="images" className="space-y-4">
-            <BoxImagesManagement />
+          <TabsContent value="stock" className="space-y-4">
+            <StockManagement />
           </TabsContent>
 
           <TabsContent value="reviews" className="space-y-4">

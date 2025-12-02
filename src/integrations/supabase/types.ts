@@ -71,6 +71,36 @@ export type Database = {
         }
         Relationships: []
       }
+      box_stock: {
+        Row: {
+          available_stock: number
+          box_id: number
+          created_at: string
+          id: string
+          safety_stock: number
+          theme: string
+          updated_at: string
+        }
+        Insert: {
+          available_stock?: number
+          box_id: number
+          created_at?: string
+          id?: string
+          safety_stock?: number
+          theme: string
+          updated_at?: string
+        }
+        Update: {
+          available_stock?: number
+          box_id?: number
+          created_at?: string
+          id?: string
+          safety_stock?: number
+          theme?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       contact_rate_limits: {
         Row: {
           id: string
