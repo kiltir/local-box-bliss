@@ -26,6 +26,9 @@ export const useStock = () => {
       if (error) throw error;
       return data as BoxStock[];
     },
+    refetchInterval: 30000, // Rafraîchir toutes les 30 secondes
+    refetchOnWindowFocus: true, // Rafraîchir quand l'onglet redevient actif
+    staleTime: 10000, // Données considérées fraîches pendant 10 secondes
   });
 
   const updateStockMutation = useMutation({
