@@ -249,19 +249,11 @@ const MesCommandes = () => {
                     <div onClick={() => setSelectedOrder(order)}>
                       <CardHeader className="pb-4">
                         <div className="flex flex-col lg:flex-row lg:items-start gap-6">
-                          {/* Image */}
+                          {/* Icône */}
                           <div className="flex-shrink-0">
-                            {boxData?.image ? (
-                              <img 
-                                src={boxData.image} 
-                                alt={boxData.baseTitle}
-                                className="w-20 h-20 sm:w-24 sm:h-24 object-cover rounded-lg"
-                              />
-                            ) : (
-                              <div className="w-20 h-20 sm:w-24 sm:h-24 bg-muted rounded-lg flex items-center justify-center">
-                                <Package className="h-8 w-8 text-muted-foreground" />
-                              </div>
-                            )}
+                            <div className="w-20 h-20 sm:w-24 sm:h-24 bg-primary/10 rounded-lg flex items-center justify-center">
+                              <Package className="h-10 w-10 text-primary" />
+                            </div>
                           </div>
 
                           {/* Informations principales */}
