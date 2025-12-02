@@ -228,6 +228,20 @@ serve(async (req) => {
         }
 
         if (theme) {
+          // Calculate quantity to decrement based on subscription type
+          let stockToDecrement = item.quantity || 1;
+          
+          // For subscriptions, multiply by the number of months
+          if (item.subscriptionType) {
+            const subscriptionMonths = item.subscriptionType === '6months' ? 6 : 12;
+            stockToDecrement = stockToDecrement * subscriptionMonths;
+            logStep('Subscription detected', { 
+              subscriptionType: item.subscriptionType, 
+              months: subscriptionMonths,
+              totalStockToDecrement: stockToDecrement 
+            });
+          }
+
           // Get current stock
           const { data: stockData, error: stockFetchError } = await supabase
             .from('box_stock')
@@ -240,8 +254,8 @@ serve(async (req) => {
             continue;
           }
 
-          // Decrement stock by quantity
-          const newStock = Math.max(0, stockData.available_stock - (item.quantity || 1));
+          // Decrement stock by calculated quantity
+          const newStock = Math.max(0, stockData.available_stock - stockToDecrement);
           
           const { error: stockUpdateError } = await supabase
             .from('box_stock')
@@ -251,7 +265,14 @@ serve(async (req) => {
           if (stockUpdateError) {
             logStep('Failed to update stock', { theme, error: stockUpdateError });
           } else {
-            logStep('Stock updated', { theme, oldStock: stockData.available_stock, newStock, quantity: item.quantity });
+            logStep('Stock updated', { 
+              theme, 
+              oldStock: stockData.available_stock, 
+              newStock, 
+              decrementedBy: stockToDecrement,
+              isSubscription: !!item.subscriptionType,
+              subscriptionType: item.subscriptionType 
+            });
           }
         }
       }

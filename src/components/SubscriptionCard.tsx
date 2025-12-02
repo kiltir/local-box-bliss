@@ -6,7 +6,8 @@ import { useCart } from '@/hooks/useCart';
 import { toast } from 'sonner';
 import StarRating from './StarRating';
 import { SubscriptionData, SubscriptionOption } from '@/types/subscription';
-import { Crown, Package, Compass, Wine, BookOpen, Leaf } from 'lucide-react';
+import { Crown, Package, Compass, Wine, BookOpen, Leaf, AlertTriangle } from 'lucide-react';
+import { useStock } from '@/hooks/useStock';
 
 interface SubscriptionCardProps {
   subscription: SubscriptionData;
@@ -16,6 +17,9 @@ interface SubscriptionCardProps {
 const SubscriptionCard: React.FC<SubscriptionCardProps> = ({ subscription, onClick }) => {
   const [selectedOption, setSelectedOption] = useState<SubscriptionOption>(subscription.options[0]);
   const { addToCart } = useCart();
+  const { isOutOfStockForPurchaseType } = useStock();
+  
+  const isOutOfStock = isOutOfStockForPurchaseType(subscription.theme, 'subscription', selectedOption.months);
 
   const getBadgeColor = () => {
     switch (subscription.theme) {
@@ -48,6 +52,11 @@ const SubscriptionCard: React.FC<SubscriptionCardProps> = ({ subscription, onCli
   };
 
   const handleAddToCart = () => {
+    if (isOutOfStock) {
+      toast.error(`Stock insuffisant pour un abonnement ${selectedOption.label}`);
+      return;
+    }
+    
     // Créer un objet pour l'abonnement dans le panier
     const subscriptionItem = {
       id: subscription.id + 1000 + (selectedOption.duration === '6months' ? 0 : 100), // ID unique pour chaque type
@@ -81,6 +90,14 @@ const SubscriptionCard: React.FC<SubscriptionCardProps> = ({ subscription, onCli
       </div>
 
       <div className="relative h-56 flex items-center justify-center bg-gradient-to-br from-amber-50 to-orange-50">
+        {isOutOfStock && (
+          <div className="absolute inset-0 bg-black/50 flex items-center justify-center z-10">
+            <Badge variant="destructive" className="text-lg gap-2 px-4 py-2">
+              <AlertTriangle className="h-5 w-5" />
+              Rupture de stock
+            </Badge>
+          </div>
+        )}
         <img 
           src={boxImage} 
           alt={subscription.baseTitle} 
@@ -157,8 +174,9 @@ const SubscriptionCard: React.FC<SubscriptionCardProps> = ({ subscription, onCli
         <Button 
           className="flex-1 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white shadow-lg"
           onClick={handleAddToCart}
+          disabled={isOutOfStock}
         >
-          S'abonner
+          {isOutOfStock ? 'Indisponible' : "S'abonner"}
         </Button>
       </CardFooter>
     </Card>
