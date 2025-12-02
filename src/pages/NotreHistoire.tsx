@@ -61,7 +61,7 @@ const NotreHistoire = () => {
                     
                     <p>Chaque élément, chaque thématique est pensé pour vous offrir une expérience immersive et unique dans l'environnement local.</p>
                     
-                    <p>Vous y retrouverez des saveurs, des parfums et des émotions et des histoires faisant partie de notre héritage culturel.</p>
+                    <p>Vous y retrouverez des saveurs, des parfums, des émotions et des histoires faisant partie de notre héritage culturel.</p>
                     
                     <p>Ne perdons pas cette richesse et partageons-la ! Qu'elle voyage, qu'elle réconforte, qu'elle soigne la solitude et qu'elle apporte la solidarité.</p>
                     
