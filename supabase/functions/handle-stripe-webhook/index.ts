@@ -211,7 +211,52 @@ serve(async (req) => {
 
       logStep('Order items created successfully', { itemsCount: orderItems.length });
 
-      return new Response(JSON.stringify({ 
+      // Decrement stock for each theme
+      for (const item of items) {
+        // Extract theme from box title (e.g., "Box Découverte" -> "Découverte")
+        const boxTitle = item.title || '';
+        let theme = '';
+        
+        if (boxTitle.includes('Découverte')) {
+          theme = 'Découverte';
+        } else if (boxTitle.includes('Bourbon')) {
+          theme = 'Bourbon';
+        } else if (boxTitle.includes('Racine')) {
+          theme = 'Racine';
+        } else if (boxTitle.includes('Saison')) {
+          theme = 'Saison';
+        }
+
+        if (theme) {
+          // Get current stock
+          const { data: stockData, error: stockFetchError } = await supabase
+            .from('box_stock')
+            .select('available_stock, id')
+            .eq('theme', theme)
+            .single();
+
+          if (stockFetchError) {
+            logStep('Failed to fetch stock', { theme, error: stockFetchError });
+            continue;
+          }
+
+          // Decrement stock by quantity
+          const newStock = Math.max(0, stockData.available_stock - (item.quantity || 1));
+          
+          const { error: stockUpdateError } = await supabase
+            .from('box_stock')
+            .update({ available_stock: newStock })
+            .eq('id', stockData.id);
+
+          if (stockUpdateError) {
+            logStep('Failed to update stock', { theme, error: stockUpdateError });
+          } else {
+            logStep('Stock updated', { theme, oldStock: stockData.available_stock, newStock, quantity: item.quantity });
+          }
+        }
+      }
+
+      return new Response(JSON.stringify({
         success: true, 
         orderId: orderData.id,
         orderNumber: orderData.order_number 
