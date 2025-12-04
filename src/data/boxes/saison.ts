@@ -12,7 +12,7 @@ export const saisonBox: BoxData = {
   description: "Une sélection de produits de saison mettant en valeur les fruits et légumes du moment.",
   image: "/lovable-uploads/ac03653a-7722-48c5-a6c8-0a25a453791b.png",
   images: [
-    "/lovable-uploads/ac03653a-7722-48c5-a6c8-0a25a453791b.png",
+    "/lovable-uploads/kiltirbox-standard.jpg",
     "/lovable-uploads/22c73fc8-f3d1-4290-8d99-f0bd76e3ea8f.png",
     "/lovable-uploads/1e5534c0-a5e1-4153-829c-02324011758e.png"
   ],
