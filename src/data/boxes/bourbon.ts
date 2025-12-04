@@ -13,7 +13,7 @@ export const bourbonBox: BoxData = {
   description: "Une sélection raffinée pour vous offrir l'expérience de parfums et saveurs \"lontan\" avec des produits d'exception.",
   image: "/lovable-uploads/dfae2a49-8682-4e2d-b364-efe22d218a5e.png",
   images: [
-    "/lovable-uploads/dfae2a49-8682-4e2d-b364-efe22d218a5e.png",
+    "/lovable-uploads/kiltirbox-standard.jpg",
     "/lovable-uploads/22c73fc8-f3d1-4290-8d99-f0bd76e3ea8f.png",
     "/lovable-uploads/1e5534c0-a5e1-4153-829c-02324011758e.png"
   ],
