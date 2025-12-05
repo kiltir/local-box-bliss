@@ -1,4 +1,5 @@
 import React from 'react';
+import Autoplay from "embla-carousel-autoplay";
 import {
   Carousel,
   CarouselContent,
@@ -34,6 +35,12 @@ const CallToAction = () => {
                 align: "center",
                 loop: true,
               }}
+              plugins={[
+                Autoplay({
+                  delay: 4000,
+                  stopOnInteraction: true,
+                }),
+              ]}
               className="w-full"
             >
               <CarouselContent className="-ml-2 md:-ml-4">
