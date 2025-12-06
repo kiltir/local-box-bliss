@@ -5,6 +5,7 @@ import rhumArrangeImg from '@/assets/products/racine/rhum-arrange.png';
 import tisanePeiImg from '@/assets/products/racine/tisane-pei.png';
 import pimentPeiImg from '@/assets/products/racine/piment-pei.png';
 import curcumaImg from '@/assets/products/racine/curcuma.png';
+import livretGuideImg from '@/assets/products/common/livret-guide.png';
 
 export const traditionBox: BoxData = {
   id: 3,
@@ -17,7 +18,7 @@ export const traditionBox: BoxData = {
     "/lovable-uploads/22c73fc8-f3d1-4290-8d99-f0bd76e3ea8f.png",
     "/lovable-uploads/1e5534c0-a5e1-4153-829c-02324011758e.png"
   ],
-  items: 5,
+  items: 6,
   size: 'unique',
   weightLimit: 4,
   theme: 'Racine',
@@ -68,6 +69,15 @@ export const traditionBox: BoxData = {
       dimensions: { width: 12, height: 8, depth: 3 },
       weight: 0.1,
       image: curcumaImg
+    },
+    { 
+      name: "Bonus Livret guide produits", 
+      quantity: "1 livret", 
+      producer: "Kiltir Box",
+      description: "Un guide complet pour découvrir l'histoire et les conseils d'utilisation de chaque produit",
+      dimensions: { width: 15, height: 21, depth: 1 },
+      weight: 0.05,
+      image: livretGuideImg
     }
   ]
 };

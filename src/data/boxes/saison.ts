@@ -4,6 +4,7 @@ import theSaisonImg from '@/assets/products/saison/the-saison.png';
 import biscuitsFruitsImg from '@/assets/products/saison/biscuits-fruits.png';
 import mielFleursImg from '@/assets/products/saison/miel-fleurs.png';
 import confitureSaisonImg from '@/assets/products/saison/confiture-saison.png';
+import livretGuideImg from '@/assets/products/common/livret-guide.png';
 
 export const saisonBox: BoxData = {
   id: 4,
@@ -16,7 +17,7 @@ export const saisonBox: BoxData = {
     "/lovable-uploads/22c73fc8-f3d1-4290-8d99-f0bd76e3ea8f.png",
     "/lovable-uploads/1e5534c0-a5e1-4153-829c-02324011758e.png"
   ],
-  items: 4,
+  items: 5,
   size: 'unique',
   weightLimit: 4,
   theme: 'Saison',
@@ -58,6 +59,15 @@ export const saisonBox: BoxData = {
       dimensions: { width: 7, height: 8, depth: 7 },
       weight: 0.25,
       image: confitureSaisonImg
+    },
+    { 
+      name: "Bonus Livret guide produits", 
+      quantity: "1 livret", 
+      producer: "Kiltir Box",
+      description: "Un guide complet pour découvrir l'histoire et les conseils d'utilisation de chaque produit",
+      dimensions: { width: 15, height: 21, depth: 1 },
+      weight: 0.05,
+      image: livretGuideImg
     }
   ]
 };
