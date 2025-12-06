@@ -4,6 +4,7 @@ import achardImg from '@/assets/products/racine/achard.png';
 import rhumArrangeImg from '@/assets/products/racine/rhum-arrange.png';
 import tisanePeiImg from '@/assets/products/racine/tisane-pei.png';
 import pimentPeiImg from '@/assets/products/racine/piment-pei.png';
+import curcumaImg from '@/assets/products/racine/curcuma.png';
 
 export const traditionBox: BoxData = {
   id: 3,
@@ -16,7 +17,7 @@ export const traditionBox: BoxData = {
     "/lovable-uploads/22c73fc8-f3d1-4290-8d99-f0bd76e3ea8f.png",
     "/lovable-uploads/1e5534c0-a5e1-4153-829c-02324011758e.png"
   ],
-  items: 4,
+  items: 5,
   size: 'unique',
   weightLimit: 4,
   theme: 'Racine',
@@ -58,6 +59,15 @@ export const traditionBox: BoxData = {
       dimensions: { width: 7, height: 8, depth: 7 },
       weight: 0.2,
       image: pimentPeiImg
+    },
+    { 
+      name: "Sachet de poudre de curcuma", 
+      quantity: "100g", 
+      producer: "Épices Créoles",
+      description: "Un condiment traditionnel très présent dans la gastronomie créole qui colore et parfume les plats",
+      dimensions: { width: 12, height: 8, depth: 3 },
+      weight: 0.1,
+      image: curcumaImg
     }
   ]
 };
