@@ -5,6 +5,7 @@ import vanilleBourbonImg from '@/assets/products/bourbon/vanille-bourbon.png';
 import chocolatBourbonImg from '@/assets/products/bourbon/chocolat-bourbon.png';
 import cafeBourbonImg from '@/assets/products/bourbon/cafe-bourbon.png';
 import biereArtisanaleImg from '@/assets/products/bourbon/biere-artisanale.png';
+import livretGuideImg from '@/assets/products/common/livret-guide.png';
 
 export const bourbonBox: BoxData = {
   id: 2,
@@ -17,7 +18,7 @@ export const bourbonBox: BoxData = {
     "/lovable-uploads/22c73fc8-f3d1-4290-8d99-f0bd76e3ea8f.png",
     "/lovable-uploads/1e5534c0-a5e1-4153-829c-02324011758e.png"
   ],
-  items: 5,
+  items: 6,
   size: 'unique',
   weightLimit: 4,
   theme: 'Bourbon',
@@ -63,6 +64,15 @@ export const bourbonBox: BoxData = {
       dimensions: { width: 6, height: 18, depth: 6 },
       weight: 0.4,
       image: biereArtisanaleImg
+    },
+    { 
+      name: "Bonus Livret guide produits", 
+      quantity: "1 livret", 
+      producer: "Kiltir Box",
+      description: "Un guide complet pour découvrir l'histoire et les conseils d'utilisation de chaque produit",
+      dimensions: { width: 15, height: 21, depth: 1 },
+      weight: 0.05,
+      image: livretGuideImg
     }
   ]
 };
