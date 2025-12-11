@@ -9,7 +9,7 @@ import livretGuideImg from '@/assets/products/common/livret-guide.png';
 export const saisonBox: BoxData = {
   id: 4,
   baseTitle: "Box Saison",
-  price: 99.99,
+  price: 69.99,
   description: "Une sélection de produits de saison mettant en valeur les fruits et légumes du moment.",
   image: "/lovable-uploads/ac03653a-7722-48c5-a6c8-0a25a453791b.png",
   images: [
