@@ -87,24 +87,29 @@ const Checkout = () => {
     return item.box.theme;
   };
 
-  const getDeliveryTypeLabel = () => {
+  const getDeliveryInfo = () => {
     const travelInfo = localStorage.getItem('travelInfo');
-    if (!travelInfo) return 'Livrée en métropole';
+    if (!travelInfo) return { label: 'Livrée en métropole', cost: 25 };
     
     try {
       const parsed = JSON.parse(travelInfo);
       switch (parsed.delivery_preference) {
         case 'airport_pickup_arrival':
-          return 'Récupération à l\'aéroport (Arrivée)';
+          return { label: 'Récupération à l\'aéroport (Arrivée)', cost: 15 };
         case 'airport_pickup_departure':
-          return 'Récupération à l\'aéroport (Départ)';
+          return { label: 'Récupération à l\'aéroport (Départ)', cost: 15 };
+        case 'reunion_delivery':
+          return { label: 'Livrée à la Réunion', cost: 15 };
         default:
-          return 'Livrée en métropole';
+          return { label: 'Livrée en métropole', cost: 25 };
       }
     } catch {
-      return 'Livrée en métropole';
+      return { label: 'Livrée en métropole', cost: 25 };
     }
   };
+
+  const deliveryInfo = getDeliveryInfo();
+  const totalWithShipping = getTotalPrice() + deliveryInfo.cost;
 
   if (items.length === 0) {
     return (
@@ -207,7 +212,7 @@ const Checkout = () => {
               <CardContent className="space-y-4">
                 <div className="flex justify-between text-sm">
                   <span>Type de livraison</span>
-                  <span className="font-medium text-leaf-green">{getDeliveryTypeLabel()}</span>
+                  <span className="font-medium text-leaf-green">{deliveryInfo.label}</span>
                 </div>
                 <Separator />
                 <div className="flex justify-between text-sm">
@@ -216,12 +221,12 @@ const Checkout = () => {
                 </div>
                 <div className="flex justify-between text-sm">
                   <span>Livraison</span>
-                  <span>Calculée à l'étape suivante</span>
+                  <span>{deliveryInfo.cost.toFixed(2)}€</span>
                 </div>
                 <Separator />
                 <div className="flex justify-between font-semibold text-lg">
                   <span>Total</span>
-                  <span>{getTotalPrice().toFixed(2)}€</span>
+                  <span>{totalWithShipping.toFixed(2)}€</span>
                 </div>
                 
                 <Button 
