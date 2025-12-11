@@ -61,12 +61,12 @@ export const subscriptions: SubscriptionData[] = [
     id: 4,
     baseTitle: "Box Saison",
     theme: 'Saison',
-    basePrice: 99.99,
+    basePrice: 69.99,
     description: "Recevez chaque mois une sélection de produits de saison mettant en valeur les fruits et légumes du moment.",
     image: "/lovable-uploads/ac03653a-7722-48c5-a6c8-0a25a453791b.png",
     items: 4,
     rating: 4.6,
     reviewCount: 18,
-    options: createSubscriptionOptions(99.99)
+    options: createSubscriptionOptions(69.99)
   }
 ];
