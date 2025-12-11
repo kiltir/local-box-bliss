@@ -55,7 +55,29 @@ serve(async (req) => {
     if (!items || !Array.isArray(items) || items.length === 0) {
       throw new Error("No items provided in cart");
     }
-    logStep("Items received", { itemCount: items.length, currency, hasTravelInfo: !!travelInfo });
+    
+    // Calculate shipping cost based on delivery preference
+    // 15€ for Réunion/airport, 25€ for Métropole
+    let shippingCost = 2500; // Default: 25€ for métropole (in cents)
+    let shippingLabel = 'Livraison métropole';
+    
+    if (travelInfo?.delivery_preference) {
+      switch (travelInfo.delivery_preference) {
+        case 'airport_pickup_arrival':
+        case 'airport_pickup_departure':
+        case 'reunion_delivery':
+          shippingCost = 1500; // 15€ in cents
+          shippingLabel = travelInfo.delivery_preference.includes('airport') 
+            ? 'Récupération aéroport' 
+            : 'Livraison Réunion';
+          break;
+        default:
+          shippingCost = 2500; // 25€ in cents
+          shippingLabel = 'Livraison métropole';
+      }
+    }
+    
+    logStep("Items received", { itemCount: items.length, currency, hasTravelInfo: !!travelInfo, shippingCost, shippingLabel });
 
     // Initialize Stripe
     const stripe = new Stripe(stripeKey, {
@@ -220,10 +242,10 @@ serve(async (req) => {
           shipping_rate_data: {
             type: 'fixed_amount',
             fixed_amount: {
-              amount: 0,
+              amount: shippingCost,
               currency: 'eur',
             },
-            display_name: 'Livraison standard',
+            display_name: shippingLabel,
             delivery_estimate: {
               minimum: {
                 unit: 'business_day',
