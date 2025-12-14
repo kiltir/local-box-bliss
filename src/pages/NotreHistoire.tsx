@@ -1,6 +1,9 @@
 import React from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import cultureAgriculture from '@/assets/illustrations/culture-agriculture.png';
+import cultureConnaissances from '@/assets/illustrations/culture-connaissances.png';
+import cultureEntreprise from '@/assets/illustrations/culture-entreprise.png';
 const NotreHistoire = () => {
   return <div className="min-h-screen flex flex-col">
       <Navbar />
@@ -41,17 +44,20 @@ const NotreHistoire = () => {
 
                 <section>
                   <h2 className="text-3xl font-semibold text-leaf-green mb-6">3 cultures en 1 box</h2>
-                  <div className="grid md:grid-cols-3 gap-6">
-                    <div className="bg-white p-6 rounded-lg shadow-md">
-                      <p className="text-gray-700 text-center">La culture au sens de l'agriculture</p>
+                    <div className="grid md:grid-cols-3 gap-6">
+                      <div className="bg-white p-6 rounded-lg shadow-md flex flex-col items-center">
+                        <img src={cultureAgriculture} alt="Culture agriculture" className="w-32 h-32 object-cover rounded-full mb-4" />
+                        <p className="text-gray-700 text-center">La culture au sens de l'agriculture</p>
+                      </div>
+                      <div className="bg-white p-6 rounded-lg shadow-md flex flex-col items-center">
+                        <img src={cultureConnaissances} alt="Culture des savoirs" className="w-32 h-32 object-cover rounded-full mb-4" />
+                        <p className="text-gray-700 text-center">La culture au sens des savoirs et des connaissances</p>
+                      </div>
+                      <div className="bg-white p-6 rounded-lg shadow-md flex flex-col items-center">
+                        <img src={cultureEntreprise} alt="Culture d'entreprise" className="w-32 h-32 object-cover rounded-full mb-4" />
+                        <p className="text-gray-700 text-center">La culture comme culture d'entreprise</p>
+                      </div>
                     </div>
-                    <div className="bg-white p-6 rounded-lg shadow-md">
-                      <p className="text-gray-700 text-center">La culture au sens des savoirs et des connaissances</p>
-                    </div>
-                    <div className="bg-white p-6 rounded-lg shadow-md">
-                      <p className="text-gray-700 text-center">La culture comme culture d'entreprise</p>
-                    </div>
-                  </div>
                 </section>
 
                 <section>
