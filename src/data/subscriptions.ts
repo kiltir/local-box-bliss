@@ -6,17 +6,17 @@ const createSubscriptionOptions = (basePrice: number) => [
     duration: '6months' as const,
     label: '6 mois',
     months: 6,
-    discount: 10,
-    totalPrice: Math.round(basePrice * 6 * 0.9),
-    monthlyPrice: Math.round(basePrice * 0.9)
+    discount: 5,
+    totalPrice: Math.round(basePrice * 6 * 0.95),
+    monthlyPrice: Math.round(basePrice * 0.95)
   },
   {
     duration: '1year' as const,
     label: '1 an',
     months: 12,
-    discount: 20,
-    totalPrice: Math.round(basePrice * 12 * 0.8),
-    monthlyPrice: Math.round(basePrice * 0.8)
+    discount: 10,
+    totalPrice: Math.round(basePrice * 12 * 0.9),
+    monthlyPrice: Math.round(basePrice * 0.9)
   }
 ];
 
