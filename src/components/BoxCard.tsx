@@ -27,8 +27,19 @@ const BoxCard = ({ title, price, description, image, items, theme, rating, revie
   const { isOutOfStockForPurchaseType } = useStock();
   const outOfStock = isOutOfStockForPurchaseType(theme, purchaseType);
   
-  // Fetch banner for Box Saison (box_id = 4)
-  const { banner } = useBoxBanner(theme === 'Saison' ? 4 : undefined);
+  // Map theme to box_id: Découverte=1, Bourbon=2, Racine=3, Saison=4
+  const themeToBoxId: Record<string, number> = { 'Découverte': 1, 'Bourbon': 2, 'Racine': 3, 'Saison': 4 };
+  const { banner } = useBoxBanner(themeToBoxId[theme]);
+
+  const getBannerGradient = () => {
+    switch (theme) {
+      case 'Découverte': return 'from-teal-500 to-teal-600';
+      case 'Bourbon': return 'from-amber-500 to-amber-600';
+      case 'Racine': return 'from-orange-500 to-orange-600';
+      case 'Saison': return 'from-purple-500 to-purple-600';
+      default: return 'from-gray-500 to-gray-600';
+    }
+  };
 
   const getBadgeColor = () => {
     switch (theme) {
@@ -111,9 +122,9 @@ const BoxCard = ({ title, price, description, image, items, theme, rating, revie
       </div>
       
       <div className="p-6">
-        {/* Bandeau saisonnier pour Box Saison */}
+        {/* Bandeau personnalisé */}
         {banner && banner.is_active && banner.message && (
-          <div className="bg-gradient-to-r from-purple-500 to-purple-600 text-white px-3 py-1.5 rounded-lg text-center text-xs font-medium mb-3 -mt-2">
+          <div className={`bg-gradient-to-r ${getBannerGradient()} text-white px-3 py-1.5 rounded-lg text-center text-xs font-medium mb-3 -mt-2`}>
             {banner.message}
           </div>
         )}
