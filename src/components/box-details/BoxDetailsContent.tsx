@@ -53,8 +53,19 @@ const BoxDetailsContent = ({
     volumePercentage
   } = useBoxCalculations(products, boxTheme, boxId, onBoxChange);
 
-  // Fetch banner for Box Saison (box_id = 4)
-  const { banner } = useBoxBanner(boxTheme === 'Saison' ? 4 : undefined);
+  // Map theme to box_id: Découverte=1, Bourbon=2, Racine=3, Saison=4
+  const themeToBoxId: Record<string, number> = { 'Découverte': 1, 'Bourbon': 2, 'Racine': 3, 'Saison': 4 };
+  const { banner } = useBoxBanner(themeToBoxId[boxTheme]);
+
+  const getBannerGradient = () => {
+    switch (boxTheme) {
+      case 'Découverte': return 'from-teal-500 to-teal-600';
+      case 'Bourbon': return 'from-amber-500 to-amber-600';
+      case 'Racine': return 'from-orange-500 to-orange-600';
+      case 'Saison': return 'from-purple-500 to-purple-600';
+      default: return 'from-gray-500 to-gray-600';
+    }
+  };
 
   // Utilise le tableau d'images s'il existe, sinon utilise l'image principale
   const carouselImages = images && images.length > 0 ? images : [image];
@@ -78,9 +89,9 @@ const BoxDetailsContent = ({
   return (
     <TabsContent value="details" className="p-3 sm:p-6 pt-3 sm:pt-4">
       <div className="flex flex-col">
-        {/* Bandeau saisonnier pour Box Saison */}
+        {/* Bandeau personnalisé */}
         {banner && banner.is_active && banner.message && (
-          <div className="bg-gradient-to-r from-purple-500 to-purple-600 text-white px-4 py-2 rounded-lg text-center text-sm font-medium mb-4">
+          <div className={`bg-gradient-to-r ${getBannerGradient()} text-white px-4 py-2 rounded-lg text-center text-sm font-medium mb-4`}>
             {banner.message}
           </div>
         )}
