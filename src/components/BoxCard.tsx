@@ -7,6 +7,7 @@ import StarRating from './StarRating';
 import { Compass, Wine, BookOpen, Leaf, Package, AlertTriangle } from 'lucide-react';
 import { useStock } from '@/hooks/useStock';
 import { Badge } from '@/components/ui/badge';
+import { useBoxBanner } from '@/hooks/useBoxBanner';
 
 interface BoxCardProps {
   title: string;
@@ -25,6 +26,9 @@ const BoxCard = ({ title, price, description, image, items, theme, rating, revie
   const { addToCart } = useCart();
   const { isOutOfStockForPurchaseType } = useStock();
   const outOfStock = isOutOfStockForPurchaseType(theme, purchaseType);
+  
+  // Fetch banner for Box Saison (box_id = 4)
+  const { banner } = useBoxBanner(theme === 'Saison' ? 4 : undefined);
 
   const getBadgeColor = () => {
     switch (theme) {
@@ -107,6 +111,13 @@ const BoxCard = ({ title, price, description, image, items, theme, rating, revie
       </div>
       
       <div className="p-6">
+        {/* Bandeau saisonnier pour Box Saison */}
+        {banner && banner.is_active && banner.message && (
+          <div className="bg-gradient-to-r from-purple-500 to-purple-600 text-white px-3 py-1.5 rounded-lg text-center text-xs font-medium mb-3 -mt-2">
+            {banner.message}
+          </div>
+        )}
+        
         <div className="flex items-center justify-between mb-2">
           <h3 className="text-xl font-bold">{title}</h3>
           {React.createElement(getThemeIcon(), { className: "h-5 w-5 text-leaf-green" })}

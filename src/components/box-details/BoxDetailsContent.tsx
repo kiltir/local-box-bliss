@@ -1,12 +1,12 @@
 
 import React from 'react';
 import { TabsContent } from "@/components/ui/tabs";
-import { Button } from "@/components/ui/button";
 import { BoxProduct } from '@/types/boxes';
 import { useBoxCalculations } from './useBoxCalculations';
 import ProductList from './ProductList';
 import AddToCartButton from './AddToCartButton';
 import BoxImageCarousel from './BoxImageCarousel';
+import { useBoxBanner } from '@/hooks/useBoxBanner';
 
 interface BoxDetailsContentProps {
   isActive: boolean;
@@ -53,6 +53,9 @@ const BoxDetailsContent = ({
     volumePercentage
   } = useBoxCalculations(products, boxTheme, boxId, onBoxChange);
 
+  // Fetch banner for Box Saison (box_id = 4)
+  const { banner } = useBoxBanner(boxTheme === 'Saison' ? 4 : undefined);
+
   // Utilise le tableau d'images s'il existe, sinon utilise l'image principale
   const carouselImages = images && images.length > 0 ? images : [image];
 
@@ -75,6 +78,13 @@ const BoxDetailsContent = ({
   return (
     <TabsContent value="details" className="p-3 sm:p-6 pt-3 sm:pt-4">
       <div className="flex flex-col">
+        {/* Bandeau saisonnier pour Box Saison */}
+        {banner && banner.is_active && banner.message && (
+          <div className="bg-gradient-to-r from-purple-500 to-purple-600 text-white px-4 py-2 rounded-lg text-center text-sm font-medium mb-4">
+            {banner.message}
+          </div>
+        )}
+        
         {/* Carrousel d'images de la box - responsive */}
         <div className="mb-4 sm:mb-6">
           <BoxImageCarousel images={carouselImages} title={title} />

@@ -14,6 +14,33 @@ export type Database = {
   }
   public: {
     Tables: {
+      box_banners: {
+        Row: {
+          box_id: number
+          created_at: string
+          id: string
+          is_active: boolean
+          message: string
+          updated_at: string
+        }
+        Insert: {
+          box_id: number
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          message?: string
+          updated_at?: string
+        }
+        Update: {
+          box_id?: number
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          message?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       box_images: {
         Row: {
           box_id: number
