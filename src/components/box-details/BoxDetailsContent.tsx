@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { TabsContent } from "@/components/ui/tabs";
 import { BoxProduct } from '@/types/boxes';
 import { useBoxCalculations } from './useBoxCalculations';
@@ -41,6 +41,8 @@ const BoxDetailsContent = ({
   rating,
   reviewCount
 }: BoxDetailsContentProps) => {
+  const [bannerIndex, setBannerIndex] = useState(0);
+  
   const {
     selectedProductIds,
     productQuantities,
@@ -56,6 +58,20 @@ const BoxDetailsContent = ({
   // Map theme to box_id: Découverte=1, Bourbon=2, Racine=3, Saison=4
   const themeToBoxId: Record<string, number> = { 'Découverte': 1, 'Bourbon': 2, 'Racine': 3, 'Saison': 4 };
   const { banner } = useBoxBanner(themeToBoxId[boxTheme]);
+
+  // Messages disponibles pour le défilement
+  const bannerMessages = banner ? [banner.message, banner.message_2].filter(Boolean) : [];
+  
+  // Défilement automatique entre les messages
+  useEffect(() => {
+    if (bannerMessages.length <= 1) return;
+    
+    const interval = setInterval(() => {
+      setBannerIndex(prev => (prev + 1) % bannerMessages.length);
+    }, 4000);
+    
+    return () => clearInterval(interval);
+  }, [bannerMessages.length]);
 
   const getBannerGradient = () => {
     switch (boxTheme) {
@@ -89,10 +105,15 @@ const BoxDetailsContent = ({
   return (
     <TabsContent value="details" className="p-3 sm:p-6 pt-3 sm:pt-4">
       <div className="flex flex-col">
-        {/* Bandeau personnalisé */}
-        {banner && banner.is_active && banner.message && (
-          <div className={`bg-gradient-to-r ${getBannerGradient()} text-white px-4 py-2 rounded-lg text-center text-sm font-medium mb-4`}>
-            {banner.message}
+        {/* Bandeau personnalisé avec défilement */}
+        {banner && banner.is_active && bannerMessages.length > 0 && (
+          <div className={`bg-gradient-to-r ${getBannerGradient()} text-white px-4 py-2 rounded-lg text-center text-sm font-medium mb-4 overflow-hidden`}>
+            <div 
+              key={bannerIndex}
+              className="animate-fade-in"
+            >
+              {bannerMessages[bannerIndex]}
+            </div>
           </div>
         )}
         
