@@ -5,7 +5,7 @@ const ProducerSection = () => {
     name: "Les Trésors de Mamie Céliane",
     specialty: "Produits bio",
     image: "https://source.unsplash.com/1472396961693-142e6e269027",
-    description: "Marie cultive des légumes bio depuis plus de 15 ans sur ses terres familiales."
+    description: "Céliane cultive des fruits et légumes bio depuis plus des années sur ses terres familiales et propose une multitude de produits bio issus de son savoir-faire."
   }, {
     name: "Terre'Api Des Hauts",
     specialty: "Miels artisanaux",
