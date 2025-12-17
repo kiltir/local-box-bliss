@@ -114,37 +114,54 @@ const Checkout = () => {
     return item.box.theme;
   };
 
-  const getDeliveryInfo = () => {
+  const getBaseDeliveryCost = () => {
     // Si le sélecteur est affiché, utiliser la sélection de l'utilisateur
     if (showDeliverySelector) {
       if (selectedDelivery === 'reunion') {
-        return { label: 'Livrée à la Réunion', cost: 12 };
+        return { label: 'Livrée à la Réunion', baseCost: 12 };
       }
-      return { label: 'Livrée en métropole', cost: 25 };
+      return { label: 'Livrée en métropole', baseCost: 25 };
     }
 
     // Sinon, utiliser les préférences de voyage stockées
     const travelInfo = localStorage.getItem('travelInfo');
-    if (!travelInfo) return { label: 'Livrée en métropole', cost: 25 };
+    if (!travelInfo) return { label: 'Livrée en métropole', baseCost: 25 };
     
     try {
       const parsed = JSON.parse(travelInfo);
       switch (parsed.delivery_preference) {
         case 'airport_pickup_arrival':
-          return { label: 'Récupération à l\'aéroport (Arrivée)', cost: 15 };
+          return { label: 'Récupération à l\'aéroport (Arrivée)', baseCost: 15 };
         case 'airport_pickup_departure':
-          return { label: 'Récupération à l\'aéroport (Départ)', cost: 15 };
+          return { label: 'Récupération à l\'aéroport (Départ)', baseCost: 15 };
         case 'reunion_delivery':
-          return { label: 'Livrée à la Réunion', cost: 15 };
+          return { label: 'Livrée à la Réunion', baseCost: 15 };
         default:
-          return { label: 'Livrée en métropole', cost: 25 };
+          return { label: 'Livrée en métropole', baseCost: 25 };
       }
     } catch {
-      return { label: 'Livrée en métropole', cost: 25 };
+      return { label: 'Livrée en métropole', baseCost: 25 };
     }
   };
 
-  const deliveryInfo = getDeliveryInfo();
+  const calculateTotalShippingCost = () => {
+    const { baseCost } = getBaseDeliveryCost();
+    let totalShipping = 0;
+
+    items.forEach(item => {
+      let multiplier = 1;
+      if (item.subscriptionType === '6months') {
+        multiplier = 6;
+      } else if (item.subscriptionType === '1year') {
+        multiplier = 12;
+      }
+      totalShipping += baseCost * item.quantity * multiplier;
+    });
+
+    return totalShipping;
+  };
+
+  const deliveryInfo = { ...getBaseDeliveryCost(), cost: calculateTotalShippingCost() };
   const totalWithShipping = getTotalPrice() + deliveryInfo.cost;
 
   if (items.length === 0) {
