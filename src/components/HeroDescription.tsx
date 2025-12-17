@@ -13,7 +13,7 @@ const HeroDescription = () => {
       <div className="max-w-3xl mx-auto text-center">
         <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">Un concept péi</h2>
         
-        <p className="text-xl text-gray-600 mb-16">Découvrez nos box de produits typiques issus du savoir-faire local, disponibles avant/après votre voyage à la Réunion ou livrées directement en Métropole.</p>
+        <p className="text-xl text-gray-600 mb-16">Découvrez nos box de produits typiques issus du savoir-faire local, disponibles avant/après votre voyage à l'aéroport de la Réunion ou livrées directement en Métropole.</p>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 bg-transparent">
           <div className="p-6 shadow-md rounded-lg bg-white">
