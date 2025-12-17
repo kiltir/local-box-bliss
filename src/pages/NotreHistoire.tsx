@@ -71,7 +71,7 @@ const NotreHistoire = () => {
                     
                     <p>Ne perdons pas cette richesse et partageons-la ! Qu'elle voyage, qu'elle réconforte, qu'elle soigne la solitude et qu'elle apporte la solidarité.</p>
                     
-                    <p>Sincèrement, je vous remercie pour votre soutien dans ce projet.</p>
+                    <p> Merci zot toute pou zot soutien ! </p>
                     
                     <div className="bg-leaf-green/10 p-6 rounded-lg mt-8 text-center">
                       <h3 className="text-2xl font-bold text-sky-400 italic">"Oubli pa nou, oubli pa ou !"</h3>
