@@ -4,7 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Separator } from "@/components/ui/separator";
-import { ShoppingCart, CreditCard, ArrowLeft, Crown } from 'lucide-react';
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
+import { ShoppingCart, CreditCard, ArrowLeft, Crown, Truck } from 'lucide-react';
 import { useCart } from '@/hooks/useCart';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
@@ -12,11 +14,14 @@ import { toast } from 'sonner';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 
+type DeliveryOption = 'metropole' | 'reunion';
+
 const Checkout = () => {
   const navigate = useNavigate();
   const { items, getTotalPrice } = useCart();
   const { user, loading } = useAuth();
   const [isProcessing, setIsProcessing] = useState(false);
+  const [selectedDelivery, setSelectedDelivery] = useState<DeliveryOption>('metropole');
 
   // Vérifier si l'utilisateur est connecté
   useEffect(() => {
@@ -25,6 +30,20 @@ const Checkout = () => {
       navigate('/auth');
     }
   }, [user, loading, navigate]);
+
+  // Vérifier si la livraison métropole est sélectionnée par défaut (pas de travelInfo ou metropole)
+  const isMetropoleDefault = () => {
+    const travelInfo = localStorage.getItem('travelInfo');
+    if (!travelInfo) return true;
+    try {
+      const parsed = JSON.parse(travelInfo);
+      return !parsed.delivery_preference || parsed.delivery_preference === 'metropole';
+    } catch {
+      return true;
+    }
+  };
+
+  const showDeliverySelector = isMetropoleDefault();
 
   const handlePayment = async () => {
     if (items.length === 0) {
@@ -46,6 +65,14 @@ const Checkout = () => {
         } catch (error) {
           console.warn('Failed to parse travel info from localStorage:', error);
         }
+      }
+
+      // Si le sélecteur de livraison est affiché, on utilise la sélection de l'utilisateur
+      if (showDeliverySelector) {
+        parsedTravelInfo = {
+          ...parsedTravelInfo,
+          delivery_preference: selectedDelivery === 'reunion' ? 'reunion_delivery' : 'metropole'
+        };
       }
       
       const { data, error } = await supabase.functions.invoke('create-payment', {
@@ -88,6 +115,15 @@ const Checkout = () => {
   };
 
   const getDeliveryInfo = () => {
+    // Si le sélecteur est affiché, utiliser la sélection de l'utilisateur
+    if (showDeliverySelector) {
+      if (selectedDelivery === 'reunion') {
+        return { label: 'Livrée à la Réunion', cost: 12 };
+      }
+      return { label: 'Livrée en métropole', cost: 25 };
+    }
+
+    // Sinon, utiliser les préférences de voyage stockées
     const travelInfo = localStorage.getItem('travelInfo');
     if (!travelInfo) return { label: 'Livrée en métropole', cost: 25 };
     
@@ -201,6 +237,49 @@ const Checkout = () => {
                 </Table>
               </CardContent>
             </Card>
+
+            {showDeliverySelector && (
+              <Card className="mt-6">
+                <CardHeader>
+                  <CardTitle className="flex items-center">
+                    <Truck className="h-5 w-5 mr-2" />
+                    Choisissez votre mode de livraison
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <RadioGroup
+                    value={selectedDelivery}
+                    onValueChange={(value) => setSelectedDelivery(value as DeliveryOption)}
+                    className="space-y-3"
+                  >
+                    <div className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-muted/50 transition-colors cursor-pointer">
+                      <RadioGroupItem value="metropole" id="metropole" />
+                      <Label htmlFor="metropole" className="flex-1 cursor-pointer">
+                        <div className="flex justify-between items-center">
+                          <div>
+                            <p className="font-medium">Livraison métropole</p>
+                            <p className="text-sm text-muted-foreground">Livrée en métropole</p>
+                          </div>
+                          <span className="font-semibold text-leaf-green">25,00€</span>
+                        </div>
+                      </Label>
+                    </div>
+                    <div className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-muted/50 transition-colors cursor-pointer">
+                      <RadioGroupItem value="reunion" id="reunion" />
+                      <Label htmlFor="reunion" className="flex-1 cursor-pointer">
+                        <div className="flex justify-between items-center">
+                          <div>
+                            <p className="font-medium">Livraison Réunion</p>
+                            <p className="text-sm text-muted-foreground">Livrée à la Réunion</p>
+                          </div>
+                          <span className="font-semibold text-leaf-green">12,00€</span>
+                        </div>
+                      </Label>
+                    </div>
+                  </RadioGroup>
+                </CardContent>
+              </Card>
+            )}
           </div>
 
           {/* Payment Summary */}

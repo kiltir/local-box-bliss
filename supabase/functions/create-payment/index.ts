@@ -57,7 +57,7 @@ serve(async (req) => {
     }
     
     // Calculate shipping cost based on delivery preference
-    // 15€ for Réunion/airport, 25€ for Métropole
+    // 12€ for Réunion delivery, 15€ for airport pickup, 25€ for Métropole
     let shippingCost = 2500; // Default: 25€ for métropole (in cents)
     let shippingLabel = 'Livraison métropole';
     
@@ -65,11 +65,12 @@ serve(async (req) => {
       switch (travelInfo.delivery_preference) {
         case 'airport_pickup_arrival':
         case 'airport_pickup_departure':
-        case 'reunion_delivery':
           shippingCost = 1500; // 15€ in cents
-          shippingLabel = travelInfo.delivery_preference.includes('airport') 
-            ? 'Récupération aéroport' 
-            : 'Livraison Réunion';
+          shippingLabel = 'Récupération aéroport';
+          break;
+        case 'reunion_delivery':
+          shippingCost = 1200; // 12€ in cents
+          shippingLabel = 'Livraison Réunion';
           break;
         default:
           shippingCost = 2500; // 25€ in cents
