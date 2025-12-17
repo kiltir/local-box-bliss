@@ -274,7 +274,7 @@ const Checkout = () => {
                       <Label htmlFor="metropole" className="flex-1 cursor-pointer">
                         <div className="flex justify-between items-center">
                           <p className="font-medium">Livraison métropole</p>
-                          <span className="font-semibold text-leaf-green">25,00€</span>
+                          <span className="font-semibold text-leaf-green">25,00€ <span className="font-normal text-muted-foreground">par box</span></span>
                         </div>
                       </Label>
                     </div>
@@ -283,7 +283,7 @@ const Checkout = () => {
                       <Label htmlFor="reunion" className="flex-1 cursor-pointer">
                         <div className="flex justify-between items-center">
                           <p className="font-medium">Livraison Réunion</p>
-                          <span className="font-semibold text-leaf-green">12,00€</span>
+                          <span className="font-semibold text-leaf-green">12,00€ <span className="font-normal text-muted-foreground">par box</span></span>
                         </div>
                       </Label>
                     </div>
