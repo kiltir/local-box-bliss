@@ -118,14 +118,14 @@ const Checkout = () => {
     // Si le sélecteur est affiché, utiliser la sélection de l'utilisateur
     if (showDeliverySelector) {
       if (selectedDelivery === 'reunion') {
-        return { label: 'Livrée à la Réunion', baseCost: 12 };
+        return { label: 'Livraison Réunion', baseCost: 12 };
       }
-      return { label: 'Livrée en métropole', baseCost: 25 };
+      return { label: 'Livraison métropole', baseCost: 25 };
     }
 
     // Sinon, utiliser les préférences de voyage stockées
     const travelInfo = localStorage.getItem('travelInfo');
-    if (!travelInfo) return { label: 'Livrée en métropole', baseCost: 25 };
+    if (!travelInfo) return { label: 'Livraison métropole', baseCost: 25 };
     
     try {
       const parsed = JSON.parse(travelInfo);
@@ -135,12 +135,12 @@ const Checkout = () => {
         case 'airport_pickup_departure':
           return { label: 'Récupération à l\'aéroport (Départ)', baseCost: 15 };
         case 'reunion_delivery':
-          return { label: 'Livrée à la Réunion', baseCost: 15 };
+          return { label: 'Livraison Réunion', baseCost: 15 };
         default:
-          return { label: 'Livrée en métropole', baseCost: 25 };
+          return { label: 'Livraison métropole', baseCost: 25 };
       }
     } catch {
-      return { label: 'Livrée en métropole', baseCost: 25 };
+      return { label: 'Livraison métropole', baseCost: 25 };
     }
   };
 
@@ -273,10 +273,7 @@ const Checkout = () => {
                       <RadioGroupItem value="metropole" id="metropole" />
                       <Label htmlFor="metropole" className="flex-1 cursor-pointer">
                         <div className="flex justify-between items-center">
-                          <div>
-                            <p className="font-medium">Livraison métropole</p>
-                            <p className="text-sm text-muted-foreground">Livrée en métropole</p>
-                          </div>
+                          <p className="font-medium">Livraison métropole</p>
                           <span className="font-semibold text-leaf-green">25,00€</span>
                         </div>
                       </Label>
@@ -285,10 +282,7 @@ const Checkout = () => {
                       <RadioGroupItem value="reunion" id="reunion" />
                       <Label htmlFor="reunion" className="flex-1 cursor-pointer">
                         <div className="flex justify-between items-center">
-                          <div>
-                            <p className="font-medium">Livraison Réunion</p>
-                            <p className="text-sm text-muted-foreground">Livrée à la Réunion</p>
-                          </div>
+                          <p className="font-medium">Livraison Réunion</p>
                           <span className="font-semibold text-leaf-green">12,00€</span>
                         </div>
                       </Label>
