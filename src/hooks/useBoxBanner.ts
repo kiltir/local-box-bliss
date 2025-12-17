@@ -5,6 +5,7 @@ interface BoxBanner {
   id: string;
   box_id: number;
   message: string;
+  message_2: string;
   is_active: boolean;
 }
 
@@ -62,21 +63,21 @@ export const useAllBoxBanners = () => {
     }
   };
 
-  const updateBanner = async (boxId: number, message: string, isActive: boolean) => {
+  const updateBanner = async (boxId: number, message: string, message2: string, isActive: boolean) => {
     try {
       const existingBanner = banners.find(b => b.box_id === boxId);
       
       if (existingBanner) {
         const { error } = await supabase
           .from('box_banners')
-          .update({ message, is_active: isActive })
+          .update({ message, message_2: message2, is_active: isActive })
           .eq('box_id', boxId);
         
         if (error) throw error;
       } else {
         const { error } = await supabase
           .from('box_banners')
-          .insert({ box_id: boxId, message, is_active: isActive });
+          .insert({ box_id: boxId, message, message_2: message2, is_active: isActive });
         
         if (error) throw error;
       }
