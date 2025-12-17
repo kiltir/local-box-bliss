@@ -36,7 +36,7 @@ const NotreHistoire = () => {
                   <div className="text-gray-700 space-y-4 leading-relaxed">
                     <p>KiltirBox ce sont des box de produits locaux selon des thématiques originales et culturelles à récupérer sur place à l'aéroport de l'île de la Réunion ou livrées en Métropole.</p>
                     
-                    <p className="font-semibold">Plus qu'un colis c'est une vraie expérience que nous vous proposons.</p>
+                    <p className="font-semibold">Plus qu'un colis c'est une véritable expérience que nous vous proposons de vivre. </p>
                     
                     <p>Découvrez ou redécouvrez la culture réunionnaise à travers notre sélection de bons produits issus du savoir-faire local de nos partenaires passionnés et engagés.</p>
                   </div>
