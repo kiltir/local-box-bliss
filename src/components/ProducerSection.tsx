@@ -12,10 +12,10 @@ const ProducerSection = () => {
     image: "https://source.unsplash.com/1582562124811-c09040d0a901",
     description: "Christophe est un apiculteur péi passionné et engagé dans le respect et la bienveillance de la nature qui élabore un miel artisanal d'exception."
   }, {
-    name: "Les Vergers d'Émilie",
-    specialty: "Fruits de saison",
+    name: "Pot en ciel Kréol",
+    specialty: "Lactofermentation",
     image: "https://source.unsplash.com/1465146344425-f00d5f5c8f07",
-    description: "Émilie cultive des fruits de saison en privilégiant les variétés anciennes et goûteuses."
+    description: "Mégane est une artisane spécialisée dans les préparations lactofermentées qu'elle élabore avec des produits locaux pour le bien-être de sa clientèle."
   }];
   return <section id="producers" className="bg-gradient-to-b from-white to-soft-beige/20 py-[15px] scroll-mt-[88px] md:scroll-mt-[80px]">
       <div className="container-section py-[15px]">
