@@ -71,6 +71,39 @@ export type Database = {
         }
         Relationships: []
       }
+      box_prices: {
+        Row: {
+          box_id: number
+          created_at: string
+          id: string
+          subscription_12_months_price: number
+          subscription_6_months_price: number
+          theme: string
+          unit_price: number
+          updated_at: string
+        }
+        Insert: {
+          box_id: number
+          created_at?: string
+          id?: string
+          subscription_12_months_price?: number
+          subscription_6_months_price?: number
+          theme: string
+          unit_price?: number
+          updated_at?: string
+        }
+        Update: {
+          box_id?: number
+          created_at?: string
+          id?: string
+          subscription_12_months_price?: number
+          subscription_6_months_price?: number
+          theme?: string
+          unit_price?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       box_reviews: {
         Row: {
           box_id: number
