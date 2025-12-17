@@ -7,10 +7,10 @@ const ProducerSection = () => {
     image: "https://source.unsplash.com/1472396961693-142e6e269027",
     description: "Marie cultive des légumes bio depuis plus de 15 ans sur ses terres familiales."
   }, {
-    name: "Fromagerie du Vallon",
-    specialty: "Fromages artisanaux",
+    name: "Terre'Api Des Hauts",
+    specialty: "Miels artisanaux",
     image: "https://source.unsplash.com/1582562124811-c09040d0a901",
-    description: "Pierre élabore des fromages traditionnels avec le lait de ses chèvres élevées en plein air."
+    description: "Christophe est un apiculteur péi passionné et engagé dans le respect et la bienveillance de la nature qui élabore un miel artisanal d'exception."
   }, {
     name: "Les Vergers d'Émilie",
     specialty: "Fruits de saison",
