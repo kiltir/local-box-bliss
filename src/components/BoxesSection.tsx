@@ -6,9 +6,9 @@ import BoxDetails from './BoxDetails';
 import { useBoxes } from '@/hooks/useBoxes';
 import { usePurchaseType } from '@/hooks/usePurchaseType';
 import { useBoxesReviews } from '@/hooks/useBoxesReviews';
+import { useSubscriptions } from '@/hooks/useSubscriptions';
 import BoxThemeSelector from './BoxThemeSelector';
 import PurchaseTypeSelector from './PurchaseTypeSelector';
-import { subscriptions } from '@/data/subscriptions';
 import { BoxTheme } from '@/types/box';
 import decouverteBg from '@/assets/backgrounds/decouverte-bg.jpg';
 import bourbonBg from '@/assets/backgrounds/bourbon-bg.jpg';
@@ -28,6 +28,7 @@ const BoxesSection = () => {
 
   const { purchaseType, handlePurchaseTypeChange } = usePurchaseType();
   const { getBoxStats } = useBoxesReviews();
+  const { subscriptions } = useSubscriptions();
 
   // Filtrer les boxes selon le thème sélectionné
   const filteredBoxes = boxes.filter(box => box.theme === selectedTheme);
