@@ -64,7 +64,7 @@ const ProducerSection = () => {
         
         <div className="mt-16 text-center">
           <button className="text-leaf-green font-medium hover:underline inline-flex items-center">
-              ​Devenir un de nos fournisseurs       
+              Devenir notre fournisseur
             <svg className="ml-2 w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
             </svg>
