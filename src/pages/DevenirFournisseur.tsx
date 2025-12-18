@@ -181,7 +181,7 @@ const DevenirFournisseur = () => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="produits">Quels produits proposez-vous de nous fournir ? *</Label>
+                <Label htmlFor="produits">Quels produits proposez-vous de nous fournir ? Pour quelle(s) thématiques ? *</Label>
                 <Textarea
                   id="produits"
                   name="produits"
