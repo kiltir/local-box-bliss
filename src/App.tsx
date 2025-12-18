@@ -25,6 +25,7 @@ import Checkout from "./pages/Checkout";
 import PaymentSuccess from "./pages/PaymentSuccess";
 import PaymentCanceled from "./pages/PaymentCanceled";
 import AdminDashboard from "./pages/AdminDashboard";
+import DevenirFournisseur from "./pages/DevenirFournisseur";
 
 const queryClient = new QueryClient();
 
@@ -54,6 +55,7 @@ const App = () => (
             <Route path="/mes-informations" element={<MesInformations />} />
             <Route path="/mes-commandes" element={<MesCommandes />} />
             <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/devenir-fournisseur" element={<DevenirFournisseur />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
