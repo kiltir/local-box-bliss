@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
 const ProducerSection = () => {
@@ -63,12 +64,12 @@ const ProducerSection = () => {
         </div>
         
         <div className="mt-16 text-center">
-          <button className="text-leaf-green font-medium hover:underline inline-flex items-center">
+          <Link to="/devenir-fournisseur" className="text-leaf-green font-medium hover:underline inline-flex items-center">
               Devenir notre fournisseur
             <svg className="ml-2 w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
             </svg>
-          </button>
+          </Link>
         </div>
       </div>
     </section>;
