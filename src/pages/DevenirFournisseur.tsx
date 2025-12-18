@@ -88,7 +88,7 @@ const DevenirFournisseur = () => {
               Devenir notre fournisseur
             </h1>
             <p className="text-gray-700 mb-8 text-center max-w-2xl mx-auto">
-              Vous êtes un producteur local ou un artisan passionné ? Rejoignez l'aventure KiltirBox et faites découvrir vos produits à travers nos box !
+              Vous êtes un producteur local ou un artisane passionnée ? Rejoignez l'aventure KiltirBox et faites découvrir VOS produits à travers NOS box !
             </p>
 
             <div className="bg-white rounded-2xl shadow-lg p-8 md:p-12">
