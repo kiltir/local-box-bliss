@@ -1,34 +1,50 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { toast } from "sonner";
 import { ArrowLeft, Upload, X } from "lucide-react";
+
+const supplierFormSchema = z.object({
+  nom: z.string().trim().min(1, { message: "Le nom est requis" }).max(100, { message: "Le nom ne peut pas dépasser 100 caractères" }),
+  raisonSociale: z.string().trim().min(1, { message: "La raison sociale est requise" }).max(200, { message: "La raison sociale ne peut pas dépasser 200 caractères" }),
+  siret: z.string().trim().min(14, { message: "Le SIRET doit contenir 14 chiffres" }).max(14, { message: "Le SIRET doit contenir 14 chiffres" }),
+  adresse: z.string().trim().min(1, { message: "L'adresse est requise" }).max(300, { message: "L'adresse ne peut pas dépasser 300 caractères" }),
+  telephone: z.string().trim().min(1, { message: "Le téléphone est requis" }).max(20, { message: "Le téléphone ne peut pas dépasser 20 caractères" }),
+  activite: z.string().trim().min(1, { message: "La description de l'activité est requise" }).max(2000, { message: "La description ne peut pas dépasser 2000 caractères" }),
+  motivation: z.string().trim().min(1, { message: "La motivation est requise" }).max(2000, { message: "La motivation ne peut pas dépasser 2000 caractères" }),
+  produits: z.string().trim().min(1, { message: "La description des produits est requise" }).max(2000, { message: "La description ne peut pas dépasser 2000 caractères" }),
+  source: z.string().trim().max(200, { message: "Ce champ ne peut pas dépasser 200 caractères" }).optional(),
+});
+
+type SupplierFormData = z.infer<typeof supplierFormSchema>;
 
 const DevenirFournisseur = () => {
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [photos, setPhotos] = useState<File[]>([]);
-  const [formData, setFormData] = useState({
-    nom: "",
-    raisonSociale: "",
-    siret: "",
-    adresse: "",
-    telephone: "",
-    activite: "",
-    motivation: "",
-    produits: "",
-    source: "",
-  });
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
+  const form = useForm<SupplierFormData>({
+    resolver: zodResolver(supplierFormSchema),
+    defaultValues: {
+      nom: "",
+      raisonSociale: "",
+      siret: "",
+      adresse: "",
+      telephone: "",
+      activite: "",
+      motivation: "",
+      produits: "",
+      source: "",
+    },
+  });
 
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -42,8 +58,7 @@ const DevenirFournisseur = () => {
     setPhotos(prev => prev.filter((_, i) => i !== index));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const onSubmit = async (data: SupplierFormData) => {
     setIsSubmitting(true);
 
     // Simulate form submission
@@ -51,205 +66,225 @@ const DevenirFournisseur = () => {
 
     toast.success("Votre candidature a bien été envoyée ! Nous vous recontacterons dans les plus brefs délais.");
     setIsSubmitting(false);
-    setFormData({
-      nom: "",
-      raisonSociale: "",
-      siret: "",
-      adresse: "",
-      telephone: "",
-      activite: "",
-      motivation: "",
-      produits: "",
-      source: "",
-    });
+    form.reset();
     setPhotos([]);
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-cream">
+    <div className="min-h-screen flex flex-col">
       <Navbar />
-      
-      <main className="flex-grow pt-24 pb-16">
-        <div className="container mx-auto px-4 max-w-2xl">
-          <button
-            onClick={() => navigate(-1)}
-            className="flex items-center text-leaf-green hover:underline mb-8"
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Retour
-          </button>
+      <main className="flex-1">
+        <div className="bg-gradient-to-b from-[#FEF7CD]/50 to-white py-16">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <button
+              onClick={() => navigate(-1)}
+              className="flex items-center text-leaf-green hover:underline mb-8"
+            >
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Retour
+            </button>
 
-          <div className="bg-white rounded-2xl shadow-lg p-8 md:p-12">
-            <h1 className="text-3xl md:text-4xl font-serif font-bold text-dark-brown mb-4">
+            <h1 className="text-4xl font-bold text-gray-900 mb-4 text-center">
               Devenir notre fournisseur
             </h1>
-            <p className="text-muted-foreground mb-8">
+            <p className="text-gray-700 mb-8 text-center max-w-2xl mx-auto">
               Vous êtes un producteur local ou un artisan passionné ? Rejoignez l'aventure KiltirBox et faites découvrir vos produits à travers nos box !
             </p>
 
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="grid md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <Label htmlFor="nom">Nom / Prénom(s) *</Label>
-                  <Input
-                    id="nom"
-                    name="nom"
-                    value={formData.nom}
-                    onChange={handleInputChange}
-                    required
-                    placeholder="Votre nom et prénom(s)"
+            <div className="bg-white rounded-2xl shadow-lg p-8 md:p-12">
+              <h2 className="text-2xl font-semibold text-leaf-green mb-6">Formulaire de candidature</h2>
+              
+              <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <FormField
+                      control={form.control}
+                      name="nom"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Nom / Prénom(s)</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Votre nom et prénom(s)" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="raisonSociale"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Raison sociale</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Nom de votre entreprise" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <FormField
+                      control={form.control}
+                      name="siret"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>SIRET</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Numéro SIRET (14 chiffres)" maxLength={14} {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="telephone"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Téléphone</FormLabel>
+                          <FormControl>
+                            <Input type="tel" placeholder="Votre numéro de téléphone" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  <FormField
+                    control={form.control}
+                    name="adresse"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Adresse</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Adresse complète de votre entreprise" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
                   />
-                </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="raisonSociale">Raison sociale *</Label>
-                  <Input
-                    id="raisonSociale"
-                    name="raisonSociale"
-                    value={formData.raisonSociale}
-                    onChange={handleInputChange}
-                    required
-                    placeholder="Nom de votre entreprise"
+                  <FormField
+                    control={form.control}
+                    name="activite"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Décrivez votre activité et ce qui vous anime</FormLabel>
+                        <FormControl>
+                          <Textarea
+                            placeholder="Parlez-nous de votre activité, de votre passion, de votre savoir-faire..."
+                            rows={4}
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
                   />
-                </div>
-              </div>
 
-              <div className="grid md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <Label htmlFor="siret">SIRET *</Label>
-                  <Input
-                    id="siret"
-                    name="siret"
-                    value={formData.siret}
-                    onChange={handleInputChange}
-                    required
-                    placeholder="Numéro SIRET (14 chiffres)"
-                    maxLength={14}
+                  <FormField
+                    control={form.control}
+                    name="motivation"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Pourquoi rejoindre l'aventure KiltirBox ?</FormLabel>
+                        <FormControl>
+                          <Textarea
+                            placeholder="Qu'est-ce qui vous motive à rejoindre KiltirBox ?"
+                            rows={3}
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
                   />
-                </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="telephone">Téléphone *</Label>
-                  <Input
-                    id="telephone"
-                    name="telephone"
-                    type="tel"
-                    value={formData.telephone}
-                    onChange={handleInputChange}
-                    required
-                    placeholder="Votre numéro de téléphone"
+                  <FormField
+                    control={form.control}
+                    name="produits"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Quels produits proposez-vous de nous fournir ? Pour quelle(s) thématiques ?</FormLabel>
+                        <FormControl>
+                          <Textarea
+                            placeholder="Décrivez les produits que vous souhaitez proposer..."
+                            rows={3}
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
                   />
-                </div>
-              </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="adresse">Adresse *</Label>
-                <Input
-                  id="adresse"
-                  name="adresse"
-                  value={formData.adresse}
-                  onChange={handleInputChange}
-                  required
-                  placeholder="Adresse complète de votre entreprise"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="activite">Décrivez votre activité et ce qui vous anime *</Label>
-                <Textarea
-                  id="activite"
-                  name="activite"
-                  value={formData.activite}
-                  onChange={handleInputChange}
-                  required
-                  placeholder="Parlez-nous de votre activité, de votre passion, de votre savoir-faire..."
-                  rows={4}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="motivation">Pourquoi rejoindre l'aventure KiltirBox ? *</Label>
-                <Textarea
-                  id="motivation"
-                  name="motivation"
-                  value={formData.motivation}
-                  onChange={handleInputChange}
-                  required
-                  placeholder="Qu'est-ce qui vous motive à rejoindre KiltirBox ?"
-                  rows={3}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="produits">Quels produits proposez-vous de nous fournir ? Pour quelle(s) thématiques ? *</Label>
-                <Textarea
-                  id="produits"
-                  name="produits"
-                  value={formData.produits}
-                  onChange={handleInputChange}
-                  required
-                  placeholder="Décrivez les produits que vous souhaitez proposer..."
-                  rows={3}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label>Photos de vos produits (2 maximum)</Label>
-                <div className="flex flex-wrap gap-4">
-                  {photos.map((photo, index) => (
-                    <div key={index} className="relative w-24 h-24 rounded-lg overflow-hidden border border-border">
-                      <img
-                        src={URL.createObjectURL(photo)}
-                        alt={`Photo ${index + 1}`}
-                        className="w-full h-full object-cover"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => removePhoto(index)}
-                        className="absolute top-1 right-1 bg-destructive text-destructive-foreground rounded-full p-1 hover:bg-destructive/90"
-                      >
-                        <X className="w-3 h-3" />
-                      </button>
+                  <div className="space-y-2">
+                    <FormLabel>Photos de vos produits (2 maximum)</FormLabel>
+                    <div className="flex flex-wrap gap-4">
+                      {photos.map((photo, index) => (
+                        <div key={index} className="relative w-24 h-24 rounded-lg overflow-hidden border border-border">
+                          <img
+                            src={URL.createObjectURL(photo)}
+                            alt={`Photo ${index + 1}`}
+                            className="w-full h-full object-cover"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => removePhoto(index)}
+                            className="absolute top-1 right-1 bg-destructive text-destructive-foreground rounded-full p-1 hover:bg-destructive/90"
+                          >
+                            <X className="w-3 h-3" />
+                          </button>
+                        </div>
+                      ))}
+                      {photos.length < 2 && (
+                        <label className="w-24 h-24 border-2 border-dashed border-border rounded-lg flex flex-col items-center justify-center cursor-pointer hover:border-leaf-green transition-colors">
+                          <Upload className="w-6 h-6 text-muted-foreground" />
+                          <span className="text-xs text-muted-foreground mt-1">Ajouter</span>
+                          <input
+                            type="file"
+                            accept="image/*"
+                            onChange={handlePhotoChange}
+                            className="hidden"
+                          />
+                        </label>
+                      )}
                     </div>
-                  ))}
-                  {photos.length < 2 && (
-                    <label className="w-24 h-24 border-2 border-dashed border-border rounded-lg flex flex-col items-center justify-center cursor-pointer hover:border-leaf-green transition-colors">
-                      <Upload className="w-6 h-6 text-muted-foreground" />
-                      <span className="text-xs text-muted-foreground mt-1">Ajouter</span>
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={handlePhotoChange}
-                        className="hidden"
-                      />
-                    </label>
-                  )}
-                </div>
-              </div>
+                  </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="source">Comment avez-vous connu KiltirBox ? (facultatif)</Label>
-                <Input
-                  id="source"
-                  name="source"
-                  value={formData.source}
-                  onChange={handleInputChange}
-                  placeholder="Réseaux sociaux, bouche-à-oreille, événement..."
-                />
-              </div>
+                  <FormField
+                    control={form.control}
+                    name="source"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Comment avez-vous connu KiltirBox ? (facultatif)</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Réseaux sociaux, bouche-à-oreille, événement..." {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-              <Button
-                type="submit"
-                disabled={isSubmitting}
-                className="w-full bg-leaf-green hover:bg-leaf-green/90 text-white py-6 text-lg"
-              >
-                {isSubmitting ? "Envoi en cours..." : "Envoyer ma candidature"}
-              </Button>
-            </form>
+                  <Button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="w-full"
+                  >
+                    {isSubmitting ? "Envoi en cours..." : "Envoyer ma candidature"}
+                  </Button>
+                </form>
+              </Form>
+            </div>
           </div>
         </div>
       </main>
-
       <Footer />
     </div>
   );
