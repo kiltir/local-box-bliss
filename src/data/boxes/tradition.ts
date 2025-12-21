@@ -20,7 +20,7 @@ export const traditionBox: BoxData = {
   ],
   items: 6,
   size: 'unique',
-  weightLimit: 4,
+  weightLimit: 2,
   theme: 'Racine',
   rating: 4.2,
   reviewCount: 31,

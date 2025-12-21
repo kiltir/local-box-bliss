@@ -19,7 +19,7 @@ export const saisonBox: BoxData = {
   ],
   items: 5,
   size: 'unique',
-  weightLimit: 4,
+  weightLimit: 2,
   theme: 'Saison',
   rating: 4.6,
   reviewCount: 18,

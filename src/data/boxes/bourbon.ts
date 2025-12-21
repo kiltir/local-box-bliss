@@ -20,7 +20,7 @@ export const bourbonBox: BoxData = {
   ],
   items: 6,
   size: 'unique',
-  weightLimit: 4,
+  weightLimit: 2,
   theme: 'Bourbon',
   rating: 4.8,
   reviewCount: 15,
