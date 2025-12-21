@@ -2,7 +2,7 @@
 
 // Box weight limits in kg - maintenant identique pour toutes les thématiques
 export const WEIGHT_LIMITS = {
-  unique: 4, // 4kg pour la box unique
+  unique: 2, // 2kg pour la box unique
 };
 
 // Box dimensions in cm (width × height × depth) - format unique

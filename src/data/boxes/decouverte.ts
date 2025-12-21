@@ -19,7 +19,7 @@ export const decouverteBox: BoxData = {
   ],
   items: 5,
   size: 'unique',
-  weightLimit: 4,
+  weightLimit: 2,
   theme: 'Découverte',
   rating: 4.5,
   reviewCount: 23,
