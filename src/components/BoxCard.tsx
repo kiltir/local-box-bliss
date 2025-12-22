@@ -48,11 +48,11 @@ const BoxCard = ({ title, price, description, image, items, theme, rating, revie
 
   const getBannerGradient = () => {
     switch (theme) {
-      case 'Découverte': return 'from-blue-500 to-blue-600';
-      case 'Bourbon': return 'from-amber-500 to-amber-600';
-      case 'Racine': return 'from-green-600 to-green-700';
-      case 'Saison': return 'from-purple-500 to-purple-600';
-      default: return 'from-gray-500 to-gray-600';
+      case 'Découverte': return 'from-blue-300 to-blue-400';
+      case 'Bourbon': return 'from-amber-300 to-amber-400';
+      case 'Racine': return 'from-green-400 to-green-500';
+      case 'Saison': return 'from-purple-300 to-purple-400';
+      default: return 'from-gray-300 to-gray-400';
     }
   };
 
