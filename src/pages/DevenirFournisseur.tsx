@@ -11,26 +11,56 @@ import { Textarea } from "@/components/ui/textarea";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { toast } from "sonner";
 import { ArrowLeft, Upload, X } from "lucide-react";
-
 const supplierFormSchema = z.object({
-  nom: z.string().trim().min(1, { message: "Le nom est requis" }).max(100, { message: "Le nom ne peut pas dépasser 100 caractères" }),
-  raisonSociale: z.string().trim().min(1, { message: "La raison sociale est requise" }).max(200, { message: "La raison sociale ne peut pas dépasser 200 caractères" }),
-  siret: z.string().trim().min(14, { message: "Le SIRET doit contenir 14 chiffres" }).max(14, { message: "Le SIRET doit contenir 14 chiffres" }),
-  adresse: z.string().trim().min(1, { message: "L'adresse est requise" }).max(300, { message: "L'adresse ne peut pas dépasser 300 caractères" }),
-  telephone: z.string().trim().min(1, { message: "Le téléphone est requis" }).max(20, { message: "Le téléphone ne peut pas dépasser 20 caractères" }),
-  activite: z.string().trim().min(1, { message: "La description de l'activité est requise" }).max(2000, { message: "La description ne peut pas dépasser 2000 caractères" }),
-  motivation: z.string().trim().min(1, { message: "La motivation est requise" }).max(2000, { message: "La motivation ne peut pas dépasser 2000 caractères" }),
-  produits: z.string().trim().min(1, { message: "La description des produits est requise" }).max(2000, { message: "La description ne peut pas dépasser 2000 caractères" }),
-  source: z.string().trim().max(200, { message: "Ce champ ne peut pas dépasser 200 caractères" }).optional(),
+  nom: z.string().trim().min(1, {
+    message: "Le nom est requis"
+  }).max(100, {
+    message: "Le nom ne peut pas dépasser 100 caractères"
+  }),
+  raisonSociale: z.string().trim().min(1, {
+    message: "La raison sociale est requise"
+  }).max(200, {
+    message: "La raison sociale ne peut pas dépasser 200 caractères"
+  }),
+  siret: z.string().trim().min(14, {
+    message: "Le SIRET doit contenir 14 chiffres"
+  }).max(14, {
+    message: "Le SIRET doit contenir 14 chiffres"
+  }),
+  adresse: z.string().trim().min(1, {
+    message: "L'adresse est requise"
+  }).max(300, {
+    message: "L'adresse ne peut pas dépasser 300 caractères"
+  }),
+  telephone: z.string().trim().min(1, {
+    message: "Le téléphone est requis"
+  }).max(20, {
+    message: "Le téléphone ne peut pas dépasser 20 caractères"
+  }),
+  activite: z.string().trim().min(1, {
+    message: "La description de l'activité est requise"
+  }).max(2000, {
+    message: "La description ne peut pas dépasser 2000 caractères"
+  }),
+  motivation: z.string().trim().min(1, {
+    message: "La motivation est requise"
+  }).max(2000, {
+    message: "La motivation ne peut pas dépasser 2000 caractères"
+  }),
+  produits: z.string().trim().min(1, {
+    message: "La description des produits est requise"
+  }).max(2000, {
+    message: "La description ne peut pas dépasser 2000 caractères"
+  }),
+  source: z.string().trim().max(200, {
+    message: "Ce champ ne peut pas dépasser 200 caractères"
+  }).optional()
 });
-
 type SupplierFormData = z.infer<typeof supplierFormSchema>;
-
 const DevenirFournisseur = () => {
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [photos, setPhotos] = useState<File[]>([]);
-
   const form = useForm<SupplierFormData>({
     resolver: zodResolver(supplierFormSchema),
     defaultValues: {
@@ -42,10 +72,9 @@ const DevenirFournisseur = () => {
       activite: "",
       motivation: "",
       produits: "",
-      source: "",
-    },
+      source: ""
+    }
   });
-
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files) {
@@ -53,33 +82,25 @@ const DevenirFournisseur = () => {
       setPhotos(prev => [...prev, ...newPhotos].slice(0, 2));
     }
   };
-
   const removePhoto = (index: number) => {
     setPhotos(prev => prev.filter((_, i) => i !== index));
   };
-
   const onSubmit = async (data: SupplierFormData) => {
     setIsSubmitting(true);
 
     // Simulate form submission
     await new Promise(resolve => setTimeout(resolve, 1500));
-
     toast.success("Votre candidature a bien été envoyée ! Nous vous recontacterons dans les plus brefs délais.");
     setIsSubmitting(false);
     form.reset();
     setPhotos([]);
   };
-
-  return (
-    <div className="min-h-screen flex flex-col">
+  return <div className="min-h-screen flex flex-col">
       <Navbar />
       <main className="flex-1">
         <div className="bg-gradient-to-b from-[#FEF7CD]/50 to-white py-16">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <button
-              onClick={() => navigate(-1)}
-              className="flex items-center text-leaf-green hover:underline mb-8"
-            >
+            <button onClick={() => navigate(-1)} className="flex items-center text-leaf-green hover:underline mb-8">
               <ArrowLeft className="w-4 h-4 mr-2" />
               Retour
             </button>
@@ -88,7 +109,7 @@ const DevenirFournisseur = () => {
               Devenir notre fournisseur
             </h1>
             <p className="text-gray-700 mb-8 text-center max-w-2xl mx-auto">
-              Vous êtes un producteur local ou un artisane passionnée ? Rejoignez l'aventure KiltirBox et faites découvrir VOS produits à travers NOS box !
+              Vous êtes un(e) professionel(le) passionné(e) et engagé(e) ? Rejoignez l'aventure KiltirBox et faites découvrir VOS produits à travers NOS box !
             </p>
 
             <div className="bg-white rounded-2xl shadow-lg p-8 md:p-12">
@@ -97,186 +118,117 @@ const DevenirFournisseur = () => {
               <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                   <div className="grid md:grid-cols-2 gap-6">
-                    <FormField
-                      control={form.control}
-                      name="nom"
-                      render={({ field }) => (
-                        <FormItem>
+                    <FormField control={form.control} name="nom" render={({
+                    field
+                  }) => <FormItem>
                           <FormLabel>Nom / Prénom(s)</FormLabel>
                           <FormControl>
                             <Input placeholder="Votre nom et prénom(s)" {...field} />
                           </FormControl>
                           <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                        </FormItem>} />
 
-                    <FormField
-                      control={form.control}
-                      name="raisonSociale"
-                      render={({ field }) => (
-                        <FormItem>
+                    <FormField control={form.control} name="raisonSociale" render={({
+                    field
+                  }) => <FormItem>
                           <FormLabel>Raison sociale</FormLabel>
                           <FormControl>
                             <Input placeholder="Nom de votre entreprise" {...field} />
                           </FormControl>
                           <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                        </FormItem>} />
                   </div>
 
                   <div className="grid md:grid-cols-2 gap-6">
-                    <FormField
-                      control={form.control}
-                      name="siret"
-                      render={({ field }) => (
-                        <FormItem>
+                    <FormField control={form.control} name="siret" render={({
+                    field
+                  }) => <FormItem>
                           <FormLabel>SIRET</FormLabel>
                           <FormControl>
                             <Input placeholder="Numéro SIRET (14 chiffres)" maxLength={14} {...field} />
                           </FormControl>
                           <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                        </FormItem>} />
 
-                    <FormField
-                      control={form.control}
-                      name="telephone"
-                      render={({ field }) => (
-                        <FormItem>
+                    <FormField control={form.control} name="telephone" render={({
+                    field
+                  }) => <FormItem>
                           <FormLabel>Téléphone</FormLabel>
                           <FormControl>
                             <Input type="tel" placeholder="Votre numéro de téléphone" {...field} />
                           </FormControl>
                           <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                        </FormItem>} />
                   </div>
 
-                  <FormField
-                    control={form.control}
-                    name="adresse"
-                    render={({ field }) => (
-                      <FormItem>
+                  <FormField control={form.control} name="adresse" render={({
+                  field
+                }) => <FormItem>
                         <FormLabel>Adresse</FormLabel>
                         <FormControl>
                           <Input placeholder="Adresse complète de votre entreprise" {...field} />
                         </FormControl>
                         <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                      </FormItem>} />
 
-                  <FormField
-                    control={form.control}
-                    name="activite"
-                    render={({ field }) => (
-                      <FormItem>
+                  <FormField control={form.control} name="activite" render={({
+                  field
+                }) => <FormItem>
                         <FormLabel>Décrivez votre activité et ce qui vous anime</FormLabel>
                         <FormControl>
-                          <Textarea
-                            placeholder="Parlez-nous de votre activité, de votre passion, de votre savoir-faire..."
-                            rows={4}
-                            {...field}
-                          />
+                          <Textarea placeholder="Parlez-nous de votre activité, de votre passion, de votre savoir-faire..." rows={4} {...field} />
                         </FormControl>
                         <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                      </FormItem>} />
 
-                  <FormField
-                    control={form.control}
-                    name="motivation"
-                    render={({ field }) => (
-                      <FormItem>
+                  <FormField control={form.control} name="motivation" render={({
+                  field
+                }) => <FormItem>
                         <FormLabel>Pourquoi rejoindre l'aventure KiltirBox ?</FormLabel>
                         <FormControl>
-                          <Textarea
-                            placeholder="Qu'est-ce qui vous motive à rejoindre KiltirBox ?"
-                            rows={3}
-                            {...field}
-                          />
+                          <Textarea placeholder="Qu'est-ce qui vous motive à rejoindre KiltirBox ?" rows={3} {...field} />
                         </FormControl>
                         <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                      </FormItem>} />
 
-                  <FormField
-                    control={form.control}
-                    name="produits"
-                    render={({ field }) => (
-                      <FormItem>
+                  <FormField control={form.control} name="produits" render={({
+                  field
+                }) => <FormItem>
                         <FormLabel>Quels produits proposez-vous de nous fournir ? Pour quelle(s) thématiques ?</FormLabel>
                         <FormControl>
-                          <Textarea
-                            placeholder="Décrivez les produits que vous souhaitez proposer..."
-                            rows={3}
-                            {...field}
-                          />
+                          <Textarea placeholder="Décrivez les produits que vous souhaitez proposer..." rows={3} {...field} />
                         </FormControl>
                         <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                      </FormItem>} />
 
                   <div className="space-y-2">
                     <FormLabel>Photos de vos produits (2 maximum)</FormLabel>
                     <div className="flex flex-wrap gap-4">
-                      {photos.map((photo, index) => (
-                        <div key={index} className="relative w-24 h-24 rounded-lg overflow-hidden border border-border">
-                          <img
-                            src={URL.createObjectURL(photo)}
-                            alt={`Photo ${index + 1}`}
-                            className="w-full h-full object-cover"
-                          />
-                          <button
-                            type="button"
-                            onClick={() => removePhoto(index)}
-                            className="absolute top-1 right-1 bg-destructive text-destructive-foreground rounded-full p-1 hover:bg-destructive/90"
-                          >
+                      {photos.map((photo, index) => <div key={index} className="relative w-24 h-24 rounded-lg overflow-hidden border border-border">
+                          <img src={URL.createObjectURL(photo)} alt={`Photo ${index + 1}`} className="w-full h-full object-cover" />
+                          <button type="button" onClick={() => removePhoto(index)} className="absolute top-1 right-1 bg-destructive text-destructive-foreground rounded-full p-1 hover:bg-destructive/90">
                             <X className="w-3 h-3" />
                           </button>
-                        </div>
-                      ))}
-                      {photos.length < 2 && (
-                        <label className="w-24 h-24 border-2 border-dashed border-border rounded-lg flex flex-col items-center justify-center cursor-pointer hover:border-leaf-green transition-colors">
+                        </div>)}
+                      {photos.length < 2 && <label className="w-24 h-24 border-2 border-dashed border-border rounded-lg flex flex-col items-center justify-center cursor-pointer hover:border-leaf-green transition-colors">
                           <Upload className="w-6 h-6 text-muted-foreground" />
                           <span className="text-xs text-muted-foreground mt-1">Ajouter</span>
-                          <input
-                            type="file"
-                            accept="image/*"
-                            onChange={handlePhotoChange}
-                            className="hidden"
-                          />
-                        </label>
-                      )}
+                          <input type="file" accept="image/*" onChange={handlePhotoChange} className="hidden" />
+                        </label>}
                     </div>
                   </div>
 
-                  <FormField
-                    control={form.control}
-                    name="source"
-                    render={({ field }) => (
-                      <FormItem>
+                  <FormField control={form.control} name="source" render={({
+                  field
+                }) => <FormItem>
                         <FormLabel>Comment avez-vous connu KiltirBox ? (facultatif)</FormLabel>
                         <FormControl>
                           <Input placeholder="Réseaux sociaux, bouche-à-oreille, événement..." {...field} />
                         </FormControl>
                         <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                      </FormItem>} />
 
-                  <Button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="w-full"
-                  >
+                  <Button type="submit" disabled={isSubmitting} className="w-full">
                     {isSubmitting ? "Envoi en cours..." : "Envoyer ma candidature"}
                   </Button>
                 </form>
@@ -286,8 +238,6 @@ const DevenirFournisseur = () => {
         </div>
       </main>
       <Footer />
-    </div>
-  );
+    </div>;
 };
-
 export default DevenirFournisseur;
