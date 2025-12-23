@@ -56,6 +56,12 @@ const FeaturesSection = () => {
               </svg>
               <span><strong className="text-gray-900">Nos valeurs</strong> - Nous partageons des valeurs humaines et culturelles propres à notre ancrage historique.</span>
             </li>
+            <li className="flex items-start">
+              <svg className="h-6 w-6 text-leaf-green mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+              <span><strong className="text-gray-900">Nos sélections</strong> - Tous les produits de nos box sont sélectionnés et validés selon des critères précis de qualité, conservation, goût, conditionnement, etc.</span>
+            </li>
           </ul>
         </div>
       </div>
