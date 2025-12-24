@@ -10,6 +10,7 @@ import { ReviewsModeration } from '@/components/admin/ReviewsModeration';
 import { UsersManagement } from '@/components/admin/UsersManagement';
 import { BannerManagement } from '@/components/admin/BannerManagement';
 import { PriceManagement } from '@/components/admin/PriceManagement';
+import SupplierApplicationsManagement from '@/components/admin/SupplierApplicationsManagement';
 import { Loader2, Shield, LogOut } from 'lucide-react';
 
 const AdminDashboard = () => {
@@ -55,13 +56,14 @@ const AdminDashboard = () => {
         </div>
 
         <Tabs defaultValue="orders" className="w-full">
-          <TabsList className="grid w-full grid-cols-6 mb-8">
+          <TabsList className="grid w-full grid-cols-7 mb-8">
             <TabsTrigger value="orders">Commandes</TabsTrigger>
             <TabsTrigger value="stock">Stocks</TabsTrigger>
             <TabsTrigger value="prices">Prix</TabsTrigger>
             <TabsTrigger value="banners">Bandeaux</TabsTrigger>
             <TabsTrigger value="reviews">Avis</TabsTrigger>
             <TabsTrigger value="users">Utilisateurs</TabsTrigger>
+            <TabsTrigger value="suppliers">Fournisseurs</TabsTrigger>
           </TabsList>
 
           <TabsContent value="orders" className="space-y-4">
@@ -86,6 +88,10 @@ const AdminDashboard = () => {
 
           <TabsContent value="users" className="space-y-4">
             <UsersManagement />
+          </TabsContent>
+
+          <TabsContent value="suppliers" className="space-y-4">
+            <SupplierApplicationsManagement />
           </TabsContent>
         </Tabs>
       </div>

@@ -403,6 +403,95 @@ export type Database = {
         }
         Relationships: []
       }
+      supplier_application_photos: {
+        Row: {
+          application_id: string
+          created_at: string
+          id: string
+          photo_url: string
+        }
+        Insert: {
+          application_id: string
+          created_at?: string
+          id?: string
+          photo_url: string
+        }
+        Update: {
+          application_id?: string
+          created_at?: string
+          id?: string
+          photo_url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "supplier_application_photos_application_id_fkey"
+            columns: ["application_id"]
+            isOneToOne: false
+            referencedRelation: "supplier_applications"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      supplier_applications: {
+        Row: {
+          activite: string
+          admin_notes: string | null
+          adresse: string
+          code_postal: string
+          created_at: string
+          email: string
+          id: string
+          motivation: string
+          nom: string
+          produits: string
+          raison_sociale: string
+          siret: string
+          source: string | null
+          status: string
+          telephone: string
+          updated_at: string
+          ville: string
+        }
+        Insert: {
+          activite: string
+          admin_notes?: string | null
+          adresse: string
+          code_postal: string
+          created_at?: string
+          email: string
+          id?: string
+          motivation: string
+          nom: string
+          produits: string
+          raison_sociale: string
+          siret: string
+          source?: string | null
+          status?: string
+          telephone: string
+          updated_at?: string
+          ville: string
+        }
+        Update: {
+          activite?: string
+          admin_notes?: string | null
+          adresse?: string
+          code_postal?: string
+          created_at?: string
+          email?: string
+          id?: string
+          motivation?: string
+          nom?: string
+          produits?: string
+          raison_sociale?: string
+          siret?: string
+          source?: string | null
+          status?: string
+          telephone?: string
+          updated_at?: string
+          ville?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string | null
