@@ -110,10 +110,14 @@ const DevenirFournisseur = () => {
     setIsSubmitting(true);
 
     try {
-      // Insert the application
-      const { data: application, error: applicationError } = await supabase
+      // Generate UUID client-side to avoid needing SELECT after INSERT
+      const applicationId = crypto.randomUUID();
+
+      // Insert the application without .select() to avoid RLS blocking
+      const { error: applicationError } = await supabase
         .from("supplier_applications")
         .insert({
+          id: applicationId,
           nom: data.nom,
           raison_sociale: data.raisonSociale,
           siret: data.siret,
@@ -126,17 +130,18 @@ const DevenirFournisseur = () => {
           motivation: data.motivation,
           produits: data.produits,
           source: data.source || null,
-        })
-        .select()
-        .single();
+        });
 
-      if (applicationError) throw applicationError;
+      if (applicationError) {
+        console.error("Application insert error:", applicationError);
+        throw applicationError;
+      }
 
       // Upload photos if any
-      if (photos.length > 0 && application) {
+      if (photos.length > 0) {
         for (const photo of photos) {
           const fileExt = photo.name.split(".").pop();
-          const fileName = `${application.id}/${crypto.randomUUID()}.${fileExt}`;
+          const fileName = `${applicationId}/${crypto.randomUUID()}.${fileExt}`;
 
           const { error: uploadError } = await supabase.storage
             .from("supplier-photos")
@@ -151,19 +156,23 @@ const DevenirFournisseur = () => {
             .from("supplier-photos")
             .getPublicUrl(fileName);
 
-          await supabase.from("supplier_application_photos").insert({
-            application_id: application.id,
+          const { error: photoInsertError } = await supabase.from("supplier_application_photos").insert({
+            application_id: applicationId,
             photo_url: publicUrl.publicUrl,
           });
+
+          if (photoInsertError) {
+            console.error("Error inserting photo record:", photoInsertError);
+          }
         }
       }
 
       toast.success("Votre candidature a bien été envoyée ! Nous vous recontacterons dans les plus brefs délais.");
       form.reset();
       setPhotos([]);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error submitting application:", error);
-      toast.error("Une erreur est survenue lors de l'envoi. Veuillez réessayer.");
+      toast.error(`Erreur: ${error.message || "Une erreur est survenue lors de l'envoi."}`);
     } finally {
       setIsSubmitting(false);
     }
