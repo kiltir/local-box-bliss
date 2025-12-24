@@ -11,6 +11,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { toast } from "sonner";
 import { ArrowLeft, Upload, X } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 const supplierFormSchema = z.object({
   nom: z.string().trim().min(1, {
     message: "Le nom est requis"
@@ -108,12 +109,64 @@ const DevenirFournisseur = () => {
   const onSubmit = async (data: SupplierFormData) => {
     setIsSubmitting(true);
 
-    // Simulate form submission
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    toast.success("Votre candidature a bien été envoyée ! Nous vous recontacterons dans les plus brefs délais.");
-    setIsSubmitting(false);
-    form.reset();
-    setPhotos([]);
+    try {
+      // Insert the application
+      const { data: application, error: applicationError } = await supabase
+        .from("supplier_applications")
+        .insert({
+          nom: data.nom,
+          raison_sociale: data.raisonSociale,
+          siret: data.siret,
+          adresse: data.adresse,
+          code_postal: data.codePostal,
+          ville: data.ville,
+          email: data.email,
+          telephone: data.telephone,
+          activite: data.activite,
+          motivation: data.motivation,
+          produits: data.produits,
+          source: data.source || null,
+        })
+        .select()
+        .single();
+
+      if (applicationError) throw applicationError;
+
+      // Upload photos if any
+      if (photos.length > 0 && application) {
+        for (const photo of photos) {
+          const fileExt = photo.name.split(".").pop();
+          const fileName = `${application.id}/${crypto.randomUUID()}.${fileExt}`;
+
+          const { error: uploadError } = await supabase.storage
+            .from("supplier-photos")
+            .upload(fileName, photo);
+
+          if (uploadError) {
+            console.error("Error uploading photo:", uploadError);
+            continue;
+          }
+
+          const { data: publicUrl } = supabase.storage
+            .from("supplier-photos")
+            .getPublicUrl(fileName);
+
+          await supabase.from("supplier_application_photos").insert({
+            application_id: application.id,
+            photo_url: publicUrl.publicUrl,
+          });
+        }
+      }
+
+      toast.success("Votre candidature a bien été envoyée ! Nous vous recontacterons dans les plus brefs délais.");
+      form.reset();
+      setPhotos([]);
+    } catch (error) {
+      console.error("Error submitting application:", error);
+      toast.error("Une erreur est survenue lors de l'envoi. Veuillez réessayer.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
   return <div className="min-h-screen flex flex-col">
       <Navbar />
