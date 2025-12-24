@@ -42,6 +42,13 @@ const supplierFormSchema = z.object({
   }).max(100, {
     message: "La ville ne peut pas dépasser 100 caractères"
   }),
+  email: z.string().trim().min(1, {
+    message: "L'email est requis"
+  }).email({
+    message: "L'email n'est pas valide"
+  }).max(255, {
+    message: "L'email ne peut pas dépasser 255 caractères"
+  }),
   telephone: z.string().trim().min(1, {
     message: "Le téléphone est requis"
   }).max(20, {
@@ -80,6 +87,7 @@ const DevenirFournisseur = () => {
       adresse: "",
       codePostal: "",
       ville: "",
+      email: "",
       telephone: "",
       activite: "",
       motivation: "",
@@ -151,13 +159,23 @@ const DevenirFournisseur = () => {
                         </FormItem>} />
                   </div>
 
-                  <div className="grid md:grid-cols-2 gap-6">
-                    <FormField control={form.control} name="siret" render={({
+                  <FormField control={form.control} name="siret" render={({
                     field
                   }) => <FormItem>
                           <FormLabel>SIRET</FormLabel>
                           <FormControl>
                             <Input placeholder="Numéro SIRET (14 chiffres)" maxLength={14} {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>} />
+
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <FormField control={form.control} name="email" render={({
+                    field
+                  }) => <FormItem>
+                          <FormLabel>Email</FormLabel>
+                          <FormControl>
+                            <Input type="email" placeholder="Votre adresse email" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>} />
