@@ -32,6 +32,16 @@ const supplierFormSchema = z.object({
   }).max(300, {
     message: "L'adresse ne peut pas dépasser 300 caractères"
   }),
+  codePostal: z.string().trim().min(1, {
+    message: "Le code postal est requis"
+  }).max(10, {
+    message: "Le code postal ne peut pas dépasser 10 caractères"
+  }),
+  ville: z.string().trim().min(1, {
+    message: "La ville est requise"
+  }).max(100, {
+    message: "La ville ne peut pas dépasser 100 caractères"
+  }),
   telephone: z.string().trim().min(1, {
     message: "Le téléphone est requis"
   }).max(20, {
@@ -68,6 +78,8 @@ const DevenirFournisseur = () => {
       raisonSociale: "",
       siret: "",
       adresse: "",
+      codePostal: "",
+      ville: "",
       telephone: "",
       activite: "",
       motivation: "",
@@ -166,10 +178,32 @@ const DevenirFournisseur = () => {
                 }) => <FormItem>
                         <FormLabel>Adresse</FormLabel>
                         <FormControl>
-                          <Input placeholder="Adresse complète de votre entreprise" {...field} />
+                          <Input placeholder="Adresse de votre entreprise" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>} />
+
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <FormField control={form.control} name="codePostal" render={({
+                    field
+                  }) => <FormItem>
+                          <FormLabel>CP</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Code postal" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>} />
+
+                    <FormField control={form.control} name="ville" render={({
+                    field
+                  }) => <FormItem>
+                          <FormLabel>Ville</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Ville" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>} />
+                  </div>
 
                   <FormField control={form.control} name="activite" render={({
                   field
