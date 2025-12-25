@@ -104,6 +104,60 @@ export type Database = {
         }
         Relationships: []
       }
+      box_products: {
+        Row: {
+          box_id: number
+          created_at: string
+          description: string | null
+          dimension_depth: number | null
+          dimension_height: number | null
+          dimension_width: number | null
+          display_order: number | null
+          id: string
+          image_url: string | null
+          name: string
+          producer: string
+          quantity: string
+          theme: string
+          updated_at: string
+          weight: number | null
+        }
+        Insert: {
+          box_id: number
+          created_at?: string
+          description?: string | null
+          dimension_depth?: number | null
+          dimension_height?: number | null
+          dimension_width?: number | null
+          display_order?: number | null
+          id?: string
+          image_url?: string | null
+          name: string
+          producer: string
+          quantity: string
+          theme: string
+          updated_at?: string
+          weight?: number | null
+        }
+        Update: {
+          box_id?: number
+          created_at?: string
+          description?: string | null
+          dimension_depth?: number | null
+          dimension_height?: number | null
+          dimension_width?: number | null
+          display_order?: number | null
+          id?: string
+          image_url?: string | null
+          name?: string
+          producer?: string
+          quantity?: string
+          theme?: string
+          updated_at?: string
+          weight?: number | null
+        }
+        Relationships: []
+      }
       box_reviews: {
         Row: {
           box_id: number
