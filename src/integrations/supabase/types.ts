@@ -164,6 +164,7 @@ export type Database = {
           comment: string | null
           created_at: string
           id: string
+          is_featured: boolean
           rating: number
           updated_at: string
           user_id: string
@@ -173,6 +174,7 @@ export type Database = {
           comment?: string | null
           created_at?: string
           id?: string
+          is_featured?: boolean
           rating: number
           updated_at?: string
           user_id: string
@@ -182,6 +184,7 @@ export type Database = {
           comment?: string | null
           created_at?: string
           id?: string
+          is_featured?: boolean
           rating?: number
           updated_at?: string
           user_id?: string
