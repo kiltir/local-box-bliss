@@ -4,7 +4,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Loader2, Trash2 } from 'lucide-react';
+import { Switch } from '@/components/ui/switch';
+import { Loader2, Trash2, Star } from 'lucide-react';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
@@ -17,6 +18,7 @@ interface Review {
   rating: number;
   comment: string | null;
   created_at: string;
+  is_featured: boolean;
   profiles: {
     full_name: string | null;
   };
@@ -90,6 +92,27 @@ export const ReviewsModeration = () => {
     }
   };
 
+  const toggleFeatured = async (reviewId: string, currentValue: boolean) => {
+    try {
+      const { error } = await supabase
+        .from('box_reviews')
+        .update({ is_featured: !currentValue })
+        .eq('id', reviewId);
+
+      if (error) throw error;
+
+      setReviews(reviews.map(review => 
+        review.id === reviewId 
+          ? { ...review, is_featured: !currentValue }
+          : review
+      ));
+      toast.success(!currentValue ? 'Avis mis en avant' : 'Avis retiré de la mise en avant');
+    } catch (error) {
+      console.error('Error toggling featured:', error);
+      toast.error('Erreur lors de la modification');
+    }
+  };
+
   const filteredReviews = reviews.filter(review => {
     const matchesBox = boxFilter === 'all' || review.box_id.toString() === boxFilter;
     const matchesRating = ratingFilter === 'all' || review.rating === parseInt(ratingFilter);
@@ -145,13 +168,17 @@ export const ReviewsModeration = () => {
               <TableHead>Note</TableHead>
               <TableHead>Commentaire</TableHead>
               <TableHead>Date</TableHead>
+              <TableHead>Mettre en avant</TableHead>
               <TableHead>Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {filteredReviews.map((review) => (
-              <TableRow key={review.id}>
-                <TableCell>{review.profiles?.full_name || 'Anonyme'}</TableCell>
+              <TableRow key={review.id} className={review.is_featured ? 'bg-primary/5' : ''}>
+                <TableCell className="flex items-center gap-2">
+                  {review.is_featured && <Star className="h-4 w-4 text-primary fill-primary" />}
+                  {review.profiles?.full_name || 'Anonyme'}
+                </TableCell>
                 <TableCell>{boxNames[review.box_id]}</TableCell>
                 <TableCell>
                   <StarRating rating={review.rating} size={14} />
@@ -160,6 +187,12 @@ export const ReviewsModeration = () => {
                   {review.comment || <span className="text-muted-foreground italic">Pas de commentaire</span>}
                 </TableCell>
                 <TableCell>{format(new Date(review.created_at), 'dd MMM yyyy', { locale: fr })}</TableCell>
+                <TableCell>
+                  <Switch
+                    checked={review.is_featured}
+                    onCheckedChange={() => toggleFeatured(review.id, review.is_featured)}
+                  />
+                </TableCell>
                 <TableCell>
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
