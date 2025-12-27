@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { Plus, Trash2, Save, ChevronDown, ChevronRight } from "lucide-react";
+import { Plus, Trash2, Save, ChevronDown, ChevronRight, Upload, X } from "lucide-react";
 import { toast } from "sonner";
 
 interface Partner {
@@ -18,12 +18,16 @@ interface Partner {
   description: string;
   display_order: number;
   is_active: boolean;
+  image_url: string | null;
 }
 
 export function PartnersManagement() {
   const queryClient = useQueryClient();
   const [expandedPartners, setExpandedPartners] = useState<Set<string>>(new Set());
   const [editedPartners, setEditedPartners] = useState<Record<string, Partial<Partner>>>({});
+  const [newPartnerImage, setNewPartnerImage] = useState<File | null>(null);
+  const [uploadingImage, setUploadingImage] = useState<string | null>(null);
+  const newImageInputRef = useRef<HTMLInputElement>(null);
   const [newPartner, setNewPartner] = useState({
     raison_sociale: "",
     secteur_activite: "",
@@ -45,9 +49,37 @@ export function PartnersManagement() {
     },
   });
 
+  const uploadImage = async (file: File, partnerId?: string): Promise<string | null> => {
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${partnerId || 'new'}-${Date.now()}.${fileExt}`;
+    const filePath = `${fileName}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from('partner-images')
+      .upload(filePath, file);
+
+    if (uploadError) {
+      console.error('Upload error:', uploadError);
+      return null;
+    }
+
+    const { data } = supabase.storage
+      .from('partner-images')
+      .getPublicUrl(filePath);
+
+    return data.publicUrl;
+  };
+
   const createMutation = useMutation({
-    mutationFn: async (partner: typeof newPartner) => {
-      const { error } = await supabase.from("partners").insert(partner);
+    mutationFn: async (partner: typeof newPartner & { image_url?: string }) => {
+      let imageUrl = null;
+      if (newPartnerImage) {
+        imageUrl = await uploadImage(newPartnerImage);
+      }
+      const { error } = await supabase.from("partners").insert({
+        ...partner,
+        image_url: imageUrl,
+      });
       if (error) throw error;
     },
     onSuccess: () => {
@@ -59,6 +91,10 @@ export function PartnersManagement() {
         display_order: 0,
         is_active: true,
       });
+      setNewPartnerImage(null);
+      if (newImageInputRef.current) {
+        newImageInputRef.current.value = '';
+      }
       toast.success("Partenaire créé avec succès");
     },
     onError: () => {
@@ -132,6 +168,21 @@ export function PartnersManagement() {
     }
   };
 
+  const handleImageUpload = async (partnerId: string, file: File) => {
+    setUploadingImage(partnerId);
+    const imageUrl = await uploadImage(file, partnerId);
+    if (imageUrl) {
+      updateMutation.mutate({ id: partnerId, updates: { image_url: imageUrl } });
+    } else {
+      toast.error("Erreur lors de l'upload de l'image");
+    }
+    setUploadingImage(null);
+  };
+
+  const removeImage = (partnerId: string) => {
+    updateMutation.mutate({ id: partnerId, updates: { image_url: null } });
+  };
+
   if (isLoading) {
     return <div className="p-4">Chargement...</div>;
   }
@@ -173,6 +224,35 @@ export function PartnersManagement() {
               placeholder="Description du partenaire..."
               rows={3}
             />
+          </div>
+          <div className="space-y-2">
+            <Label>Photo du partenaire</Label>
+            <div className="flex items-center gap-4">
+              <Input
+                ref={newImageInputRef}
+                type="file"
+                accept="image/*"
+                onChange={(e) => setNewPartnerImage(e.target.files?.[0] || null)}
+                className="flex-1"
+              />
+              {newPartnerImage && (
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-muted-foreground">{newPartnerImage.name}</span>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => {
+                      setNewPartnerImage(null);
+                      if (newImageInputRef.current) {
+                        newImageInputRef.current.value = '';
+                      }
+                    }}
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+              )}
+            </div>
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
@@ -273,6 +353,44 @@ export function PartnersManagement() {
                       onChange={(e) => handlePartnerChange(partner.id, "description", e.target.value)}
                       rows={3}
                     />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Photo du partenaire</Label>
+                    {partner.image_url ? (
+                      <div className="flex items-center gap-4">
+                        <img
+                          src={partner.image_url}
+                          alt={partner.raison_sociale}
+                          className="w-20 h-20 object-cover rounded-lg border"
+                        />
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => removeImage(partner.id)}
+                        >
+                          <X className="h-4 w-4 mr-1" />
+                          Supprimer
+                        </Button>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-2">
+                        <Input
+                          type="file"
+                          accept="image/*"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) {
+                              handleImageUpload(partner.id, file);
+                            }
+                          }}
+                          disabled={uploadingImage === partner.id}
+                          className="flex-1"
+                        />
+                        {uploadingImage === partner.id && (
+                          <span className="text-sm text-muted-foreground">Upload en cours...</span>
+                        )}
+                      </div>
+                    )}
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
