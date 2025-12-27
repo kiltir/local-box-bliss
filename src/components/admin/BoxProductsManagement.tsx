@@ -6,8 +6,9 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Label } from '@/components/ui/label';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { toast } from 'sonner';
-import { Loader2, Save, Plus, Trash2, Package } from 'lucide-react';
+import { Loader2, Save, Plus, Trash2, Package, ChevronDown, ChevronRight } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -56,6 +57,7 @@ export const BoxProductsManagement = () => {
   const [saving, setSaving] = useState<string | null>(null);
   const [selectedTheme, setSelectedTheme] = useState('Découverte');
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [expandedProducts, setExpandedProducts] = useState<Set<string>>(new Set());
   const [newProduct, setNewProduct] = useState({
     name: '',
     quantity: '',
@@ -87,6 +89,18 @@ export const BoxProductsManagement = () => {
       setProducts(data || []);
     }
     setLoading(false);
+  };
+
+  const toggleProductExpanded = (productId: string) => {
+    setExpandedProducts(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(productId)) {
+        newSet.delete(productId);
+      } else {
+        newSet.add(productId);
+      }
+      return newSet;
+    });
   };
 
   const handleUpdateProduct = async (product: BoxProduct) => {
@@ -319,129 +333,146 @@ export const BoxProductsManagement = () => {
               </Card>
             ) : (
               filteredProducts.map((product) => (
-                <Card key={product.id}>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-lg flex items-center justify-between">
-                      <span>{product.name}</span>
-                      <div className="flex items-center gap-2">
-                        <Button
-                          size="sm"
-                          onClick={() => handleUpdateProduct(product)}
-                          disabled={saving === product.id}
-                        >
-                          {saving === product.id ? (
-                            <Loader2 className="h-4 w-4 animate-spin" />
-                          ) : (
-                            <>
-                              <Save className="h-4 w-4 mr-1" />
-                              Sauvegarder
-                            </>
-                          )}
-                        </Button>
-                        <AlertDialog>
-                          <AlertDialogTrigger asChild>
-                            <Button size="sm" variant="destructive">
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </AlertDialogTrigger>
-                          <AlertDialogContent>
-                            <AlertDialogHeader>
-                              <AlertDialogTitle>Supprimer ce produit ?</AlertDialogTitle>
-                              <AlertDialogDescription>
-                                Cette action est irréversible. Le produit "{product.name}" sera définitivement supprimé.
-                              </AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter>
-                              <AlertDialogCancel>Annuler</AlertDialogCancel>
-                              <AlertDialogAction onClick={() => handleDeleteProduct(product.id)}>
-                                Supprimer
-                              </AlertDialogAction>
-                            </AlertDialogFooter>
-                          </AlertDialogContent>
-                        </AlertDialog>
-                      </div>
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <Label>Nom du produit</Label>
-                        <Input
-                          value={product.name}
-                          onChange={(e) => updateLocalProduct(product.id, 'name', e.target.value)}
-                        />
-                      </div>
-                      <div>
-                        <Label>Quantité</Label>
-                        <Input
-                          value={product.quantity}
-                          onChange={(e) => updateLocalProduct(product.id, 'quantity', e.target.value)}
-                        />
-                      </div>
-                      <div>
-                        <Label>Producteur</Label>
-                        <Input
-                          value={product.producer}
-                          onChange={(e) => updateLocalProduct(product.id, 'producer', e.target.value)}
-                        />
-                      </div>
-                      <div>
-                        <Label>Poids (kg)</Label>
-                        <Input
-                          type="number"
-                          step="0.001"
-                          value={product.weight}
-                          onChange={(e) => updateLocalProduct(product.id, 'weight', parseFloat(e.target.value) || 0)}
-                        />
-                      </div>
-                    </div>
-                    
-                    <div>
-                      <Label>Description</Label>
-                      <Textarea
-                        value={product.description || ''}
-                        onChange={(e) => updateLocalProduct(product.id, 'description', e.target.value)}
-                        placeholder="Description optionnelle du produit"
-                      />
-                    </div>
+                <Collapsible
+                  key={product.id}
+                  open={expandedProducts.has(product.id)}
+                  onOpenChange={() => toggleProductExpanded(product.id)}
+                >
+                  <Card>
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-lg flex items-center justify-between">
+                        <CollapsibleTrigger asChild>
+                          <button className="flex items-center gap-2 text-left hover:text-primary transition-colors">
+                            {expandedProducts.has(product.id) ? (
+                              <ChevronDown className="h-4 w-4 flex-shrink-0" />
+                            ) : (
+                              <ChevronRight className="h-4 w-4 flex-shrink-0" />
+                            )}
+                            <span>{product.name}</span>
+                          </button>
+                        </CollapsibleTrigger>
+                        <div className="flex items-center gap-2">
+                          <Button
+                            size="sm"
+                            onClick={() => handleUpdateProduct(product)}
+                            disabled={saving === product.id}
+                          >
+                            {saving === product.id ? (
+                              <Loader2 className="h-4 w-4 animate-spin" />
+                            ) : (
+                              <>
+                                <Save className="h-4 w-4 mr-1" />
+                                Sauvegarder
+                              </>
+                            )}
+                          </Button>
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <Button size="sm" variant="destructive">
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>Supprimer ce produit ?</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  Cette action est irréversible. Le produit "{product.name}" sera définitivement supprimé.
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>Annuler</AlertDialogCancel>
+                                <AlertDialogAction onClick={() => handleDeleteProduct(product.id)}>
+                                  Supprimer
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
+                        </div>
+                      </CardTitle>
+                    </CardHeader>
+                    <CollapsibleContent>
+                      <CardContent className="space-y-4 pt-0">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div>
+                            <Label>Nom du produit</Label>
+                            <Input
+                              value={product.name}
+                              onChange={(e) => updateLocalProduct(product.id, 'name', e.target.value)}
+                            />
+                          </div>
+                          <div>
+                            <Label>Quantité</Label>
+                            <Input
+                              value={product.quantity}
+                              onChange={(e) => updateLocalProduct(product.id, 'quantity', e.target.value)}
+                            />
+                          </div>
+                          <div>
+                            <Label>Producteur</Label>
+                            <Input
+                              value={product.producer}
+                              onChange={(e) => updateLocalProduct(product.id, 'producer', e.target.value)}
+                            />
+                          </div>
+                          <div>
+                            <Label>Poids (kg)</Label>
+                            <Input
+                              type="number"
+                              step="0.001"
+                              value={product.weight}
+                              onChange={(e) => updateLocalProduct(product.id, 'weight', parseFloat(e.target.value) || 0)}
+                            />
+                          </div>
+                        </div>
+                        
+                        <div>
+                          <Label>Description</Label>
+                          <Textarea
+                            value={product.description || ''}
+                            onChange={(e) => updateLocalProduct(product.id, 'description', e.target.value)}
+                            placeholder="Description optionnelle du produit"
+                          />
+                        </div>
 
-                    <div className="grid grid-cols-3 gap-4">
-                      <div>
-                        <Label>Largeur (cm)</Label>
-                        <Input
-                          type="number"
-                          value={product.dimension_width}
-                          onChange={(e) => updateLocalProduct(product.id, 'dimension_width', parseFloat(e.target.value) || 0)}
-                        />
-                      </div>
-                      <div>
-                        <Label>Hauteur (cm)</Label>
-                        <Input
-                          type="number"
-                          value={product.dimension_height}
-                          onChange={(e) => updateLocalProduct(product.id, 'dimension_height', parseFloat(e.target.value) || 0)}
-                        />
-                      </div>
-                      <div>
-                        <Label>Profondeur (cm)</Label>
-                        <Input
-                          type="number"
-                          value={product.dimension_depth}
-                          onChange={(e) => updateLocalProduct(product.id, 'dimension_depth', parseFloat(e.target.value) || 0)}
-                        />
-                      </div>
-                    </div>
+                        <div className="grid grid-cols-3 gap-4">
+                          <div>
+                            <Label>Largeur (cm)</Label>
+                            <Input
+                              type="number"
+                              value={product.dimension_width}
+                              onChange={(e) => updateLocalProduct(product.id, 'dimension_width', parseFloat(e.target.value) || 0)}
+                            />
+                          </div>
+                          <div>
+                            <Label>Hauteur (cm)</Label>
+                            <Input
+                              type="number"
+                              value={product.dimension_height}
+                              onChange={(e) => updateLocalProduct(product.id, 'dimension_height', parseFloat(e.target.value) || 0)}
+                            />
+                          </div>
+                          <div>
+                            <Label>Profondeur (cm)</Label>
+                            <Input
+                              type="number"
+                              value={product.dimension_depth}
+                              onChange={(e) => updateLocalProduct(product.id, 'dimension_depth', parseFloat(e.target.value) || 0)}
+                            />
+                          </div>
+                        </div>
 
-                    <div>
-                      <Label>URL de l'image</Label>
-                      <Input
-                        value={product.image_url || ''}
-                        onChange={(e) => updateLocalProduct(product.id, 'image_url', e.target.value)}
-                        placeholder="/path/to/image.png"
-                      />
-                    </div>
-                  </CardContent>
-                </Card>
+                        <div>
+                          <Label>URL de l'image</Label>
+                          <Input
+                            value={product.image_url || ''}
+                            onChange={(e) => updateLocalProduct(product.id, 'image_url', e.target.value)}
+                            placeholder="/path/to/image.png"
+                          />
+                        </div>
+                      </CardContent>
+                    </CollapsibleContent>
+                  </Card>
+                </Collapsible>
               ))
             )}
           </TabsContent>
