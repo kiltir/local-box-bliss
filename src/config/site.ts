@@ -1,6 +1,6 @@
 export const siteConfig = {
-  brandName: "KiltirBox",
+  brandName: "kiltirbox.com",
   domainName: "kiltirbox.com",
-  description: "KiltirBox - Box de produits réunionnais",
-  author: "KiltirBox"
+  description: "kiltirbox.com - Box de produits réunionnais",
+  author: "kiltirbox.com"
 } as const;
