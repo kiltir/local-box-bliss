@@ -418,6 +418,7 @@ export type Database = {
           description: string
           display_order: number | null
           id: string
+          image_url: string | null
           is_active: boolean | null
           raison_sociale: string
           secteur_activite: string
@@ -428,6 +429,7 @@ export type Database = {
           description: string
           display_order?: number | null
           id?: string
+          image_url?: string | null
           is_active?: boolean | null
           raison_sociale: string
           secteur_activite: string
@@ -438,6 +440,7 @@ export type Database = {
           description?: string
           display_order?: number | null
           id?: string
+          image_url?: string | null
           is_active?: boolean | null
           raison_sociale?: string
           secteur_activite?: string
