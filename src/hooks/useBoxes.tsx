@@ -3,6 +3,7 @@ import { boxes as staticBoxes } from '@/data/boxes';
 import { useBoxTheme } from './useBoxTheme';
 import { useBoxPrices } from './useBoxPrices';
 import { useBoxProducts } from './useBoxProducts';
+import { useBoxImages } from './useBoxImages';
 import { BoxData } from '@/types/boxes';
 
 export const useBoxes = () => {
@@ -10,21 +11,23 @@ export const useBoxes = () => {
   const { selectedTheme, handleThemeChange } = useBoxTheme();
   const { prices, loading: pricesLoading } = useBoxPrices();
   const { getProductsForBox, isLoading: productsLoading } = useBoxProducts();
+  const { getImagesForBox, isLoading: imagesLoading } = useBoxImages();
 
-  // Fusionner les prix dynamiques et produits Supabase avec les données statiques des boxes
+  // Fusionner les prix dynamiques, produits et images Supabase avec les données statiques des boxes
   const boxes: BoxData[] = useMemo(() => {
     return staticBoxes.map(box => {
       const priceData = prices.find(p => p.box_id === box.id);
-      // Récupérer les produits depuis Supabase, fallback sur statique si vide
       const supabaseProducts = getProductsForBox(box.id, box.theme);
+      const dynamicImages = getImagesForBox(box.id);
       
       return {
         ...box,
         price: priceData?.unit_price || box.price,
-        products: supabaseProducts || box.products, // Priorité Supabase
+        products: supabaseProducts || box.products,
+        images: dynamicImages.length > 0 ? dynamicImages : box.images,
       };
     });
-  }, [prices, getProductsForBox]);
+  }, [prices, getProductsForBox, getImagesForBox]);
 
   const handleBoxClick = (id: number) => {
     setSelectedBox(id);
