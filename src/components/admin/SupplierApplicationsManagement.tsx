@@ -80,7 +80,28 @@ const SupplierApplicationsManagement = () => {
         .eq("application_id", selectedApplication.id);
 
       if (error) throw error;
-      return data as SupplierPhoto[];
+      
+      // Generate signed URLs for each photo (bucket is private)
+      const photosWithSignedUrls = await Promise.all(
+        (data as SupplierPhoto[]).map(async (photo) => {
+          // Check if photo_url is already a full URL (legacy) or just a path
+          if (photo.photo_url.startsWith('http')) {
+            return photo;
+          }
+          
+          // Generate signed URL for private bucket access
+          const { data: signedUrlData } = await supabase.storage
+            .from('supplier-photos')
+            .createSignedUrl(photo.photo_url, 3600); // 1 hour expiry
+          
+          return {
+            ...photo,
+            photo_url: signedUrlData?.signedUrl || photo.photo_url,
+          };
+        })
+      );
+      
+      return photosWithSignedUrls;
     },
     enabled: !!selectedApplication,
   });

@@ -110,35 +110,25 @@ const DevenirFournisseur = () => {
     setIsSubmitting(true);
 
     try {
-      // Generate UUID client-side to avoid needing SELECT after INSERT
-      const applicationId = crypto.randomUUID();
+      // Submit application via edge function for server-side validation
+      const response = await supabase.functions.invoke('submit-supplier-application', {
+        body: data,
+      });
 
-      // Insert the application without .select() to avoid RLS blocking
-      const { error: applicationError } = await supabase
-        .from("supplier_applications")
-        .insert({
-          id: applicationId,
-          nom: data.nom,
-          raison_sociale: data.raisonSociale,
-          siret: data.siret,
-          adresse: data.adresse,
-          code_postal: data.codePostal,
-          ville: data.ville,
-          email: data.email,
-          telephone: data.telephone,
-          activite: data.activite,
-          motivation: data.motivation,
-          produits: data.produits,
-          source: data.source || null,
-        });
-
-      if (applicationError) {
-        console.error("Application insert error:", applicationError);
-        throw applicationError;
+      if (response.error) {
+        throw new Error(response.error.message || 'Erreur lors de l\'envoi');
       }
 
-      // Upload photos if any
-      if (photos.length > 0) {
+      const result = response.data;
+      
+      if (!result.success) {
+        throw new Error(result.error || 'Erreur lors de l\'envoi');
+      }
+
+      const applicationId = result.applicationId;
+
+      // Upload photos if any (photos are uploaded separately after application is created)
+      if (photos.length > 0 && applicationId) {
         for (const photo of photos) {
           const fileExt = photo.name.split(".").pop();
           const fileName = `${applicationId}/${crypto.randomUUID()}.${fileExt}`;
@@ -152,13 +142,10 @@ const DevenirFournisseur = () => {
             continue;
           }
 
-          const { data: publicUrl } = supabase.storage
-            .from("supplier-photos")
-            .getPublicUrl(fileName);
-
+          // Store just the path, not the full public URL (bucket is now private)
           const { error: photoInsertError } = await supabase.from("supplier_application_photos").insert({
             application_id: applicationId,
-            photo_url: publicUrl.publicUrl,
+            photo_url: fileName,
           });
 
           if (photoInsertError) {
