@@ -638,7 +638,36 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      public_box_reviews: {
+        Row: {
+          box_id: number | null
+          comment: string | null
+          created_at: string | null
+          id: string | null
+          is_featured: boolean | null
+          rating: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          box_id?: number | null
+          comment?: string | null
+          created_at?: string | null
+          id?: string | null
+          is_featured?: boolean | null
+          rating?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          box_id?: number | null
+          comment?: string | null
+          created_at?: string | null
+          id?: string | null
+          is_featured?: boolean | null
+          rating?: number | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       has_role: {
