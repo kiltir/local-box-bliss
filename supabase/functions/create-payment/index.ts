@@ -85,8 +85,88 @@ serve(async (req) => {
       apiVersion: "2023-10-16",
     });
 
-    // Check for authenticated user (optional for guest checkout)
+    // Create Supabase client with service role for price validation
     const supabaseClient = createClient(
+      Deno.env.get("SUPABASE_URL") ?? "",
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
+    );
+
+    // Fetch all box prices from database for validation
+    const { data: dbPrices, error: pricesError } = await supabaseClient
+      .from('box_prices')
+      .select('box_id, theme, unit_price, subscription_6_months_price, subscription_12_months_price');
+    
+    if (pricesError) {
+      logStep("Failed to fetch prices from database", { error: pricesError.message });
+      throw new Error("Impossible de valider les prix. Veuillez réessayer.");
+    }
+
+    logStep("Database prices fetched", { count: dbPrices?.length || 0 });
+
+    // Create a map for quick price lookup: "boxId-theme" -> price info
+    const priceMap = new Map<string, { unit: number; sub6: number; sub12: number }>();
+    if (dbPrices) {
+      for (const price of dbPrices) {
+        const key = `${price.box_id}-${price.theme}`;
+        priceMap.set(key, {
+          unit: Number(price.unit_price),
+          sub6: Number(price.subscription_6_months_price),
+          sub12: Number(price.subscription_12_months_price),
+        });
+      }
+    }
+
+    // Validate each item's price against database
+    for (const item of items) {
+      const boxId = item.box?.id;
+      const theme = item.box?.theme;
+      const clientPrice = item.box?.price;
+      const subscriptionType = item.subscriptionType;
+
+      if (!boxId || !theme) {
+        logStep("Invalid item - missing boxId or theme", { item });
+        throw new Error("Article invalide dans le panier");
+      }
+
+      const key = `${boxId}-${theme}`;
+      const dbPrice = priceMap.get(key);
+
+      if (!dbPrice) {
+        logStep("Price not found in database", { boxId, theme });
+        throw new Error(`Prix introuvable pour l'article: ${item.box?.baseTitle || 'Inconnu'}`);
+      }
+
+      // Determine expected price based on subscription type
+      let expectedPrice: number;
+      if (subscriptionType === '6_months') {
+        expectedPrice = dbPrice.sub6;
+      } else if (subscriptionType === '12_months') {
+        expectedPrice = dbPrice.sub12;
+      } else {
+        expectedPrice = dbPrice.unit;
+      }
+
+      // Compare prices (allow for small floating point differences)
+      const priceDifference = Math.abs(clientPrice - expectedPrice);
+      if (priceDifference > 0.01) {
+        logStep("PRICE MANIPULATION DETECTED", { 
+          boxId, 
+          theme, 
+          clientPrice, 
+          expectedPrice, 
+          subscriptionType,
+          difference: priceDifference 
+        });
+        throw new Error("Les prix ont été modifiés. Veuillez rafraîchir votre panier.");
+      }
+
+      logStep("Price validated", { boxId, theme, price: expectedPrice, subscriptionType });
+    }
+
+    logStep("All prices validated successfully");
+
+    // Check for authenticated user (optional for guest checkout)
+    const supabaseAnonClient = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
       Deno.env.get("SUPABASE_ANON_KEY") ?? ""
     );
@@ -99,7 +179,7 @@ serve(async (req) => {
     if (authHeader) {
       try {
         const token = authHeader.replace("Bearer ", "");
-        const { data } = await supabaseClient.auth.getUser(token);
+        const { data } = await supabaseAnonClient.auth.getUser(token);
         user = data.user;
         if (user?.email) {
           customerEmail = user.email;
@@ -167,21 +247,32 @@ serve(async (req) => {
       }
     }
 
-    // Build line items from cart with normalized image URLs
+    // Build line items from cart with VALIDATED database prices
     const lineItems = items.map((item: any) => {
-      const unitAmount = Math.round(item.box.price * 100); // Convert to cents
+      const key = `${item.box.id}-${item.box.theme}`;
+      const dbPrice = priceMap.get(key)!;
+      
+      // Use database price instead of client price
+      let validatedPrice: number;
+      if (item.subscriptionType === '6_months') {
+        validatedPrice = dbPrice.sub6;
+      } else if (item.subscriptionType === '12_months') {
+        validatedPrice = dbPrice.sub12;
+      } else {
+        validatedPrice = dbPrice.unit;
+      }
+      
+      const unitAmount = Math.round(validatedPrice * 100); // Convert to cents
       
       // Normalize image URL
       const originalImage = item.box.image;
       const normalizedImage = toAbsoluteUrl(originalImage, origin);
       
-      logStep("Processing item", { 
+      logStep("Processing item with validated price", { 
         title: item.box.baseTitle, 
-        price: item.box.price, 
+        validatedPrice,
         quantity: item.quantity,
         unitAmount,
-        originalImage,
-        normalizedImage
       });
       
       const productData: any = {
@@ -204,7 +295,7 @@ serve(async (req) => {
       };
     });
 
-    logStep("Line items created", { count: lineItems.length });
+    logStep("Line items created with validated prices", { count: lineItems.length });
 
     // Create simplified metadata to stay under 500 character limit
     const simplifiedItems = items.map((item: any) => ({
