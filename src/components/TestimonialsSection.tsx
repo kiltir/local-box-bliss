@@ -9,9 +9,6 @@ interface FeaturedReview {
   rating: number;
   comment: string | null;
   box_id: number;
-  profiles: {
-    full_name: string | null;
-  } | null;
 }
 
 const boxNames: Record<number, string> = {
@@ -25,35 +22,17 @@ const TestimonialsSection = () => {
   const { data: featuredReviews, isLoading } = useQuery({
     queryKey: ['featured-reviews'],
     queryFn: async () => {
+      // Use the public view that doesn't expose user_id for security
       const { data: reviews, error } = await supabase
-        .from('box_reviews')
-        .select('id, rating, comment, box_id, user_id')
+        .from('public_box_reviews')
+        .select('id, rating, comment, box_id, is_featured')
         .eq('is_featured', true)
         .order('created_at', { ascending: false })
         .limit(6);
 
       if (error) throw error;
 
-      // Fetch profiles for each review
-      const reviewsWithProfiles = await Promise.all(
-        (reviews || []).map(async (review) => {
-          const { data: profile } = await supabase
-            .from('profiles')
-            .select('full_name')
-            .eq('id', review.user_id)
-            .single();
-
-          return {
-            id: review.id,
-            rating: review.rating,
-            comment: review.comment,
-            box_id: review.box_id,
-            profiles: profile
-          };
-        })
-      );
-
-      return reviewsWithProfiles as FeaturedReview[];
+      return (reviews || []) as FeaturedReview[];
     }
   });
 
@@ -122,7 +101,7 @@ const TestimonialsSection = () => {
                     </div>
                     <p className="text-foreground mb-4 italic">"{review.comment}"</p>
                     <div className="text-sm text-muted-foreground">
-                      <strong className="text-foreground">{review.profiles?.full_name || 'Client satisfait'}</strong>
+                      <strong className="text-foreground">Client vérifié</strong>
                       <span> • {boxNames[review.box_id]}</span>
                     </div>
                   </div>
