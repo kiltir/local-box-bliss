@@ -111,8 +111,9 @@ const DevenirFournisseur = () => {
 
     try {
       // Submit application via edge function for server-side validation
+      // Include photo count so the server can generate signed upload URLs
       const response = await supabase.functions.invoke('submit-supplier-application', {
-        body: data,
+        body: { ...data, photoCount: photos.length },
       });
 
       if (response.error) {
@@ -126,30 +127,40 @@ const DevenirFournisseur = () => {
       }
 
       const applicationId = result.applicationId;
+      const uploadUrls = result.uploadUrls || [];
 
-      // Upload photos if any (photos are uploaded separately after application is created)
-      if (photos.length > 0 && applicationId) {
-        for (const photo of photos) {
-          const fileExt = photo.name.split(".").pop();
-          const fileName = `${applicationId}/${crypto.randomUUID()}.${fileExt}`;
+      // Upload photos using signed URLs (more secure - controlled by server)
+      if (photos.length > 0 && uploadUrls.length > 0) {
+        for (let i = 0; i < Math.min(photos.length, uploadUrls.length); i++) {
+          const photo = photos[i];
+          const { path, signedUrl } = uploadUrls[i];
 
-          const { error: uploadError } = await supabase.storage
-            .from("supplier-photos")
-            .upload(fileName, photo);
+          try {
+            // Upload using the signed URL
+            const uploadResponse = await fetch(signedUrl, {
+              method: 'PUT',
+              body: photo,
+              headers: {
+                'Content-Type': photo.type,
+              },
+            });
 
-          if (uploadError) {
+            if (!uploadResponse.ok) {
+              console.error("Error uploading photo via signed URL:", await uploadResponse.text());
+              continue;
+            }
+
+            // Store just the path in the database
+            const { error: photoInsertError } = await supabase.from("supplier_application_photos").insert({
+              application_id: applicationId,
+              photo_url: path,
+            });
+
+            if (photoInsertError) {
+              console.error("Error inserting photo record:", photoInsertError);
+            }
+          } catch (uploadError) {
             console.error("Error uploading photo:", uploadError);
-            continue;
-          }
-
-          // Store just the path, not the full public URL (bucket is now private)
-          const { error: photoInsertError } = await supabase.from("supplier_application_photos").insert({
-            application_id: applicationId,
-            photo_url: fileName,
-          });
-
-          if (photoInsertError) {
-            console.error("Error inserting photo record:", photoInsertError);
           }
         }
       }

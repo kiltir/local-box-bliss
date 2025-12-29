@@ -19,7 +19,13 @@ interface SupplierApplicationData {
   motivation: string;
   produits: string;
   source?: string;
+  photoCount?: number; // Number of photos to upload (0-2)
 }
+
+// Maximum file size: 5MB
+const MAX_FILE_SIZE = 5 * 1024 * 1024;
+// Allowed MIME types
+const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
 
 serve(async (req) => {
   // Handle CORS preflight requests
@@ -35,6 +41,33 @@ serve(async (req) => {
 
     const data = await req.json() as SupplierApplicationData;
     console.log('Received supplier application submission');
+
+    // Get client IP for rate limiting
+    const clientIP = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 
+                     req.headers.get('cf-connecting-ip') || 
+                     req.headers.get('x-real-ip') || 
+                     'unknown';
+
+    // Rate limiting: max 3 applications per hour per IP
+    const now = new Date();
+    const { data: rateLimit } = await supabase
+      .from('contact_rate_limits')
+      .select('*')
+      .eq('identifier', `supplier:${clientIP}`)
+      .single();
+
+    if (rateLimit) {
+      const windowStart = new Date(rateLimit.window_start);
+      const hoursSinceWindowStart = (now.getTime() - windowStart.getTime()) / (1000 * 60 * 60);
+
+      if (hoursSinceWindowStart < 1 && rateLimit.submission_count >= 3) {
+        console.log(`Rate limit exceeded for supplier application from ${clientIP}`);
+        return new Response(
+          JSON.stringify({ error: 'Trop de candidatures envoyées. Veuillez réessayer plus tard.' }),
+          { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+    }
 
     // Server-side validation
     const validationErrors: string[] = [];
@@ -127,6 +160,12 @@ serve(async (req) => {
       validationErrors.push('La source ne peut pas dépasser 200 caractères');
     }
 
+    // Validate photo count (0-2)
+    const photoCount = data.photoCount || 0;
+    if (photoCount < 0 || photoCount > 2) {
+      validationErrors.push('Nombre de photos invalide (maximum 2)');
+    }
+
     // Return validation errors if any
     if (validationErrors.length > 0) {
       console.log('Validation errors:', validationErrors);
@@ -134,6 +173,38 @@ serve(async (req) => {
         JSON.stringify({ error: validationErrors.join(', ') }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
+    }
+
+    // Update rate limit
+    if (rateLimit) {
+      const windowStart = new Date(rateLimit.window_start);
+      const hoursSinceWindowStart = (now.getTime() - windowStart.getTime()) / (1000 * 60 * 60);
+      
+      if (hoursSinceWindowStart >= 1) {
+        await supabase
+          .from('contact_rate_limits')
+          .update({
+            submission_count: 1,
+            window_start: now.toISOString(),
+            last_submission: now.toISOString()
+          })
+          .eq('identifier', `supplier:${clientIP}`);
+      } else {
+        await supabase
+          .from('contact_rate_limits')
+          .update({
+            submission_count: rateLimit.submission_count + 1,
+            last_submission: now.toISOString()
+          })
+          .eq('identifier', `supplier:${clientIP}`);
+      }
+    } else {
+      await supabase
+        .from('contact_rate_limits')
+        .insert({
+          identifier: `supplier:${clientIP}`,
+          submission_count: 1
+        });
     }
 
     // Generate UUID for the application
@@ -166,13 +237,39 @@ serve(async (req) => {
       );
     }
 
-    console.log(`Supplier application submitted successfully: ${applicationId}`);
+    // Generate signed upload URLs for photos if requested
+    const uploadUrls: { path: string; signedUrl: string }[] = [];
+    
+    if (photoCount > 0) {
+      for (let i = 0; i < photoCount; i++) {
+        const fileName = `${applicationId}/${crypto.randomUUID()}.jpg`;
+        
+        const { data: signedUrlData, error: signedUrlError } = await supabase.storage
+          .from('supplier-photos')
+          .createSignedUploadUrl(fileName);
+
+        if (signedUrlError) {
+          console.error('Error creating signed upload URL:', signedUrlError);
+          continue;
+        }
+
+        if (signedUrlData) {
+          uploadUrls.push({
+            path: fileName,
+            signedUrl: signedUrlData.signedUrl
+          });
+        }
+      }
+    }
+
+    console.log(`Supplier application submitted successfully: ${applicationId}, upload URLs generated: ${uploadUrls.length}`);
 
     return new Response(
       JSON.stringify({ 
         success: true, 
         message: 'Candidature envoyée avec succès',
-        applicationId 
+        applicationId,
+        uploadUrls
       }),
       { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
