@@ -17,8 +17,10 @@ const Auth = () => {
   const [fullName, setFullName] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [resetEmail, setResetEmail] = useState('');
   
-  const { user, signUp, signIn } = useAuth();
+  const { user, signUp, signIn, resetPassword } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -106,6 +108,108 @@ const Auth = () => {
     }
   };
 
+  const handleResetPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+
+    try {
+      const { error } = await resetPassword(resetEmail);
+      
+      if (error) {
+        toast({
+          title: "Erreur",
+          description: error.message,
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Email envoyé !",
+          description: "Vérifiez votre boîte mail pour réinitialiser votre mot de passe.",
+        });
+        setShowForgotPassword(false);
+        setResetEmail('');
+      }
+    } catch (error) {
+      toast({
+        title: "Erreur",
+        description: "Une erreur inattendue s'est produite.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  if (showForgotPassword) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-leaf-green/5 to-yellow-400/5 flex items-center justify-center p-4">
+        <div className="w-full max-w-md">
+          <div className="text-center mb-8">
+            <div className="flex items-center justify-center mb-4">
+              <img 
+                src={kiltirboxLogo} 
+                alt="KiltirBox Logo" 
+                className="h-16 w-auto"
+              />
+            </div>
+            <p className="text-gray-600">Réinitialisez votre mot de passe</p>
+          </div>
+
+          <Card className="shadow-xl border-0">
+            <CardHeader className="space-y-1">
+              <CardTitle className="text-2xl text-center text-gray-800">
+                Mot de passe oublié ?
+              </CardTitle>
+              <CardDescription className="text-center">
+                Entrez votre email pour recevoir un lien de réinitialisation
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleResetPassword} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="reset-email">Email</Label>
+                  <Input
+                    id="reset-email"
+                    type="email"
+                    placeholder="votre@email.com"
+                    value={resetEmail}
+                    onChange={(e) => setResetEmail(e.target.value)}
+                    required
+                    className="border-gray-200 focus:border-leaf-green focus:ring-leaf-green"
+                  />
+                </div>
+                <Button 
+                  type="submit" 
+                  className="w-full bg-leaf-green hover:bg-dark-green text-white"
+                  disabled={isLoading}
+                >
+                  {isLoading ? "Envoi..." : "Envoyer le lien"}
+                </Button>
+                <Button 
+                  type="button"
+                  variant="ghost"
+                  className="w-full"
+                  onClick={() => setShowForgotPassword(false)}
+                >
+                  ← Retour à la connexion
+                </Button>
+              </form>
+            </CardContent>
+          </Card>
+
+          <div className="text-center mt-6">
+            <button
+              onClick={() => navigate('/')}
+              className="text-gray-500 hover:text-leaf-green transition-colors"
+            >
+              ← Retour à l'accueil
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-leaf-green/5 to-yellow-400/5 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
@@ -172,14 +276,21 @@ const Auth = () => {
                       </button>
                     </div>
                   </div>
-                  <Button 
-                    type="submit" 
-                    className="w-full bg-leaf-green hover:bg-dark-green text-white"
-                    disabled={isLoading}
-                  >
-                    {isLoading ? "Connexion..." : "Se connecter"}
-                  </Button>
-                </form>
+                    <Button 
+                      type="submit" 
+                      className="w-full bg-leaf-green hover:bg-dark-green text-white"
+                      disabled={isLoading}
+                    >
+                      {isLoading ? "Connexion..." : "Se connecter"}
+                    </Button>
+                    <button
+                      type="button"
+                      onClick={() => setShowForgotPassword(true)}
+                      className="w-full text-sm text-leaf-green hover:text-dark-green transition-colors"
+                    >
+                      Mot de passe oublié ?
+                    </button>
+                  </form>
               </TabsContent>
               
               <TabsContent value="signup">
