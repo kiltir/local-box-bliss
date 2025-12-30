@@ -1,9 +1,25 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.3";
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+// Allowed origins for CORS
+const ALLOWED_ORIGINS = [
+  'https://dmtxlyxgpmszsqfuyzkc.lovableproject.com',
+  'https://kiltirbox.re',
+  'https://www.kiltirbox.re',
+  'http://localhost:5173',
+  'http://localhost:3000',
+];
+
+const getCorsHeaders = (origin: string | null) => {
+  const allowedOrigin = origin && ALLOWED_ORIGINS.some(allowed => 
+    origin === allowed || origin.endsWith('.lovableproject.com')
+  ) ? origin : ALLOWED_ORIGINS[0];
+  
+  return {
+    'Access-Control-Allow-Origin': allowedOrigin,
+    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  };
 };
 
 interface ContactFormData {
@@ -43,6 +59,9 @@ function generateFingerprint(req: Request, email: string): string {
 }
 
 serve(async (req) => {
+  const origin = req.headers.get('origin');
+  const corsHeaders = getCorsHeaders(origin);
+
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
@@ -93,7 +112,7 @@ serve(async (req) => {
     const normalizedEmail = normalizeEmail(email);
     const fingerprint = generateFingerprint(req, email);
     
-    console.log(`Contact form submission from IP: ${clientIP}, Email: ${normalizedEmail}`);
+    console.log(`Contact form submission from IP: [REDACTED], Email: [REDACTED]`);
     
     // Check rate limits for BOTH IP and email separately
     // This prevents both IP spoofing and email aliasing attacks
@@ -112,7 +131,7 @@ serve(async (req) => {
       const hoursSinceWindowStart = (now.getTime() - windowStart.getTime()) / (1000 * 60 * 60);
 
       if (hoursSinceWindowStart < 1 && ipRateLimit.submission_count >= 5) {
-        console.log(`IP rate limit exceeded for ${clientIP}`);
+        console.log(`IP rate limit exceeded`);
         return new Response(
           JSON.stringify({ error: 'Trop de soumissions. Veuillez réessayer plus tard.' }),
           { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -132,7 +151,7 @@ serve(async (req) => {
       const hoursSinceWindowStart = (now.getTime() - windowStart.getTime()) / (1000 * 60 * 60);
 
       if (hoursSinceWindowStart < 1 && emailRateLimit.submission_count >= 3) {
-        console.log(`Email rate limit exceeded for ${normalizedEmail}`);
+        console.log(`Email rate limit exceeded`);
         return new Response(
           JSON.stringify({ error: 'Trop de soumissions depuis cette adresse email. Veuillez réessayer plus tard.' }),
           { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -224,7 +243,7 @@ serve(async (req) => {
       );
     }
 
-    console.log(`Contact form submitted successfully from ${email}`);
+    console.log(`Contact form submitted successfully`);
 
     return new Response(
       JSON.stringify({ success: true, message: 'Message envoyé avec succès' }),
@@ -235,7 +254,7 @@ serve(async (req) => {
     console.error('Error in submit-contact-form function:', error);
     return new Response(
       JSON.stringify({ error: 'Erreur interne du serveur' }),
-      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      { status: 500, headers: { ...getCorsHeaders(req.headers.get('origin')), 'Content-Type': 'application/json' } }
     );
   }
 });
