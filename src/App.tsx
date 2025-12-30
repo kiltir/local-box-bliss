@@ -26,6 +26,7 @@ import PaymentSuccess from "./pages/PaymentSuccess";
 import PaymentCanceled from "./pages/PaymentCanceled";
 import AdminDashboard from "./pages/AdminDashboard";
 import DevenirFournisseur from "./pages/DevenirFournisseur";
+import ResetPassword from "./pages/ResetPassword";
 
 const queryClient = new QueryClient();
 
@@ -56,6 +57,7 @@ const App = () => (
             <Route path="/mes-commandes" element={<MesCommandes />} />
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/devenir-fournisseur" element={<DevenirFournisseur />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
