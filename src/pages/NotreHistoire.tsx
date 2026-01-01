@@ -19,7 +19,7 @@ const NotreHistoire = () => {
                   <div className="text-gray-700 space-y-4 leading-relaxed">
                     <p>Bonjour, je m'appelle Yannick GENCE et je suis le fondateur de KiltirBox.</p>
                     
-                    <p>Comme la plupart des réunionnais, pour poursuivre mon parcours professionnel en Métropole, j'ai dû laisser famille, amis et proches. Se fût une expérience aussi enrichissante que déstabilisante, avec des hauts et surtout des bas avec toutes les difficultés que cela représente.</p>
+                    <p>Comme la plupart des réunionnais, pour poursuivre mon parcours professionnel, j'ai dû laisser famille, amis et proches pour aller en Métropole. Se fût une expérience aussi enrichissante que déstabilisante, avec des hauts et surtout des bas avec toutes les difficultés que cela représente.</p>
                     
                     <p>Néanmoins, j'ai appris une chose très importante : le voyage est surtout une affaire de partage. Je pensais en apprendre beaucoup des autres mais je n'imaginais pas autant leurs apprendre de moi et de l'île.</p>
                     
