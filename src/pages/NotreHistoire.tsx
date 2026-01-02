@@ -34,7 +34,7 @@ const NotreHistoire = () => {
                 <section>
                   <h2 className="text-3xl font-semibold text-leaf-green mb-6">Un concept original</h2>
                   <div className="text-gray-700 space-y-4 leading-relaxed">
-                    <p>KiltirBox ce sont des box de produits locaux selon des thématiques originales et culturelles à récupérer sur place à l'aéroport de l'île de la Réunion ou livrées en Métropole.</p>
+                    <p>KiltirBox ce sont des box de produits locaux selon des thématiques originales et culturelles à récupérer sur place à l'aéroport de l'île de la Réunion ou livrées en à domicile.</p>
                     
                     <p className="font-semibold">Plus qu'un colis c'est une véritable expérience que nous vous proposons de vivre. </p>
                     
