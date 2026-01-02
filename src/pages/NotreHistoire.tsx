@@ -17,7 +17,7 @@ const NotreHistoire = () => {
                 <section>
                   <h2 className="text-3xl font-semibold text-leaf-green mb-6">Un partage universel</h2>
                   <div className="text-gray-700 space-y-4 leading-relaxed">
-                    <p>Bonjour, je m'appelle Yannick GENCE et je suis le fondateur de KiltirBox.</p>
+                    
                     
                     <p>Comme la plupart des réunionnais, pour poursuivre mon parcours professionnel, j'ai dû laisser famille, amis et proches pour aller en Métropole. Se fût une expérience aussi enrichissante que déstabilisante, avec des hauts et surtout des bas avec toutes les difficultés que cela représente.</p>
                     
