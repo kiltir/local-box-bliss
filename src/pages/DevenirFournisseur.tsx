@@ -130,6 +130,7 @@ const DevenirFournisseur = () => {
       const uploadUrls = result.uploadUrls || [];
 
       // Upload photos using signed URLs (more secure - controlled by server)
+      const uploadedPaths: string[] = [];
       if (photos.length > 0 && uploadUrls.length > 0) {
         for (let i = 0; i < Math.min(photos.length, uploadUrls.length); i++) {
           const photo = photos[i];
@@ -145,22 +146,24 @@ const DevenirFournisseur = () => {
               },
             });
 
-            if (!uploadResponse.ok) {
+            if (uploadResponse.ok) {
+              uploadedPaths.push(path);
+            } else {
               console.error("Error uploading photo via signed URL:", await uploadResponse.text());
-              continue;
-            }
-
-            // Store just the path in the database
-            const { error: photoInsertError } = await supabase.from("supplier_application_photos").insert({
-              application_id: applicationId,
-              photo_url: path,
-            });
-
-            if (photoInsertError) {
-              console.error("Error inserting photo record:", photoInsertError);
             }
           } catch (uploadError) {
             console.error("Error uploading photo:", uploadError);
+          }
+        }
+
+        // Confirm photo uploads via edge function (secure server-side insertion)
+        if (uploadedPaths.length > 0) {
+          const confirmResponse = await supabase.functions.invoke('submit-supplier-application', {
+            body: { applicationId, photoPaths: uploadedPaths },
+          });
+
+          if (confirmResponse.error) {
+            console.error("Error confirming photo uploads:", confirmResponse.error);
           }
         }
       }

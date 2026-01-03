@@ -38,6 +38,12 @@ interface SupplierApplicationData {
   photoCount?: number; // Number of photos to upload (0-2)
 }
 
+// Request to confirm photo uploads were successful
+interface ConfirmPhotoUploadData {
+  applicationId: string;
+  photoPaths: string[];
+}
+
 // Maximum file size: 5MB
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
 // Allowed MIME types
@@ -58,7 +64,56 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
 
-    const data = await req.json() as SupplierApplicationData;
+    const requestBody = await req.json();
+    
+    // Check if this is a photo confirmation request
+    if (requestBody.applicationId && requestBody.photoPaths) {
+      const confirmData = requestBody as ConfirmPhotoUploadData;
+      console.log('Received photo upload confirmation for application:', confirmData.applicationId);
+      
+      // Validate applicationId exists
+      const { data: application, error: appError } = await supabase
+        .from('supplier_applications')
+        .select('id')
+        .eq('id', confirmData.applicationId)
+        .single();
+      
+      if (appError || !application) {
+        console.error('Invalid application ID for photo confirmation:', confirmData.applicationId);
+        return new Response(
+          JSON.stringify({ error: 'Candidature non trouvée' }),
+          { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+      
+      // Validate and insert photo records (max 2)
+      const validPaths = confirmData.photoPaths
+        .filter(path => typeof path === 'string' && path.startsWith(confirmData.applicationId + '/'))
+        .slice(0, 2);
+      
+      for (const path of validPaths) {
+        const { error: photoError } = await supabase
+          .from('supplier_application_photos')
+          .insert({
+            application_id: confirmData.applicationId,
+            photo_url: path,
+          });
+        
+        if (photoError) {
+          console.error('Error inserting photo record:', photoError);
+        }
+      }
+      
+      console.log(`Photo records inserted: ${validPaths.length} for application ${confirmData.applicationId}`);
+      
+      return new Response(
+        JSON.stringify({ success: true, photosRegistered: validPaths.length }),
+        { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+    
+    // Otherwise, handle as new supplier application
+    const data = requestBody as SupplierApplicationData;
     console.log('Received supplier application submission');
 
     // Get client IP for rate limiting

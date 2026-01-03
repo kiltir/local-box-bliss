@@ -1,0 +1,2 @@
+-- Remove the public INSERT policy that allows anyone to insert photos (security vulnerability)
+DROP POLICY IF EXISTS "Anyone can insert supplier application photos" ON public.supplier_application_photos;
