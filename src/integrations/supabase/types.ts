@@ -115,6 +115,7 @@ export type Database = {
           display_order: number | null
           id: string
           image_url: string | null
+          is_visible: boolean
           name: string
           producer: string
           quantity: string
@@ -132,6 +133,7 @@ export type Database = {
           display_order?: number | null
           id?: string
           image_url?: string | null
+          is_visible?: boolean
           name: string
           producer: string
           quantity: string
@@ -149,6 +151,7 @@ export type Database = {
           display_order?: number | null
           id?: string
           image_url?: string | null
+          is_visible?: boolean
           name?: string
           producer?: string
           quantity?: string
