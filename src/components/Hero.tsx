@@ -71,7 +71,7 @@ const Hero = () => {
     }} className="hero-section md:py-24 relative bg-cover bg-center bg-no-repeat py-[40px]">
         <div className="container-section py-[15px]">
           <div className="max-w-3xl mx-auto text-center slide-in py-[10px]">
-            <h1 className="md:text-5xl lg:text-6xl font-bold text-white mb-6 mx-0 text-center text-3xl">La Réunion 
+            <h1 className="md:text-5xl font-bold text-white mb-6 mx-0 text-center text-3xl lg:text-5xl">La Réunion 
 sur
 place ou à emporter</h1>
             
