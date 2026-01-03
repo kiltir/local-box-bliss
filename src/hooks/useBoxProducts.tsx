@@ -16,6 +16,7 @@ interface SupabaseBoxProduct {
   weight: number | null;
   image_url: string | null;
   display_order: number | null;
+  is_visible: boolean;
 }
 
 const mapSupabaseProductToBoxProduct = (product: SupabaseBoxProduct): BoxProduct => ({
@@ -49,12 +50,12 @@ export const useBoxProducts = () => {
     },
   });
 
-  // Grouper les produits par box_id et theme
+  // Grouper les produits par box_id et theme (seulement les produits visibles)
   const getProductsForBox = (boxId: number, theme: string): BoxProduct[] | null => {
     if (!products) return null;
     
     const boxProducts = products.filter(
-      p => p.box_id === boxId && p.theme.toLowerCase() === theme.toLowerCase()
+      p => p.box_id === boxId && p.theme.toLowerCase() === theme.toLowerCase() && p.is_visible
     );
     
     // Retourne null si aucun produit n'existe dans Supabase (fallback sur statique)

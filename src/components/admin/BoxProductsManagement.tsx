@@ -8,7 +8,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Label } from '@/components/ui/label';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { toast } from 'sonner';
-import { Loader2, Save, Plus, Trash2, Package, ChevronDown, ChevronRight, ArrowUp, ArrowDown, GripVertical } from 'lucide-react';
+import { Loader2, Save, Plus, Trash2, Package, ChevronDown, ChevronRight, ArrowUp, ArrowDown, Eye, EyeOff } from 'lucide-react';
+import { Switch } from '@/components/ui/switch';
 import {
   Dialog,
   DialogContent,
@@ -42,6 +43,7 @@ interface BoxProduct {
   dimension_depth: number;
   image_url: string | null;
   display_order: number;
+  is_visible: boolean;
 }
 
 const THEMES = [
@@ -118,6 +120,7 @@ export const BoxProductsManagement = () => {
         dimension_depth: product.dimension_depth,
         image_url: product.image_url,
         display_order: product.display_order,
+        is_visible: product.is_visible,
       })
       .eq('id', product.id);
 
@@ -128,6 +131,29 @@ export const BoxProductsManagement = () => {
       toast.success('Produit mis à jour');
     }
     setSaving(null);
+  };
+
+  const toggleProductVisibility = async (productId: string, isVisible: boolean) => {
+    // Update locally first for immediate feedback
+    setProducts(products.map(p => 
+      p.id === productId ? { ...p, is_visible: isVisible } : p
+    ));
+    
+    const { error } = await supabase
+      .from('box_products')
+      .update({ is_visible: isVisible })
+      .eq('id', productId);
+
+    if (error) {
+      console.error('Error toggling visibility:', error);
+      toast.error('Erreur lors de la mise à jour de la visibilité');
+      // Revert on error
+      setProducts(products.map(p => 
+        p.id === productId ? { ...p, is_visible: !isVisible } : p
+      ));
+    } else {
+      toast.success(isVisible ? 'Produit visible' : 'Produit masqué');
+    }
   };
 
   const handleAddProduct = async () => {
@@ -425,11 +451,29 @@ export const BoxProductsManagement = () => {
                               ) : (
                                 <ChevronRight className="h-4 w-4 flex-shrink-0" />
                               )}
-                              <span>{product.name}</span>
+                              <span className={!product.is_visible ? 'text-muted-foreground line-through' : ''}>
+                                {product.name}
+                              </span>
+                              {!product.is_visible && (
+                                <span className="text-xs text-muted-foreground ml-2">(masqué)</span>
+                              )}
                             </button>
                           </CollapsibleTrigger>
                         </div>
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-3">
+                          {/* Visibility toggle */}
+                          <div className="flex items-center gap-2">
+                            {product.is_visible ? (
+                              <Eye className="h-4 w-4 text-muted-foreground" />
+                            ) : (
+                              <EyeOff className="h-4 w-4 text-muted-foreground" />
+                            )}
+                            <Switch
+                              checked={product.is_visible}
+                              onCheckedChange={(checked) => toggleProductVisibility(product.id, checked)}
+                              title={product.is_visible ? 'Masquer le produit' : 'Afficher le produit'}
+                            />
+                          </div>
                           <Button
                             size="sm"
                             onClick={() => handleUpdateProduct(product)}
