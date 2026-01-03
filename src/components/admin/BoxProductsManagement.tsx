@@ -8,7 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Label } from '@/components/ui/label';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { toast } from 'sonner';
-import { Loader2, Save, Plus, Trash2, Package, ChevronDown, ChevronRight } from 'lucide-react';
+import { Loader2, Save, Plus, Trash2, Package, ChevronDown, ChevronRight, ArrowUp, ArrowDown, GripVertical } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -193,7 +193,54 @@ export const BoxProductsManagement = () => {
     ));
   };
 
-  const filteredProducts = products.filter(p => p.theme === selectedTheme);
+  const moveProduct = async (productId: string, direction: 'up' | 'down') => {
+    const themeProducts = products
+      .filter(p => p.theme === selectedTheme)
+      .sort((a, b) => a.display_order - b.display_order);
+    
+    const currentIndex = themeProducts.findIndex(p => p.id === productId);
+    if (currentIndex === -1) return;
+    
+    const newIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1;
+    if (newIndex < 0 || newIndex >= themeProducts.length) return;
+    
+    // Swap display_order values
+    const currentProduct = themeProducts[currentIndex];
+    const swapProduct = themeProducts[newIndex];
+    
+    const currentOrder = currentProduct.display_order;
+    const swapOrder = swapProduct.display_order;
+    
+    // Update locally first for immediate feedback
+    setProducts(products.map(p => {
+      if (p.id === currentProduct.id) return { ...p, display_order: swapOrder };
+      if (p.id === swapProduct.id) return { ...p, display_order: currentOrder };
+      return p;
+    }));
+    
+    // Update in database
+    const { error: error1 } = await supabase
+      .from('box_products')
+      .update({ display_order: swapOrder })
+      .eq('id', currentProduct.id);
+    
+    const { error: error2 } = await supabase
+      .from('box_products')
+      .update({ display_order: currentOrder })
+      .eq('id', swapProduct.id);
+    
+    if (error1 || error2) {
+      console.error('Error reordering products:', error1 || error2);
+      toast.error('Erreur lors du réordonnancement');
+      fetchProducts(); // Reload to sync state
+    } else {
+      toast.success('Ordre mis à jour');
+    }
+  };
+
+  const filteredProducts = products
+    .filter(p => p.theme === selectedTheme)
+    .sort((a, b) => a.display_order - b.display_order);
 
   if (loading) {
     return (
@@ -332,7 +379,7 @@ export const BoxProductsManagement = () => {
                 </CardContent>
               </Card>
             ) : (
-              filteredProducts.map((product) => (
+              filteredProducts.map((product, index) => (
                 <Collapsible
                   key={product.id}
                   open={expandedProducts.has(product.id)}
@@ -341,16 +388,47 @@ export const BoxProductsManagement = () => {
                   <Card>
                     <CardHeader className="pb-2">
                       <CardTitle className="text-lg flex items-center justify-between">
-                        <CollapsibleTrigger asChild>
-                          <button className="flex items-center gap-2 text-left hover:text-primary transition-colors">
-                            {expandedProducts.has(product.id) ? (
-                              <ChevronDown className="h-4 w-4 flex-shrink-0" />
-                            ) : (
-                              <ChevronRight className="h-4 w-4 flex-shrink-0" />
-                            )}
-                            <span>{product.name}</span>
-                          </button>
-                        </CollapsibleTrigger>
+                        <div className="flex items-center gap-3">
+                          {/* Order controls */}
+                          <div className="flex flex-col gap-0.5">
+                            <Button
+                              size="icon"
+                              variant="ghost"
+                              className="h-5 w-5"
+                              onClick={() => moveProduct(product.id, 'up')}
+                              disabled={index === 0}
+                              title="Monter"
+                            >
+                              <ArrowUp className="h-3 w-3" />
+                            </Button>
+                            <Button
+                              size="icon"
+                              variant="ghost"
+                              className="h-5 w-5"
+                              onClick={() => moveProduct(product.id, 'down')}
+                              disabled={index === filteredProducts.length - 1}
+                              title="Descendre"
+                            >
+                              <ArrowDown className="h-3 w-3" />
+                            </Button>
+                          </div>
+                          
+                          {/* Order number badge */}
+                          <span className="flex items-center justify-center h-6 w-6 rounded-full bg-muted text-muted-foreground text-xs font-medium">
+                            {index + 1}
+                          </span>
+                          
+                          <CollapsibleTrigger asChild>
+                            <button className="flex items-center gap-2 text-left hover:text-primary transition-colors">
+                              {expandedProducts.has(product.id) ? (
+                                <ChevronDown className="h-4 w-4 flex-shrink-0" />
+                              ) : (
+                                <ChevronRight className="h-4 w-4 flex-shrink-0" />
+                              )}
+                              <span>{product.name}</span>
+                            </button>
+                          </CollapsibleTrigger>
+                        </div>
                         <div className="flex items-center gap-2">
                           <Button
                             size="sm"
