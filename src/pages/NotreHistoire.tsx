@@ -25,7 +25,7 @@ const NotreHistoire = () => {
                     
                     <p>Quelques années plus tard, à mon retour sur l'île, plongé dans la réalité économique et sociale du territoire, le constat restait amer mais l'envie et la possibilité de changer les choses devenaient réelles.</p>
                     
-                    <p>Et c'est pourquoi j'ai créé KiltirBox.</p>
+                    <p>Et c'est pourquoi j'ai crée KiltirBox.</p>
                     
                     <p className="font-semibold text-leaf-green">Partager notre culture, notre richesse et notre savoir-faire, au-delà des frontières, de l'autre côté de la mer.</p>
                   </div>
@@ -34,7 +34,7 @@ const NotreHistoire = () => {
                 <section>
                   <h2 className="text-3xl font-semibold text-leaf-green mb-6">Un concept original</h2>
                   <div className="text-gray-700 space-y-4 leading-relaxed">
-                    <p>KiltirBox ce sont des box de produits locaux selon des thématiques originales et culturelles à récupérer sur place à l'aéroport de l'île de la Réunion ou livrées en à domicile.</p>
+                    <p>KiltirBox ce sont des box de produits locaux selon des thématiques originales et culturelles à récupérer sur place à l'aéroport de l'île de la Réunion ou livrées en Métropole.</p>
                     
                     <p className="font-semibold">Plus qu'un colis c'est une véritable expérience que nous vous proposons de vivre. </p>
                     
