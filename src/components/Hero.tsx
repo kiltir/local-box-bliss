@@ -71,9 +71,9 @@ const Hero = () => {
     }} className="hero-section md:py-24 relative bg-cover bg-center bg-no-repeat py-[40px]">
         <div className="container-section py-[15px]">
           <div className="max-w-3xl mx-auto text-center slide-in py-[10px]">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 mx-[16px]">
-              La Réunion sur place ou à emporter
-            </h1>
+            <h1 className="md:text-5xl lg:text-6xl font-bold text-white mb-6 mx-0 text-center text-3xl">La Réunion 
+sur
+place ou à emporter</h1>
             
             {/* Section des dates de voyage */}
             <div className="max-w-4xl mx-auto text-center py-0">
@@ -84,7 +84,7 @@ const Hero = () => {
                 </h2>
               </div>
               
-              <p className="text-xl text-white mb-8 font-normal">Vous pouvez renseigner vos dates de séjour <strong>15 jours</strong> avant un vol et profiter d'un service sur-mesure* ou commander une box pour la Métropole.</p>
+              <p className="text-xl text-white mb-8 font-normal">Vous pouvez renseigner vos dates de séjour <strong>15 jours</strong> avant un vol et profiter d'un service sur-mesure* ou commander une box tout simplement.</p>
 
               <div className="bg-white p-8 rounded-xl shadow-lg max-w-2xl mx-auto mb-8">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
