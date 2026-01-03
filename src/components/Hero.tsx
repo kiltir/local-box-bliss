@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
-import WaveText from "@/components/WaveText";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -72,9 +71,7 @@ const Hero = () => {
     }} className="hero-section md:py-24 relative bg-cover bg-center bg-no-repeat py-[40px]">
         <div className="container-section py-[15px]">
           <div className="max-w-3xl mx-auto text-center slide-in py-[10px]">
-            <h1 className="md:text-5xl font-bold mb-6 mx-0 text-center text-3xl lg:text-5xl text-yellow-300 cursor-pointer">
-              <WaveText text="La Réunion sur place ou à emporter" />
-            </h1>
+            <h1 className="md:text-5xl font-bold mb-6 mx-0 text-center text-3xl lg:text-5xl text-yellow-300">La Réunion sur place ou à emporter</h1>
             
             {/* Section des dates de voyage */}
             <div className="max-w-4xl mx-auto text-center py-0">
