@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Trash2, Plus, Image as ImageIcon, GripVertical } from 'lucide-react';
+import { Loader2, Trash2, Plus, Image as ImageIcon, GripVertical, Box, Save } from 'lucide-react';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -28,11 +28,21 @@ interface BoxImage {
   created_at: string;
 }
 
+interface BoxDimensions {
+  id: string;
+  box_id: number;
+  theme: string;
+  weight_limit: number;
+  width: number;
+  height: number;
+  depth: number;
+}
+
 const BOX_THEMES = [
-  { id: 1, name: 'Découverte', theme: 'decouverte' },
-  { id: 2, name: 'Racine', theme: 'tradition' },
-  { id: 3, name: 'Bourbon', theme: 'bourbon' },
-  { id: 4, name: 'Saison', theme: 'saison' },
+  { id: 1, name: 'Découverte', theme: 'Découverte' },
+  { id: 2, name: 'Racine', theme: 'Racine' },
+  { id: 3, name: 'Bourbon', theme: 'Bourbon' },
+  { id: 4, name: 'Saison', theme: 'Saison' },
 ];
 
 export const BoxDetailsImagesManagement = () => {
@@ -41,6 +51,14 @@ export const BoxDetailsImagesManagement = () => {
   const [selectedBoxId, setSelectedBoxId] = useState<number>(1);
   const [newImageUrl, setNewImageUrl] = useState('');
   const [isUploading, setIsUploading] = useState(false);
+  
+  // State for dimensions editing
+  const [dimensionsForm, setDimensionsForm] = useState({
+    weight_limit: 2,
+    width: 30,
+    height: 18,
+    depth: 8,
+  });
 
   const { data: images, isLoading } = useQuery({
     queryKey: ['box-images-admin', selectedBoxId],
@@ -53,6 +71,74 @@ export const BoxDetailsImagesManagement = () => {
 
       if (error) throw error;
       return data as BoxImage[];
+    },
+  });
+
+  // Query for box dimensions
+  const currentBox = BOX_THEMES.find(b => b.id === selectedBoxId);
+  const { data: dimensions, isLoading: isDimensionsLoading } = useQuery({
+    queryKey: ['box-dimensions-admin', currentBox?.theme],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('box_dimensions')
+        .select('*')
+        .eq('theme', currentBox?.theme)
+        .maybeSingle();
+
+      if (error) throw error;
+      return data as BoxDimensions | null;
+    },
+    enabled: !!currentBox?.theme,
+  });
+
+  // Update form when dimensions data changes
+  useEffect(() => {
+    if (dimensions) {
+      setDimensionsForm({
+        weight_limit: dimensions.weight_limit,
+        width: dimensions.width,
+        height: dimensions.height,
+        depth: dimensions.depth,
+      });
+    }
+  }, [dimensions]);
+
+  // Mutation for updating dimensions
+  const updateDimensionsMutation = useMutation({
+    mutationFn: async (newDimensions: typeof dimensionsForm) => {
+      if (!dimensions?.id) {
+        // Insert if not exists
+        const { error } = await supabase
+          .from('box_dimensions')
+          .insert({
+            box_id: selectedBoxId,
+            theme: currentBox?.theme,
+            ...newDimensions,
+          });
+        if (error) throw error;
+      } else {
+        // Update existing
+        const { error } = await supabase
+          .from('box_dimensions')
+          .update(newDimensions)
+          .eq('id', dimensions.id);
+        if (error) throw error;
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['box-dimensions-admin'] });
+      queryClient.invalidateQueries({ queryKey: ['box-dimensions'] });
+      toast({
+        title: 'Dimensions mises à jour',
+        description: 'Le poids et les dimensions de la box ont été enregistrés.',
+      });
+    },
+    onError: () => {
+      toast({
+        title: 'Erreur',
+        description: 'Impossible de mettre à jour les dimensions.',
+        variant: 'destructive',
+      });
     },
   });
 
@@ -188,7 +274,7 @@ export const BoxDetailsImagesManagement = () => {
     addImageMutation.mutate({ imageUrl: newImageUrl.trim() });
   };
 
-  const currentBox = BOX_THEMES.find(b => b.id === selectedBoxId);
+  // currentBox is already defined above
 
   return (
     <div className="space-y-6">
@@ -293,6 +379,120 @@ export const BoxDetailsImagesManagement = () => {
                   ))}
                 </div>
               )}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Box Dimensions Card */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Box className="h-5 w-5" />
+            Dimensions et poids de la box {currentBox?.name}
+          </CardTitle>
+          <CardDescription>
+            Modifiez les limites de poids et les dimensions physiques de la box
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          {isDimensionsLoading ? (
+            <div className="flex items-center justify-center py-8">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            </div>
+          ) : (
+            <div className="space-y-6">
+              {/* Weight limit */}
+              <div className="space-y-2">
+                <Label htmlFor="weight-limit">Limite de poids (kg)</Label>
+                <Input
+                  id="weight-limit"
+                  type="number"
+                  step="0.1"
+                  min="0"
+                  value={dimensionsForm.weight_limit}
+                  onChange={(e) => setDimensionsForm(prev => ({
+                    ...prev,
+                    weight_limit: parseFloat(e.target.value) || 0,
+                  }))}
+                  className="max-w-xs"
+                />
+                <p className="text-sm text-muted-foreground">
+                  Poids maximum autorisé pour les produits dans la box
+                </p>
+              </div>
+
+              {/* Dimensions */}
+              <div className="space-y-4">
+                <Label>Dimensions de la box (cm)</Label>
+                <div className="grid gap-4 md:grid-cols-3 max-w-lg">
+                  <div className="space-y-2">
+                    <Label htmlFor="width" className="text-sm text-muted-foreground">
+                      Largeur
+                    </Label>
+                    <Input
+                      id="width"
+                      type="number"
+                      step="0.1"
+                      min="0"
+                      value={dimensionsForm.width}
+                      onChange={(e) => setDimensionsForm(prev => ({
+                        ...prev,
+                        width: parseFloat(e.target.value) || 0,
+                      }))}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="height" className="text-sm text-muted-foreground">
+                      Hauteur
+                    </Label>
+                    <Input
+                      id="height"
+                      type="number"
+                      step="0.1"
+                      min="0"
+                      value={dimensionsForm.height}
+                      onChange={(e) => setDimensionsForm(prev => ({
+                        ...prev,
+                        height: parseFloat(e.target.value) || 0,
+                      }))}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="depth" className="text-sm text-muted-foreground">
+                      Profondeur
+                    </Label>
+                    <Input
+                      id="depth"
+                      type="number"
+                      step="0.1"
+                      min="0"
+                      value={dimensionsForm.depth}
+                      onChange={(e) => setDimensionsForm(prev => ({
+                        ...prev,
+                        depth: parseFloat(e.target.value) || 0,
+                      }))}
+                    />
+                  </div>
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  Volume calculé : {(dimensionsForm.width * dimensionsForm.height * dimensionsForm.depth).toLocaleString('fr-FR')} cm³
+                </p>
+              </div>
+
+              {/* Save button */}
+              <Button
+                onClick={() => updateDimensionsMutation.mutate(dimensionsForm)}
+                disabled={updateDimensionsMutation.isPending}
+                className="mt-4"
+              >
+                {updateDimensionsMutation.isPending ? (
+                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                ) : (
+                  <Save className="h-4 w-4 mr-2" />
+                )}
+                Enregistrer les dimensions
+              </Button>
             </div>
           )}
         </CardContent>
