@@ -39,7 +39,8 @@ export function useBoxDimensions(theme?: string) {
   const width = dimensions?.width ?? DEFAULT_DIMENSIONS.width;
   const height = dimensions?.height ?? DEFAULT_DIMENSIONS.height;
   const depth = dimensions?.depth ?? DEFAULT_DIMENSIONS.depth;
-  const boxVolume = width * height * depth;
+  // Volume maximum fixé à 3600 cm³
+  const boxVolume = 3600;
 
   return {
     dimensions,
