@@ -44,6 +44,42 @@ export type Database = {
         }
         Relationships: []
       }
+      box_dimensions: {
+        Row: {
+          box_id: number
+          created_at: string
+          depth: number
+          height: number
+          id: string
+          theme: string
+          updated_at: string
+          weight_limit: number
+          width: number
+        }
+        Insert: {
+          box_id: number
+          created_at?: string
+          depth?: number
+          height?: number
+          id?: string
+          theme: string
+          updated_at?: string
+          weight_limit?: number
+          width?: number
+        }
+        Update: {
+          box_id?: number
+          created_at?: string
+          depth?: number
+          height?: number
+          id?: string
+          theme?: string
+          updated_at?: string
+          weight_limit?: number
+          width?: number
+        }
+        Relationships: []
+      }
       box_images: {
         Row: {
           box_id: number
