@@ -62,8 +62,8 @@ const TouristDatesSection = () => {
     length: 24
   }, (_, i) => i.toString().padStart(2, '0'));
 
-  // Generate minutes (00, 15, 30, 45)
-  const minutes = ['00', '15', '30', '45'];
+  // Generate minutes (intervals of 5 minutes)
+  const minutes = ['00', '05', '10', '15', '20', '25', '30', '35', '40', '45', '50', '55'];
   return <section className="bg-gradient-to-b from-white to-[#FEF7CD]/30 my-0 py-0">
       <div className="container-section mx-0 my-0 py-0">
         <div className="max-w-4xl mx-auto text-center py-[30px]">
