@@ -25,7 +25,7 @@ const NotreHistoire = () => {
                     
                     <p>Quelques années plus tard, à mon retour sur l'île, plongé dans la réalité économique et sociale du territoire, le constat restait amer mais l'envie et la possibilité de changer les choses devenaient réelles.</p>
                     
-                    <p>Et c'est pourquoi j'ai crée KiltirBox.</p>
+                    <p>Et c'est pourquoi j'ai créé KiltirBox.</p>
                     
                     <p className="font-semibold text-leaf-green">Partager notre culture, notre richesse et notre savoir-faire, au-delà des frontières, de l'autre côté de la mer.</p>
                   </div>
