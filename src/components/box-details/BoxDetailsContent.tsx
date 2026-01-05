@@ -129,7 +129,7 @@ const BoxDetailsContent = ({
           {/* Informations de poids et volume - stack sur mobile */}
           <div className="space-y-1 mb-3">
             <div className={`text-sm ${weightExceeded ? 'text-red-600 font-semibold' : 'text-gray-600'}`}>
-              <span className="font-medium">Poids:</span> {totalWeight.toFixed(2)} kg / {weightLimit} kg {weightExceeded && '⚠️'}
+              <span className="font-medium">Poids:</span> {totalWeight.toFixed(2)} kg {weightExceeded && '⚠️'}
             </div>
             <div className="text-sm text-gray-600">
               <span className="font-medium">Volume:</span> {totalVolume.toFixed(2)} cm³ ({volumePercentage.toFixed(1)}%)
