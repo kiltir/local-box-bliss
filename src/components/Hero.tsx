@@ -63,8 +63,8 @@ const Hero = () => {
     length: 24
   }, (_, i) => i.toString().padStart(2, '0'));
 
-  // Generate minutes (00, 15, 30, 45)
-  const minutes = ['00', '15', '30', '45'];
+  // Generate minutes (intervals of 5 minutes)
+  const minutes = ['00', '05', '10', '15', '20', '25', '30', '35', '40', '45', '50', '55'];
   return <>
       <section style={{
       backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('/lovable-uploads/56c399f2-fc34-4f1d-befd-83ee8f0e5d2d.png')`
