@@ -10,7 +10,7 @@ export const useAdminCheck = () => {
   useEffect(() => {
     const checkAdminRole = async () => {
       console.log('[useAdminCheck] Checking admin role for user:', user?.id);
-      
+
       if (!user) {
         console.log('[useAdminCheck] No user, setting isAdmin to false');
         setIsAdmin(false);
@@ -19,15 +19,14 @@ export const useAdminCheck = () => {
       }
 
       try {
-        console.log('[useAdminCheck] Querying user_roles for user:', user.id);
-        const { data, error } = await supabase
-          .from('user_roles')
-          .select('role')
-          .eq('user_id', user.id)
-          .eq('role', 'admin')
-          .maybeSingle();
+        console.log('[useAdminCheck] Checking admin role via RPC for user:', user.id);
 
-        console.log('[useAdminCheck] Query result:', { data, error });
+        const { data, error } = await supabase.rpc('has_role', {
+          _user_id: user.id,
+          _role: 'admin',
+        });
+
+        console.log('[useAdminCheck] RPC result:', { data, error });
 
         if (error) {
           console.error('[useAdminCheck] Error checking admin role:', error);

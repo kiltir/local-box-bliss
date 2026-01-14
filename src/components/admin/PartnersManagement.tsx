@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -23,6 +24,8 @@ interface Partner {
 
 export function PartnersManagement() {
   const queryClient = useQueryClient();
+  const { user } = useAuth();
+
   const [expandedPartners, setExpandedPartners] = useState<Set<string>>(new Set());
   const [editedPartners, setEditedPartners] = useState<Record<string, Partial<Partner>>>({});
   const [newPartner, setNewPartner] = useState({
@@ -81,8 +84,18 @@ export function PartnersManagement() {
       queryClient.invalidateQueries({ queryKey: ["admin-partners"] });
       toast.success("Partenaire mis à jour");
     },
-    onError: () => {
-      toast.error("Erreur lors de la mise à jour");
+    onError: (error: any) => {
+      console.error("[PartnersManagement] Update failed:", error);
+      const message = [
+        error?.message,
+        error?.details ? `Détails: ${error.details}` : null,
+        error?.hint ? `Hint: ${error.hint}` : null,
+        error?.code ? `Code: ${error.code}` : null,
+      ]
+        .filter(Boolean)
+        .join(" • ");
+
+      toast.error(message || "Erreur lors de la mise à jour");
     },
   });
 
@@ -127,15 +140,31 @@ export function PartnersManagement() {
   };
 
   const savePartner = (id: string) => {
-    const updates = editedPartners[id];
-    if (updates) {
-      updateMutation.mutate({ id, updates });
-      setEditedPartners((prev) => {
-        const newEdited = { ...prev };
-        delete newEdited[id];
-        return newEdited;
-      });
+    if (!user) {
+      toast.error("Session expirée. Veuillez vous reconnecter.");
+      return;
     }
+
+    const updates = editedPartners[id];
+    if (!updates) return;
+
+    const normalizedUpdates: Partial<Partner> = {
+      ...updates,
+      image_url: updates.image_url === "" ? null : updates.image_url,
+    };
+
+    updateMutation.mutate(
+      { id, updates: normalizedUpdates },
+      {
+        onSuccess: () => {
+          setEditedPartners((prev) => {
+            const newEdited = { ...prev };
+            delete newEdited[id];
+            return newEdited;
+          });
+        },
+      }
+    );
   };
 
 
