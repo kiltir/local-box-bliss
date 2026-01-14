@@ -20,7 +20,7 @@ import { Loader2, Shield, LogOut } from 'lucide-react';
 const AdminDashboard = () => {
   const navigate = useNavigate();
   const { isAdmin, loading } = useAdminCheck();
-  const { signOut } = useAuth();
+  const { signOut, user } = useAuth();
 
   const handleSignOut = async () => {
     await signOut();
@@ -53,10 +53,17 @@ const AdminDashboard = () => {
             <Shield className="h-8 w-8 text-primary" />
             <h1 className="text-3xl font-bold">Tableau de bord administrateur</h1>
           </div>
-          <Button variant="outline" onClick={handleSignOut} className="gap-2">
-            <LogOut className="h-4 w-4" />
-            Déconnexion
-          </Button>
+          <div className="flex items-center gap-4">
+            {user && (
+              <span className="text-sm text-muted-foreground">
+                Connecté: {user.email}
+              </span>
+            )}
+            <Button variant="outline" onClick={handleSignOut} className="gap-2">
+              <LogOut className="h-4 w-4" />
+              Déconnexion
+            </Button>
+          </div>
         </div>
 
         <Tabs defaultValue="orders" className="w-full">
