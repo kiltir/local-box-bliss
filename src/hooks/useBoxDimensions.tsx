@@ -9,6 +9,7 @@ interface BoxDimensions {
   width: number;
   height: number;
   depth: number;
+  shipping_box_weight: number | null;
 }
 
 // Default values if no data in database
@@ -39,6 +40,7 @@ export function useBoxDimensions(theme?: string) {
   const width = dimensions?.width ?? DEFAULT_DIMENSIONS.width;
   const height = dimensions?.height ?? DEFAULT_DIMENSIONS.height;
   const depth = dimensions?.depth ?? DEFAULT_DIMENSIONS.depth;
+  const shippingBoxWeight = dimensions?.shipping_box_weight ?? 0.3;
   // Volume maximum fixé à 3600 cm³
   const boxVolume = 3600;
 
@@ -50,6 +52,7 @@ export function useBoxDimensions(theme?: string) {
     height,
     depth,
     boxVolume,
+    shippingBoxWeight,
     BOX_DIMENSIONS: {
       unique: { width, height, depth },
     },
