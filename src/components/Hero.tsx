@@ -77,7 +77,7 @@ const Hero = () => {
             <div className="max-w-4xl mx-auto text-center py-0">
               <div className="flex items-center justify-center mb-6">
                 <MapPin className="h-8 w-8 text-leaf-green mr-3" />
-                <h2 className="text-3xl font-bold text-white">
+                <h2 className="font-bold text-white text-2xl">
                   En voyage à la Réunion ?
                 </h2>
               </div>
