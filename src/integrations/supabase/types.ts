@@ -51,6 +51,7 @@ export type Database = {
           depth: number
           height: number
           id: string
+          shipping_box_weight: number | null
           theme: string
           updated_at: string
           weight_limit: number
@@ -62,6 +63,7 @@ export type Database = {
           depth?: number
           height?: number
           id?: string
+          shipping_box_weight?: number | null
           theme: string
           updated_at?: string
           weight_limit?: number
@@ -73,6 +75,7 @@ export type Database = {
           depth?: number
           height?: number
           id?: string
+          shipping_box_weight?: number | null
           theme?: string
           updated_at?: string
           weight_limit?: number
