@@ -24,7 +24,7 @@ export function useBoxCalculations(
   } = useProductSelection(products);
   
   const { showWeightExceededToast } = useToastNotification();
-  const { weightLimit, boxVolume, BOX_DIMENSIONS, isLoading: isDimensionsLoading } = useBoxDimensions(boxTheme);
+  const { weightLimit, boxVolume, BOX_DIMENSIONS, shippingBoxWeight, isLoading: isDimensionsLoading } = useBoxDimensions(boxTheme);
 
   useEffect(() => {
     const totalWeight = calculateTotalWeight(products, selectedProductIds, productQuantities);
@@ -40,7 +40,8 @@ export function useBoxCalculations(
     }
   }, [selectedProductIds, productQuantities, weightLimit, showWeightExceededToast]);
 
-  const totalWeight = calculateTotalWeight(products, selectedProductIds, productQuantities);
+  const productsWeight = calculateTotalWeight(products, selectedProductIds, productQuantities);
+  const totalWeight = productsWeight + shippingBoxWeight;
   const weightExceeded = totalWeight > weightLimit;
   
   const totalVolume = calculateTotalVolume(products, selectedProductIds, productQuantities);
