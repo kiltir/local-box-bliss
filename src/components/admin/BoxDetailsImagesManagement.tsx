@@ -36,6 +36,7 @@ interface BoxDimensions {
   width: number;
   height: number;
   depth: number;
+  shipping_box_weight: number;
 }
 
 const BOX_THEMES = [
@@ -58,6 +59,7 @@ export const BoxDetailsImagesManagement = () => {
     width: 30,
     height: 18,
     depth: 8,
+    shipping_box_weight: 0.3,
   });
 
   const { data: images, isLoading } = useQuery({
@@ -99,6 +101,7 @@ export const BoxDetailsImagesManagement = () => {
         width: dimensions.width,
         height: dimensions.height,
         depth: dimensions.depth,
+        shipping_box_weight: dimensions.shipping_box_weight ?? 0.3,
       });
     }
   }, [dimensions]);
@@ -477,6 +480,26 @@ export const BoxDetailsImagesManagement = () => {
                 </div>
                 <p className="text-sm text-muted-foreground">
                   Volume calculé : {(dimensionsForm.width * dimensionsForm.height * dimensionsForm.depth).toLocaleString('fr-FR')} cm³
+                </p>
+              </div>
+
+              {/* Shipping box weight */}
+              <div className="space-y-2">
+                <Label htmlFor="shipping-box-weight">Poids du carton d'expédition (kg)</Label>
+                <Input
+                  id="shipping-box-weight"
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  value={dimensionsForm.shipping_box_weight}
+                  onChange={(e) => setDimensionsForm(prev => ({
+                    ...prev,
+                    shipping_box_weight: parseFloat(e.target.value) || 0,
+                  }))}
+                  className="max-w-xs"
+                />
+                <p className="text-sm text-muted-foreground">
+                  Poids du carton vide à ajouter au poids des produits pour le calcul du poids total d'expédition
                 </p>
               </div>
 
