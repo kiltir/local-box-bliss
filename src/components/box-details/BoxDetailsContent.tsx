@@ -132,7 +132,7 @@ const BoxDetailsContent = ({
               <span className="font-medium">Poids:</span> {totalWeight.toFixed(2)} kg {weightExceeded && '⚠️'}
             </div>
             <div className="text-sm text-gray-600">
-              <span className="font-medium">Volume:</span> {totalVolume.toFixed(2)} cm³ ({volumePercentage.toFixed(1)}%)
+              <span className="font-medium">Volume:</span> {totalVolume.toFixed(2)} cm³
             </div>
           </div>
           
