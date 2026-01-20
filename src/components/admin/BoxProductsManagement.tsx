@@ -74,6 +74,15 @@ export const BoxProductsManagement = () => {
     image_url: '',
   });
 
+  // Normalize theme name for file path (remove accents)
+  const normalizeThemeName = (theme: string): string => {
+    return theme
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/\s+/g, '-');
+  };
+
   // Handle file upload for new product
   const handleNewProductFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -83,7 +92,8 @@ export const BoxProductsManagement = () => {
     try {
       const fileExt = file.name.split('.').pop();
       const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
-      const filePath = `${selectedTheme.toLowerCase()}/${fileName}`;
+      const normalizedTheme = normalizeThemeName(selectedTheme);
+      const filePath = `${normalizedTheme}/${fileName}`;
 
       const { error: uploadError } = await supabase.storage
         .from('box-product-images')
@@ -114,7 +124,8 @@ export const BoxProductsManagement = () => {
     try {
       const fileExt = file.name.split('.').pop();
       const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
-      const filePath = `${selectedTheme.toLowerCase()}/${fileName}`;
+      const normalizedTheme = normalizeThemeName(selectedTheme);
+      const filePath = `${normalizedTheme}/${fileName}`;
 
       const { error: uploadError } = await supabase.storage
         .from('box-product-images')
