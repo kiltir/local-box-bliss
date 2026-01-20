@@ -8,7 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Label } from '@/components/ui/label';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { toast } from 'sonner';
-import { Loader2, Save, Plus, Trash2, Package, ChevronDown, ChevronRight, ArrowUp, ArrowDown, Eye, EyeOff } from 'lucide-react';
+import { Loader2, Save, Plus, Trash2, Package, ChevronDown, ChevronRight, ArrowUp, ArrowDown, Eye, EyeOff, Upload, Image } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
 import {
   Dialog,
@@ -60,6 +60,8 @@ export const BoxProductsManagement = () => {
   const [selectedTheme, setSelectedTheme] = useState('Découverte');
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [expandedProducts, setExpandedProducts] = useState<Set<string>>(new Set());
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadingProductId, setUploadingProductId] = useState<string | null>(null);
   const [newProduct, setNewProduct] = useState({
     name: '',
     quantity: '',
@@ -71,6 +73,68 @@ export const BoxProductsManagement = () => {
     dimension_depth: 0,
     image_url: '',
   });
+
+  // Handle file upload for new product
+  const handleNewProductFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    setIsUploading(true);
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
+      const filePath = `${selectedTheme.toLowerCase()}/${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('box-product-images')
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('box-product-images')
+        .getPublicUrl(filePath);
+
+      setNewProduct({ ...newProduct, image_url: publicUrl });
+      toast.success('Image téléchargée avec succès');
+    } catch (error) {
+      console.error('Error uploading file:', error);
+      toast.error('Erreur lors du téléchargement de l\'image');
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  // Handle file upload for existing product
+  const handleProductFileUpload = async (productId: string, event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    setUploadingProductId(productId);
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
+      const filePath = `${selectedTheme.toLowerCase()}/${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('box-product-images')
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('box-product-images')
+        .getPublicUrl(filePath);
+
+      updateLocalProduct(productId, 'image_url', publicUrl);
+      toast.success('Image téléchargée avec succès');
+    } catch (error) {
+      console.error('Error uploading file:', error);
+      toast.error('Erreur lors du téléchargement de l\'image');
+    } finally {
+      setUploadingProductId(null);
+    }
+  };
 
   useEffect(() => {
     fetchProducts();
@@ -339,23 +403,50 @@ export const BoxProductsManagement = () => {
                     placeholder="Description optionnelle"
                   />
                 </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label>Poids (kg)</Label>
-                    <Input
-                      type="number"
-                      step="0.001"
-                      value={newProduct.weight}
-                      onChange={(e) => setNewProduct({ ...newProduct, weight: parseFloat(e.target.value) || 0 })}
-                    />
-                  </div>
-                  <div>
-                    <Label>URL Image</Label>
-                    <Input
-                      value={newProduct.image_url}
-                      onChange={(e) => setNewProduct({ ...newProduct, image_url: e.target.value })}
-                      placeholder="/path/to/image.png"
-                    />
+                <div>
+                  <Label>Poids (kg)</Label>
+                  <Input
+                    type="number"
+                    step="0.001"
+                    value={newProduct.weight}
+                    onChange={(e) => setNewProduct({ ...newProduct, weight: parseFloat(e.target.value) || 0 })}
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label>Image du produit</Label>
+                  <div className="flex flex-col gap-2">
+                    <div className="flex items-center gap-2">
+                      <Input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleNewProductFileUpload}
+                        disabled={isUploading}
+                        className="flex-1"
+                      />
+                      {isUploading && <Loader2 className="h-4 w-4 animate-spin" />}
+                    </div>
+                    {newProduct.image_url && (
+                      <div className="flex items-center gap-2">
+                        <img 
+                          src={newProduct.image_url} 
+                          alt="Aperçu" 
+                          className="h-12 w-12 object-cover rounded border"
+                        />
+                        <span className="text-xs text-muted-foreground truncate flex-1">
+                          {newProduct.image_url}
+                        </span>
+                      </div>
+                    )}
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                      <span>ou entrez une URL :</span>
+                      <Input
+                        value={newProduct.image_url}
+                        onChange={(e) => setNewProduct({ ...newProduct, image_url: e.target.value })}
+                        placeholder="https://..."
+                        className="flex-1"
+                      />
+                    </div>
                   </div>
                 </div>
                 <div className="grid grid-cols-3 gap-2">
@@ -583,13 +674,42 @@ export const BoxProductsManagement = () => {
                           </div>
                         </div>
 
-                        <div>
-                          <Label>URL de l'image</Label>
-                          <Input
-                            value={product.image_url || ''}
-                            onChange={(e) => updateLocalProduct(product.id, 'image_url', e.target.value)}
-                            placeholder="/path/to/image.png"
-                          />
+                        <div className="space-y-2">
+                          <Label>Image du produit</Label>
+                          {product.image_url && (
+                            <div className="flex items-center gap-3 p-2 bg-muted rounded">
+                              <img 
+                                src={product.image_url} 
+                                alt={product.name} 
+                                className="h-16 w-16 object-cover rounded border"
+                              />
+                              <span className="text-xs text-muted-foreground truncate flex-1">
+                                {product.image_url}
+                              </span>
+                            </div>
+                          )}
+                          <div className="flex items-center gap-2">
+                            <div className="flex-1">
+                              <Input
+                                type="file"
+                                accept="image/*"
+                                onChange={(e) => handleProductFileUpload(product.id, e)}
+                                disabled={uploadingProductId === product.id}
+                              />
+                            </div>
+                            {uploadingProductId === product.id && (
+                              <Loader2 className="h-4 w-4 animate-spin" />
+                            )}
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs text-muted-foreground">ou URL :</span>
+                            <Input
+                              value={product.image_url || ''}
+                              onChange={(e) => updateLocalProduct(product.id, 'image_url', e.target.value)}
+                              placeholder="https://..."
+                              className="flex-1"
+                            />
+                          </div>
                         </div>
                       </CardContent>
                     </CollapsibleContent>
