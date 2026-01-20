@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { Plus, Trash2, Save, ChevronDown, ChevronRight, X } from "lucide-react";
+import { Plus, Trash2, Save, ChevronDown, ChevronRight, X, Upload, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 interface Partner {
@@ -28,6 +28,8 @@ export function PartnersManagement() {
 
   const [expandedPartners, setExpandedPartners] = useState<Set<string>>(new Set());
   const [editedPartners, setEditedPartners] = useState<Record<string, Partial<Partner>>>({});
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadingPartnerId, setUploadingPartnerId] = useState<string | null>(null);
   const [newPartner, setNewPartner] = useState({
     raison_sociale: "",
     secteur_activite: "",
@@ -36,6 +38,64 @@ export function PartnersManagement() {
     is_active: true,
     image_url: "",
   });
+
+  const handleFileUpload = async (file: File) => {
+    if (!file) return;
+
+    setIsUploading(true);
+    try {
+      const fileExt = file.name.split(".").pop();
+      const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
+      const filePath = fileName;
+
+      const { error: uploadError } = await supabase.storage
+        .from("partner-images")
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      const { data: publicUrlData } = supabase.storage
+        .from("partner-images")
+        .getPublicUrl(filePath);
+
+      setNewPartner({ ...newPartner, image_url: publicUrlData.publicUrl });
+      toast.success("Image téléchargée avec succès");
+    } catch (error: any) {
+      console.error("Upload error:", error);
+      toast.error("Erreur lors du téléchargement de l'image");
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handleEditFileUpload = async (partnerId: string, file: File) => {
+    if (!file) return;
+
+    setUploadingPartnerId(partnerId);
+    try {
+      const fileExt = file.name.split(".").pop();
+      const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
+      const filePath = fileName;
+
+      const { error: uploadError } = await supabase.storage
+        .from("partner-images")
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      const { data: publicUrlData } = supabase.storage
+        .from("partner-images")
+        .getPublicUrl(filePath);
+
+      handlePartnerChange(partnerId, "image_url", publicUrlData.publicUrl);
+      toast.success("Image téléchargée avec succès");
+    } catch (error: any) {
+      console.error("Upload error:", error);
+      toast.error("Erreur lors du téléchargement de l'image");
+    } finally {
+      setUploadingPartnerId(null);
+    }
+  };
 
   const { data: partners, isLoading } = useQuery({
     queryKey: ["admin-partners"],
@@ -210,15 +270,33 @@ export function PartnersManagement() {
               rows={3}
             />
           </div>
-          <div className="space-y-2">
-            <Label>URL de la photo</Label>
-            <Input
-              value={newPartner.image_url}
-              onChange={(e) => setNewPartner({ ...newPartner, image_url: e.target.value })}
-              placeholder="https://exemple.com/image.jpg"
-            />
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label>Uploader une image</Label>
+              <div className="flex items-center gap-2">
+                <Input
+                  type="file"
+                  accept="image/*"
+                  disabled={isUploading}
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) handleFileUpload(file);
+                  }}
+                  className="flex-1"
+                />
+                {isUploading && <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />}
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label className="text-muted-foreground">Ou entrez une URL</Label>
+              <Input
+                value={newPartner.image_url}
+                onChange={(e) => setNewPartner({ ...newPartner, image_url: e.target.value })}
+                placeholder="https://exemple.com/image.jpg"
+              />
+            </div>
             {newPartner.image_url && (
-              <div className="flex items-center gap-4 mt-2">
+              <div className="flex items-center gap-4">
                 <img
                   src={newPartner.image_url}
                   alt="Aperçu"
@@ -335,15 +413,35 @@ export function PartnersManagement() {
                       rows={3}
                     />
                   </div>
-                  <div className="space-y-2">
-                    <Label>URL de la photo</Label>
-                    <Input
-                      value={getPartnerValue(partner, "image_url") as string || ""}
-                      onChange={(e) => handlePartnerChange(partner.id, "image_url", e.target.value)}
-                      placeholder="https://exemple.com/image.jpg"
-                    />
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <Label>Uploader une nouvelle image</Label>
+                      <div className="flex items-center gap-2">
+                        <Input
+                          type="file"
+                          accept="image/*"
+                          disabled={uploadingPartnerId === partner.id}
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) handleEditFileUpload(partner.id, file);
+                          }}
+                          className="flex-1"
+                        />
+                        {uploadingPartnerId === partner.id && (
+                          <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+                        )}
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-muted-foreground">Ou entrez une URL</Label>
+                      <Input
+                        value={getPartnerValue(partner, "image_url") as string || ""}
+                        onChange={(e) => handlePartnerChange(partner.id, "image_url", e.target.value)}
+                        placeholder="https://exemple.com/image.jpg"
+                      />
+                    </div>
                     {getPartnerValue(partner, "image_url") && (
-                      <div className="flex items-center gap-4 mt-2">
+                      <div className="flex items-center gap-4">
                         <img
                           src={getPartnerValue(partner, "image_url") as string}
                           alt={partner.raison_sociale}
