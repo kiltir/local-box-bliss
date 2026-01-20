@@ -546,6 +546,22 @@ export const BoxProductsManagement = () => {
                             {index + 1}
                           </span>
                           
+                          {/* Image preview thumbnail */}
+                          {product.image_url ? (
+                            <img 
+                              src={product.image_url} 
+                              alt={product.name}
+                              className="h-10 w-10 object-cover rounded border flex-shrink-0"
+                              onError={(e) => {
+                                (e.target as HTMLImageElement).src = '/placeholder.svg';
+                              }}
+                            />
+                          ) : (
+                            <div className="h-10 w-10 rounded border bg-muted flex items-center justify-center flex-shrink-0">
+                              <Image className="h-5 w-5 text-muted-foreground" />
+                            </div>
+                          )}
+                          
                           <CollapsibleTrigger asChild>
                             <button className="flex items-center gap-2 text-left hover:text-primary transition-colors">
                               {expandedProducts.has(product.id) ? (
