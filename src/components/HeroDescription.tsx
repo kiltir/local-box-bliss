@@ -11,7 +11,7 @@ const HeroDescription = () => {
     
     <div className="container-section py-[30px] relative z-10">
       <div className="max-w-3xl mx-auto text-center">
-        <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">Un concept péi</h2>
+        <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6" style={{ fontFamily: "'Chewy', cursive" }}>Un concept péi</h2>
         
         <p className="text-xl text-gray-600 mb-16">Découvrez nos box de produits typiques issus du savoir-faire local, disponibles avant/après votre voyage à l'aéroport de la Réunion ou livrées directement en Métropole.</p>
         

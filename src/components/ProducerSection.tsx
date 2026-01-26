@@ -32,7 +32,7 @@ const ProducerSection = () => {
     <section id="producers" className="bg-gradient-to-b from-white to-soft-beige/20 py-[15px] scroll-mt-[88px] md:scroll-mt-[80px]">
       <div className="container-section py-[15px]">
         <div className="text-center mb-12 fade-in">
-          <h2 id="producers-title" className="text-3xl font-bold mb-4">Nos Partenaires</h2>
+          <h2 id="producers-title" className="text-3xl font-bold mb-4" style={{ fontFamily: "'Chewy', cursive" }}>Nos Partenaires</h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
             Découvrez nos artisans/producteurs passionnés qui travaillent chaque jour pour offrir le meilleur du territoire.
           </p>
