@@ -143,6 +143,7 @@ const BoxCard = ({ title, price, description, image, items, theme, rating, revie
             <div 
               key={bannerIndex}
               className="animate-fade-in"
+              style={{ fontFamily: "'Chewy', cursive" }}
             >
               {bannerMessages[bannerIndex]}
             </div>
