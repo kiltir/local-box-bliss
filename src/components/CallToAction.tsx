@@ -42,7 +42,7 @@ const CallToAction = () => {
     <section className="py-16 bg-leaf-yellow text-white">
       <div className="container-section py-[15px]">
         <div className="max-w-4xl mx-auto text-center fade-in">
-          <h2 className="text-3xl font-bold mb-4 text-slate-900">
+          <h2 className="text-3xl font-bold mb-4 text-slate-900" style={{ fontFamily: "'Chewy', cursive" }}>
             Une expérience inédite à partager ?
           </h2>
           <p className="text-xl mb-8 text-slate-900">

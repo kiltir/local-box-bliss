@@ -67,7 +67,7 @@ const TestimonialsSection = () => {
     <section className="py-16 bg-soft-beige/20">
       <div className="container-section">
         <div className="text-center mb-12 fade-in">
-          <h2 className="text-3xl font-bold mb-4">Ce que disent nos clients</h2>
+          <h2 className="text-3xl font-bold mb-4" style={{ fontFamily: "'Chewy', cursive" }}>Ce que disent nos clients</h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
             Découvrez les témoignages de ceux qui ont déjà goûté à l'expérience de nos box.
           </p>
