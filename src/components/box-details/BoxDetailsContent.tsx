@@ -111,6 +111,7 @@ const BoxDetailsContent = ({
             <div 
               key={bannerIndex}
               className="animate-fade-in"
+              style={{ fontFamily: "'Chewy', cursive" }}
             >
               {bannerMessages[bannerIndex]}
             </div>
