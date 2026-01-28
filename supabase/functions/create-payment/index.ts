@@ -436,16 +436,17 @@ serve(async (req) => {
           });
         }
         
-        // Add shipping for one-time items as a separate line item
-        if (oneTimeShippingCents > 0) {
+        // Add shipping for one-time items as a separate line item with correct quantity
+        if (oneTimeItemsTotalQuantity > 0) {
           const shippingProduct = await stripe.products.create({
-            name: `Frais de livraison (achats uniques)`,
-            description: shippingLabel,
+            name: shippingLabel,
+            description: 'Frais de livraison par box',
           });
           
+          // Use unit shipping cost with quantity = number of one-time boxes
           const shippingPrice = await stripe.prices.create({
             product: shippingProduct.id,
-            unit_amount: oneTimeShippingCents,
+            unit_amount: shippingCostBase,
             currency: currency,
             metadata: {
               is_shipping: 'true',
@@ -455,7 +456,13 @@ serve(async (req) => {
           
           allLineItems.push({
             price: shippingPrice.id,
-            quantity: 1,
+            quantity: oneTimeItemsTotalQuantity,
+          });
+          
+          logStep("Added one-time shipping to line items", { 
+            unitAmount: shippingCostBase,
+            quantity: oneTimeItemsTotalQuantity,
+            totalAmount: shippingCostBase * oneTimeItemsTotalQuantity
           });
           
           logStep("Added one-time shipping to line items", { amount: oneTimeShippingCents });
