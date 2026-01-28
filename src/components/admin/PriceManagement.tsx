@@ -143,7 +143,7 @@ export const PriceManagement = () => {
                   }
                 />
                 <p className="text-xs text-muted-foreground">
-                  Prix mensuel: {(boxPrice.subscription_6_months_price / 6).toFixed(2)}€
+                  Prix total 6 mois: {(boxPrice.subscription_6_months_price * 6).toFixed(2)}€
                 </p>
               </div>
 
@@ -166,7 +166,7 @@ export const PriceManagement = () => {
                   }
                 />
                 <p className="text-xs text-muted-foreground">
-                  Prix mensuel: {(boxPrice.subscription_12_months_price / 12).toFixed(2)}€
+                  Prix total 12 mois: {(boxPrice.subscription_12_months_price * 12).toFixed(2)}€
                 </p>
               </div>
 
