@@ -58,8 +58,11 @@ const SubscriptionCard: React.FC<SubscriptionCardProps> = ({ subscription, onCli
     }
     
     // Créer un objet pour l'abonnement dans le panier
+    // Use a unique cart id for display purposes, but keep the original boxId for payment validation
+    const cartId = subscription.id + 1000 + (selectedOption.duration === '6months' ? 0 : 100);
     const subscriptionItem = {
-      id: subscription.id + 1000 + (selectedOption.duration === '6months' ? 0 : 100), // ID unique pour chaque type
+      id: cartId, // Unique ID for cart display
+      boxId: subscription.id, // Original box ID for payment validation (1, 2, 3, 4)
       baseTitle: `${subscription.baseTitle} - Abonnement ${selectedOption.label}`,
       price: selectedOption.totalPrice,
       description: subscription.description,

@@ -150,7 +150,9 @@ serve(async (req) => {
 
     // Validate each item's price against database
     for (const item of items) {
-      const boxId = item.box?.id;
+      // For subscriptions, boxId contains the original box ID (1, 2, 3, 4)
+      // For one-time purchases, we use id directly
+      const boxId = item.box?.boxId || item.box?.id;
       const theme = item.box?.theme;
       const clientPrice = item.box?.price;
       const subscriptionType = item.subscriptionType;
@@ -284,7 +286,8 @@ serve(async (req) => {
       const subscriptionItems: any[] = [];
       
       for (const item of items) {
-        const key = `${item.box.id}-${normalizeTheme(item.box.theme)}`;
+        const boxId = item.box.boxId || item.box.id;
+        const key = `${boxId}-${normalizeTheme(item.box.theme)}`;
         const dbPrice = priceMap.get(key)!
         
         const isYearly = item.subscriptionType === '1year' || item.subscriptionType === '12_months';
