@@ -212,13 +212,16 @@ const Checkout = () => {
     let totalShipping = 0;
 
     items.forEach(item => {
-      let multiplier = 1;
       if (item.subscriptionType === '6months') {
-        multiplier = 6;
+        // Abonnement 6 mois : frais de livraison × 6 × quantité
+        totalShipping += baseCost * 6 * item.quantity;
       } else if (item.subscriptionType === '1year') {
-        multiplier = 12;
+        // Abonnement 12 mois : frais de livraison × 12 × quantité
+        totalShipping += baseCost * 12 * item.quantity;
+      } else {
+        // Achat unique : frais de livraison × quantité (1 livraison par box)
+        totalShipping += baseCost * item.quantity;
       }
-      totalShipping += baseCost * item.quantity * multiplier;
     });
 
     return totalShipping;
