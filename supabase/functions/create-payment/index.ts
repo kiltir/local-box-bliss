@@ -169,19 +169,25 @@ serve(async (req) => {
         throw new Error(`Prix introuvable pour l'article: ${item.box?.baseTitle || 'Inconnu'}`);
       }
 
+      // For subscriptions, client sends total engagement price (monthly * months)
+      // For one-time, client sends unit price
       let expectedPrice: number;
+      let monthlyPrice: number | null = null;
+      
       if (subscriptionType === '6months' || subscriptionType === '6_months') {
-        expectedPrice = dbPrice.sub6;
+        monthlyPrice = dbPrice.sub6;
+        expectedPrice = monthlyPrice * 6; // Total engagement = monthly × 6
       } else if (subscriptionType === '1year' || subscriptionType === '12_months') {
-        expectedPrice = dbPrice.sub12;
+        monthlyPrice = dbPrice.sub12;
+        expectedPrice = monthlyPrice * 12; // Total engagement = monthly × 12
       } else {
         expectedPrice = dbPrice.unit;
       }
 
       const priceDifference = Math.abs(clientPrice - expectedPrice);
-      if (priceDifference > 0.01) {
+      if (priceDifference > 1) { // Allow 1€ tolerance for rounding
         logStep("PRICE MANIPULATION DETECTED", { 
-          boxId, theme, clientPrice, expectedPrice, subscriptionType, difference: priceDifference 
+          boxId, theme, clientPrice, expectedPrice, monthlyPrice, subscriptionType, difference: priceDifference 
         });
         throw new Error("Les prix ont été modifiés. Veuillez rafraîchir votre panier.");
       }
