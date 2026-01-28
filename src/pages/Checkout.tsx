@@ -109,9 +109,33 @@ const Checkout = () => {
 
   const getItemDescription = (item: any) => {
     if (item.subscriptionType) {
-      return `Abonnement ${item.subscriptionType === '6months' ? '6 mois' : '1 an'}`;
+      const months = item.subscriptionType === '6months' ? 6 : 12;
+      return `Prélèvement mensuel pendant ${months} mois`;
     }
     return item.box.theme;
+  };
+
+  const getItemPriceDisplay = (item: any) => {
+    if (item.subscriptionType) {
+      // For subscriptions, show monthly price
+      return `${item.box.price.toFixed(2)}€/mois`;
+    }
+    return `${item.box.price.toFixed(2)}€`;
+  };
+
+  const getItemTotalDisplay = (item: any) => {
+    if (item.subscriptionType) {
+      // For subscriptions, total is monthly price * quantity (first month)
+      const months = item.subscriptionType === '6months' ? 6 : 12;
+      const totalEngagement = item.box.price * item.quantity * months;
+      return (
+        <div className="text-right">
+          <p className="font-medium">{item.box.price.toFixed(2)}€/mois</p>
+          <p className="text-xs text-muted-foreground">Total engagement: {totalEngagement.toFixed(2)}€</p>
+        </div>
+      );
+    }
+    return <span className="font-medium">{(item.box.price * item.quantity).toFixed(2)}€</span>;
   };
 
   const getBaseDeliveryCost = () => {
@@ -238,15 +262,15 @@ const Checkout = () => {
                               )}
                             </div>
                             <div>
-                              <p className="font-medium">{getItemDisplayName(item)}</p>
+                            <p className="font-medium">{getItemDisplayName(item)}</p>
                               <p className="text-sm text-gray-500">{getItemDescription(item)}</p>
                             </div>
                           </div>
                         </TableCell>
                         <TableCell className="text-center">{item.quantity}</TableCell>
-                        <TableCell className="text-right">{item.box.price.toFixed(2)}€</TableCell>
-                        <TableCell className="text-right font-medium">
-                          {(item.box.price * item.quantity).toFixed(2)}€
+                        <TableCell className="text-right">{getItemPriceDisplay(item)}</TableCell>
+                        <TableCell className="text-right">
+                          {getItemTotalDisplay(item)}
                         </TableCell>
                       </TableRow>
                     ))}

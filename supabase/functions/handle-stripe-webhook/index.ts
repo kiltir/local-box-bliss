@@ -1,8 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.56.0';
 
-// Allowed origins for CORS - Stripe webhooks come from Stripe servers, not browser
-// but we still need CORS for preflight requests
 const ALLOWED_ORIGINS = [
   'https://dmtxlyxgpmszsqfuyzkc.lovableproject.com',
   'https://kiltirbox.re',
@@ -59,8 +57,6 @@ serve(async (req) => {
     }
 
     const body = await req.text();
-    
-    // Verify webhook signature
     const stripe = (await import('https://esm.sh/stripe@12.18.0')).default(stripeSecret);
     
     let event;
@@ -76,238 +72,67 @@ serve(async (req) => {
       });
     }
 
-    // Handle checkout.session.completed event
-    if (event.type === 'checkout.session.completed') {
-      const session = event.data.object;
-      logStep('Processing completed checkout session', { sessionId: session.id });
+    const supabase = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    );
 
-      // Initialize Supabase client
-      const supabase = createClient(
-        Deno.env.get('SUPABASE_URL') ?? '',
-        Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-      );
+    // Handle different event types
+    switch (event.type) {
+      case 'checkout.session.completed': {
+        const session = event.data.object;
+        logStep('Processing completed checkout session', { sessionId: session.id, mode: session.mode });
 
-      // Extract metadata from the session
-      const userId = session.metadata?.user_id;
-      const itemsData = session.metadata?.items;
-      const travelInfoData = session.metadata?.travel_info;
-
-      if (!userId || !itemsData) {
-        logStep('Missing required metadata', { userId, hasItems: !!itemsData });
-        return new Response(JSON.stringify({ error: 'Missing required metadata' }), {
-          status: 400,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        });
-      }
-
-      let items;
-      try {
-        items = JSON.parse(itemsData);
-      } catch (err) {
-        const msg = err instanceof Error ? err.message : String(err);
-        logStep('Failed to parse items metadata', { error: msg });
-        return new Response(JSON.stringify({ error: 'Invalid items metadata' }), {
-          status: 400,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        });
-      }
-
-      // Parse travel info if available
-      let travelInfo = null;
-      if (travelInfoData) {
-        try {
-          travelInfo = JSON.parse(travelInfoData);
-        } catch (err) {
-          const msg = err instanceof Error ? err.message : String(err);
-          logStep('Failed to parse travel info metadata', { error: msg });
-          // Don't fail the entire request for travel info parsing errors
+        if (session.mode === 'subscription') {
+          // SUBSCRIPTION ORDER
+          await handleSubscriptionCreated(session, stripe, supabase);
+        } else {
+          // ONE-TIME PAYMENT
+          await handleOneTimePayment(session, supabase);
         }
+        break;
       }
 
-      // Generate order number
-      const orderNumber = `CMD-${Date.now()}-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
-
-      // Calculate total amount from session
-      const totalAmount = session.amount_total / 100; // Convert from cents
-
-      logStep('Creating order', { userId, orderNumber, totalAmount, itemsCount: items.length, hasTravelInfo: !!travelInfo });
-
-      // Determine delivery preference using travel info if provided
-      let deliveryPreference = travelInfo?.delivery_preference || 'ship_to_metropole';
-
-      logStep('Travel info processed', { 
-        deliveryPreference,
-        arrival_date_reunion: travelInfo?.arrival_date_reunion,
-        departure_date_reunion: travelInfo?.departure_date_reunion,
-        arrival_time_reunion: travelInfo?.arrival_time_reunion,
-        departure_time_reunion: travelInfo?.departure_time_reunion
-      });
-
-      // Calculate pickup date and time based on delivery preference
-      let pickupDate = null;
-      let pickupTime = null;
-      
-      if (deliveryPreference === 'airport_pickup_arrival') {
-        pickupDate = travelInfo?.arrival_date_reunion || null;
-        pickupTime = travelInfo?.arrival_time_reunion || null;
-      } else if (deliveryPreference === 'airport_pickup_departure') {
-        pickupDate = travelInfo?.departure_date_reunion || null;
-        pickupTime = travelInfo?.departure_time_reunion || null;
-      }
-
-      logStep('Pickup preferences calculated', {
-        deliveryPreference,
-        pickupDate,
-        pickupTime,
-      });
-
-      // Create the order
-      const { data: orderData, error: orderError } = await supabase
-        .from('orders')
-        .insert({
-          user_id: userId,
-          order_number: orderNumber,
-          total_amount: totalAmount,
-          status: 'confirmee',
-          delivery_preference: deliveryPreference,
-          arrival_date_reunion: travelInfo?.arrival_date_reunion || null,
-          departure_date_reunion: travelInfo?.departure_date_reunion || null,
-          arrival_time_reunion: travelInfo?.arrival_time_reunion || null,
-          departure_time_reunion: travelInfo?.departure_time_reunion || null,
-          date_preference: pickupDate,
-          time_preference: pickupTime,
-          shipping_address_street: session.shipping_details?.address?.line1 || null,
-          shipping_address_city: session.shipping_details?.address?.city || null,
-          shipping_address_postal_code: session.shipping_details?.address?.postal_code || null,
-          shipping_address_country: session.shipping_details?.address?.country || 'France',
-          // Persist billing address separately
-          billing_address_street: session.customer_details?.address?.line1 || null,
-          billing_address_city: session.customer_details?.address?.city || null,
-          billing_address_postal_code: session.customer_details?.address?.postal_code || null,
-          billing_address_country: session.customer_details?.address?.country || 'France',
-        })
-        .select()
-        .single();
-
-      if (orderError) {
-        logStep('Failed to create order', { error: orderError });
-        return new Response(JSON.stringify({ error: 'Failed to create order' }), {
-          status: 500,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        });
-      }
-
-      logStep('Order created successfully', { orderId: orderData.id });
-
-      // Create order items from simplified metadata format
-      const orderItems = items
-        .filter((item: any) => {
-          if (!item || !item.quantity || typeof item.quantity !== 'number' || !item.price || typeof item.price !== 'number') {
-            logStep('Invalid item skipped', { item });
-            return false;
-          }
-          return true;
-        })
-        .map((item: any) => {
-          return {
-            order_id: orderData.id,
-            box_type: item.title || item.id?.toString() || 'Unknown',
-            quantity: item.quantity,
-            unit_price: item.price,
-          };
-        });
-
-      const { error: itemsError } = await supabase
-        .from('order_items')
-        .insert(orderItems);
-
-      if (itemsError) {
-        logStep('Failed to create order items', { error: itemsError });
-        return new Response(JSON.stringify({ error: 'Failed to create order items' }), {
-          status: 500,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        });
-      }
-
-      logStep('Order items created successfully', { itemsCount: orderItems.length });
-
-      // Decrement stock for each theme
-      for (const item of items) {
-        // Extract theme from box title (e.g., "Box Découverte" -> "Découverte")
-        const boxTitle = item.title || '';
-        let theme = '';
+      case 'invoice.paid': {
+        // Monthly subscription payment succeeded
+        const invoice = event.data.object;
+        logStep('Invoice paid', { invoiceId: invoice.id, subscriptionId: invoice.subscription });
         
-        if (boxTitle.includes('Découverte')) {
-          theme = 'Découverte';
-        } else if (boxTitle.includes('Bourbon')) {
-          theme = 'Bourbon';
-        } else if (boxTitle.includes('Racine')) {
-          theme = 'Racine';
-        } else if (boxTitle.includes('Saison')) {
-          theme = 'Saison';
+        if (invoice.subscription) {
+          await handleInvoicePaid(invoice, stripe, supabase);
         }
-
-        if (theme) {
-          // Calculate quantity to decrement based on subscription type
-          let stockToDecrement = item.quantity || 1;
-          
-          // For subscriptions, multiply by the number of months
-          if (item.subscriptionType) {
-            const subscriptionMonths = item.subscriptionType === '6months' ? 6 : 12;
-            stockToDecrement = stockToDecrement * subscriptionMonths;
-            logStep('Subscription detected', { 
-              subscriptionType: item.subscriptionType, 
-              months: subscriptionMonths,
-              totalStockToDecrement: stockToDecrement 
-            });
-          }
-
-          // Get current stock
-          const { data: stockData, error: stockFetchError } = await supabase
-            .from('box_stock')
-            .select('available_stock, id')
-            .eq('theme', theme)
-            .single();
-
-          if (stockFetchError) {
-            logStep('Failed to fetch stock', { theme, error: stockFetchError });
-            continue;
-          }
-
-          // Decrement stock by calculated quantity
-          const newStock = Math.max(0, stockData.available_stock - stockToDecrement);
-          
-          const { error: stockUpdateError } = await supabase
-            .from('box_stock')
-            .update({ available_stock: newStock })
-            .eq('id', stockData.id);
-
-          if (stockUpdateError) {
-            logStep('Failed to update stock', { theme, error: stockUpdateError });
-          } else {
-            logStep('Stock updated', { 
-              theme, 
-              oldStock: stockData.available_stock, 
-              newStock, 
-              decrementedBy: stockToDecrement,
-              isSubscription: !!item.subscriptionType,
-              subscriptionType: item.subscriptionType 
-            });
-          }
-        }
+        break;
       }
 
-      return new Response(JSON.stringify({
-        success: true, 
-        orderId: orderData.id,
-        orderNumber: orderData.order_number 
-      }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
+      case 'invoice.payment_failed': {
+        // Payment failed - Stripe will retry automatically
+        const invoice = event.data.object;
+        logStep('Invoice payment failed', { invoiceId: invoice.id, subscriptionId: invoice.subscription });
+        
+        if (invoice.subscription) {
+          await handlePaymentFailed(invoice, supabase);
+        }
+        break;
+      }
+
+      case 'customer.subscription.updated': {
+        const subscription = event.data.object;
+        logStep('Subscription updated', { subscriptionId: subscription.id, status: subscription.status });
+        await updateSubscriptionStatus(subscription, supabase);
+        break;
+      }
+
+      case 'customer.subscription.deleted': {
+        const subscription = event.data.object;
+        logStep('Subscription deleted/completed', { subscriptionId: subscription.id });
+        await handleSubscriptionEnded(subscription, supabase);
+        break;
+      }
+
+      default:
+        logStep('Event acknowledged', { type: event.type });
     }
 
-    // For other event types, just acknowledge receipt
-    logStep('Event acknowledged', { type: event.type });
     return new Response(JSON.stringify({ received: true }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
@@ -321,3 +146,350 @@ serve(async (req) => {
     });
   }
 });
+
+// Handle new subscription creation
+async function handleSubscriptionCreated(session: any, stripe: any, supabase: any) {
+  const userId = session.metadata?.user_id;
+  const itemsData = session.metadata?.items;
+  const subscriptionId = session.subscription;
+  
+  if (!userId || !itemsData || !subscriptionId) {
+    logStep('Missing required metadata for subscription', { userId, hasItems: !!itemsData, subscriptionId });
+    return;
+  }
+
+  let items;
+  try {
+    items = JSON.parse(itemsData);
+  } catch (err) {
+    logStep('Failed to parse items metadata', { error: (err as Error).message });
+    return;
+  }
+
+  // Get Stripe subscription details
+  const stripeSubscription = await stripe.subscriptions.retrieve(subscriptionId);
+  
+  for (const item of items) {
+    const durationMonths = item.durationMonths || (item.subscriptionType === '1year' ? 12 : 6);
+    
+    // Create subscription record in database
+    const { data: subData, error: subError } = await supabase
+      .from('subscriptions')
+      .insert({
+        user_id: userId,
+        stripe_subscription_id: subscriptionId,
+        stripe_customer_id: session.customer,
+        box_id: item.id,
+        theme: item.theme || item.title.replace('Box ', ''),
+        status: 'active',
+        duration_months: durationMonths,
+        monthly_price: item.price,
+        total_paid_months: 1, // First month paid at checkout
+        current_period_start: new Date(stripeSubscription.current_period_start * 1000).toISOString(),
+        current_period_end: new Date(stripeSubscription.current_period_end * 1000).toISOString(),
+        shipping_address_street: session.shipping_details?.address?.line1 || null,
+        shipping_address_city: session.shipping_details?.address?.city || null,
+        shipping_address_postal_code: session.shipping_details?.address?.postal_code || null,
+        shipping_address_country: session.shipping_details?.address?.country || 'France',
+        delivery_preference: session.metadata?.travel_info ? JSON.parse(session.metadata.travel_info).delivery_preference : 'metropole',
+      })
+      .select()
+      .single();
+
+    if (subError) {
+      logStep('Failed to create subscription record', { error: subError.message });
+      continue;
+    }
+
+    logStep('Subscription record created', { subscriptionId: subData.id, boxId: item.id, durationMonths });
+
+    // Decrement stock for first month
+    await decrementStock(item.theme || item.title.replace('Box ', ''), 1, supabase);
+  }
+
+  // Create initial order for the first month
+  const orderNumber = `ABO-${Date.now()}-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
+  
+  const { data: orderData, error: orderError } = await supabase
+    .from('orders')
+    .insert({
+      user_id: userId,
+      order_number: orderNumber,
+      total_amount: session.amount_total / 100,
+      status: 'confirmee',
+      delivery_preference: session.metadata?.travel_info ? JSON.parse(session.metadata.travel_info).delivery_preference : 'metropole',
+      shipping_address_street: session.shipping_details?.address?.line1 || null,
+      shipping_address_city: session.shipping_details?.address?.city || null,
+      shipping_address_postal_code: session.shipping_details?.address?.postal_code || null,
+      shipping_address_country: session.shipping_details?.address?.country || 'France',
+      billing_address_street: session.customer_details?.address?.line1 || null,
+      billing_address_city: session.customer_details?.address?.city || null,
+      billing_address_postal_code: session.customer_details?.address?.postal_code || null,
+      billing_address_country: session.customer_details?.address?.country || 'France',
+    })
+    .select()
+    .single();
+
+  if (orderError) {
+    logStep('Failed to create initial order', { error: orderError.message });
+    return;
+  }
+
+  // Create order items
+  const orderItems = items.map((item: any) => ({
+    order_id: orderData.id,
+    box_type: `${item.title} - Abonnement (Mois 1/${item.durationMonths || 6})`,
+    quantity: item.quantity || 1,
+    unit_price: item.price,
+  }));
+
+  await supabase.from('order_items').insert(orderItems);
+  logStep('Initial subscription order created', { orderId: orderData.id, orderNumber });
+
+  // Schedule subscription cancellation after the engagement period
+  // This is handled by Stripe's subscription schedule or by checking in invoice.paid
+}
+
+// Handle monthly invoice paid
+async function handleInvoicePaid(invoice: any, stripe: any, supabase: any) {
+  const subscriptionId = invoice.subscription;
+  
+  // Get subscription from database
+  const { data: subscription, error } = await supabase
+    .from('subscriptions')
+    .select('*')
+    .eq('stripe_subscription_id', subscriptionId)
+    .single();
+
+  if (error || !subscription) {
+    logStep('Subscription not found for invoice', { subscriptionId });
+    return;
+  }
+
+  // Update paid months counter
+  const newPaidMonths = subscription.total_paid_months + 1;
+  
+  await supabase
+    .from('subscriptions')
+    .update({
+      total_paid_months: newPaidMonths,
+      current_period_start: new Date(invoice.period_start * 1000).toISOString(),
+      current_period_end: new Date(invoice.period_end * 1000).toISOString(),
+    })
+    .eq('id', subscription.id);
+
+  logStep('Subscription payment recorded', { 
+    subscriptionId: subscription.id, 
+    month: newPaidMonths, 
+    of: subscription.duration_months 
+  });
+
+  // Create monthly order
+  const orderNumber = `ABO-${Date.now()}-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
+  
+  const { data: orderData, error: orderError } = await supabase
+    .from('orders')
+    .insert({
+      user_id: subscription.user_id,
+      order_number: orderNumber,
+      total_amount: invoice.amount_paid / 100,
+      status: 'confirmee',
+      delivery_preference: subscription.delivery_preference,
+      shipping_address_street: subscription.shipping_address_street,
+      shipping_address_city: subscription.shipping_address_city,
+      shipping_address_postal_code: subscription.shipping_address_postal_code,
+      shipping_address_country: subscription.shipping_address_country,
+    })
+    .select()
+    .single();
+
+  if (!orderError && orderData) {
+    await supabase.from('order_items').insert({
+      order_id: orderData.id,
+      box_type: `Box ${subscription.theme} - Abonnement (Mois ${newPaidMonths}/${subscription.duration_months})`,
+      quantity: 1,
+      unit_price: subscription.monthly_price,
+    });
+
+    logStep('Monthly order created', { orderId: orderData.id, month: newPaidMonths });
+  }
+
+  // Decrement stock
+  await decrementStock(subscription.theme, 1, supabase);
+
+  // Check if subscription should end (engagement period completed)
+  if (newPaidMonths >= subscription.duration_months) {
+    logStep('Subscription engagement completed, canceling', { subscriptionId });
+    
+    // Cancel the Stripe subscription at period end
+    await stripe.subscriptions.update(subscriptionId, {
+      cancel_at_period_end: true,
+    });
+    
+    await supabase
+      .from('subscriptions')
+      .update({ status: 'completed' })
+      .eq('id', subscription.id);
+  }
+}
+
+// Handle payment failure
+async function handlePaymentFailed(invoice: any, supabase: any) {
+  const subscriptionId = invoice.subscription;
+  
+  await supabase
+    .from('subscriptions')
+    .update({ status: 'past_due' })
+    .eq('stripe_subscription_id', subscriptionId);
+
+  logStep('Subscription marked as past_due', { subscriptionId });
+}
+
+// Update subscription status
+async function updateSubscriptionStatus(stripeSubscription: any, supabase: any) {
+  const status = stripeSubscription.status === 'active' ? 'active' : 
+                 stripeSubscription.status === 'past_due' ? 'past_due' :
+                 stripeSubscription.status === 'canceled' ? 'canceled' : 'active';
+
+  await supabase
+    .from('subscriptions')
+    .update({
+      status,
+      current_period_start: new Date(stripeSubscription.current_period_start * 1000).toISOString(),
+      current_period_end: new Date(stripeSubscription.current_period_end * 1000).toISOString(),
+    })
+    .eq('stripe_subscription_id', stripeSubscription.id);
+
+  logStep('Subscription status updated', { subscriptionId: stripeSubscription.id, status });
+}
+
+// Handle subscription ended
+async function handleSubscriptionEnded(stripeSubscription: any, supabase: any) {
+  await supabase
+    .from('subscriptions')
+    .update({
+      status: 'completed',
+      canceled_at: new Date().toISOString(),
+    })
+    .eq('stripe_subscription_id', stripeSubscription.id);
+
+  logStep('Subscription marked as completed', { subscriptionId: stripeSubscription.id });
+}
+
+// Handle one-time payment (existing logic)
+async function handleOneTimePayment(session: any, supabase: any) {
+  const userId = session.metadata?.user_id;
+  const itemsData = session.metadata?.items;
+  const travelInfoData = session.metadata?.travel_info;
+
+  if (!userId || !itemsData) {
+    logStep('Missing required metadata', { userId, hasItems: !!itemsData });
+    return;
+  }
+
+  let items;
+  try {
+    items = JSON.parse(itemsData);
+  } catch (err) {
+    logStep('Failed to parse items metadata', { error: (err as Error).message });
+    return;
+  }
+
+  let travelInfo = null;
+  if (travelInfoData) {
+    try {
+      travelInfo = JSON.parse(travelInfoData);
+    } catch (err) {
+      logStep('Failed to parse travel info', { error: (err as Error).message });
+    }
+  }
+
+  const orderNumber = `CMD-${Date.now()}-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
+  const totalAmount = session.amount_total / 100;
+  const deliveryPreference = travelInfo?.delivery_preference || 'ship_to_metropole';
+
+  const { data: orderData, error: orderError } = await supabase
+    .from('orders')
+    .insert({
+      user_id: userId,
+      order_number: orderNumber,
+      total_amount: totalAmount,
+      status: 'confirmee',
+      delivery_preference: deliveryPreference,
+      arrival_date_reunion: travelInfo?.arrival_date_reunion || null,
+      departure_date_reunion: travelInfo?.departure_date_reunion || null,
+      arrival_time_reunion: travelInfo?.arrival_time_reunion || null,
+      departure_time_reunion: travelInfo?.departure_time_reunion || null,
+      shipping_address_street: session.shipping_details?.address?.line1 || null,
+      shipping_address_city: session.shipping_details?.address?.city || null,
+      shipping_address_postal_code: session.shipping_details?.address?.postal_code || null,
+      shipping_address_country: session.shipping_details?.address?.country || 'France',
+      billing_address_street: session.customer_details?.address?.line1 || null,
+      billing_address_city: session.customer_details?.address?.city || null,
+      billing_address_postal_code: session.customer_details?.address?.postal_code || null,
+      billing_address_country: session.customer_details?.address?.country || 'France',
+    })
+    .select()
+    .single();
+
+  if (orderError) {
+    logStep('Failed to create order', { error: orderError.message });
+    return;
+  }
+
+  logStep('Order created successfully', { orderId: orderData.id });
+
+  const orderItems = items
+    .filter((item: any) => item && item.quantity && item.price)
+    .map((item: any) => ({
+      order_id: orderData.id,
+      box_type: item.title || item.id?.toString() || 'Unknown',
+      quantity: item.quantity,
+      unit_price: item.price,
+    }));
+
+  await supabase.from('order_items').insert(orderItems);
+  logStep('Order items created', { itemsCount: orderItems.length });
+
+  // Decrement stock
+  for (const item of items) {
+    const boxTitle = item.title || '';
+    let theme = '';
+    
+    if (boxTitle.includes('Découverte')) theme = 'Découverte';
+    else if (boxTitle.includes('Bourbon')) theme = 'Bourbon';
+    else if (boxTitle.includes('Racine')) theme = 'Racine';
+    else if (boxTitle.includes('Saison')) theme = 'Saison';
+
+    if (theme) {
+      await decrementStock(theme, item.quantity || 1, supabase);
+    }
+  }
+}
+
+// Helper function to decrement stock
+async function decrementStock(theme: string, quantity: number, supabase: any) {
+  const { data: stockData, error: stockFetchError } = await supabase
+    .from('box_stock')
+    .select('available_stock, id')
+    .eq('theme', theme)
+    .single();
+
+  if (stockFetchError) {
+    logStep('Failed to fetch stock', { theme, error: stockFetchError.message });
+    return;
+  }
+
+  const newStock = Math.max(0, stockData.available_stock - quantity);
+  
+  const { error: stockUpdateError } = await supabase
+    .from('box_stock')
+    .update({ available_stock: newStock })
+    .eq('id', stockData.id);
+
+  if (stockUpdateError) {
+    logStep('Failed to update stock', { theme, error: stockUpdateError.message });
+  } else {
+    logStep('Stock updated', { theme, oldStock: stockData.available_stock, newStock, decrementedBy: quantity });
+  }
+}
