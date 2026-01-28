@@ -92,9 +92,12 @@ const BoxCard = ({ title, price, description, image, items, theme, rating, revie
       return;
     }
     
+    // Map theme to box_id for proper price validation
+    const boxId = themeToBoxId[theme] || 1;
+    
     // Créer un objet BoxData simplifié pour le panier
     const boxData = {
-      id: Math.random(), // En attendant d'avoir un vrai ID
+      id: boxId, // Real box ID for price validation (1, 2, 3, 4)
       baseTitle: title,
       price,
       description,
