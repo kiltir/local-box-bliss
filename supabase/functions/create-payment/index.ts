@@ -278,8 +278,8 @@ serve(async (req) => {
       const subscriptionItems: any[] = [];
       
       for (const item of items) {
-        const key = `${item.box.id}-${item.box.theme}`;
-        const dbPrice = priceMap.get(key)!;
+        const key = `${item.box.id}-${normalizeTheme(item.box.theme)}`;
+        const dbPrice = priceMap.get(key)!
         
         const isYearly = item.subscriptionType === '1year' || item.subscriptionType === '12_months';
         const months = isYearly ? 12 : 6;
@@ -404,8 +404,8 @@ serve(async (req) => {
     logStep("Processing one-time payment order");
     
     const lineItems = items.map((item: any) => {
-      const key = `${item.box.id}-${item.box.theme}`;
-      const dbPrice = priceMap.get(key)!;
+      const key = `${item.box.id}-${normalizeTheme(item.box.theme)}`;
+      const dbPrice = priceMap.get(key)!
       const validatedPrice = dbPrice.unit;
       const unitAmount = Math.round(validatedPrice * 100);
       
