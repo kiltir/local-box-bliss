@@ -568,6 +568,75 @@ export type Database = {
         }
         Relationships: []
       }
+      subscriptions: {
+        Row: {
+          box_id: number
+          canceled_at: string | null
+          created_at: string
+          current_period_end: string | null
+          current_period_start: string | null
+          delivery_preference: string | null
+          duration_months: number
+          id: string
+          monthly_price: number
+          shipping_address_city: string | null
+          shipping_address_country: string | null
+          shipping_address_postal_code: string | null
+          shipping_address_street: string | null
+          status: string
+          stripe_customer_id: string
+          stripe_subscription_id: string
+          theme: string
+          total_paid_months: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          box_id: number
+          canceled_at?: string | null
+          created_at?: string
+          current_period_end?: string | null
+          current_period_start?: string | null
+          delivery_preference?: string | null
+          duration_months: number
+          id?: string
+          monthly_price: number
+          shipping_address_city?: string | null
+          shipping_address_country?: string | null
+          shipping_address_postal_code?: string | null
+          shipping_address_street?: string | null
+          status?: string
+          stripe_customer_id: string
+          stripe_subscription_id: string
+          theme: string
+          total_paid_months?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          box_id?: number
+          canceled_at?: string | null
+          created_at?: string
+          current_period_end?: string | null
+          current_period_start?: string | null
+          delivery_preference?: string | null
+          duration_months?: number
+          id?: string
+          monthly_price?: number
+          shipping_address_city?: string | null
+          shipping_address_country?: string | null
+          shipping_address_postal_code?: string | null
+          shipping_address_street?: string | null
+          status?: string
+          stripe_customer_id?: string
+          stripe_subscription_id?: string
+          theme?: string
+          total_paid_months?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       supplier_application_photos: {
         Row: {
           application_id: string
