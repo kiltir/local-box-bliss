@@ -55,6 +55,41 @@ const Checkout = () => {
     
     try {
       console.log('Starting payment process with items:', items);
+
+      // Sanitize cart items for payment validation:
+      // some UI components use a “display id” (or other non-canonical ids) in the cart,
+      // but the payment validation expects the real box_id (1..4) matching DB pricing.
+      const themeToBoxId: Record<string, number> = {
+        'Découverte': 1,
+        'Bourbon': 2,
+        'Racine': 3,
+        'Saison': 4,
+      };
+
+      const getCanonicalBoxId = (box: any): number => {
+        const candidates = [box?.boxId, box?.id];
+        for (const c of candidates) {
+          if (typeof c === 'number' && Number.isFinite(c) && Number.isInteger(c) && c >= 1 && c <= 4) {
+            return c;
+          }
+        }
+
+        const fromTheme = themeToBoxId[String(box?.theme ?? '')];
+        return fromTheme ?? 1;
+      };
+
+      const itemsForPayment = items.map((item: any) => {
+        const canonicalBoxId = getCanonicalBoxId(item?.box);
+        return {
+          ...item,
+          box: {
+            ...item.box,
+            // Ensure create-payment reads a stable id for DB price lookup
+            id: canonicalBoxId,
+            boxId: canonicalBoxId,
+          },
+        };
+      });
       
       // Get travel information from localStorage
       const travelInfo = localStorage.getItem('travelInfo');
@@ -76,7 +111,7 @@ const Checkout = () => {
       }
       
       const { data, error } = await supabase.functions.invoke('create-payment', {
-        body: { items, currency: 'eur', travelInfo: parsedTravelInfo }
+        body: { items: itemsForPayment, currency: 'eur', travelInfo: parsedTravelInfo }
       });
 
       if (error) {
