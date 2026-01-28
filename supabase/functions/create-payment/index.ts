@@ -53,7 +53,7 @@ serve(async (req) => {
     }
     logStep("Stripe key verified");
 
-    const requestOrigin = origin || "http://localhost:3000";
+    const requestOrigin = req.headers.get("origin") || "http://localhost:3000";
     logStep("Origin detected", { origin: requestOrigin });
 
     const { items, currency = 'eur', travelInfo } = await req.json();
