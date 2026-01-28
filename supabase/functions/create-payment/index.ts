@@ -30,6 +30,14 @@ const logStep = (step: string, details?: any) => {
   console.log(`[CREATE-PAYMENT] ${step}${detailsStr}`);
 };
 
+// Normalize theme names for comparison (removes accents, lowercase)
+const normalizeTheme = (theme: string): string => {
+  return theme
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '');
+};
+
 // Utility function to normalize URLs
 const toAbsoluteUrl = (url: string, origin: string): string | null => {
   try {
@@ -129,11 +137,13 @@ serve(async (req) => {
     const priceMap = new Map<string, { unit: number; sub6: number; sub12: number }>();
     if (dbPrices) {
       for (const price of dbPrices) {
-        const key = `${price.box_id}-${price.theme}`;
+        // Use normalized theme for the key
+        const key = `${price.box_id}-${normalizeTheme(price.theme)}`;
         priceMap.set(key, {
           unit: Number(price.unit_price),
           sub6: Number(price.subscription_6_months_price),
           sub12: Number(price.subscription_12_months_price),
+          originalTheme: price.theme, // Keep original for logging
         });
       }
     }
@@ -150,11 +160,12 @@ serve(async (req) => {
         throw new Error("Article invalide dans le panier");
       }
 
-      const key = `${boxId}-${theme}`;
+      // Use normalized theme for lookup
+      const key = `${boxId}-${normalizeTheme(theme)}`;
       const dbPrice = priceMap.get(key);
 
       if (!dbPrice) {
-        logStep("Price not found in database", { boxId, theme });
+        logStep("Price not found in database", { boxId, theme, normalizedTheme: normalizeTheme(theme), availableKeys: Array.from(priceMap.keys()) });
         throw new Error(`Prix introuvable pour l'article: ${item.box?.baseTitle || 'Inconnu'}`);
       }
 
