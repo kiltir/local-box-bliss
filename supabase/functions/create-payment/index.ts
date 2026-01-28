@@ -61,17 +61,21 @@ serve(async (req) => {
       throw new Error("No items provided in cart");
     }
     
-    // Determine if this is a subscription order
-    const hasSubscription = items.some((item: any) => item.subscriptionType);
-    const isOneTimeOnly = items.every((item: any) => !item.subscriptionType);
+    // Determine order type - now supports mixed carts!
+    const subscriptionItems = items.filter((item: any) => item.subscriptionType);
+    const oneTimeItems = items.filter((item: any) => !item.subscriptionType);
+    const hasSubscription = subscriptionItems.length > 0;
+    const hasOneTime = oneTimeItems.length > 0;
+    const isMixedCart = hasSubscription && hasOneTime;
     
-    logStep("Order type detected", { hasSubscription, isOneTimeOnly, itemCount: items.length });
-    
-    // For mixed carts (subscription + one-time), we need to split them
-    // For now, we'll only allow pure subscription or pure one-time orders
-    if (hasSubscription && !items.every((item: any) => item.subscriptionType)) {
-      throw new Error("Impossible de mélanger abonnements et achats uniques dans le même panier");
-    }
+    logStep("Order type detected", { 
+      hasSubscription, 
+      hasOneTime, 
+      isMixedCart,
+      subscriptionCount: subscriptionItems.length,
+      oneTimeCount: oneTimeItems.length,
+      itemCount: items.length 
+    });
     
     // Calculate shipping cost based on delivery preference
     let shippingCostBase = 2500; // Default: 25€ for métropole (in cents)
@@ -261,14 +265,14 @@ serve(async (req) => {
       }
     }
 
-    // SUBSCRIPTION FLOW
+    // SUBSCRIPTION FLOW (including mixed carts)
     if (hasSubscription) {
-      logStep("Processing subscription order");
+      logStep("Processing subscription order", { isMixedCart });
       
       // For subscriptions, we create Stripe Subscriptions with monthly billing
-      const subscriptionItems: any[] = [];
+      const stripeSubscriptionItems: any[] = [];
       
-      for (const item of items) {
+      for (const item of subscriptionItems) {
         const boxId = item.box.boxId || item.box.id;
         const key = `${boxId}-${normalizeTheme(item.box.theme)}`;
         const dbPrice = priceMap.get(key)!
@@ -328,7 +332,7 @@ serve(async (req) => {
           shipping: shippingCostBase
         });
         
-        subscriptionItems.push({
+        stripeSubscriptionItems.push({
           price: priceData.id,
           quantity: item.quantity,
           metadata: {
@@ -340,7 +344,7 @@ serve(async (req) => {
       }
       
       // Create simplified metadata for the subscription
-      const simplifiedItems = items.map((item: any) => ({
+      const simplifiedSubscriptionItems = subscriptionItems.map((item: any) => ({
         id: item.box.id,
         title: item.box.baseTitle,
         theme: item.box.theme,
@@ -350,11 +354,46 @@ serve(async (req) => {
         durationMonths: (item.subscriptionType === '1year' || item.subscriptionType === '12_months') ? 12 : 6,
       }));
       
-      // Create Stripe Checkout Session for subscription
-      const session = await stripe.checkout.sessions.create({
+      // Prepare one-time items for invoice_items (for mixed carts)
+      const oneTimeItemsData: any[] = [];
+      if (isMixedCart) {
+        for (const item of oneTimeItems) {
+          const key = `${item.box.id}-${normalizeTheme(item.box.theme)}`;
+          const dbPrice = priceMap.get(key)!;
+          const validatedPrice = dbPrice.unit;
+          const unitAmount = Math.round(validatedPrice * 100);
+          
+          const originalImage = item.box.image;
+          const normalizedImage = toAbsoluteUrl(originalImage, requestOrigin);
+          
+          oneTimeItemsData.push({
+            boxId: item.box.id,
+            title: item.box.baseTitle,
+            theme: item.box.theme,
+            unitAmount: unitAmount,
+            quantity: item.quantity,
+            description: item.box.description || `Box ${item.box.theme}`,
+            image: normalizedImage,
+          });
+          
+          logStep("Prepared one-time item for mixed cart", { 
+            title: item.box.baseTitle, 
+            unitAmount,
+            quantity: item.quantity
+          });
+        }
+      }
+      
+      // Calculate total for one-time items (for display/logging)
+      const oneTimeTotalCents = oneTimeItemsData.reduce((sum, item) => sum + (item.unitAmount * item.quantity), 0);
+      // Add shipping for one-time items in mixed cart
+      const oneTimeShippingCents = isMixedCart ? shippingCostBase : 0;
+      
+      // Build session configuration
+      const sessionConfig: any = {
         customer: customerId,
         mode: 'subscription',
-        line_items: subscriptionItems.map(item => ({
+        line_items: stripeSubscriptionItems.map(item => ({
           price: item.price,
           quantity: item.quantity,
         })),
@@ -367,23 +406,104 @@ serve(async (req) => {
         subscription_data: {
           metadata: {
             user_id: user!.id,
-            items: JSON.stringify(simplifiedItems),
+            items: JSON.stringify(simplifiedSubscriptionItems),
+            is_mixed_cart: isMixedCart ? 'true' : 'false',
             ...(travelInfo && { travel_info: JSON.stringify(travelInfo) }),
           },
-          // Set billing cycle anchor to now
-          // Subscription will automatically cancel after the specified period
         },
         payment_method_collection: 'always',
         metadata: {
           user_id: user!.id,
           is_subscription: 'true',
-          items: JSON.stringify(simplifiedItems),
+          is_mixed_cart: isMixedCart ? 'true' : 'false',
+          items: JSON.stringify(simplifiedSubscriptionItems),
+          ...(isMixedCart && { one_time_items: JSON.stringify(oneTimeItemsData.map(i => ({ id: i.boxId, title: i.title, price: i.unitAmount / 100, quantity: i.quantity }))) }),
         },
-      });
+      };
+      
+      // For mixed carts, add one-time items as invoice_items using add_invoice_items
+      if (isMixedCart && oneTimeItemsData.length > 0) {
+        // Create products for one-time items and add them as add_invoice_items
+        const invoiceItems: any[] = [];
+        
+        for (const item of oneTimeItemsData) {
+          // Create a one-time price for this item
+          const productData: any = {
+            name: `${item.title} (Achat unique)`,
+            description: item.description,
+          };
+          if (item.image) {
+            productData.images = [item.image];
+          }
+          
+          const oneTimeProduct = await stripe.products.create(productData);
+          
+          const oneTimePrice = await stripe.prices.create({
+            product: oneTimeProduct.id,
+            unit_amount: item.unitAmount,
+            currency: currency,
+            metadata: {
+              box_id: item.boxId.toString(),
+              theme: item.theme,
+              is_one_time: 'true',
+            },
+          });
+          
+          invoiceItems.push({
+            price: oneTimePrice.id,
+            quantity: item.quantity,
+          });
+          
+          logStep("Created one-time invoice item", { 
+            productId: oneTimeProduct.id,
+            priceId: oneTimePrice.id,
+            title: item.title,
+            amount: item.unitAmount
+          });
+        }
+        
+        // Add shipping for one-time items
+        if (oneTimeShippingCents > 0) {
+          const shippingProduct = await stripe.products.create({
+            name: `Frais de livraison (achats uniques)`,
+            description: shippingLabel,
+          });
+          
+          const shippingPrice = await stripe.prices.create({
+            product: shippingProduct.id,
+            unit_amount: oneTimeShippingCents,
+            currency: currency,
+            metadata: {
+              is_shipping: 'true',
+              is_one_time: 'true',
+            },
+          });
+          
+          invoiceItems.push({
+            price: shippingPrice.id,
+            quantity: 1,
+          });
+          
+          logStep("Added one-time shipping to invoice", { amount: oneTimeShippingCents });
+        }
+        
+        // Add invoice_items to subscription_data
+        sessionConfig.subscription_data.add_invoice_items = invoiceItems;
+        
+        logStep("Mixed cart configured", { 
+          subscriptionItemCount: stripeSubscriptionItems.length,
+          oneTimeItemCount: invoiceItems.length,
+          oneTimeTotalCents: oneTimeTotalCents + oneTimeShippingCents
+        });
+      }
+      
+      // Create Stripe Checkout Session for subscription (with optional one-time add-ons)
+      const session = await stripe.checkout.sessions.create(sessionConfig);
       
       logStep("Subscription checkout session created", { 
         sessionId: session.id, 
-        url: session.url?.substring(0, 50) + "..." 
+        url: session.url?.substring(0, 50) + "...",
+        isMixedCart
       });
 
       return new Response(JSON.stringify({ url: session.url }), {
