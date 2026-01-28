@@ -117,21 +117,24 @@ const Checkout = () => {
 
   const getItemPriceDisplay = (item: any) => {
     if (item.subscriptionType) {
-      // For subscriptions, show monthly price
-      return `${item.box.price.toFixed(2)}€/mois`;
+      // For subscriptions, show total subscription cost as unit price
+      const months = item.subscriptionType === '6months' ? 6 : 12;
+      const totalSubscriptionCost = item.box.price * months;
+      return `${totalSubscriptionCost.toFixed(0)}€`;
     }
     return `${item.box.price.toFixed(2)}€`;
   };
 
   const getItemTotalDisplay = (item: any) => {
     if (item.subscriptionType) {
-      // For subscriptions, total is monthly price * quantity (first month)
+      // For subscriptions: show monthly price and total engagement
       const months = item.subscriptionType === '6months' ? 6 : 12;
-      const totalEngagement = item.box.price * item.quantity * months;
+      const monthlyPrice = item.box.price;
+      const totalEngagement = monthlyPrice * item.quantity * months;
       return (
         <div className="text-right">
-          <p className="font-medium">{item.box.price.toFixed(2)}€/mois</p>
-          <p className="text-xs text-muted-foreground">Total engagement: {totalEngagement.toFixed(2)}€</p>
+          <p className="font-medium">{monthlyPrice.toFixed(0)}€/mois</p>
+          <p className="text-xs text-muted-foreground">Total engagement: {totalEngagement.toFixed(0)}€</p>
         </div>
       );
     }
