@@ -561,12 +561,24 @@ serve(async (req) => {
 
     // Calculate total quantity for shipping (1 delivery per box)
     const totalOneTimeQuantity = items.reduce((sum: number, item: any) => sum + item.quantity, 0);
-    const totalShippingCost = shippingCostBase * totalOneTimeQuantity;
     
     logStep("Shipping calculated for one-time items", { 
       totalQuantity: totalOneTimeQuantity, 
       baseShipping: shippingCostBase, 
-      totalShipping: totalShippingCost 
+      totalShipping: shippingCostBase * totalOneTimeQuantity 
+    });
+
+    // Add shipping as a line item with correct quantity instead of using shipping_options
+    lineItems.push({
+      price_data: {
+        currency: 'eur',
+        product_data: {
+          name: shippingLabel,
+          description: 'Frais de livraison par box',
+        },
+        unit_amount: shippingCostBase,
+      },
+      quantity: totalOneTimeQuantity,
     });
 
     const sessionConfig: any = {
@@ -584,22 +596,6 @@ serve(async (req) => {
           message: '(Destinataire)',
         },
       },
-      shipping_options: [
-        {
-          shipping_rate_data: {
-            type: 'fixed_amount',
-            fixed_amount: {
-              amount: totalShippingCost,
-              currency: 'eur',
-            },
-            display_name: `${shippingLabel} (${totalOneTimeQuantity} box${totalOneTimeQuantity > 1 ? 's' : ''})`,
-            delivery_estimate: {
-              minimum: { unit: 'business_day', value: 3 },
-              maximum: { unit: 'business_day', value: 7 },
-            },
-          },
-        },
-      ],
       metadata: {
         user_id: user?.id || 'guest',
         items: JSON.stringify(simplifiedItems),
