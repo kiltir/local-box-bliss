@@ -386,8 +386,9 @@ serve(async (req) => {
       
       // Calculate total for one-time items (for display/logging)
       const oneTimeTotalCents = oneTimeItemsData.reduce((sum, item) => sum + (item.unitAmount * item.quantity), 0);
-      // Add shipping for one-time items in mixed cart
-      const oneTimeShippingCents = isMixedCart ? shippingCostBase : 0;
+      // Add shipping for one-time items in mixed cart - multiply by total quantity of one-time items
+      const oneTimeItemsTotalQuantity = oneTimeItemsData.reduce((sum, item) => sum + item.quantity, 0);
+      const oneTimeShippingCents = isMixedCart ? shippingCostBase * oneTimeItemsTotalQuantity : 0;
       
       // Build line_items - start with subscription items
       const allLineItems: any[] = stripeSubscriptionItems.map(item => ({
@@ -558,6 +559,16 @@ serve(async (req) => {
       quantity: item.quantity,
     }));
 
+    // Calculate total quantity for shipping (1 delivery per box)
+    const totalOneTimeQuantity = items.reduce((sum: number, item: any) => sum + item.quantity, 0);
+    const totalShippingCost = shippingCostBase * totalOneTimeQuantity;
+    
+    logStep("Shipping calculated for one-time items", { 
+      totalQuantity: totalOneTimeQuantity, 
+      baseShipping: shippingCostBase, 
+      totalShipping: totalShippingCost 
+    });
+
     const sessionConfig: any = {
       line_items: lineItems,
       mode: "payment",
@@ -578,10 +589,10 @@ serve(async (req) => {
           shipping_rate_data: {
             type: 'fixed_amount',
             fixed_amount: {
-              amount: shippingCostBase,
+              amount: totalShippingCost,
               currency: 'eur',
             },
-            display_name: shippingLabel,
+            display_name: `${shippingLabel} (${totalOneTimeQuantity} box${totalOneTimeQuantity > 1 ? 's' : ''})`,
             delivery_estimate: {
               minimum: { unit: 'business_day', value: 3 },
               maximum: { unit: 'business_day', value: 7 },
