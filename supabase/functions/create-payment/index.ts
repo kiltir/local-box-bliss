@@ -486,6 +486,11 @@ serve(async (req) => {
         shipping_address_collection: {
           allowed_countries: ['FR', 'RE', 'BE', 'CH', 'DE', 'ES', 'IT', 'NL', 'LU'],
         },
+        custom_text: {
+          submit: {
+            message: "Payer / s'abonner",
+          },
+        },
         subscription_data: {
           metadata: {
             user_id: user!.id,
@@ -601,6 +606,9 @@ serve(async (req) => {
       custom_text: {
         shipping_address: {
           message: '(Destinataire)',
+        },
+        submit: {
+          message: "Payer / s'abonner",
         },
       },
       metadata: {
