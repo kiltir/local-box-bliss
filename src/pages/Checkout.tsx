@@ -227,8 +227,51 @@ const Checkout = () => {
     return totalShipping;
   };
 
+  // Calcul du total engagement (montant total de tous les abonnements sur leur durée)
+  const calculateTotalEngagement = () => {
+    const { baseCost } = getBaseDeliveryCost();
+    let totalEngagement = 0;
+
+    items.forEach(item => {
+      if (item.subscriptionType) {
+        // item.box.price est le coût total de l'abonnement
+        const subscriptionCost = item.box.price * item.quantity;
+        const months = item.subscriptionType === '6months' ? 6 : 12;
+        const shippingCost = baseCost * months * item.quantity;
+        totalEngagement += subscriptionCost + shippingCost;
+      }
+    });
+
+    return totalEngagement;
+  };
+
+  // Calcul du premier paiement (premier mois des abonnements + achats uniques + livraison)
+  const calculateFirstPayment = () => {
+    const { baseCost } = getBaseDeliveryCost();
+    let firstPayment = 0;
+
+    items.forEach(item => {
+      if (item.subscriptionType) {
+        // Pour les abonnements : prix mensuel + livraison pour le premier mois
+        const months = item.subscriptionType === '6months' ? 6 : 12;
+        const monthlyPrice = item.box.price / months;
+        firstPayment += (monthlyPrice + baseCost) * item.quantity;
+      } else {
+        // Achat unique : prix complet + livraison
+        firstPayment += (item.box.price + baseCost) * item.quantity;
+      }
+    });
+
+    return firstPayment;
+  };
+
+  // Vérifier s'il y a des abonnements dans le panier
+  const hasSubscriptions = items.some(item => item.subscriptionType);
+
   const deliveryInfo = { ...getBaseDeliveryCost(), cost: calculateTotalShippingCost() };
   const totalWithShipping = getTotalPrice() + deliveryInfo.cost;
+  const totalEngagement = calculateTotalEngagement();
+  const firstPayment = calculateFirstPayment();
 
   if (items.length === 0) {
     return (
@@ -368,22 +411,44 @@ const Checkout = () => {
               <CardContent className="space-y-4">
                 <div className="flex justify-between text-sm">
                   <span>Type de livraison</span>
-                  <span className="font-medium text-leaf-green">{deliveryInfo.label}</span>
+                  <span className="font-medium text-primary">{deliveryInfo.label}</span>
                 </div>
                 <Separator />
                 <div className="flex justify-between text-sm">
-                  <span>Sous-total</span>
+                  <span>Sous-total produits</span>
                   <span>{getTotalPrice().toFixed(2)}€</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span>Livraison</span>
+                  <span>Livraison totale</span>
                   <span>{deliveryInfo.cost.toFixed(2)}€</span>
                 </div>
+                
+                {hasSubscriptions && (
+                  <>
+                    <Separator />
+                    <div className="flex justify-between text-sm font-medium text-amber-600">
+                      <span className="flex items-center">
+                        <Crown className="h-4 w-4 mr-1" />
+                        Total engagement
+                      </span>
+                      <span>{totalEngagement.toFixed(2)}€</span>
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      Montant total de vos abonnements sur toute leur durée (produits + livraison)
+                    </p>
+                  </>
+                )}
+
                 <Separator />
-                <div className="flex justify-between font-semibold text-lg">
-                  <span>Total</span>
-                  <span>{totalWithShipping.toFixed(2)}€</span>
+                <div className="flex justify-between font-semibold text-lg bg-muted/50 p-2 rounded-md">
+                  <span>Premier paiement</span>
+                  <span>{firstPayment.toFixed(2)}€</span>
                 </div>
+                {hasSubscriptions && (
+                  <p className="text-xs text-muted-foreground">
+                    Montant prélevé aujourd'hui (1er mois des abonnements + achats uniques)
+                  </p>
+                )}
                 
                 <Button 
                   onClick={handlePayment}
