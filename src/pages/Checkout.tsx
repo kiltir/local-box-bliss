@@ -440,7 +440,7 @@ const Checkout = () => {
                 )}
 
                 <Separator />
-                <div className="flex justify-between gap-4 font-semibold text-lg bg-muted/50 p-2 rounded-md">
+                <div className="flex justify-between gap-8 font-semibold text-lg bg-muted/50 p-2 rounded-md">
                   <span>Premier paiement</span>
                   <span>{firstPayment.toFixed(2)}€</span>
                 </div>
