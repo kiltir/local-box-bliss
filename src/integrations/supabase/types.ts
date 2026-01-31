@@ -14,6 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
+      box_advice: {
+        Row: {
+          box_id: number
+          created_at: string
+          id: string
+          info_content: string
+          info_title: string
+          theme: string
+          updated_at: string
+          why_content: string
+          why_title: string
+        }
+        Insert: {
+          box_id: number
+          created_at?: string
+          id?: string
+          info_content?: string
+          info_title?: string
+          theme: string
+          updated_at?: string
+          why_content?: string
+          why_title?: string
+        }
+        Update: {
+          box_id?: number
+          created_at?: string
+          id?: string
+          info_content?: string
+          info_title?: string
+          theme?: string
+          updated_at?: string
+          why_content?: string
+          why_title?: string
+        }
+        Relationships: []
+      }
       box_banners: {
         Row: {
           box_id: number
@@ -139,6 +175,39 @@ export type Database = {
           subscription_6_months_price?: number
           theme?: string
           unit_price?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      box_product_advice: {
+        Row: {
+          advice_content: string
+          advice_title: string
+          created_at: string
+          icon_color: string
+          icon_name: string
+          id: string
+          product_keyword: string
+          updated_at: string
+        }
+        Insert: {
+          advice_content: string
+          advice_title: string
+          created_at?: string
+          icon_color?: string
+          icon_name?: string
+          id?: string
+          product_keyword: string
+          updated_at?: string
+        }
+        Update: {
+          advice_content?: string
+          advice_title?: string
+          created_at?: string
+          icon_color?: string
+          icon_name?: string
+          id?: string
+          product_keyword?: string
           updated_at?: string
         }
         Relationships: []
