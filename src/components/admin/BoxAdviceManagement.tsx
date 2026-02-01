@@ -22,11 +22,18 @@ interface BoxAdvice {
 
 interface ProductAdvice {
   id: string;
-  product_keyword: string;
+  theme: string;
+  product_name: string;
   advice_title: string;
   advice_content: string;
   icon_name: string;
   icon_color: string;
+}
+
+interface BoxProduct {
+  id: string;
+  name: string;
+  theme: string;
 }
 
 const ICON_OPTIONS = [
@@ -48,14 +55,18 @@ const COLOR_OPTIONS = [
   { value: 'text-blue-600', label: 'Bleu' },
 ];
 
+const THEMES = ['Découverte', 'Bourbon', 'Racine', 'Saison'];
+
 export const BoxAdviceManagement = () => {
   const { toast } = useToast();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [boxAdvice, setBoxAdvice] = useState<BoxAdvice[]>([]);
   const [productAdvice, setProductAdvice] = useState<ProductAdvice[]>([]);
+  const [boxProducts, setBoxProducts] = useState<BoxProduct[]>([]);
   const [selectedTheme, setSelectedTheme] = useState<string>('Découverte');
-  const [newProductKeyword, setNewProductKeyword] = useState('');
+  const [selectedProductTheme, setSelectedProductTheme] = useState<string>('Découverte');
+  const [selectedProduct, setSelectedProduct] = useState<string>('');
 
   useEffect(() => {
     fetchData();
@@ -64,16 +75,19 @@ export const BoxAdviceManagement = () => {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const [boxRes, productRes] = await Promise.all([
+      const [boxRes, productRes, productsRes] = await Promise.all([
         supabase.from('box_advice').select('*').order('box_id'),
-        supabase.from('box_product_advice').select('*').order('product_keyword')
+        supabase.from('box_product_advice').select('*').order('theme').order('product_name'),
+        supabase.from('box_products').select('id, name, theme').order('theme').order('name')
       ]);
 
       if (boxRes.error) throw boxRes.error;
       if (productRes.error) throw productRes.error;
+      if (productsRes.error) throw productsRes.error;
 
       setBoxAdvice(boxRes.data || []);
       setProductAdvice(productRes.data || []);
+      setBoxProducts(productsRes.data || []);
     } catch (error) {
       console.error('Error fetching advice data:', error);
       toast({
@@ -141,7 +155,8 @@ export const BoxAdviceManagement = () => {
       const { error } = await supabase
         .from('box_product_advice')
         .update({
-          product_keyword: advice.product_keyword,
+          theme: advice.theme,
+          product_name: advice.product_name,
           advice_title: advice.advice_title,
           advice_content: advice.advice_content,
           icon_name: advice.icon_name,
@@ -168,10 +183,23 @@ export const BoxAdviceManagement = () => {
   };
 
   const addProductAdvice = async () => {
-    if (!newProductKeyword.trim()) {
+    if (!selectedProduct) {
       toast({
         title: 'Erreur',
-        description: 'Veuillez entrer un mot-clé',
+        description: 'Veuillez sélectionner un produit',
+        variant: 'destructive'
+      });
+      return;
+    }
+
+    // Check if advice already exists for this theme/product
+    const exists = productAdvice.some(
+      a => a.theme === selectedProductTheme && a.product_name === selectedProduct
+    );
+    if (exists) {
+      toast({
+        title: 'Erreur',
+        description: 'Un conseil existe déjà pour ce produit dans cette thématique',
         variant: 'destructive'
       });
       return;
@@ -182,7 +210,8 @@ export const BoxAdviceManagement = () => {
       const { data, error } = await supabase
         .from('box_product_advice')
         .insert({
-          product_keyword: newProductKeyword.toLowerCase().trim(),
+          theme: selectedProductTheme,
+          product_name: selectedProduct,
           advice_title: 'Nouveau conseil',
           advice_content: 'Description du conseil...',
           icon_name: 'Lightbulb',
@@ -194,7 +223,7 @@ export const BoxAdviceManagement = () => {
       if (error) throw error;
 
       setProductAdvice(prev => [...prev, data]);
-      setNewProductKeyword('');
+      setSelectedProduct('');
       toast({
         title: 'Succès',
         description: 'Nouveau conseil produit ajouté'
@@ -203,7 +232,7 @@ export const BoxAdviceManagement = () => {
       console.error('Error adding product advice:', error);
       toast({
         title: 'Erreur',
-        description: error.code === '23505' ? 'Ce mot-clé existe déjà' : 'Impossible d\'ajouter le conseil',
+        description: error.code === '23505' ? 'Ce conseil existe déjà' : 'Impossible d\'ajouter le conseil',
         variant: 'destructive'
       });
     } finally {
@@ -249,6 +278,12 @@ export const BoxAdviceManagement = () => {
     return Lightbulb;
   };
 
+  // Get products for the selected theme
+  const productsForSelectedTheme = boxProducts.filter(p => p.theme === selectedProductTheme);
+  
+  // Get product advice filtered by selected theme
+  const productAdviceForTheme = productAdvice.filter(a => a.theme === selectedProductTheme);
+
   if (loading) {
     return (
       <div className="flex items-center justify-center p-8">
@@ -283,10 +318,9 @@ export const BoxAdviceManagement = () => {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="Découverte">Box Découverte</SelectItem>
-                    <SelectItem value="Bourbon">Box Bourbon</SelectItem>
-                    <SelectItem value="Racine">Box Racine</SelectItem>
-                    <SelectItem value="Saison">Box Saison</SelectItem>
+                    {THEMES.map(theme => (
+                      <SelectItem key={theme} value={theme}>Box {theme}</SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
@@ -360,135 +394,178 @@ export const BoxAdviceManagement = () => {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Coffee className="h-5 w-5" />
-                Conseils par type de produit
+                Conseils par produit
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
-              <div className="flex gap-2">
-                <Input
-                  placeholder="Nouveau mot-clé (ex: rhum, sucre...)"
-                  value={newProductKeyword}
-                  onChange={(e) => setNewProductKeyword(e.target.value)}
-                  className="flex-1"
-                />
-                <Button onClick={addProductAdvice} disabled={saving}>
-                  <Plus className="h-4 w-4 mr-2" />
-                  Ajouter
-                </Button>
+              {/* Theme selector for products */}
+              <div>
+                <Label>Thématique</Label>
+                <Select value={selectedProductTheme} onValueChange={setSelectedProductTheme}>
+                  <SelectTrigger className="w-full max-w-xs mt-2">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {THEMES.map(theme => (
+                      <SelectItem key={theme} value={theme}>Box {theme}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
 
-              <p className="text-sm text-muted-foreground">
-                Les conseils s'affichent automatiquement si le nom d'un produit contient le mot-clé défini.
-              </p>
+              {/* Add new product advice */}
+              <div className="border rounded-lg p-4 bg-muted/30">
+                <h4 className="font-medium mb-3">Ajouter un conseil pour un produit</h4>
+                <div className="flex gap-2 items-end">
+                  <div className="flex-1">
+                    <Label>Sélectionner un produit de la box {selectedProductTheme}</Label>
+                    <Select value={selectedProduct} onValueChange={setSelectedProduct}>
+                      <SelectTrigger className="mt-1">
+                        <SelectValue placeholder="Choisir un produit..." />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {productsForSelectedTheme.map(product => (
+                          <SelectItem key={product.id} value={product.name}>
+                            {product.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <Button onClick={addProductAdvice} disabled={saving || !selectedProduct}>
+                    <Plus className="h-4 w-4 mr-2" />
+                    Ajouter
+                  </Button>
+                </div>
+              </div>
 
+              {/* List of product advice for selected theme */}
               <div className="space-y-4">
-                {productAdvice.map((advice) => {
-                  const IconComponent = getIconComponent(advice.icon_name);
-                  return (
-                    <div key={advice.id} className="border rounded-lg p-4 space-y-4">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <IconComponent className={`h-5 w-5 ${advice.icon_color}`} />
-                          <span className="font-medium">Mot-clé: "{advice.product_keyword}"</span>
+                <h4 className="font-medium">Conseils existants pour la box {selectedProductTheme}</h4>
+                {productAdviceForTheme.length === 0 ? (
+                  <p className="text-sm text-muted-foreground py-4 text-center">
+                    Aucun conseil produit pour cette thématique
+                  </p>
+                ) : (
+                  productAdviceForTheme.map((advice) => {
+                    const IconComponent = getIconComponent(advice.icon_name);
+                    return (
+                      <div key={advice.id} className="border rounded-lg p-4 space-y-4">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <IconComponent className={`h-5 w-5 ${advice.icon_color}`} />
+                            <span className="font-medium">{advice.product_name}</span>
+                            <span className="text-xs bg-muted px-2 py-1 rounded">{advice.theme}</span>
+                          </div>
+                          <Button 
+                            variant="destructive" 
+                            size="sm"
+                            onClick={() => deleteProductAdvice(advice.id)}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
                         </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div>
+                            <Label>Produit</Label>
+                            <Select 
+                              value={advice.product_name} 
+                              onValueChange={(v) => handleProductAdviceChange(advice.id, 'product_name', v)}
+                            >
+                              <SelectTrigger className="mt-1">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {productsForSelectedTheme.map(product => (
+                                  <SelectItem key={product.id} value={product.name}>
+                                    {product.name}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div>
+                            <Label>Titre du conseil</Label>
+                            <Input
+                              value={advice.advice_title}
+                              onChange={(e) => handleProductAdviceChange(advice.id, 'advice_title', e.target.value)}
+                              className="mt-1"
+                            />
+                          </div>
+                        </div>
+
+                        <div>
+                          <Label>Contenu du conseil</Label>
+                          <Textarea
+                            value={advice.advice_content}
+                            onChange={(e) => handleProductAdviceChange(advice.id, 'advice_content', e.target.value)}
+                            className="mt-1"
+                          />
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div>
+                            <Label>Icône</Label>
+                            <Select 
+                              value={advice.icon_name} 
+                              onValueChange={(v) => handleProductAdviceChange(advice.id, 'icon_name', v)}
+                            >
+                              <SelectTrigger className="mt-1">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {ICON_OPTIONS.map(opt => (
+                                  <SelectItem key={opt.value} value={opt.value}>
+                                    <div className="flex items-center gap-2">
+                                      <opt.icon className="h-4 w-4" />
+                                      {opt.label}
+                                    </div>
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div>
+                            <Label>Couleur</Label>
+                            <Select 
+                              value={advice.icon_color} 
+                              onValueChange={(v) => handleProductAdviceChange(advice.id, 'icon_color', v)}
+                            >
+                              <SelectTrigger className="mt-1">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {COLOR_OPTIONS.map(opt => (
+                                  <SelectItem key={opt.value} value={opt.value}>
+                                    <div className="flex items-center gap-2">
+                                      <div className={`w-4 h-4 rounded-full bg-current ${opt.value}`} />
+                                      {opt.label}
+                                    </div>
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </div>
+
                         <Button 
-                          variant="destructive" 
-                          size="sm"
-                          onClick={() => deleteProductAdvice(advice.id)}
+                          onClick={() => saveProductAdvice(advice.id)} 
+                          disabled={saving}
+                          variant="outline"
+                          className="w-full"
                         >
-                          <Trash2 className="h-4 w-4" />
+                          {saving ? (
+                            <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                          ) : (
+                            <Save className="h-4 w-4 mr-2" />
+                          )}
+                          Enregistrer
                         </Button>
                       </div>
-
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                          <Label>Mot-clé</Label>
-                          <Input
-                            value={advice.product_keyword}
-                            onChange={(e) => handleProductAdviceChange(advice.id, 'product_keyword', e.target.value)}
-                            className="mt-1"
-                          />
-                        </div>
-                        <div>
-                          <Label>Titre du conseil</Label>
-                          <Input
-                            value={advice.advice_title}
-                            onChange={(e) => handleProductAdviceChange(advice.id, 'advice_title', e.target.value)}
-                            className="mt-1"
-                          />
-                        </div>
-                      </div>
-
-                      <div>
-                        <Label>Contenu du conseil</Label>
-                        <Textarea
-                          value={advice.advice_content}
-                          onChange={(e) => handleProductAdviceChange(advice.id, 'advice_content', e.target.value)}
-                          className="mt-1"
-                        />
-                      </div>
-
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                          <Label>Icône</Label>
-                          <Select 
-                            value={advice.icon_name} 
-                            onValueChange={(v) => handleProductAdviceChange(advice.id, 'icon_name', v)}
-                          >
-                            <SelectTrigger className="mt-1">
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {ICON_OPTIONS.map(opt => (
-                                <SelectItem key={opt.value} value={opt.value}>
-                                  <div className="flex items-center gap-2">
-                                    <opt.icon className="h-4 w-4" />
-                                    {opt.label}
-                                  </div>
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </div>
-                        <div>
-                          <Label>Couleur</Label>
-                          <Select 
-                            value={advice.icon_color} 
-                            onValueChange={(v) => handleProductAdviceChange(advice.id, 'icon_color', v)}
-                          >
-                            <SelectTrigger className="mt-1">
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {COLOR_OPTIONS.map(opt => (
-                                <SelectItem key={opt.value} value={opt.value}>
-                                  <div className="flex items-center gap-2">
-                                    <div className={`w-4 h-4 rounded-full bg-current ${opt.value}`} />
-                                    {opt.label}
-                                  </div>
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </div>
-                      </div>
-
-                      <Button 
-                        onClick={() => saveProductAdvice(advice.id)} 
-                        disabled={saving}
-                        variant="outline"
-                        className="w-full"
-                      >
-                        {saving ? (
-                          <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                        ) : (
-                          <Save className="h-4 w-4 mr-2" />
-                        )}
-                        Enregistrer ce conseil
-                      </Button>
-                    </div>
-                  );
-                })}
+                    );
+                  })
+                )}
               </div>
             </CardContent>
           </Card>
@@ -497,5 +574,3 @@ export const BoxAdviceManagement = () => {
     </div>
   );
 };
-
-export default BoxAdviceManagement;
