@@ -1,6 +1,7 @@
 
 import { useMemo } from 'react';
 import { useBoxPrices } from './useBoxPrices';
+import { useBoxProductCounts } from './useBoxProductCounts';
 import { SubscriptionData } from '@/types/subscription';
 
 const createSubscriptionOptions = (
@@ -26,14 +27,13 @@ const createSubscriptionOptions = (
   }
 ];
 
-const baseSubscriptions: Omit<SubscriptionData, 'basePrice' | 'options'>[] = [
+const baseSubscriptions: Omit<SubscriptionData, 'basePrice' | 'options' | 'items'>[] = [
   {
     id: 1,
     baseTitle: "Box Découverte",
     theme: 'Découverte' as const,
     description: "Recevez chaque mois une sélection variée de douceurs artisanales pour découvrir de nouvelles saveurs authentiques de La Réunion.",
     image: "https://source.unsplash.com/1618160702438-9b02ab6515c9",
-    items: 4,
     rating: 4.5,
     reviewCount: 23,
   },
@@ -43,7 +43,6 @@ const baseSubscriptions: Omit<SubscriptionData, 'basePrice' | 'options'>[] = [
     theme: 'Bourbon' as const,
     description: "Recevez chaque mois une sélection raffinée pour vous offrir l'expérience de parfums et saveurs \"lontan\" avec des produits d'exception.",
     image: "/lovable-uploads/dfae2a49-8682-4e2d-b364-efe22d218a5e.png",
-    items: 5,
     rating: 4.8,
     reviewCount: 15,
   },
@@ -53,7 +52,6 @@ const baseSubscriptions: Omit<SubscriptionData, 'basePrice' | 'options'>[] = [
     theme: 'Racine' as const,
     description: "Recevez chaque mois des produits authentiques issus de recettes traditionnelles créoles transmises de génération en génération.",
     image: "https://source.unsplash.com/472396961693-142e6e269027",
-    items: 4,
     rating: 4.2,
     reviewCount: 31,
   },
@@ -63,7 +61,6 @@ const baseSubscriptions: Omit<SubscriptionData, 'basePrice' | 'options'>[] = [
     theme: 'Saison' as const,
     description: "Recevez chaque mois une sélection de produits de saison mettant en valeur les fruits et légumes du moment.",
     image: "/lovable-uploads/ac03653a-7722-48c5-a6c8-0a25a453791b.png",
-    items: 4,
     rating: 4.6,
     reviewCount: 18,
   }
@@ -71,6 +68,7 @@ const baseSubscriptions: Omit<SubscriptionData, 'basePrice' | 'options'>[] = [
 
 export const useSubscriptions = () => {
   const { prices, loading } = useBoxPrices();
+  const { getProductCount } = useBoxProductCounts();
 
   const subscriptions: SubscriptionData[] = useMemo(() => {
     return baseSubscriptions.map(sub => {
@@ -78,14 +76,16 @@ export const useSubscriptions = () => {
       const basePrice = priceData?.unit_price || 0;
       const sub6Price = priceData?.subscription_6_months_price || basePrice * 0.95;
       const sub12Price = priceData?.subscription_12_months_price || basePrice * 0.9;
+      const subscriptionCount = getProductCount(sub.id, 'subscription');
 
       return {
         ...sub,
         basePrice,
+        items: subscriptionCount,
         options: createSubscriptionOptions(basePrice, sub6Price, sub12Price)
       };
     });
-  }, [prices]);
+  }, [prices, getProductCount]);
 
   return { subscriptions, loading };
 };

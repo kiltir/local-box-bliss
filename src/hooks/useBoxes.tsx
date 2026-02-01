@@ -4,6 +4,7 @@ import { useBoxTheme } from './useBoxTheme';
 import { useBoxPrices } from './useBoxPrices';
 import { useBoxProducts } from './useBoxProducts';
 import { useBoxImages } from './useBoxImages';
+import { useBoxProductCounts } from './useBoxProductCounts';
 import { BoxData } from '@/types/boxes';
 
 export const useBoxes = () => {
@@ -12,6 +13,7 @@ export const useBoxes = () => {
   const { prices, loading: pricesLoading } = useBoxPrices();
   const { getProductsForBox, isLoading: productsLoading } = useBoxProducts();
   const { getImagesForBox, isLoading: imagesLoading } = useBoxImages();
+  const { getProductCount, loading: countsLoading } = useBoxProductCounts();
 
   // Fusionner les prix dynamiques, produits et images Supabase avec les données statiques des boxes
   const boxes: BoxData[] = useMemo(() => {
@@ -19,15 +21,17 @@ export const useBoxes = () => {
       const priceData = prices.find(p => p.box_id === box.id);
       const supabaseProducts = getProductsForBox(box.id, box.theme);
       const dynamicImages = getImagesForBox(box.id);
+      const oneTimeCount = getProductCount(box.id, 'one-time');
       
       return {
         ...box,
         price: priceData?.unit_price || box.price,
         products: supabaseProducts || box.products,
         images: dynamicImages.length > 0 ? dynamicImages : box.images,
+        items: oneTimeCount,
       };
     });
-  }, [prices, getProductsForBox, getImagesForBox]);
+  }, [prices, getProductsForBox, getImagesForBox, getProductCount]);
 
   const handleBoxClick = (id: number) => {
     setSelectedBox(id);
@@ -58,5 +62,6 @@ export const useBoxes = () => {
     handleBoxChange,
     getSelectedBoxDetails,
     pricesLoading,
+    getProductCount,
   };
 };

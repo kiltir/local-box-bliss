@@ -215,6 +215,36 @@ export type Database = {
         }
         Relationships: []
       }
+      box_product_counts: {
+        Row: {
+          box_id: number
+          created_at: string
+          id: string
+          one_time_count: number
+          subscription_count: number
+          theme: string
+          updated_at: string
+        }
+        Insert: {
+          box_id: number
+          created_at?: string
+          id?: string
+          one_time_count?: number
+          subscription_count?: number
+          theme: string
+          updated_at?: string
+        }
+        Update: {
+          box_id?: number
+          created_at?: string
+          id?: string
+          one_time_count?: number
+          subscription_count?: number
+          theme?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       box_products: {
         Row: {
           box_id: number
