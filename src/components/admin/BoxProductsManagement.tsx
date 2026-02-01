@@ -9,6 +9,8 @@ import { Label } from '@/components/ui/label';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { toast } from 'sonner';
 import { Loader2, Save, Plus, Trash2, Package, ChevronDown, ChevronRight, ArrowUp, ArrowDown, Eye, EyeOff, Upload, Image } from 'lucide-react';
+import { ProductCountsManagement } from './ProductCountsManagement';
+import { Separator } from '@/components/ui/separator';
 import { Switch } from '@/components/ui/switch';
 import {
   Dialog,
@@ -359,6 +361,11 @@ export const BoxProductsManagement = () => {
           Gestion des Produits par Box
         </h2>
       </div>
+
+      {/* Section Nombre de produits */}
+      <ProductCountsManagement />
+      
+      <Separator className="my-6" />
 
       <Tabs value={selectedTheme} onValueChange={setSelectedTheme}>
         <div className="flex items-center justify-between mb-4">
