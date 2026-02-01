@@ -187,7 +187,8 @@ export type Database = {
           icon_color: string
           icon_name: string
           id: string
-          product_keyword: string
+          product_name: string
+          theme: string
           updated_at: string
         }
         Insert: {
@@ -197,7 +198,8 @@ export type Database = {
           icon_color?: string
           icon_name?: string
           id?: string
-          product_keyword: string
+          product_name: string
+          theme: string
           updated_at?: string
         }
         Update: {
@@ -207,7 +209,8 @@ export type Database = {
           icon_color?: string
           icon_name?: string
           id?: string
-          product_keyword?: string
+          product_name?: string
+          theme?: string
           updated_at?: string
         }
         Relationships: []
