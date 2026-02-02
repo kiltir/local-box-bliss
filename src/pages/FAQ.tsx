@@ -12,7 +12,7 @@ const FAQ = () => {
     },
     {
       question: "Comment fonctionne la livraison ?",
-      answer: "Nous proposons 3 options :\n- retrait à l'aéroport Roland Garros\n- livraison en Métropole\n- livraison à la Réunion\nLa livraison peut être assurée par nos équipes ou des transporteurs spécialisés pour garantir la fraîcheur de nos produits."
+      answer: "Nous proposons deux options : retrait à l'aéroport Roland Garros ou livraison en Métropole. Pour la livraison, nous utilisons des transporteurs spécialisés pour garantir la fraîcheur de nos produits."
     },
     {
       question: "Les produits sont-ils vraiment locaux ?",
