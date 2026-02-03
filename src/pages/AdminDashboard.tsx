@@ -16,6 +16,7 @@ import { PartnersManagement } from '@/components/admin/PartnersManagement';
 import { GalleryManagement } from '@/components/admin/GalleryManagement';
 import { BoxDetailsImagesManagement } from '@/components/admin/BoxDetailsImagesManagement';
 import { BoxAdviceManagement } from '@/components/admin/BoxAdviceManagement';
+import { FAQManagement } from '@/components/admin/FAQManagement';
 import { Loader2, Shield, LogOut } from 'lucide-react';
 
 const AdminDashboard = () => {
@@ -68,7 +69,7 @@ const AdminDashboard = () => {
         </div>
 
         <Tabs defaultValue="orders" className="w-full">
-          <TabsList className="grid w-full grid-cols-12 mb-8">
+          <TabsList className="grid w-full grid-cols-13 mb-8">
             <TabsTrigger value="orders">Commandes</TabsTrigger>
             <TabsTrigger value="boxes">Box</TabsTrigger>
             <TabsTrigger value="box-details">Box détails</TabsTrigger>
@@ -78,6 +79,7 @@ const AdminDashboard = () => {
             <TabsTrigger value="banners">Bandeaux</TabsTrigger>
             <TabsTrigger value="reviews">Avis</TabsTrigger>
             <TabsTrigger value="gallery">Galerie</TabsTrigger>
+            <TabsTrigger value="faq">FAQ</TabsTrigger>
             <TabsTrigger value="users">Utilisateurs</TabsTrigger>
             <TabsTrigger value="partners">Partenaires</TabsTrigger>
             <TabsTrigger value="suppliers">Fournisseurs</TabsTrigger>
@@ -117,6 +119,10 @@ const AdminDashboard = () => {
 
           <TabsContent value="gallery" className="space-y-4">
             <GalleryManagement />
+          </TabsContent>
+
+          <TabsContent value="faq" className="space-y-4">
+            <FAQManagement />
           </TabsContent>
 
           <TabsContent value="users" className="space-y-4">
