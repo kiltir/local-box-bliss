@@ -126,7 +126,6 @@ export type Database = {
           display_order: number
           id: string
           image_url: string
-          purchase_type: string
           updated_at: string
         }
         Insert: {
@@ -135,7 +134,6 @@ export type Database = {
           display_order?: number
           id?: string
           image_url: string
-          purchase_type?: string
           updated_at?: string
         }
         Update: {
@@ -144,7 +142,6 @@ export type Database = {
           display_order?: number
           id?: string
           image_url?: string
-          purchase_type?: string
           updated_at?: string
         }
         Relationships: []

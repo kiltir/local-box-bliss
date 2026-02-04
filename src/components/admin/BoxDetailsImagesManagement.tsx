@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Trash2, Plus, Image as ImageIcon, GripVertical, Box, Save, ShoppingBag, Crown } from 'lucide-react';
+import { Loader2, Trash2, Plus, Image as ImageIcon, GripVertical, Box, Save } from 'lucide-react';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -26,7 +26,6 @@ interface BoxImage {
   image_url: string;
   display_order: number;
   created_at: string;
-  purchase_type: string;
 }
 
 interface BoxDimensions {
@@ -47,16 +46,10 @@ const BOX_THEMES = [
   { id: 4, name: 'Saison', theme: 'Saison' },
 ];
 
-const PURCHASE_TYPES = [
-  { id: 'one-time', label: 'Achat unique', icon: ShoppingBag },
-  { id: 'subscription', label: 'Abonnement', icon: Crown },
-];
-
 export const BoxDetailsImagesManagement = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [selectedBoxId, setSelectedBoxId] = useState<number>(1);
-  const [selectedPurchaseType, setSelectedPurchaseType] = useState<string>('one-time');
   const [newImageUrl, setNewImageUrl] = useState('');
   const [isUploading, setIsUploading] = useState(false);
   
@@ -70,13 +63,12 @@ export const BoxDetailsImagesManagement = () => {
   });
 
   const { data: images, isLoading } = useQuery({
-    queryKey: ['box-images-admin', selectedBoxId, selectedPurchaseType],
+    queryKey: ['box-images-admin', selectedBoxId],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('box_images')
         .select('*')
         .eq('box_id', selectedBoxId)
-        .eq('purchase_type', selectedPurchaseType)
         .order('display_order', { ascending: true });
 
       if (error) throw error;
@@ -163,15 +155,13 @@ export const BoxDetailsImagesManagement = () => {
           box_id: selectedBoxId,
           image_url: imageUrl,
           display_order: maxOrder + 1,
-          purchase_type: selectedPurchaseType,
         });
 
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['box-images-admin'] });
+      queryClient.invalidateQueries({ queryKey: ['box-images-admin', selectedBoxId] });
       queryClient.invalidateQueries({ queryKey: ['box-images'] });
-      queryClient.invalidateQueries({ queryKey: ['box-card-images'] });
       setNewImageUrl('');
       toast({
         title: 'Image ajoutée',
@@ -197,9 +187,8 @@ export const BoxDetailsImagesManagement = () => {
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['box-images-admin'] });
+      queryClient.invalidateQueries({ queryKey: ['box-images-admin', selectedBoxId] });
       queryClient.invalidateQueries({ queryKey: ['box-images'] });
-      queryClient.invalidateQueries({ queryKey: ['box-card-images'] });
       toast({
         title: 'Image mise à jour',
         description: "L'URL de l'image a été modifiée.",
@@ -224,9 +213,8 @@ export const BoxDetailsImagesManagement = () => {
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['box-images-admin'] });
+      queryClient.invalidateQueries({ queryKey: ['box-images-admin', selectedBoxId] });
       queryClient.invalidateQueries({ queryKey: ['box-images'] });
-      queryClient.invalidateQueries({ queryKey: ['box-card-images'] });
       toast({
         title: 'Image supprimée',
         description: "L'image a été supprimée de la box.",
@@ -318,34 +306,10 @@ export const BoxDetailsImagesManagement = () => {
             </TabsList>
           </Tabs>
 
-          {/* Purchase type selector */}
-          <div className="space-y-2">
-            <Label>Type d'achat</Label>
-            <div className="flex gap-2">
-              {PURCHASE_TYPES.map((type) => {
-                const Icon = type.icon;
-                return (
-                  <Button
-                    key={type.id}
-                    variant={selectedPurchaseType === type.id ? 'default' : 'outline'}
-                    onClick={() => setSelectedPurchaseType(type.id)}
-                    className="flex items-center gap-2"
-                  >
-                    <Icon className="h-4 w-4" />
-                    {type.label}
-                  </Button>
-                );
-              })}
-            </div>
-            <p className="text-sm text-muted-foreground">
-              Image affichée dans la section "Découvrez nos box" pour {selectedPurchaseType === 'one-time' ? 'l\'achat unique' : 'l\'abonnement'}
-            </p>
-          </div>
-
           {/* Add new image form */}
           <div className="border rounded-lg p-4 space-y-4 bg-muted/30">
             <h3 className="font-medium">
-              Ajouter une image à la box {currentBox?.name} ({selectedPurchaseType === 'one-time' ? 'Achat unique' : 'Abonnement'})
+              Ajouter une image à la box {currentBox?.name}
             </h3>
             <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
@@ -398,11 +362,11 @@ export const BoxDetailsImagesManagement = () => {
           ) : (
             <div className="space-y-4">
               <h3 className="font-medium">
-                Images de la box {currentBox?.name} - {selectedPurchaseType === 'one-time' ? 'Achat unique' : 'Abonnement'} ({images?.length || 0})
+                Images de la box {currentBox?.name} ({images?.length || 0})
               </h3>
               {images?.length === 0 ? (
                 <p className="text-muted-foreground text-center py-8">
-                  Aucune image pour cette box ({selectedPurchaseType === 'one-time' ? 'achat unique' : 'abonnement'}). Ajoutez-en une ci-dessus.
+                  Aucune image pour cette box. Ajoutez-en une ci-dessus.
                 </p>
               ) : (
                 <div className="space-y-3">

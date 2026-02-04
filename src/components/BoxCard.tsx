@@ -8,7 +8,6 @@ import { Compass, Wine, BookOpen, Leaf, Package, AlertTriangle } from 'lucide-re
 import { useStock } from '@/hooks/useStock';
 import { Badge } from '@/components/ui/badge';
 import { useBoxBanner } from '@/hooks/useBoxBanner';
-import { useBoxCardImages } from '@/hooks/useBoxCardImages';
 
 interface BoxCardProps {
   title: string;
@@ -26,12 +25,11 @@ interface BoxCardProps {
 const BoxCard = ({ title, price, description, image, items, theme, rating, reviewCount, onClick, purchaseType = 'one-time' }: BoxCardProps) => {
   const { addToCart } = useCart();
   const { isOutOfStockForPurchaseType } = useStock();
-  const { getImageForBox } = useBoxCardImages();
   const outOfStock = isOutOfStockForPurchaseType(theme, purchaseType);
   const [bannerIndex, setBannerIndex] = useState(0);
   
-  // Map theme to box_id: Découverte=1, Racine=2, Bourbon=3, Saison=4
-  const themeToBoxId: Record<string, number> = { 'Découverte': 1, 'Racine': 2, 'Bourbon': 3, 'Saison': 4 };
+  // Map theme to box_id: Découverte=1, Bourbon=2, Racine=3, Saison=4
+  const themeToBoxId: Record<string, number> = { 'Découverte': 1, 'Bourbon': 2, 'Racine': 3, 'Saison': 4 };
   const { banner } = useBoxBanner(themeToBoxId[theme]);
 
   // Messages disponibles pour le défilement
@@ -117,10 +115,8 @@ const BoxCard = ({ title, price, description, image, items, theme, rating, revie
     toast.success(`${title} ajouté au panier !`);
   };
 
-  // Utiliser l'image de la base de données ou l'image par défaut
-  const boxId = themeToBoxId[theme] || 1;
-  const dbImage = getImageForBox(boxId, 'one-time');
-  const boxImage = dbImage || "/lovable-uploads/c3069f51-0eec-4ebc-b702-b987e85233e0.png";
+  // Utiliser la nouvelle image téléchargée "KitirBox"
+  const boxImage = "/lovable-uploads/c3069f51-0eec-4ebc-b702-b987e85233e0.png";
 
   return (
     <div className="bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300">
