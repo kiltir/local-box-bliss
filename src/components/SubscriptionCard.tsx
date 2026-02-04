@@ -8,6 +8,7 @@ import StarRating from './StarRating';
 import { SubscriptionData, SubscriptionOption } from '@/types/subscription';
 import { Crown, Package, Compass, Wine, BookOpen, Leaf, AlertTriangle } from 'lucide-react';
 import { useStock } from '@/hooks/useStock';
+import { useBoxCardImages } from '@/hooks/useBoxCardImages';
 
 interface SubscriptionCardProps {
   subscription: SubscriptionData;
@@ -18,6 +19,10 @@ const SubscriptionCard: React.FC<SubscriptionCardProps> = ({ subscription, onCli
   const [selectedOption, setSelectedOption] = useState<SubscriptionOption>(subscription.options[0]);
   const { addToCart } = useCart();
   const { isOutOfStockForPurchaseType } = useStock();
+  const { getImageForBox } = useBoxCardImages();
+  
+  // Map theme to box_id
+  const themeToBoxId: Record<string, number> = { 'Découverte': 1, 'Racine': 2, 'Bourbon': 3, 'Saison': 4 };
   
   const isOutOfStock = isOutOfStockForPurchaseType(subscription.theme, 'subscription', selectedOption.months);
 
@@ -80,7 +85,10 @@ const SubscriptionCard: React.FC<SubscriptionCardProps> = ({ subscription, onCli
     toast.success(`Abonnement ${subscription.baseTitle} ${selectedOption.label} ajouté au panier !`);
   };
 
-  const boxImage = "/lovable-uploads/13ed681f-25b2-4ab0-a83c-ad7795af76a9.png";
+  // Utiliser l'image de la base de données ou l'image par défaut
+  const boxId = themeToBoxId[subscription.theme] || 1;
+  const dbImage = getImageForBox(boxId, 'subscription');
+  const boxImage = dbImage || "/lovable-uploads/13ed681f-25b2-4ab0-a83c-ad7795af76a9.png";
 
   return (
     <Card className="overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-gradient-to-r from-amber-200 to-orange-200 relative">
