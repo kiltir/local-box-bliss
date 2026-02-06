@@ -1,0 +1,16 @@
+{
+  "name": "KiltirBox",
+  "short_name": "KiltirBox",
+  "description": "Box de produits réunionnais authentiques",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#8B4513",
+  "icons": [
+    {
+      "src": "/kiltirbox-logo.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+}
