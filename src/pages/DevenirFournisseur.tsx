@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import SEO from "@/components/SEO";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -12,6 +13,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { toast } from "sonner";
 import { ArrowLeft, Upload, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+
 const supplierFormSchema = z.object({
   nom: z.string().trim().min(1, {
     message: "Le nom est requis"
@@ -74,11 +76,14 @@ const supplierFormSchema = z.object({
     message: "Ce champ ne peut pas dépasser 200 caractères"
   }).optional()
 });
+
 type SupplierFormData = z.infer<typeof supplierFormSchema>;
+
 const DevenirFournisseur = () => {
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [photos, setPhotos] = useState<File[]>([]);
+
   const form = useForm<SupplierFormData>({
     resolver: zodResolver(supplierFormSchema),
     defaultValues: {
@@ -96,6 +101,7 @@ const DevenirFournisseur = () => {
       source: ""
     }
   });
+
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files) {
@@ -103,15 +109,15 @@ const DevenirFournisseur = () => {
       setPhotos(prev => [...prev, ...newPhotos].slice(0, 2));
     }
   };
+
   const removePhoto = (index: number) => {
     setPhotos(prev => prev.filter((_, i) => i !== index));
   };
+
   const onSubmit = async (data: SupplierFormData) => {
     setIsSubmitting(true);
 
     try {
-      // Submit application via edge function for server-side validation
-      // Include photo count so the server can generate signed upload URLs
       const response = await supabase.functions.invoke('submit-supplier-application', {
         body: { ...data, photoCount: photos.length },
       });
@@ -129,7 +135,6 @@ const DevenirFournisseur = () => {
       const applicationId = result.applicationId;
       const uploadUrls = result.uploadUrls || [];
 
-      // Upload photos using signed URLs (more secure - controlled by server)
       const uploadedPaths: string[] = [];
       if (photos.length > 0 && uploadUrls.length > 0) {
         for (let i = 0; i < Math.min(photos.length, uploadUrls.length); i++) {
@@ -137,7 +142,6 @@ const DevenirFournisseur = () => {
           const { path, signedUrl } = uploadUrls[i];
 
           try {
-            // Upload using the signed URL
             const uploadResponse = await fetch(signedUrl, {
               method: 'PUT',
               body: photo,
@@ -156,7 +160,6 @@ const DevenirFournisseur = () => {
           }
         }
 
-        // Confirm photo uploads via edge function (secure server-side insertion)
         if (uploadedPaths.length > 0) {
           const confirmResponse = await supabase.functions.invoke('submit-supplier-application', {
             body: { applicationId, photoPaths: uploadedPaths },
@@ -178,7 +181,15 @@ const DevenirFournisseur = () => {
       setIsSubmitting(false);
     }
   };
-  return <div className="min-h-screen flex flex-col">
+
+  return (
+    <div className="min-h-screen flex flex-col">
+      <SEO 
+        title="Devenir Fournisseur - KiltirBox | Rejoignez l'aventure"
+        description="Vous êtes producteur réunionnais ? Rejoignez KiltirBox et faites découvrir vos produits locaux à travers nos box. Candidature en ligne."
+        keywords="devenir fournisseur, partenariat KiltirBox, producteur réunionnais, artisan local, vendre produits réunion"
+        canonicalPath="/devenir-fournisseur"
+      />
       <Navbar />
       <main className="flex-1">
         <div className="bg-gradient-to-b from-[#FEF7CD]/50 to-white py-16">
@@ -201,147 +212,151 @@ const DevenirFournisseur = () => {
               <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                   <div className="grid md:grid-cols-2 gap-6">
-                    <FormField control={form.control} name="nom" render={({
-                    field
-                  }) => <FormItem>
-                          <FormLabel>Nom / Prénom(s)</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Votre nom et prénom(s)" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>} />
+                    <FormField control={form.control} name="nom" render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Nom / Prénom(s)</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Votre nom et prénom(s)" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )} />
 
-                    <FormField control={form.control} name="raisonSociale" render={({
-                    field
-                  }) => <FormItem>
-                          <FormLabel>Raison sociale</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Nom de votre entreprise" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>} />
+                    <FormField control={form.control} name="raisonSociale" render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Raison sociale</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Nom de votre entreprise" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )} />
                   </div>
 
-                  <FormField control={form.control} name="siret" render={({
-                    field
-                  }) => <FormItem>
-                          <FormLabel>SIRET</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Numéro SIRET (14 chiffres)" maxLength={14} {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>} />
+                  <FormField control={form.control} name="siret" render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>SIRET</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Numéro SIRET (14 chiffres)" maxLength={14} {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
 
                   <div className="grid md:grid-cols-2 gap-6">
-                    <FormField control={form.control} name="email" render={({
-                    field
-                  }) => <FormItem>
-                          <FormLabel>Email</FormLabel>
-                          <FormControl>
-                            <Input type="email" placeholder="Votre adresse email" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>} />
-
-                    <FormField control={form.control} name="telephone" render={({
-                    field
-                  }) => <FormItem>
-                          <FormLabel>Téléphone</FormLabel>
-                          <FormControl>
-                            <Input type="tel" placeholder="Votre numéro de téléphone" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>} />
-                  </div>
-
-                  <FormField control={form.control} name="adresse" render={({
-                  field
-                }) => <FormItem>
-                        <FormLabel>Adresse</FormLabel>
+                    <FormField control={form.control} name="email" render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Email</FormLabel>
                         <FormControl>
-                          <Input placeholder="Adresse de votre entreprise" {...field} />
+                          <Input type="email" placeholder="Votre adresse email" {...field} />
                         </FormControl>
                         <FormMessage />
-                      </FormItem>} />
+                      </FormItem>
+                    )} />
+
+                    <FormField control={form.control} name="telephone" render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Téléphone</FormLabel>
+                        <FormControl>
+                          <Input type="tel" placeholder="Votre numéro de téléphone" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )} />
+                  </div>
+
+                  <FormField control={form.control} name="adresse" render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Adresse</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Adresse de votre entreprise" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
 
                   <div className="grid md:grid-cols-2 gap-6">
-                    <FormField control={form.control} name="codePostal" render={({
-                    field
-                  }) => <FormItem>
-                          <FormLabel>CP</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Code postal" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>} />
+                    <FormField control={form.control} name="codePostal" render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>CP</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Code postal" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )} />
 
-                    <FormField control={form.control} name="ville" render={({
-                    field
-                  }) => <FormItem>
-                          <FormLabel>Ville</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Ville" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>} />
+                    <FormField control={form.control} name="ville" render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Ville</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Ville" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )} />
                   </div>
 
-                  <FormField control={form.control} name="activite" render={({
-                  field
-                }) => <FormItem>
-                        <FormLabel>Décrivez votre activité et ce qui vous anime</FormLabel>
-                        <FormControl>
-                          <Textarea placeholder="Parlez-nous de votre activité, de votre passion, de votre savoir-faire..." rows={4} {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>} />
+                  <FormField control={form.control} name="activite" render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Décrivez votre activité et ce qui vous anime</FormLabel>
+                      <FormControl>
+                        <Textarea placeholder="Parlez-nous de votre activité, de votre passion, de votre savoir-faire..." rows={4} {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
 
-                  <FormField control={form.control} name="motivation" render={({
-                  field
-                }) => <FormItem>
-                        <FormLabel>Pourquoi rejoindre l'aventure KiltirBox ?</FormLabel>
-                        <FormControl>
-                          <Textarea placeholder="Qu'est-ce qui vous motive à rejoindre KiltirBox ?" rows={3} {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>} />
+                  <FormField control={form.control} name="motivation" render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Pourquoi rejoindre l'aventure KiltirBox ?</FormLabel>
+                      <FormControl>
+                        <Textarea placeholder="Qu'est-ce qui vous motive à rejoindre KiltirBox ?" rows={3} {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
 
-                  <FormField control={form.control} name="produits" render={({
-                  field
-                }) => <FormItem>
-                        <FormLabel>Quels produits proposez-vous de nous fournir ? Pour quelle(s) thématiques ?</FormLabel>
-                        <FormControl>
-                          <Textarea placeholder="Décrivez les produits que vous souhaitez proposer..." rows={3} {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>} />
+                  <FormField control={form.control} name="produits" render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Quels produits proposez-vous de nous fournir ? Pour quelle(s) thématiques ?</FormLabel>
+                      <FormControl>
+                        <Textarea placeholder="Décrivez les produits que vous souhaitez proposer..." rows={3} {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
 
                   <div className="space-y-2">
                     <FormLabel>Photos de vos produits (2 maximum)</FormLabel>
                     <div className="flex flex-wrap gap-4">
-                      {photos.map((photo, index) => <div key={index} className="relative w-24 h-24 rounded-lg overflow-hidden border border-border">
+                      {photos.map((photo, index) => (
+                        <div key={index} className="relative w-24 h-24 rounded-lg overflow-hidden border border-border">
                           <img src={URL.createObjectURL(photo)} alt={`Photo ${index + 1}`} className="w-full h-full object-cover" />
                           <button type="button" onClick={() => removePhoto(index)} className="absolute top-1 right-1 bg-destructive text-destructive-foreground rounded-full p-1 hover:bg-destructive/90">
                             <X className="w-3 h-3" />
                           </button>
-                        </div>)}
-                      {photos.length < 2 && <label className="w-24 h-24 border-2 border-dashed border-border rounded-lg flex flex-col items-center justify-center cursor-pointer hover:border-leaf-green transition-colors">
+                        </div>
+                      ))}
+                      {photos.length < 2 && (
+                        <label className="w-24 h-24 border-2 border-dashed border-border rounded-lg flex flex-col items-center justify-center cursor-pointer hover:border-leaf-green transition-colors">
                           <Upload className="w-6 h-6 text-muted-foreground" />
                           <span className="text-xs text-muted-foreground mt-1">Ajouter</span>
                           <input type="file" accept="image/*" onChange={handlePhotoChange} className="hidden" />
-                        </label>}
+                        </label>
+                      )}
                     </div>
                   </div>
 
-                  <FormField control={form.control} name="source" render={({
-                  field
-                }) => <FormItem>
-                        <FormLabel>Comment avez-vous connu KiltirBox ? (facultatif)</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Réseaux sociaux, bouche-à-oreille, événement..." {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>} />
+                  <FormField control={form.control} name="source" render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Comment avez-vous connu KiltirBox ? (facultatif)</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Réseaux sociaux, bouche-à-oreille, événement..." {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
 
                   <Button type="submit" disabled={isSubmitting} className="w-full">
                     {isSubmitting ? "Envoi en cours..." : "Envoyer ma candidature"}
@@ -353,6 +368,8 @@ const DevenirFournisseur = () => {
         </div>
       </main>
       <Footer />
-    </div>;
+    </div>
+  );
 };
+
 export default DevenirFournisseur;

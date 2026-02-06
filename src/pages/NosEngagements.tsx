@@ -2,10 +2,17 @@
 import React from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import SEO from '@/components/SEO';
 
 const NosEngagements = () => {
   return (
     <div className="min-h-screen flex flex-col">
+      <SEO 
+        title="Nos Engagements - KiltirBox | Notre engagement qualité"
+        description="Découvrez les engagements de KiltirBox : qualité des produits, respect des producteurs locaux, protection de vos données et accessibilité du site."
+        keywords="engagements KiltirBox, qualité produits réunionnais, protection données, producteurs locaux"
+        canonicalPath="/nos-engagements"
+      />
       <Navbar />
       <main className="flex-grow bg-gray-50 py-16">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
