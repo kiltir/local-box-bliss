@@ -1,11 +1,20 @@
 import React from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import SEO from '@/components/SEO';
 import cultureAgriculture from '@/assets/illustrations/culture-agriculture.png';
 import cultureConnaissances from '@/assets/illustrations/culture-connaissances.png';
 import cultureEntreprise from '@/assets/illustrations/culture-entreprise.png';
+
 const NotreHistoire = () => {
-  return <div className="min-h-screen flex flex-col">
+  return (
+    <div className="min-h-screen flex flex-col">
+      <SEO 
+        title="Notre Histoire - KiltirBox | L'aventure des saveurs réunionnaises"
+        description="Découvrez l'histoire de KiltirBox : partager la culture réunionnaise au-delà des frontières. Une passion pour les produits locaux et le savoir-faire artisanal de La Réunion."
+        keywords="histoire KiltirBox, produits réunionnais, culture réunion, artisanat local, île de la réunion"
+        canonicalPath="/notre-histoire"
+      />
       <Navbar />
       <main className="flex-1">
         <div className="bg-gradient-to-b from-[#FEF7CD]/50 to-white py-16">
@@ -84,6 +93,8 @@ const NotreHistoire = () => {
         </div>
       </main>
       <Footer />
-    </div>;
+    </div>
+  );
 };
+
 export default NotreHistoire;

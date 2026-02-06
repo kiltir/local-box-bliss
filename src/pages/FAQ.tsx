@@ -3,6 +3,7 @@ import React from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import SEO from '@/components/SEO';
 
 const FAQ = () => {
   const faqs = [
@@ -42,6 +43,12 @@ const FAQ = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
+      <SEO 
+        title="FAQ - KiltirBox | Questions fréquentes sur nos box réunionnaises"
+        description="Retrouvez les réponses aux questions fréquentes sur KiltirBox : livraison, produits locaux, abonnement, personnalisation des box réunionnaises."
+        keywords="FAQ KiltirBox, questions box réunionnaise, livraison réunion, abonnement box, produits locaux"
+        canonicalPath="/faq"
+      />
       <Navbar />
       <main className="flex-1">
         <div className="bg-gradient-to-b from-[#FEF7CD]/50 to-white py-16">

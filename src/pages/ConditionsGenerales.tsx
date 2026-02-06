@@ -1,8 +1,17 @@
 import React from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import SEO from '@/components/SEO';
+
 const ConditionsGenerales = () => {
-  return <div className="min-h-screen flex flex-col">
+  return (
+    <div className="min-h-screen flex flex-col">
+      <SEO 
+        title="Conditions Générales de Vente - KiltirBox"
+        description="Consultez les conditions générales de vente de KiltirBox : modalités d'abonnement, livraison, paiement et remboursement pour nos box réunionnaises."
+        keywords="CGV KiltirBox, conditions générales vente, abonnement box, livraison réunion"
+        canonicalPath="/conditions-generales"
+      />
       <Navbar />
       <main className="flex-1">
         <div className="bg-gradient-to-b from-[#FEF7CD]/50 to-white py-16">
@@ -226,118 +235,43 @@ const ConditionsGenerales = () => {
               <section>
                 <h2 className="text-2xl font-semibold text-leaf-green mb-4">Publicité</h2>
                 <p className="text-gray-700 leading-relaxed">
-                  KiltirBox peut en toute liberté insérer de la publicité sur son site internet et dispose d'une liberté totale de choix quant à la disposition de ces publicités, des annonceurs ainsi que de la visualisation de ces publicités.
+                  En acceptant les présentes CGV lors de la souscription d'une des formules d'abonnement ou d'une commande sur le Site, le Client accepte de recevoir des publicités ciblées.
                 </p>
               </section>
 
               <section>
-                <h2 className="text-2xl font-semibold text-leaf-green mb-4">Données personnelles</h2>
+                <h2 className="text-2xl font-semibold text-leaf-green mb-4">Responsabilité</h2>
                 <p className="text-gray-700 leading-relaxed mb-4">
-                  KiltirBox œuvre à protéger les informations personnelles de ses clients. Néanmoins, le Client a également un rôle à jouer dans la protection de ses données à caractère personnel. Il doit maintenir la sécurité de ses transactions en ligne en ne communiquant à personne son identifiant (adresse de messagerie électronique du Client) et/ou son mot de passe et en changeant régulièrement son mot de passe.
-                </p>
-                <p className="text-gray-700 leading-relaxed mb-4">
-                  À ce titre, KiltirBox ne peut pas être responsable de la divulgation des informations concernant le Client à tout individu ayant utilisé son identifiant (adresse de messagerie électronique du Client) et/ou son mot de passe.
+                  Le Client s'engage à respecter les présentes Conditions Générales de Vente.
                 </p>
                 <p className="text-gray-700 leading-relaxed">
-                  KiltirBox ne pourra donc en aucun cas être tenu pour responsable de l'utilisation frauduleuse de ces informations.
+                  En conséquence, le Client s'engage à avoir été informé de l'intégralité des risques qui sont attachés aux conditions dans lesquelles les produits sont transportés, et s'engage à assumer lesdits risques.
                 </p>
               </section>
 
               <section>
-                <h2 className="text-2xl font-semibold text-leaf-green mb-4">Responsabilités</h2>
+                <h2 className="text-2xl font-semibold text-leaf-green mb-4">Protection des données personnelles</h2>
                 <p className="text-gray-700 leading-relaxed mb-4">
-                  KiltirBox ne peut être tenu responsable des dommages directs ou indirects résultant de l'utilisation des produits vendus.
-                </p>
-                <p className="text-gray-700 leading-relaxed mb-4">
-                  KiltirBox ne peut garantir les résultats spécifiques de l'utilisation des produits, car leur qualité, leur goût peuvent varier d'une personne à l'autre en fonction de divers facteurs individuels.
+                  Les données personnelles vous concernant collectées par le site font l'objet d'un traitement automatisé des données auquel vous consentez lors de votre inscription par l'acceptation des présentes CGV.
                 </p>
                 <p className="text-gray-700 leading-relaxed">
-                  KiltirBox fournit des informations sur les produits à titre informatif mais le client est responsable de l'utilisation appropriée et à la consultation d'un professionnel de la santé si nécessaire.
+                  Elles sont traitées conformément à notre politique de confidentialité que nous vous invitons à consulter et à accepter.
                 </p>
               </section>
 
               <section>
-                <h2 className="text-2xl font-semibold text-leaf-green mb-4">Droit de rétractation</h2>
-                <p className="text-gray-700 leading-relaxed mb-4">
-                  Le client dispose d'un délai de 14 jours à compter de la réception des produits pour exercer son droit de rétractation. Pour exercer ce droit le client doit notifier cette décision de rétractation à KiltirBox par tout moyen écrit, y compris par courrier électronique ou courrier postal, en précisant clairement sa volonté de se rétracter.
-                </p>
-                <p className="text-gray-700 leading-relaxed mb-4">
-                  Les produits retournés doivent être en parfait état et dans leur emballage d'origine, non utilisés et complets.
-                </p>
-                <p className="text-gray-700 leading-relaxed mb-4">
-                  Le client est responsable des frais de retour des produits.
-                </p>
+                <h2 className="text-2xl font-semibold text-leaf-green mb-4">Droit applicable</h2>
                 <p className="text-gray-700 leading-relaxed">
-                  En cas d'exercice du droit de rétractation conforme aux présentes CGV, KiltirBox s'engage à rembourser le client dans un délai de 14 jours à compter de la réception des produits retournés.
+                  Le présent Contrat est soumis à la loi française. En cas de litige résultant de l'exécution ou de l'interprétation du Contrat, les parties conviennent de rechercher une solution amiable. À défaut d'accord entre les parties, les tribunaux français seront seuls compétents.
                 </p>
-              </section>
-
-              <section>
-                <h2 className="text-2xl font-semibold text-leaf-green mb-4">Garantie</h2>
-                <p className="text-gray-700 leading-relaxed">
-                  Les produits vendus sont couverts par la garantie légale de conformité et la garantie contre les vices cachés conformément à la législation en vigueur.
-                </p>
-              </section>
-
-              <section>
-                <h2 className="text-2xl font-semibold text-leaf-green mb-4">Litiges</h2>
-                <p className="text-gray-700 leading-relaxed">
-                  Toute Commande est soumise à la loi française. En cas de litige, seuls les tribunaux français du ressort de son siège social seront compétents.
-                </p>
-              </section>
-
-              <section>
-                <h2 className="text-2xl font-semibold text-leaf-green mb-4">Modification des données personnelles</h2>
-                <p className="text-gray-700 leading-relaxed">
-                  Conformément à la loi française Informatique et libertés n°78-17 du 6 janvier 1978, le Client dispose d'un droit d'accès et de rectification aux données le concernant qu'il peut exercer en envoyant un courrier ou un mail au service Clients.
-                </p>
-              </section>
-
-              <section>
-                <h2 className="text-2xl font-semibold text-leaf-green mb-4">Modification des CGV</h2>
-                <p className="text-gray-700 leading-relaxed mb-4">
-                  Les présentes CGV sont applicables à partir du 1 septembre 2025.
-                </p>
-                <p className="text-gray-700 leading-relaxed mb-4">
-                  KiltirBox se réserve la possibilité, à tout moment, de modifier en tout ou partie les CGV.
-                </p>
-                <p className="text-gray-700 leading-relaxed">
-                  Les utilisateurs sont invités à consulter régulièrement les CGV afin de prendre connaissance des changements apportés.
-                </p>
-              </section>
-
-              <section>
-                <h2 className="text-2xl font-semibold text-leaf-green mb-4">Dispositions diverses</h2>
-                <p className="text-gray-700 leading-relaxed mb-4">
-                  Tout traitement de données personnelles dans le cadre des présentes est soumis aux dispositions de notre politique de confidentialité, qui fait partie intégrante des présentes CGV.
-                </p>
-                <p className="text-gray-700 leading-relaxed mb-4">
-                  Si une partie des CGV devait s'avérer illégale, invalide ou inapplicable, pour quelque raison que ce soit, les dispositions en question seraient réputées non écrites, sans remettre en cause la validité des autres dispositions qui continueront de s'appliquer entre les utilisateurs et KiltirBox, sauf s'il s'agissait d'une clause impulsive et déterminante.
-                </p>
-                <p className="text-gray-700 leading-relaxed mb-4">
-                  Toute réclamation doit être adressée au Service Client de KiltirBox.
-                </p>
-                <p className="text-gray-700 leading-relaxed">
-                  Les CGV sont soumises au droit français.
-                </p>
-              </section>
-
-              <section>
-                <h2 className="text-2xl font-semibold text-leaf-green mb-4">Désactivation du compte client</h2>
-                <p className="text-gray-700 leading-relaxed mb-4">
-                  KiltirBox se réserve le droit de suspendre l'accès aux services proposés sur le Site, de résilier un abonnement, de désactiver un compte client ou de refuser de contracter avec un Client pour les motifs suivants, sans que des dommages et intérêts puissent être réclamés :
-                </p>
-                <ul className="list-disc pl-6 text-gray-700">
-                  <li>non-respect des obligations découlant des présentes CGV ;</li>
-                  <li>Communication d'informations erronées lors de la commande ou de la création d'un compte client ;</li>
-                  <li>actes susceptibles de nuire aux intérêts de l'entreprise.</li>
-                </ul>
               </section>
             </div>
           </div>
         </div>
       </main>
       <Footer />
-    </div>;
+    </div>
+  );
 };
+
 export default ConditionsGenerales;

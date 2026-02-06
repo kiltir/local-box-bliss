@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import SEO from '@/components/SEO';
 import { Mail, Phone, MapPin } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -32,6 +33,7 @@ const contactFormSchema = z.object({
 });
 
 type ContactFormData = z.infer<typeof contactFormSchema>;
+
 const NousContacter = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -68,7 +70,14 @@ const NousContacter = () => {
     }
   };
 
-  return <div className="min-h-screen flex flex-col">
+  return (
+    <div className="min-h-screen flex flex-col">
+      <SEO 
+        title="Nous Contacter - KiltirBox | Contact et support client"
+        description="Contactez l'équipe KiltirBox pour toute question sur nos box réunionnaises, livraison ou partenariat. Nous sommes à votre écoute."
+        keywords="contact KiltirBox, support client, question box réunionnaise, partenariat"
+        canonicalPath="/nous-contacter"
+      />
       <Navbar />
       <main className="flex-1">
         <div className="bg-gradient-to-b from-[#FEF7CD]/50 to-white py-16">
@@ -186,6 +195,8 @@ const NousContacter = () => {
         </div>
       </main>
       <Footer />
-    </div>;
+    </div>
+  );
 };
+
 export default NousContacter;

@@ -1,10 +1,17 @@
 import React from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import SEO from '@/components/SEO';
 
 const MentionsLegales = () => {
   return (
     <div className="min-h-screen flex flex-col">
+      <SEO 
+        title="Mentions Légales - KiltirBox | Informations légales"
+        description="Consultez les mentions légales de KiltirBox : identité de l'entreprise, conditions d'utilisation, propriété intellectuelle et gestion des données personnelles."
+        keywords="mentions légales, informations légales KiltirBox, CGU, propriété intellectuelle"
+        canonicalPath="/mentions-legales"
+      />
       <Navbar />
       <main className="flex-1">
         <div className="bg-gradient-to-b from-[#FEF7CD]/50 to-white py-16">

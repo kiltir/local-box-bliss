@@ -2,10 +2,17 @@
 import React from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import SEO from '@/components/SEO';
 
 const PolitiqueConfidentialite = () => {
   return (
     <div className="min-h-screen flex flex-col">
+      <SEO 
+        title="Politique de Confidentialité - KiltirBox | Protection des données"
+        description="Consultez la politique de confidentialité de KiltirBox : collecte, utilisation et protection de vos données personnelles conformément au RGPD."
+        keywords="politique confidentialité, RGPD, protection données, vie privée KiltirBox"
+        canonicalPath="/politique-confidentialite"
+      />
       <Navbar />
       <main className="flex-1">
         <div className="bg-gradient-to-b from-[#FEF7CD]/50 to-white py-16">
