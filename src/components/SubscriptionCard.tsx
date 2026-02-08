@@ -83,7 +83,7 @@ const SubscriptionCard: React.FC<SubscriptionCardProps> = ({ subscription, onCli
   const boxImage = "/lovable-uploads/box-abonnement.jpg";
 
   return (
-    <Card className="overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-gradient-to-r from-amber-200 to-orange-200 relative">
+    <Card className="overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border-2 border-gradient-to-r from-amber-200 to-orange-200 relative group">
       {/* Badge Premium */}
       <div className="absolute top-4 left-4 z-10">
         <Badge className="bg-gradient-to-r from-amber-500 to-orange-500 text-white font-semibold px-3 py-1 flex items-center gap-1">
@@ -104,7 +104,7 @@ const SubscriptionCard: React.FC<SubscriptionCardProps> = ({ subscription, onCli
         <img 
           src={boxImage} 
           alt={subscription.baseTitle} 
-          className="w-auto h-auto max-h-48 object-contain"
+          className="w-auto h-auto max-h-48 object-contain transition-transform duration-500 group-hover:scale-105"
         />
         <div className={`absolute top-4 right-4 px-3 py-1 rounded-full text-sm font-medium ${getBadgeColor()}`}>
           {subscription.theme}
