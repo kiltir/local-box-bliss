@@ -1,70 +1,91 @@
 import React from 'react';
+import { FadeInSection, StaggerContainer, StaggerItem } from '@/components/animations';
+
 const FeaturesSection = () => {
-  return <section id="concept" className="bg-soft-beige/30 my-0 py-0 scroll-mt-[88px] md:scroll-mt-[80px]">
+  return (
+    <section id="concept" className="bg-soft-beige/30 my-0 py-0 scroll-mt-[88px] md:scroll-mt-[80px]">
       <div className="container-section my-0 py-[30px]">
-        <div className="text-center mb-12 fade-in">
+        <FadeInSection className="text-center mb-12">
           <h2 id="features-title" className="text-3xl font-bold mb-4 py-[15px]" style={{ fontFamily: "'Chewy', cursive" }}>Comment ça marche ?</h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto py-0 my-0">Choisissez, commandez, recevez.</p>
-        </div>
+        </FadeInSection>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-10 mt-12 fade-in">
-          <div className="text-center">
-            <div className="w-16 h-16 bg-leaf-green rounded-full flex items-center justify-center mx-auto mb-6">
-              <span className="text-white text-2xl font-bold">1</span>
+        <StaggerContainer className="grid grid-cols-1 md:grid-cols-3 gap-10 mt-12" staggerDelay={0.15}>
+          <StaggerItem>
+            <div className="text-center group">
+              <div className="w-16 h-16 bg-leaf-green rounded-full flex items-center justify-center mx-auto mb-6 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6">
+                <span className="text-white text-2xl font-bold">1</span>
+              </div>
+              <h3 className="text-xl font-bold mb-3">Choisissez votre box</h3>
+              <p className="text-gray-600">Sélectionnez la thématique de box et le type de commande selon vos goûts et vos envies.</p>
             </div>
-            <h3 className="text-xl font-bold mb-3">Choisissez votre box</h3>
-            <p className="text-gray-600">Sélectionnez la thématique de box et le type de commande selon vos goûts et vos envies.</p>
-          </div>
+          </StaggerItem>
           
-          <div className="text-center">
-            <div className="w-16 h-16 bg-leaf-green rounded-full flex items-center justify-center mx-auto mb-6">
-              <span className="text-white text-2xl font-bold">2</span>
+          <StaggerItem>
+            <div className="text-center group">
+              <div className="w-16 h-16 bg-leaf-green rounded-full flex items-center justify-center mx-auto mb-6 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6">
+                <span className="text-white text-2xl font-bold">2</span>
+              </div>
+              <h3 className="text-xl font-bold mb-3">Nous préparons votre commande</h3>
+              <p className="text-gray-600">Toutes nos box sont élaborées et préparées avec soin pour vous offrir la meilleure expérience possible.</p>
             </div>
-            <h3 className="text-xl font-bold mb-3">Nous préparons votre commande</h3>
-            <p className="text-gray-600">Toutes nos box sont élaborées et préparées avec soin pour vous offrir la meilleure expérience possible.</p>
-          </div>
+          </StaggerItem>
           
-          <div className="text-center">
-            <div className="w-16 h-16 bg-leaf-green rounded-full flex items-center justify-center mx-auto mb-6">
-              <span className="text-white text-2xl font-bold">3</span>
+          <StaggerItem>
+            <div className="text-center group">
+              <div className="w-16 h-16 bg-leaf-green rounded-full flex items-center justify-center mx-auto mb-6 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6">
+                <span className="text-white text-2xl font-bold">3</span>
+              </div>
+              <h3 className="text-xl font-bold mb-3">Recevez vos produits</h3>
+              <p className="text-gray-600">Récupérez votre box à l'aéroport de Roland Garros avant/après votre vol ou faîtes-la livrer à une adresse Métropole.</p>
             </div>
-            <h3 className="text-xl font-bold mb-3">Recevez vos produits</h3>
-            <p className="text-gray-600">Récupérez votre box à l'aéroport de Roland Garros avant/après votre vol ou faîtes-la livrer à une adresse Métropole.</p>
-          </div>
-        </div>
+          </StaggerItem>
+        </StaggerContainer>
         
-        <div className="mt-20 bg-white rounded-xl p-8 shadow-lg max-w-3xl mx-auto fade-in">
+        <FadeInSection delay={0.3} className="mt-20 bg-white rounded-xl p-8 shadow-lg max-w-3xl mx-auto hover:shadow-xl transition-shadow duration-300">
           <h3 className="text-2xl font-bold mb-4 text-center">Pourquoi choisir nos box ?</h3>
           
-          <ul className="space-y-4">
-            <li className="flex items-start">
-              <svg className="h-6 w-6 text-leaf-green mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-              </svg>
-              <span><strong className="text-gray-900">Produits 100% locaux</strong> - Toutes nos box sont le résultat du savoir-faire de nos partenaires locaux engagés et passionnés.</span>
-            </li>
+          <StaggerContainer className="space-y-4" staggerDelay={0.1}>
+            <StaggerItem>
+              <div className="flex items-start group">
+                <svg className="h-6 w-6 text-leaf-green mr-2 flex-shrink-0 transition-transform duration-300 group-hover:scale-125" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                <span><strong className="text-gray-900">Produits 100% locaux</strong> - Toutes nos box sont le résultat du savoir-faire de nos partenaires locaux engagés et passionnés.</span>
+              </div>
+            </StaggerItem>
             
-            <li className="flex items-start">
-              <svg className="h-6 w-6 text-leaf-green mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-              </svg>
-              <span><strong className="text-gray-900">Soutien aux professionnels</strong> - Nous rémunérons justement nos producteurs partenaires.</span>
-            </li>
-            <li className="flex items-start">
-              <svg className="h-6 w-6 text-leaf-green mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-              </svg>
-              <span><strong className="text-gray-900">Nos valeurs</strong> - Nous partageons des valeurs humaines et culturelles propres à notre ancrage historique.</span>
-            </li>
-            <li className="flex items-start">
-              <svg className="h-6 w-6 text-leaf-green mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-              </svg>
-              <span><strong className="text-gray-900">Nos sélections</strong> - Tous les produits de nos box sont sélectionnés et validés selon des critères précis de qualité, originalité, conservation, goût, conditionnement, etc.</span>
-            </li>
-          </ul>
-        </div>
+            <StaggerItem>
+              <div className="flex items-start group">
+                <svg className="h-6 w-6 text-leaf-green mr-2 flex-shrink-0 transition-transform duration-300 group-hover:scale-125" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                <span><strong className="text-gray-900">Soutien aux professionnels</strong> - Nous rémunérons justement nos producteurs partenaires.</span>
+              </div>
+            </StaggerItem>
+
+            <StaggerItem>
+              <div className="flex items-start group">
+                <svg className="h-6 w-6 text-leaf-green mr-2 flex-shrink-0 transition-transform duration-300 group-hover:scale-125" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                <span><strong className="text-gray-900">Nos valeurs</strong> - Nous partageons des valeurs humaines et culturelles propres à notre ancrage historique.</span>
+              </div>
+            </StaggerItem>
+
+            <StaggerItem>
+              <div className="flex items-start group">
+                <svg className="h-6 w-6 text-leaf-green mr-2 flex-shrink-0 transition-transform duration-300 group-hover:scale-125" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                <span><strong className="text-gray-900">Nos sélections</strong> - Tous les produits de nos box sont sélectionnés et validés selon des critères précis de qualité, originalité, conservation, goût, conditionnement, etc.</span>
+              </div>
+            </StaggerItem>
+          </StaggerContainer>
+        </FadeInSection>
       </div>
-    </section>;
+    </section>
+  );
 };
+
 export default FeaturesSection;
