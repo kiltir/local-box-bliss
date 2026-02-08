@@ -10,6 +10,7 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { Skeleton } from "@/components/ui/skeleton";
+import { FadeInSection } from '@/components/animations';
 
 // Fallback images if no images in database
 const fallbackImages = [
@@ -41,7 +42,7 @@ const CallToAction = () => {
   return (
     <section className="py-16 bg-leaf-yellow text-white">
       <div className="container-section py-[15px]">
-        <div className="max-w-4xl mx-auto text-center fade-in">
+        <FadeInSection className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl font-bold mb-4 text-slate-900" style={{ fontFamily: "'Chewy', cursive" }}>
             Une expérience inédite à partager ?
           </h2>
@@ -74,22 +75,22 @@ const CallToAction = () => {
                 <CarouselContent className="-ml-2 md:-ml-4">
                   {images.map((image, index) => (
                     <CarouselItem key={index} className="pl-2 md:pl-4 basis-1/3">
-                      <div className="aspect-square overflow-hidden rounded-xl shadow-lg">
+                      <div className="aspect-square overflow-hidden rounded-xl shadow-lg group">
                         <img
                           src={image.url}
                           alt={image.title || `Photo communauté ${index + 1}`}
-                          className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                         />
                       </div>
                     </CarouselItem>
                   ))}
                 </CarouselContent>
-                <CarouselPrevious className="left-0 bg-white/80 hover:bg-white border-none text-slate-900" />
-                <CarouselNext className="right-0 bg-white/80 hover:bg-white border-none text-slate-900" />
+                <CarouselPrevious className="left-0 bg-white/80 hover:bg-white border-none text-slate-900 transition-transform duration-200 hover:scale-110" />
+                <CarouselNext className="right-0 bg-white/80 hover:bg-white border-none text-slate-900 transition-transform duration-200 hover:scale-110" />
               </Carousel>
             )}
           </div>
-        </div>
+        </FadeInSection>
       </div>
     </section>
   );

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -70,13 +71,42 @@ const Hero = () => {
       backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('/lovable-uploads/56c399f2-fc34-4f1d-befd-83ee8f0e5d2d.png')`
     }} className="hero-section md:py-24 relative bg-cover bg-center bg-no-repeat py-[40px]">
         <div className="container-section py-[15px]">
-          <div className="max-w-3xl mx-auto text-center slide-in py-[10px]">
-            <h1 className="md:text-5xl font-bold mb-6 mx-0 text-center text-3xl lg:text-5xl text-yellow-300" style={{ fontFamily: "'Chewy', cursive" }}>La Réunion sur place ou à emporter</h1>
+          <motion.div 
+            className="max-w-3xl mx-auto text-center py-[10px]"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, ease: "easeOut" }}
+          >
+            <motion.h1 
+              className="md:text-5xl font-bold mb-6 mx-0 text-center text-3xl lg:text-5xl text-yellow-300" 
+              style={{ fontFamily: "'Chewy', cursive" }}
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+            >
+              La Réunion sur place ou à emporter
+            </motion.h1>
             
             {/* Section des dates de voyage */}
-            <div className="max-w-4xl mx-auto text-center py-0">
+            <motion.div 
+              className="max-w-4xl mx-auto text-center py-0"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+            >
               <div className="flex items-center justify-center mb-6">
-                <MapPin className="h-8 w-8 text-leaf-green mr-3" />
+                <motion.div
+                  animate={{ 
+                    y: [0, -5, 0],
+                  }}
+                  transition={{ 
+                    duration: 2,
+                    repeat: Infinity,
+                    ease: "easeInOut"
+                  }}
+                >
+                  <MapPin className="h-8 w-8 text-leaf-green mr-3" />
+                </motion.div>
                 <h2 className="font-bold text-white text-2xl">
                   En voyage à la Réunion ?
                 </h2>
@@ -271,8 +301,8 @@ const Hero = () => {
               <div className="max-w-2xl mx-auto mb-8">
                 <p className="text-sm backdrop-blur-sm px-6 rounded-lg text-slate-50 py-[10px]">*Possibilité de récupérer la 1ère box d'un abonnement sur place à l'aéroport de Roland Garros à la Réunion si la commande a été passée 15 jours avant un vol prévu. Dans le cas contraire, une adresse métropolitaine vous sera demandée pour la livraison.</p>
               </div>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
         </div>
       </section>
 

@@ -119,7 +119,7 @@ const BoxCard = ({ title, price, description, image, items, theme, rating, revie
   const boxImage = "/lovable-uploads/c3069f51-0eec-4ebc-b702-b987e85233e0.png";
 
   return (
-    <div className="bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300">
+    <div className="bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 group">
       <div className="relative h-56 flex items-center justify-center bg-[#f5eada]">
         {outOfStock && (
           <div className="absolute inset-0 bg-black/50 flex items-center justify-center z-10">
@@ -132,7 +132,7 @@ const BoxCard = ({ title, price, description, image, items, theme, rating, revie
         <img 
           src={boxImage} 
           alt={title} 
-          className="w-auto h-auto max-h-48 object-contain"
+          className="w-auto h-auto max-h-48 object-contain transition-transform duration-500 group-hover:scale-105"
         />
         <div className={`absolute top-4 right-4 px-3 py-1 rounded-full text-sm font-medium ${getBadgeColor()}`}>
           {theme}

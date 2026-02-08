@@ -1,8 +1,8 @@
-
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Skeleton } from '@/components/ui/skeleton';
+import { FadeInSection, StaggerContainer, StaggerItem } from '@/components/animations';
 
 interface FeaturedReview {
   id: string;
@@ -22,7 +22,6 @@ const TestimonialsSection = () => {
   const { data: featuredReviews, isLoading } = useQuery({
     queryKey: ['featured-reviews'],
     queryFn: async () => {
-      // Use the public view that doesn't expose user_id for security
       const { data: reviews, error } = await supabase
         .from('public_box_reviews')
         .select('id, rating, comment, box_id, is_featured')
@@ -36,7 +35,6 @@ const TestimonialsSection = () => {
     }
   });
 
-  // Fallback testimonials if no featured reviews
   const fallbackTestimonials = [
     {
       id: 'fallback-1',
@@ -66,12 +64,12 @@ const TestimonialsSection = () => {
   return (
     <section className="py-16 bg-soft-beige/20">
       <div className="container-section">
-        <div className="text-center mb-12 fade-in">
+        <FadeInSection className="text-center mb-12">
           <h2 className="text-3xl font-bold mb-4" style={{ fontFamily: "'Chewy', cursive" }}>Ce que disent nos clients</h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
             Découvrez les témoignages de ceux qui ont déjà goûté à l'expérience de nos box.
           </p>
-        </div>
+        </FadeInSection>
         
         {isLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -88,41 +86,45 @@ const TestimonialsSection = () => {
             ))}
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 fade-in">
+          <StaggerContainer className="grid grid-cols-1 md:grid-cols-3 gap-8" staggerDelay={0.15}>
             {hasRealReviews
               ? featuredReviews.slice(0, 3).map((review) => (
-                  <div key={review.id} className="bg-background p-6 rounded-xl shadow-lg">
-                    <div className="flex mb-4">
-                      {[...Array(review.rating)].map((_, i) => (
-                        <svg key={i} className="w-5 h-5 text-leaf-green" fill="currentColor" viewBox="0 0 20 20">
-                          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                        </svg>
-                      ))}
+                  <StaggerItem key={review.id}>
+                    <div className="bg-background p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+                      <div className="flex mb-4">
+                        {[...Array(review.rating)].map((_, i) => (
+                          <svg key={i} className="w-5 h-5 text-leaf-green" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                          </svg>
+                        ))}
+                      </div>
+                      <p className="text-foreground mb-4 italic">"{review.comment}"</p>
+                      <div className="text-sm text-muted-foreground">
+                        <strong className="text-foreground">Client vérifié</strong>
+                        <span> • {boxNames[review.box_id]}</span>
+                      </div>
                     </div>
-                    <p className="text-foreground mb-4 italic">"{review.comment}"</p>
-                    <div className="text-sm text-muted-foreground">
-                      <strong className="text-foreground">Client vérifié</strong>
-                      <span> • {boxNames[review.box_id]}</span>
-                    </div>
-                  </div>
+                  </StaggerItem>
                 ))
               : fallbackTestimonials.map((testimonial) => (
-                  <div key={testimonial.id} className="bg-background p-6 rounded-xl shadow-lg">
-                    <div className="flex mb-4">
-                      {[...Array(testimonial.rating)].map((_, i) => (
-                        <svg key={i} className="w-5 h-5 text-leaf-green" fill="currentColor" viewBox="0 0 20 20">
-                          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                        </svg>
-                      ))}
+                  <StaggerItem key={testimonial.id}>
+                    <div className="bg-background p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+                      <div className="flex mb-4">
+                        {[...Array(testimonial.rating)].map((_, i) => (
+                          <svg key={i} className="w-5 h-5 text-leaf-green" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                            </svg>
+                        ))}
+                      </div>
+                      <p className="text-foreground mb-4 italic">"{testimonial.text}"</p>
+                      <div className="text-sm text-muted-foreground">
+                        <strong className="text-foreground">{testimonial.name}</strong>
+                        <span> • {testimonial.location}</span>
+                      </div>
                     </div>
-                    <p className="text-foreground mb-4 italic">"{testimonial.text}"</p>
-                    <div className="text-sm text-muted-foreground">
-                      <strong className="text-foreground">{testimonial.name}</strong>
-                      <span> • {testimonial.location}</span>
-                    </div>
-                  </div>
+                  </StaggerItem>
                 ))}
-          </div>
+          </StaggerContainer>
         )}
       </div>
     </section>

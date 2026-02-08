@@ -1,4 +1,3 @@
-
 import React from 'react';
 import BoxCard from './BoxCard';
 import SubscriptionCard from './SubscriptionCard';
@@ -10,6 +9,8 @@ import { useSubscriptions } from '@/hooks/useSubscriptions';
 import BoxThemeSelector from './BoxThemeSelector';
 import PurchaseTypeSelector from './PurchaseTypeSelector';
 import { BoxTheme } from '@/types/box';
+import { FadeInSection, StaggerContainer, StaggerItem } from '@/components/animations';
+import { motion, AnimatePresence } from 'framer-motion';
 import decouverteBg from '@/assets/backgrounds/decouverte-bg.jpg';
 import bourbonBg from '@/assets/backgrounds/bourbon-bg.jpg';
 import racineBg from '@/assets/backgrounds/racine-bg.jpg';
@@ -30,11 +31,9 @@ const BoxesSection = () => {
   const { getBoxStats } = useBoxesReviews();
   const { subscriptions } = useSubscriptions();
 
-  // Filtrer les boxes selon le thème sélectionné
   const filteredBoxes = boxes.filter(box => box.theme === selectedTheme);
   const filteredSubscriptions = subscriptions.filter(sub => sub.theme === selectedTheme);
 
-  // Map des fonds d'écran par thème
   const themeBackgrounds: Record<BoxTheme, string> = {
     'Découverte': decouverteBg,
     'Bourbon': bourbonBg,
@@ -45,8 +44,12 @@ const BoxesSection = () => {
   return (
     <section id="boxes" className="py-[15px] scroll-mt-[88px] md:scroll-mt-[80px] relative overflow-hidden">
       {/* Fond dynamique avec transition */}
-      <div 
-        className="absolute inset-0 bg-cover bg-center transition-all duration-700 ease-in-out"
+      <motion.div 
+        className="absolute inset-0 bg-cover bg-center"
+        key={selectedTheme}
+        initial={{ opacity: 0, scale: 1.1 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.7, ease: "easeOut" }}
         style={{ 
           backgroundImage: `url(${themeBackgrounds[selectedTheme]})`,
         }}
@@ -55,7 +58,7 @@ const BoxesSection = () => {
       <div className="absolute inset-0 bg-background/80 backdrop-blur-sm" />
       
       <div className="container-section py-[15px] relative z-10">
-        <div className="text-center mb-12 fade-in">
+        <FadeInSection className="text-center mb-12">
           <h2 className="text-3xl font-bold mb-4" style={{ fontFamily: "'Chewy', cursive" }}>Découvrez nos box</h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
             Choisissez parmi nos 4 thématiques pensées et confectionnées avec soin pour une meilleure expérience.
@@ -67,36 +70,52 @@ const BoxesSection = () => {
 
           {/* Sélecteur de type d'achat */}
           <PurchaseTypeSelector selectedType={purchaseType} onTypeChange={handlePurchaseTypeChange} />
-        </div>
+        </FadeInSection>
           
-        <div className="grid grid-cols-1 md:grid-cols-1 gap-8 fade-in max-w-md mx-auto">
-          {purchaseType === 'one-time' 
-            ? filteredBoxes.map(box => {
-                const boxStats = getBoxStats(box.id);
-                return (
-                  <BoxCard 
-                    key={box.id} 
-                    title={box.baseTitle} 
-                    price={box.price} 
-                    description={box.description} 
-                    image={box.image} 
-                    items={box.items} 
-                    theme={box.theme}
-                    rating={boxStats.averageRating}
-                    reviewCount={boxStats.totalReviews}
-                    onClick={() => handleBoxClick(box.id)}
-                    purchaseType={purchaseType}
-                  />
-                );
-              })
-            : filteredSubscriptions.map(subscription => (
-                <SubscriptionCard
-                  key={subscription.id}
-                  subscription={subscription}
-                  onClick={() => handleBoxClick(subscription.id)}
-                />
-              ))
-          }
+        <div className="grid grid-cols-1 md:grid-cols-1 gap-8 max-w-md mx-auto">
+          <AnimatePresence mode="wait">
+            {purchaseType === 'one-time' 
+              ? filteredBoxes.map((box, index) => {
+                  const boxStats = getBoxStats(box.id);
+                  return (
+                    <motion.div
+                      key={box.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -20 }}
+                      transition={{ duration: 0.4, delay: index * 0.1 }}
+                    >
+                      <BoxCard 
+                        title={box.baseTitle} 
+                        price={box.price} 
+                        description={box.description} 
+                        image={box.image} 
+                        items={box.items} 
+                        theme={box.theme}
+                        rating={boxStats.averageRating}
+                        reviewCount={boxStats.totalReviews}
+                        onClick={() => handleBoxClick(box.id)}
+                        purchaseType={purchaseType}
+                      />
+                    </motion.div>
+                  );
+                })
+              : filteredSubscriptions.map((subscription, index) => (
+                  <motion.div
+                    key={subscription.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    transition={{ duration: 0.4, delay: index * 0.1 }}
+                  >
+                    <SubscriptionCard
+                      subscription={subscription}
+                      onClick={() => handleBoxClick(subscription.id)}
+                    />
+                  </motion.div>
+                ))
+            }
+          </AnimatePresence>
         </div>
       </div>
 
