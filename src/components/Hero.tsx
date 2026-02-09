@@ -71,40 +71,50 @@ const Hero = () => {
       backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('/lovable-uploads/56c399f2-fc34-4f1d-befd-83ee8f0e5d2d.png')`
     }} className="hero-section md:py-24 relative bg-cover bg-center bg-no-repeat py-[40px]">
         <div className="container-section py-[15px]">
-          <motion.div 
-            className="max-w-3xl mx-auto text-center py-[10px]"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, ease: "easeOut" }}
-          >
-            <motion.h1 
-              className="md:text-5xl font-bold mb-6 mx-0 text-center text-3xl lg:text-5xl text-yellow-300" 
-              style={{ fontFamily: "'Chewy', cursive" }}
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-            >
-              La Réunion sur place ou à emporter
+          <motion.div className="max-w-3xl mx-auto text-center py-[10px]" initial={{
+          opacity: 0,
+          y: 30
+        }} animate={{
+          opacity: 1,
+          y: 0
+        }} transition={{
+          duration: 0.7,
+          ease: "easeOut"
+        }}>
+            <motion.h1 className="md:text-5xl font-bold mb-6 mx-0 text-center text-3xl lg:text-5xl text-yellow-300" style={{
+            fontFamily: "'Chewy', cursive"
+          }} initial={{
+            opacity: 0,
+            scale: 0.9
+          }} animate={{
+            opacity: 1,
+            scale: 1
+          }} transition={{
+            duration: 0.6,
+            delay: 0.2
+          }}>
+              La Réunion sur place ou à domicile
             </motion.h1>
             
             {/* Section des dates de voyage */}
-            <motion.div 
-              className="max-w-4xl mx-auto text-center py-0"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.4 }}
-            >
+            <motion.div className="max-w-4xl mx-auto text-center py-0" initial={{
+            opacity: 0,
+            y: 20
+          }} animate={{
+            opacity: 1,
+            y: 0
+          }} transition={{
+            duration: 0.6,
+            delay: 0.4
+          }}>
               <div className="flex items-center justify-center mb-6">
-                <motion.div
-                  animate={{ 
-                    y: [0, -5, 0],
-                  }}
-                  transition={{ 
-                    duration: 2,
-                    repeat: Infinity,
-                    ease: "easeInOut"
-                  }}
-                >
+                <motion.div animate={{
+                y: [0, -5, 0]
+              }} transition={{
+                duration: 2,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}>
                   <MapPin className="h-8 w-8 text-leaf-green mr-3" />
                 </motion.div>
                 <h2 className="font-bold text-white text-2xl">
