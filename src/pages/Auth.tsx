@@ -53,10 +53,7 @@ const Auth = () => {
           });
         }
       } else {
-        toast({
-          title: "Inscription réussie !",
-          description: "Vérifiez votre email pour confirmer votre compte.",
-        });
+        navigate('/inscription-confirmee');
       }
     } catch (error) {
       toast({
