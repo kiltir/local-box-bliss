@@ -76,7 +76,7 @@ const NotreHistoire = () => {
                     <p> Merci zot toute pou zot soutien ! </p>
                     
                     <div className="bg-leaf-green/10 p-6 rounded-lg mt-8 text-center">
-                      <h3 className="text-2xl font-bold text-sky-400 italic">"Oubli pa nou, oubli pa ou !"</h3>
+                      <h3 className="font-bold text-sky-400 italic text-xl">"Oubli pa nou, oubli pa ou!"</h3>
                     </div>
                   </div>
                 </section>
