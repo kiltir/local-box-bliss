@@ -49,38 +49,38 @@ const AdminDashboard = () => {
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto py-8 px-4">
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4">
           <div className="flex items-center gap-3">
-            <Shield className="h-8 w-8 text-primary" />
-            <h1 className="text-3xl font-bold">Tableau de bord administrateur</h1>
+            <Shield className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
+            <h1 className="text-xl sm:text-3xl font-bold">Admin</h1>
           </div>
           <div className="flex items-center gap-4">
             {user && (
-              <span className="text-sm text-muted-foreground">
-                Connecté: {user.email}
+              <span className="text-xs sm:text-sm text-muted-foreground hidden sm:inline">
+                {user.email}
               </span>
             )}
-            <Button variant="outline" onClick={handleSignOut} className="gap-2">
+            <Button variant="outline" onClick={handleSignOut} size="sm" className="gap-2">
               <LogOut className="h-4 w-4" />
-              Déconnexion
+              <span className="hidden sm:inline">Déconnexion</span>
             </Button>
           </div>
         </div>
 
         <Tabs defaultValue="orders" className="w-full">
-          <TabsList className="grid w-full grid-cols-12 mb-8">
-            <TabsTrigger value="orders">Commandes</TabsTrigger>
-            <TabsTrigger value="boxes">Box</TabsTrigger>
-            <TabsTrigger value="box-details">Box détails</TabsTrigger>
-            <TabsTrigger value="box-advice">Box conseils</TabsTrigger>
-            <TabsTrigger value="stock">Stocks</TabsTrigger>
-            <TabsTrigger value="prices">Prix</TabsTrigger>
-            <TabsTrigger value="banners">Bandeaux</TabsTrigger>
-            <TabsTrigger value="reviews">Avis</TabsTrigger>
-            <TabsTrigger value="gallery">Galerie</TabsTrigger>
-            <TabsTrigger value="users">Utilisateurs</TabsTrigger>
-            <TabsTrigger value="partners">Partenaires</TabsTrigger>
-            <TabsTrigger value="suppliers">Fournisseurs</TabsTrigger>
+          <TabsList className="flex w-full overflow-x-auto mb-8 h-auto flex-wrap sm:flex-nowrap gap-1 p-1">
+            <TabsTrigger value="orders" className="text-xs sm:text-sm whitespace-nowrap">Cmd.</TabsTrigger>
+            <TabsTrigger value="boxes" className="text-xs sm:text-sm whitespace-nowrap">Box</TabsTrigger>
+            <TabsTrigger value="box-details" className="text-xs sm:text-sm whitespace-nowrap">Détails</TabsTrigger>
+            <TabsTrigger value="box-advice" className="text-xs sm:text-sm whitespace-nowrap">Conseils</TabsTrigger>
+            <TabsTrigger value="stock" className="text-xs sm:text-sm whitespace-nowrap">Stocks</TabsTrigger>
+            <TabsTrigger value="prices" className="text-xs sm:text-sm whitespace-nowrap">Prix</TabsTrigger>
+            <TabsTrigger value="banners" className="text-xs sm:text-sm whitespace-nowrap">Bandeau</TabsTrigger>
+            <TabsTrigger value="reviews" className="text-xs sm:text-sm whitespace-nowrap">Avis</TabsTrigger>
+            <TabsTrigger value="gallery" className="text-xs sm:text-sm whitespace-nowrap">Galerie</TabsTrigger>
+            <TabsTrigger value="users" className="text-xs sm:text-sm whitespace-nowrap">Users</TabsTrigger>
+            <TabsTrigger value="partners" className="text-xs sm:text-sm whitespace-nowrap">Partn.</TabsTrigger>
+            <TabsTrigger value="suppliers" className="text-xs sm:text-sm whitespace-nowrap">Fourn.</TabsTrigger>
           </TabsList>
 
           <TabsContent value="orders" className="space-y-4">
