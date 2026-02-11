@@ -56,8 +56,8 @@ const PaymentCanceled = () => {
             <div className="text-sm text-gray-500 pt-4 border-t">
               <p>
                 Besoin d'aide ? Contactez-nous à{' '}
-                <a href="mailto:support@kiltirbox.com" className="text-leaf-green hover:underline">
-                  support@kiltirbox.com
+                <a href="mailto:contact@kiltirbox.com" className="text-leaf-green hover:underline">
+                  contact@kiltirbox.com
                 </a>
               </p>
             </div>

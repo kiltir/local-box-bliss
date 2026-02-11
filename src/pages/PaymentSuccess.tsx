@@ -65,8 +65,8 @@ const PaymentSuccess = () => {
             <div className="text-sm text-gray-500 pt-4 border-t">
               <p>
                 Des questions ? Contactez notre service client à{' '}
-                <a href="mailto:support@kiltirbox.com" className="text-leaf-green hover:underline">
-                  support@kiltirbox.com
+                <a href="mailto:contact@kiltirbox.com" className="text-leaf-green hover:underline">
+                  contact@kiltirbox.com
                 </a>
               </p>
             </div>
