@@ -68,20 +68,22 @@ const AdminDashboard = () => {
         </div>
 
         <Tabs defaultValue="orders" className="w-full">
-          <TabsList className="flex w-full overflow-x-auto mb-8 h-auto flex-wrap sm:flex-nowrap gap-1 p-1">
-            <TabsTrigger value="orders" className="text-xs sm:text-sm whitespace-nowrap">Cmd.</TabsTrigger>
-            <TabsTrigger value="boxes" className="text-xs sm:text-sm whitespace-nowrap">Box</TabsTrigger>
-            <TabsTrigger value="box-details" className="text-xs sm:text-sm whitespace-nowrap">Détails</TabsTrigger>
-            <TabsTrigger value="box-advice" className="text-xs sm:text-sm whitespace-nowrap">Conseils</TabsTrigger>
-            <TabsTrigger value="stock" className="text-xs sm:text-sm whitespace-nowrap">Stocks</TabsTrigger>
-            <TabsTrigger value="prices" className="text-xs sm:text-sm whitespace-nowrap">Prix</TabsTrigger>
-            <TabsTrigger value="banners" className="text-xs sm:text-sm whitespace-nowrap">Bandeau</TabsTrigger>
-            <TabsTrigger value="reviews" className="text-xs sm:text-sm whitespace-nowrap">Avis</TabsTrigger>
-            <TabsTrigger value="gallery" className="text-xs sm:text-sm whitespace-nowrap">Galerie</TabsTrigger>
-            <TabsTrigger value="users" className="text-xs sm:text-sm whitespace-nowrap">Users</TabsTrigger>
-            <TabsTrigger value="partners" className="text-xs sm:text-sm whitespace-nowrap">Partn.</TabsTrigger>
-            <TabsTrigger value="suppliers" className="text-xs sm:text-sm whitespace-nowrap">Fourn.</TabsTrigger>
-          </TabsList>
+          <div className="overflow-x-auto mb-8 -mx-4 px-4 sm:mx-0 sm:px-0">
+            <TabsList className="inline-flex w-max sm:w-full h-auto gap-1 p-1">
+              <TabsTrigger value="orders" className="text-xs sm:text-sm whitespace-nowrap px-2.5 py-1.5">Cmd.</TabsTrigger>
+              <TabsTrigger value="boxes" className="text-xs sm:text-sm whitespace-nowrap px-2.5 py-1.5">Box</TabsTrigger>
+              <TabsTrigger value="box-details" className="text-xs sm:text-sm whitespace-nowrap px-2.5 py-1.5">Détails</TabsTrigger>
+              <TabsTrigger value="box-advice" className="text-xs sm:text-sm whitespace-nowrap px-2.5 py-1.5">Conseils</TabsTrigger>
+              <TabsTrigger value="stock" className="text-xs sm:text-sm whitespace-nowrap px-2.5 py-1.5">Stocks</TabsTrigger>
+              <TabsTrigger value="prices" className="text-xs sm:text-sm whitespace-nowrap px-2.5 py-1.5">Prix</TabsTrigger>
+              <TabsTrigger value="banners" className="text-xs sm:text-sm whitespace-nowrap px-2.5 py-1.5">Bandeau</TabsTrigger>
+              <TabsTrigger value="reviews" className="text-xs sm:text-sm whitespace-nowrap px-2.5 py-1.5">Avis</TabsTrigger>
+              <TabsTrigger value="gallery" className="text-xs sm:text-sm whitespace-nowrap px-2.5 py-1.5">Galerie</TabsTrigger>
+              <TabsTrigger value="users" className="text-xs sm:text-sm whitespace-nowrap px-2.5 py-1.5">Users</TabsTrigger>
+              <TabsTrigger value="partners" className="text-xs sm:text-sm whitespace-nowrap px-2.5 py-1.5">Partn.</TabsTrigger>
+              <TabsTrigger value="suppliers" className="text-xs sm:text-sm whitespace-nowrap px-2.5 py-1.5">Fourn.</TabsTrigger>
+            </TabsList>
+          </div>
 
           <TabsContent value="orders" className="space-y-4">
             <OrdersManagement />
