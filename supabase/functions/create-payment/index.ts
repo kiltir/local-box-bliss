@@ -77,29 +77,6 @@ serve(async (req) => {
       itemCount: items.length 
     });
     
-    // Calculate shipping cost based on delivery preference
-    let shippingCostBase = 2500; // Default: 25€ for métropole (in cents)
-    let shippingLabel = 'Livraison métropole';
-    
-    if (travelInfo?.delivery_preference) {
-      switch (travelInfo.delivery_preference) {
-        case 'airport_pickup_arrival':
-        case 'airport_pickup_departure':
-          shippingCostBase = 1500;
-          shippingLabel = 'Récupération aéroport';
-          break;
-        case 'reunion_delivery':
-          shippingCostBase = 1200;
-          shippingLabel = 'Livraison Réunion';
-          break;
-        default:
-          shippingCostBase = 2500;
-          shippingLabel = 'Livraison métropole';
-      }
-    }
-    
-    logStep("Items received", { itemCount: items.length, currency, hasTravelInfo: !!travelInfo, shippingCostBase, shippingLabel });
-
     const stripe = new Stripe(stripeKey, {
       apiVersion: "2023-10-16",
     });
@@ -108,6 +85,59 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_URL") ?? "",
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
     );
+
+    // Fetch shipping costs from database
+    const { data: shippingCostsData, error: shippingError } = await supabaseClient
+      .from('shipping_costs')
+      .select('delivery_type, label, cost')
+      .eq('is_active', true);
+
+    if (shippingError) {
+      logStep("Failed to fetch shipping costs", { error: shippingError.message });
+    }
+
+    const shippingMap = new Map<string, { label: string; cost: number }>();
+    if (shippingCostsData) {
+      for (const sc of shippingCostsData) {
+        shippingMap.set(sc.delivery_type, { label: sc.label, cost: Number(sc.cost) });
+      }
+    }
+
+    // Determine shipping based on delivery preference
+    let shippingCostBase: number;
+    let shippingLabel: string;
+
+    const getShipping = (type: string) => {
+      const found = shippingMap.get(type);
+      return found || { label: 'Livraison métropole', cost: 25 };
+    };
+
+    if (travelInfo?.delivery_preference) {
+      switch (travelInfo.delivery_preference) {
+        case 'airport_pickup_arrival':
+        case 'airport_pickup_departure': {
+          const s = getShipping('airport');
+          shippingCostBase = Math.round(s.cost * 100);
+          shippingLabel = s.label;
+          break;
+        }
+        case 'reunion_delivery': {
+          const s = getShipping('reunion');
+          shippingCostBase = Math.round(s.cost * 100);
+          shippingLabel = s.label;
+          break;
+        }
+        default: {
+          const s = getShipping('metropole');
+          shippingCostBase = Math.round(s.cost * 100);
+          shippingLabel = s.label;
+        }
+      }
+    } else {
+      const s = getShipping('metropole');
+      shippingCostBase = Math.round(s.cost * 100);
+      shippingLabel = s.label;
+    }
 
     // Fetch all box prices from database for validation
     const { data: dbPrices, error: pricesError } = await supabaseClient

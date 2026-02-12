@@ -16,12 +16,39 @@ import Footer from '@/components/Footer';
 
 type DeliveryOption = 'metropole' | 'reunion';
 
+interface ShippingCostData {
+  delivery_type: string;
+  label: string;
+  cost: number;
+}
+
 const Checkout = () => {
   const navigate = useNavigate();
   const { items, getTotalPrice } = useCart();
   const { user, loading } = useAuth();
   const [isProcessing, setIsProcessing] = useState(false);
   const [selectedDelivery, setSelectedDelivery] = useState<DeliveryOption>('metropole');
+  const [shippingCosts, setShippingCosts] = useState<ShippingCostData[]>([]);
+  const [shippingLoading, setShippingLoading] = useState(true);
+
+  // Charger les frais de livraison depuis la base de données
+  useEffect(() => {
+    const fetchShippingCosts = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('shipping_costs')
+          .select('delivery_type, label, cost')
+          .eq('is_active', true);
+        if (error) throw error;
+        setShippingCosts(data || []);
+      } catch (error) {
+        console.error('Error fetching shipping costs:', error);
+      } finally {
+        setShippingLoading(false);
+      }
+    };
+    fetchShippingCosts();
+  }, []);
 
   // Vérifier si l'utilisateur est connecté
   useEffect(() => {
@@ -177,33 +204,36 @@ const Checkout = () => {
     return <span className="font-medium">{(item.box.price * item.quantity).toFixed(2)}€</span>;
   };
 
+  const getShippingByType = (type: string): { label: string; baseCost: number } => {
+    const found = shippingCosts.find(s => s.delivery_type === type);
+    if (found) return { label: found.label, baseCost: Number(found.cost) };
+    // Fallback par défaut
+    return { label: 'Livraison métropole', baseCost: 25 };
+  };
+
   const getBaseDeliveryCost = () => {
     // Si le sélecteur est affiché, utiliser la sélection de l'utilisateur
     if (showDeliverySelector) {
-      if (selectedDelivery === 'reunion') {
-        return { label: 'Livraison Réunion', baseCost: 12 };
-      }
-      return { label: 'Livraison métropole', baseCost: 25 };
+      return getShippingByType(selectedDelivery);
     }
 
     // Sinon, utiliser les préférences de voyage stockées
     const travelInfo = localStorage.getItem('travelInfo');
-    if (!travelInfo) return { label: 'Livraison métropole', baseCost: 25 };
+    if (!travelInfo) return getShippingByType('metropole');
     
     try {
       const parsed = JSON.parse(travelInfo);
       switch (parsed.delivery_preference) {
         case 'airport_pickup_arrival':
-          return { label: 'Récupération à l\'aéroport (Arrivée)', baseCost: 15 };
         case 'airport_pickup_departure':
-          return { label: 'Récupération à l\'aéroport (Départ)', baseCost: 15 };
+          return getShippingByType('airport');
         case 'reunion_delivery':
-          return { label: 'Livraison Réunion', baseCost: 15 };
+          return getShippingByType('reunion');
         default:
-          return { label: 'Livraison métropole', baseCost: 25 };
+          return getShippingByType('metropole');
       }
     } catch {
-      return { label: 'Livraison métropole', baseCost: 25 };
+      return getShippingByType('metropole');
     }
   };
 
@@ -378,24 +408,20 @@ const Checkout = () => {
                     onValueChange={(value) => setSelectedDelivery(value as DeliveryOption)}
                     className="space-y-3"
                   >
-                    <div className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-muted/50 transition-colors cursor-pointer">
-                      <RadioGroupItem value="metropole" id="metropole" />
-                      <Label htmlFor="metropole" className="flex-1 cursor-pointer">
-                        <div className="flex justify-between items-center">
-                          <p className="font-medium">Livraison métropole</p>
-                          <span className="font-semibold text-leaf-green">25,00€ <span className="font-normal text-muted-foreground">par box</span></span>
+                    {(['metropole', 'reunion'] as DeliveryOption[]).map((type) => {
+                      const shipping = getShippingByType(type);
+                      return (
+                        <div key={type} className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-muted/50 transition-colors cursor-pointer">
+                          <RadioGroupItem value={type} id={type} />
+                          <Label htmlFor={type} className="flex-1 cursor-pointer">
+                            <div className="flex justify-between items-center">
+                              <p className="font-medium">{shipping.label}</p>
+                              <span className="font-semibold text-leaf-green">{shipping.baseCost.toFixed(2)}€ <span className="font-normal text-muted-foreground">par box</span></span>
+                            </div>
+                          </Label>
                         </div>
-                      </Label>
-                    </div>
-                    <div className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-muted/50 transition-colors cursor-pointer">
-                      <RadioGroupItem value="reunion" id="reunion" />
-                      <Label htmlFor="reunion" className="flex-1 cursor-pointer">
-                        <div className="flex justify-between items-center">
-                          <p className="font-medium">Livraison Réunion</p>
-                          <span className="font-semibold text-leaf-green">12,00€ <span className="font-normal text-muted-foreground">par box</span></span>
-                        </div>
-                      </Label>
-                    </div>
+                      );
+                    })}
                   </RadioGroup>
                 </CardContent>
               </Card>
