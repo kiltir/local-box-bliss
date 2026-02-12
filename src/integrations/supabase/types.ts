@@ -706,6 +706,36 @@ export type Database = {
         }
         Relationships: []
       }
+      shipping_costs: {
+        Row: {
+          cost: number
+          created_at: string
+          delivery_type: string
+          id: string
+          is_active: boolean
+          label: string
+          updated_at: string
+        }
+        Insert: {
+          cost?: number
+          created_at?: string
+          delivery_type: string
+          id?: string
+          is_active?: boolean
+          label: string
+          updated_at?: string
+        }
+        Update: {
+          cost?: number
+          created_at?: string
+          delivery_type?: string
+          id?: string
+          is_active?: boolean
+          label?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       subscriptions: {
         Row: {
           box_id: number
