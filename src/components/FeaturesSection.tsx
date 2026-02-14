@@ -37,7 +37,7 @@ const FeaturesSection = () => {
                 <span className="text-white text-2xl font-bold">3</span>
               </div>
               <h3 className="text-xl font-bold mb-3">Recevez vos produits</h3>
-              <p className="text-gray-600">Récupérez votre box à l'aéroport de Roland Garros avant/après votre vol ou faîtes-la livrer à une adresse Métropole.</p>
+              <p className="text-gray-600">Récupérez votre box à l'aéroport de Roland Garros avant/après votre vol ou faîtes-la livrer à une adresse.</p>
             </div>
           </StaggerItem>
         </StaggerContainer>
@@ -84,8 +84,8 @@ const FeaturesSection = () => {
           </StaggerContainer>
         </FadeInSection>
       </div>
-    </section>
-  );
+    </section>);
+
 };
 
 export default FeaturesSection;
