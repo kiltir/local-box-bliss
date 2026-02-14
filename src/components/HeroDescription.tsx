@@ -29,7 +29,7 @@ const HeroDescription = () => {
           <div className="p-6 rounded-lg shadow-md bg-white">
             <div className="text-leaf-green text-2xl font-bold mb-2">Livraison</div>
             <h3 className="text-lg font-medium mb-2">Sur-mesure</h3>
-            <p className="text-gray-600">Recevez votre box chez vous ou récupérez-la directement à l'aéroport de Roland Garros de la Réunion.</p>
+            <p className="text-gray-600">Récupérez votre box à l'aéroport de la Réunion ou recevez-la à votre domicile en Métropole ou Réunion. </p>
           </div>
         </div>
       </div>
