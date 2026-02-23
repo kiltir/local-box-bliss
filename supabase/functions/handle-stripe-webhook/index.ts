@@ -25,6 +25,23 @@ const logStep = (step: string, details?: any) => {
   console.log(`[STRIPE WEBHOOK] ${step}`, details ? JSON.stringify(details, null, 2) : '');
 };
 
+// Helper: fetch items from pending_orders table
+async function fetchPendingOrderItems(pendingOrderId: string, supabase: any): Promise<any[] | null> {
+  const { data, error } = await supabase
+    .from('pending_orders')
+    .select('items, travel_info')
+    .eq('id', pendingOrderId)
+    .single();
+
+  if (error || !data) {
+    logStep('Failed to fetch pending order', { pendingOrderId, error: error?.message });
+    return null;
+  }
+
+  logStep('Fetched pending order', { pendingOrderId, itemCount: data.items?.length });
+  return data;
+}
+
 serve(async (req) => {
   const origin = req.headers.get('origin');
   const corsHeaders = getCorsHeaders(origin);
@@ -84,17 +101,14 @@ serve(async (req) => {
         logStep('Processing completed checkout session', { sessionId: session.id, mode: session.mode });
 
         if (session.mode === 'subscription') {
-          // SUBSCRIPTION ORDER
           await handleSubscriptionCreated(session, stripe, supabase);
         } else {
-          // ONE-TIME PAYMENT
           await handleOneTimePayment(session, supabase);
         }
         break;
       }
 
       case 'invoice.paid': {
-        // Monthly subscription payment succeeded
         const invoice = event.data.object;
         logStep('Invoice paid', { invoiceId: invoice.id, subscriptionId: invoice.subscription });
         
@@ -105,7 +119,6 @@ serve(async (req) => {
       }
 
       case 'invoice.payment_failed': {
-        // Payment failed - Stripe will retry automatically
         const invoice = event.data.object;
         logStep('Invoice payment failed', { invoiceId: invoice.id, subscriptionId: invoice.subscription });
         
@@ -150,48 +163,59 @@ serve(async (req) => {
 // Handle new subscription creation
 async function handleSubscriptionCreated(session: any, stripe: any, supabase: any) {
   const userId = session.metadata?.user_id;
-  const itemsData = session.metadata?.items;
+  const pendingOrderId = session.metadata?.pending_order_id;
   const subscriptionId = session.subscription;
   
-  if (!userId || !itemsData || !subscriptionId) {
-    logStep('Missing required metadata for subscription', { userId, hasItems: !!itemsData, subscriptionId });
+  if (!userId || !pendingOrderId || !subscriptionId) {
+    logStep('Missing required metadata for subscription', { userId, pendingOrderId, subscriptionId });
     return;
   }
 
-  let items;
-  try {
-    items = JSON.parse(itemsData);
-  } catch (err) {
-    logStep('Failed to parse items metadata', { error: (err as Error).message });
+  // Fetch items from pending_orders
+  const pendingData = await fetchPendingOrderItems(pendingOrderId, supabase);
+  if (!pendingData || !pendingData.items) {
+    logStep('No items found in pending order', { pendingOrderId });
     return;
   }
+
+  const allItems = pendingData.items;
+  const travelInfo = pendingData.travel_info;
+  const subscriptionItems = allItems.filter((item: any) => item.subscriptionType);
+  const oneTimeItems = allItems.filter((item: any) => !item.subscriptionType);
+  const isMixedCart = subscriptionItems.length > 0 && oneTimeItems.length > 0;
+
+  logStep('Processing subscription items from pending_orders', { 
+    totalItems: allItems.length,
+    subscriptionCount: subscriptionItems.length,
+    oneTimeCount: oneTimeItems.length,
+    isMixedCart
+  });
 
   // Get Stripe subscription details
   const stripeSubscription = await stripe.subscriptions.retrieve(subscriptionId);
   
-  for (const item of items) {
+  for (const item of subscriptionItems) {
     const durationMonths = item.durationMonths || (item.subscriptionType === '1year' ? 12 : 6);
     
-    // Create subscription record in database
     const { data: subData, error: subError } = await supabase
       .from('subscriptions')
       .insert({
         user_id: userId,
         stripe_subscription_id: subscriptionId,
         stripe_customer_id: session.customer,
-        box_id: item.id,
-        theme: item.theme || item.title.replace('Box ', ''),
+        box_id: item.id || item.boxId,
+        theme: item.theme || item.title?.replace('Box ', ''),
         status: 'active',
         duration_months: durationMonths,
         monthly_price: item.price,
-        total_paid_months: 1, // First month paid at checkout
+        total_paid_months: 1,
         current_period_start: new Date(stripeSubscription.current_period_start * 1000).toISOString(),
         current_period_end: new Date(stripeSubscription.current_period_end * 1000).toISOString(),
         shipping_address_street: session.shipping_details?.address?.line1 || null,
         shipping_address_city: session.shipping_details?.address?.city || null,
         shipping_address_postal_code: session.shipping_details?.address?.postal_code || null,
         shipping_address_country: session.shipping_details?.address?.country || 'France',
-        delivery_preference: session.metadata?.travel_info ? JSON.parse(session.metadata.travel_info).delivery_preference : 'metropole',
+        delivery_preference: travelInfo?.delivery_preference || 'metropole',
       })
       .select()
       .single();
@@ -202,13 +226,12 @@ async function handleSubscriptionCreated(session: any, stripe: any, supabase: an
     }
 
     logStep('Subscription record created', { subscriptionId: subData.id, boxId: item.id, durationMonths });
-
-    // Decrement stock for first month
-    await decrementStock(item.theme || item.title.replace('Box ', ''), 1, supabase);
+    await decrementStock(item.theme || item.title?.replace('Box ', ''), 1, supabase);
   }
 
   // Create initial order for the first month
   const orderNumber = `ABO-${Date.now()}-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
+  const deliveryPreference = travelInfo?.delivery_preference || 'metropole';
   
   const { data: orderData, error: orderError } = await supabase
     .from('orders')
@@ -217,7 +240,7 @@ async function handleSubscriptionCreated(session: any, stripe: any, supabase: an
       order_number: orderNumber,
       total_amount: session.amount_total / 100,
       status: 'confirmee',
-      delivery_preference: session.metadata?.travel_info ? JSON.parse(session.metadata.travel_info).delivery_preference : 'metropole',
+      delivery_preference: deliveryPreference,
       shipping_address_street: session.shipping_details?.address?.line1 || null,
       shipping_address_city: session.shipping_details?.address?.city || null,
       shipping_address_postal_code: session.shipping_details?.address?.postal_code || null,
@@ -235,26 +258,55 @@ async function handleSubscriptionCreated(session: any, stripe: any, supabase: an
     return;
   }
 
-  // Create order items
-  const orderItems = items.map((item: any) => ({
-    order_id: orderData.id,
-    box_type: `${item.title} - Abonnement (Mois 1/${item.durationMonths || 6})`,
-    quantity: item.quantity || 1,
-    unit_price: item.price,
-  }));
+  // Create order items for ALL items (subscriptions + one-time)
+  const orderItemsToInsert: any[] = [];
 
-  await supabase.from('order_items').insert(orderItems);
-  logStep('Initial subscription order created', { orderId: orderData.id, orderNumber });
+  for (const item of subscriptionItems) {
+    orderItemsToInsert.push({
+      order_id: orderData.id,
+      box_type: `${item.title} - Abonnement (Mois 1/${item.durationMonths || 6})`,
+      quantity: item.quantity || 1,
+      unit_price: item.price,
+    });
+  }
 
-  // Schedule subscription cancellation after the engagement period
-  // This is handled by Stripe's subscription schedule or by checking in invoice.paid
+  for (const item of oneTimeItems) {
+    orderItemsToInsert.push({
+      order_id: orderData.id,
+      box_type: item.title || `Box ${item.theme}`,
+      quantity: item.quantity || 1,
+      unit_price: item.price,
+    });
+  }
+
+  if (orderItemsToInsert.length > 0) {
+    const { error: insertError } = await supabase.from('order_items').insert(orderItemsToInsert);
+    if (insertError) {
+      logStep('Failed to insert order items', { error: insertError.message });
+    } else {
+      logStep('Order items created', { count: orderItemsToInsert.length });
+    }
+  }
+
+  logStep('Initial subscription order created', { orderId: orderData.id, orderNumber, itemCount: orderItemsToInsert.length });
+
+  // Decrement stock for one-time items
+  for (const item of oneTimeItems) {
+    const theme = item.theme || '';
+    if (theme) {
+      await decrementStock(theme, item.quantity || 1, supabase);
+    }
+  }
+
+  // Clean up pending order
+  await supabase.from('pending_orders').delete().eq('id', pendingOrderId);
+  logStep('Pending order cleaned up', { pendingOrderId });
 }
 
 // Handle monthly invoice paid
 async function handleInvoicePaid(invoice: any, stripe: any, supabase: any) {
   const subscriptionId = invoice.subscription;
   
-  // Get subscription from database
   const { data: subscription, error } = await supabase
     .from('subscriptions')
     .select('*')
@@ -266,7 +318,6 @@ async function handleInvoicePaid(invoice: any, stripe: any, supabase: any) {
     return;
   }
 
-  // Update paid months counter
   const newPaidMonths = subscription.total_paid_months + 1;
   
   await supabase
@@ -314,14 +365,11 @@ async function handleInvoicePaid(invoice: any, stripe: any, supabase: any) {
     logStep('Monthly order created', { orderId: orderData.id, month: newPaidMonths });
   }
 
-  // Decrement stock
   await decrementStock(subscription.theme, 1, supabase);
 
-  // Check if subscription should end (engagement period completed)
   if (newPaidMonths >= subscription.duration_months) {
     logStep('Subscription engagement completed, canceling', { subscriptionId });
     
-    // Cancel the Stripe subscription at period end
     await stripe.subscriptions.update(subscriptionId, {
       cancel_at_period_end: true,
     });
@@ -376,33 +424,27 @@ async function handleSubscriptionEnded(stripeSubscription: any, supabase: any) {
   logStep('Subscription marked as completed', { subscriptionId: stripeSubscription.id });
 }
 
-// Handle one-time payment (existing logic)
+// Handle one-time payment
 async function handleOneTimePayment(session: any, supabase: any) {
   const userId = session.metadata?.user_id;
-  const itemsData = session.metadata?.items;
-  const travelInfoData = session.metadata?.travel_info;
+  const pendingOrderId = session.metadata?.pending_order_id;
 
-  if (!userId || !itemsData) {
-    logStep('Missing required metadata', { userId, hasItems: !!itemsData });
+  if (!userId || !pendingOrderId) {
+    logStep('Missing required metadata', { userId, pendingOrderId });
     return;
   }
 
-  let items;
-  try {
-    items = JSON.parse(itemsData);
-  } catch (err) {
-    logStep('Failed to parse items metadata', { error: (err as Error).message });
+  // Fetch items from pending_orders
+  const pendingData = await fetchPendingOrderItems(pendingOrderId, supabase);
+  if (!pendingData || !pendingData.items) {
+    logStep('No items found in pending order', { pendingOrderId });
     return;
   }
 
-  let travelInfo = null;
-  if (travelInfoData) {
-    try {
-      travelInfo = JSON.parse(travelInfoData);
-    } catch (err) {
-      logStep('Failed to parse travel info', { error: (err as Error).message });
-    }
-  }
+  const items = pendingData.items;
+  const travelInfo = pendingData.travel_info;
+
+  logStep('Processing one-time items from pending_orders', { itemCount: items.length });
 
   const orderNumber = `CMD-${Date.now()}-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
   const totalAmount = session.amount_total / 100;
@@ -448,8 +490,14 @@ async function handleOneTimePayment(session: any, supabase: any) {
       unit_price: item.price,
     }));
 
-  await supabase.from('order_items').insert(orderItems);
-  logStep('Order items created', { itemsCount: orderItems.length });
+  if (orderItems.length > 0) {
+    const { error: insertError } = await supabase.from('order_items').insert(orderItems);
+    if (insertError) {
+      logStep('Failed to insert order items', { error: insertError.message });
+    } else {
+      logStep('Order items created', { itemsCount: orderItems.length });
+    }
+  }
 
   // Decrement stock
   for (const item of items) {
@@ -460,11 +508,16 @@ async function handleOneTimePayment(session: any, supabase: any) {
     else if (boxTitle.includes('Bourbon')) theme = 'Bourbon';
     else if (boxTitle.includes('Racine')) theme = 'Racine';
     else if (boxTitle.includes('Saison')) theme = 'Saison';
+    else if (item.theme) theme = item.theme;
 
     if (theme) {
       await decrementStock(theme, item.quantity || 1, supabase);
     }
   }
+
+  // Clean up pending order
+  await supabase.from('pending_orders').delete().eq('id', pendingOrderId);
+  logStep('Pending order cleaned up', { pendingOrderId });
 }
 
 // Helper function to decrement stock
@@ -482,14 +535,10 @@ async function decrementStock(theme: string, quantity: number, supabase: any) {
 
   const newStock = Math.max(0, stockData.available_stock - quantity);
   
-  const { error: stockUpdateError } = await supabase
+  await supabase
     .from('box_stock')
     .update({ available_stock: newStock })
     .eq('id', stockData.id);
 
-  if (stockUpdateError) {
-    logStep('Failed to update stock', { theme, error: stockUpdateError.message });
-  } else {
-    logStep('Stock updated', { theme, oldStock: stockData.available_stock, newStock, decrementedBy: quantity });
-  }
+  logStep('Stock decremented', { theme, oldStock: stockData.available_stock, newStock, quantity });
 }

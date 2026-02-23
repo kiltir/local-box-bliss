@@ -154,21 +154,17 @@ serve(async (req) => {
     const priceMap = new Map<string, { unit: number; sub6: number; sub12: number }>();
     if (dbPrices) {
       for (const price of dbPrices) {
-        // Use normalized theme for the key
         const key = `${price.box_id}-${normalizeTheme(price.theme)}`;
         priceMap.set(key, {
           unit: Number(price.unit_price),
           sub6: Number(price.subscription_6_months_price),
           sub12: Number(price.subscription_12_months_price),
-          originalTheme: price.theme, // Keep original for logging
         });
       }
     }
 
     // Validate each item's price against database
     for (const item of items) {
-      // For subscriptions, boxId contains the original box ID (1, 2, 3, 4)
-      // For one-time purchases, we use id directly
       const boxId = item.box?.boxId || item.box?.id;
       const theme = item.box?.theme;
       const clientPrice = item.box?.price;
@@ -179,7 +175,6 @@ serve(async (req) => {
         throw new Error("Article invalide dans le panier");
       }
 
-      // Use normalized theme for lookup
       const key = `${boxId}-${normalizeTheme(theme)}`;
       const dbPrice = priceMap.get(key);
 
@@ -188,23 +183,21 @@ serve(async (req) => {
         throw new Error(`Prix introuvable pour l'article: ${item.box?.baseTitle || 'Inconnu'}`);
       }
 
-      // For subscriptions, client sends total engagement price (monthly * months)
-      // For one-time, client sends unit price
       let expectedPrice: number;
       let monthlyPrice: number | null = null;
       
       if (subscriptionType === '6months' || subscriptionType === '6_months') {
         monthlyPrice = dbPrice.sub6;
-        expectedPrice = monthlyPrice * 6; // Total engagement = monthly × 6
+        expectedPrice = monthlyPrice * 6;
       } else if (subscriptionType === '1year' || subscriptionType === '12_months') {
         monthlyPrice = dbPrice.sub12;
-        expectedPrice = monthlyPrice * 12; // Total engagement = monthly × 12
+        expectedPrice = monthlyPrice * 12;
       } else {
         expectedPrice = dbPrice.unit;
       }
 
       const priceDifference = Math.abs(clientPrice - expectedPrice);
-      if (priceDifference > 1) { // Allow 1€ tolerance for rounding
+      if (priceDifference > 1) {
         logStep("PRICE MANIPULATION DETECTED", { 
           boxId, theme, clientPrice, expectedPrice, monthlyPrice, subscriptionType, difference: priceDifference 
         });
@@ -258,6 +251,38 @@ serve(async (req) => {
       throw new Error("Vous devez être connecté pour souscrire à un abonnement");
     }
 
+    // ============================================================
+    // Store items in pending_orders to avoid Stripe metadata limit
+    // ============================================================
+    const allItemsForStorage = items.map((item: any) => ({
+      id: item.box?.id || item.box?.boxId,
+      boxId: item.box?.boxId || item.box?.id,
+      title: item.box?.baseTitle || 'Unknown',
+      theme: item.box?.theme,
+      price: item.box?.price,
+      quantity: item.quantity,
+      subscriptionType: item.subscriptionType || null,
+      durationMonths: item.subscriptionType === '1year' || item.subscriptionType === '12_months' ? 12 : item.subscriptionType ? 6 : null,
+    }));
+
+    const { data: pendingOrder, error: pendingOrderError } = await supabaseClient
+      .from('pending_orders')
+      .insert({
+        user_id: user?.id || '00000000-0000-0000-0000-000000000000',
+        items: allItemsForStorage,
+        travel_info: travelInfo || null,
+      })
+      .select()
+      .single();
+
+    if (pendingOrderError) {
+      logStep("Failed to create pending order", { error: pendingOrderError.message });
+      throw new Error("Erreur lors de la préparation de la commande");
+    }
+
+    const pendingOrderId = pendingOrder.id;
+    logStep("Pending order created", { pendingOrderId, itemCount: allItemsForStorage.length });
+
     // Upsert Stripe customer
     let customerId;
     if (customerEmail !== "guest@example.com") {
@@ -299,7 +324,6 @@ serve(async (req) => {
     if (hasSubscription) {
       logStep("Processing subscription order", { isMixedCart });
       
-      // For subscriptions, we create Stripe Subscriptions with monthly billing
       const stripeSubscriptionItems: any[] = [];
       
       for (const item of subscriptionItems) {
@@ -312,10 +336,8 @@ serve(async (req) => {
         const monthlyPrice = isYearly ? dbPrice.sub12 : dbPrice.sub6;
         const monthlyPriceCents = Math.round(monthlyPrice * 100);
         
-        // Create or get Stripe product
         const productName = `${item.box.baseTitle} - Abonnement ${months} mois`;
         
-        // Search for existing product
         const existingProducts = await stripe.products.search({
           query: `name:'${productName.replace(/'/g, "\\'")}' active:'true'`,
         });
@@ -338,10 +360,9 @@ serve(async (req) => {
           logStep("Created new product", { productId, productName });
         }
         
-        // Create recurring price for monthly billing
         const priceData = await stripe.prices.create({
           product: productId,
-          unit_amount: monthlyPriceCents + shippingCostBase, // Include shipping in monthly price
+          unit_amount: monthlyPriceCents + shippingCostBase,
           currency: currency,
           recurring: {
             interval: 'month',
@@ -365,28 +386,17 @@ serve(async (req) => {
         stripeSubscriptionItems.push({
           price: priceData.id,
           quantity: item.quantity,
-          metadata: {
-            box_id: item.box.id.toString(),
-            theme: item.box.theme,
-            duration_months: months.toString(),
-          },
         });
       }
       
-      // Create simplified metadata for the subscription
-      const simplifiedSubscriptionItems = subscriptionItems.map((item: any) => ({
-        id: item.box.id,
-        title: item.box.baseTitle,
-        theme: item.box.theme,
-        price: item.box.price,
+      // Prepare one-time items for line_items (for mixed carts)
+      const allLineItems: any[] = stripeSubscriptionItems.map(item => ({
+        price: item.price,
         quantity: item.quantity,
-        subscriptionType: item.subscriptionType,
-        durationMonths: (item.subscriptionType === '1year' || item.subscriptionType === '12_months') ? 12 : 6,
       }));
       
-      // Prepare one-time items for invoice_items (for mixed carts)
-      const oneTimeItemsData: any[] = [];
       if (isMixedCart) {
+        const oneTimeItemsData: any[] = [];
         for (const item of oneTimeItems) {
           const key = `${item.box.id}-${normalizeTheme(item.box.theme)}`;
           const dbPrice = priceMap.get(key)!;
@@ -405,31 +415,11 @@ serve(async (req) => {
             description: item.box.description || `Box ${item.box.theme}`,
             image: normalizedImage,
           });
-          
-          logStep("Prepared one-time item for mixed cart", { 
-            title: item.box.baseTitle, 
-            unitAmount,
-            quantity: item.quantity
-          });
         }
-      }
-      
-      // Calculate total for one-time items (for display/logging)
-      const oneTimeTotalCents = oneTimeItemsData.reduce((sum, item) => sum + (item.unitAmount * item.quantity), 0);
-      // Add shipping for one-time items in mixed cart - multiply by total quantity of one-time items
-      const oneTimeItemsTotalQuantity = oneTimeItemsData.reduce((sum, item) => sum + item.quantity, 0);
-      const oneTimeShippingCents = isMixedCart ? shippingCostBase * oneTimeItemsTotalQuantity : 0;
-      
-      // Build line_items - start with subscription items
-      const allLineItems: any[] = stripeSubscriptionItems.map(item => ({
-        price: item.price,
-        quantity: item.quantity,
-      }));
-      
-      // For mixed carts, create one-time prices and add them to line_items
-      if (isMixedCart && oneTimeItemsData.length > 0) {
+        
+        const oneTimeItemsTotalQuantity = oneTimeItemsData.reduce((sum, item) => sum + item.quantity, 0);
+        
         for (const item of oneTimeItemsData) {
-          // Create a one-time product for this item
           const productData: any = {
             name: `${item.title} (Achat unique)`,
             description: item.description,
@@ -440,12 +430,10 @@ serve(async (req) => {
           
           const oneTimeProduct = await stripe.products.create(productData);
           
-          // Create a one-time price (NOT recurring)
           const oneTimePrice = await stripe.prices.create({
             product: oneTimeProduct.id,
             unit_amount: item.unitAmount,
             currency: currency,
-            // No recurring property - this makes it a one-time price
             metadata: {
               box_id: item.boxId.toString(),
               theme: item.theme,
@@ -466,14 +454,13 @@ serve(async (req) => {
           });
         }
         
-        // Add shipping for one-time items as a separate line item with correct quantity
+        // Add shipping for one-time items
         if (oneTimeItemsTotalQuantity > 0) {
           const shippingProduct = await stripe.products.create({
             name: shippingLabel,
             description: 'Frais de livraison par box',
           });
           
-          // Use unit shipping cost with quantity = number of one-time boxes
           const shippingPrice = await stripe.prices.create({
             product: shippingProduct.id,
             unit_amount: shippingCostBase,
@@ -492,20 +479,11 @@ serve(async (req) => {
           logStep("Added one-time shipping to line items", { 
             unitAmount: shippingCostBase,
             quantity: oneTimeItemsTotalQuantity,
-            totalAmount: shippingCostBase * oneTimeItemsTotalQuantity
           });
-          
-          logStep("Added one-time shipping to line items", { amount: oneTimeShippingCents });
         }
-        
-        logStep("Mixed cart configured", { 
-          subscriptionItemCount: stripeSubscriptionItems.length,
-          oneTimeItemCount: oneTimeItemsData.length + (oneTimeShippingCents > 0 ? 1 : 0),
-          oneTimeTotalCents: oneTimeTotalCents + oneTimeShippingCents
-        });
       }
       
-      // Build session configuration
+      // Build session configuration - use pending_order_id instead of full items JSON
       const sessionConfig: any = {
         customer: customerId,
         mode: 'subscription',
@@ -524,28 +502,25 @@ serve(async (req) => {
         subscription_data: {
           metadata: {
             user_id: user!.id,
-            items: JSON.stringify(simplifiedSubscriptionItems),
-            is_mixed_cart: isMixedCart ? 'true' : 'false',
-            ...(travelInfo && { travel_info: JSON.stringify(travelInfo) }),
+            pending_order_id: pendingOrderId,
           },
         },
         payment_method_collection: 'always',
         metadata: {
           user_id: user!.id,
+          pending_order_id: pendingOrderId,
           is_subscription: 'true',
           is_mixed_cart: isMixedCart ? 'true' : 'false',
-          items: JSON.stringify(simplifiedSubscriptionItems),
-          ...(isMixedCart && { one_time_items: JSON.stringify(oneTimeItemsData.map(i => ({ id: i.boxId, title: i.title, price: i.unitAmount / 100, quantity: i.quantity }))) }),
         },
       };
       
-      // Create Stripe Checkout Session for subscription (with optional one-time add-ons)
       const session = await stripe.checkout.sessions.create(sessionConfig);
       
       logStep("Subscription checkout session created", { 
         sessionId: session.id, 
         url: session.url?.substring(0, 50) + "...",
-        isMixedCart
+        isMixedCart,
+        pendingOrderId,
       });
 
       return new Response(JSON.stringify({ url: session.url }), {
@@ -554,7 +529,7 @@ serve(async (req) => {
       });
     }
 
-    // ONE-TIME PAYMENT FLOW (existing logic)
+    // ONE-TIME PAYMENT FLOW
     logStep("Processing one-time payment order");
     
     const lineItems = items.map((item: any) => {
@@ -594,23 +569,10 @@ serve(async (req) => {
 
     logStep("Line items created with validated prices", { count: lineItems.length });
 
-    const simplifiedItems = items.map((item: any) => ({
-      id: item.box.id,
-      title: item.box.baseTitle,
-      price: item.box.price,
-      quantity: item.quantity,
-    }));
-
-    // Calculate total quantity for shipping (1 delivery per box)
+    // Calculate total quantity for shipping
     const totalOneTimeQuantity = items.reduce((sum: number, item: any) => sum + item.quantity, 0);
-    
-    logStep("Shipping calculated for one-time items", { 
-      totalQuantity: totalOneTimeQuantity, 
-      baseShipping: shippingCostBase, 
-      totalShipping: shippingCostBase * totalOneTimeQuantity 
-    });
 
-    // Add shipping as a line item with correct quantity instead of using shipping_options
+    // Add shipping as a line item
     lineItems.push({
       price_data: {
         currency: 'eur',
@@ -643,8 +605,7 @@ serve(async (req) => {
       },
       metadata: {
         user_id: user?.id || 'guest',
-        items: JSON.stringify(simplifiedItems),
-        ...(travelInfo && { travel_info: JSON.stringify(travelInfo) }),
+        pending_order_id: pendingOrderId,
       },
     };
 
@@ -658,7 +619,8 @@ serve(async (req) => {
     
     logStep("Checkout session created", { 
       sessionId: session.id, 
-      url: session.url?.substring(0, 50) + "..." 
+      url: session.url?.substring(0, 50) + "...",
+      pendingOrderId,
     });
 
     return new Response(JSON.stringify({ url: session.url }), {
