@@ -25,6 +25,37 @@ const logStep = (step: string, details?: any) => {
   console.log(`[STRIPE WEBHOOK] ${step}`, details ? JSON.stringify(details, null, 2) : '');
 };
 
+// Convert ISO country codes to readable names
+const countryCodeToName: Record<string, string> = {
+  'FR': 'France',
+  'RE': 'La Réunion',
+  'GP': 'Guadeloupe',
+  'MQ': 'Martinique',
+  'GF': 'Guyane française',
+  'YT': 'Mayotte',
+  'PM': 'Saint-Pierre-et-Miquelon',
+  'WF': 'Wallis-et-Futuna',
+  'PF': 'Polynésie française',
+  'NC': 'Nouvelle-Calédonie',
+  'BL': 'Saint-Barthélemy',
+  'MF': 'Saint-Martin',
+  'BE': 'Belgique',
+  'CH': 'Suisse',
+  'LU': 'Luxembourg',
+  'MC': 'Monaco',
+  'DE': 'Allemagne',
+  'ES': 'Espagne',
+  'IT': 'Italie',
+  'GB': 'Royaume-Uni',
+  'US': 'États-Unis',
+};
+
+const resolveCountryName = (code: string | null | undefined, fallback = 'France'): string => {
+  if (!code) return fallback;
+  const upper = code.toUpperCase().trim();
+  return countryCodeToName[upper] || upper;
+};
+
 // Helper: fetch items from pending_orders table
 async function fetchPendingOrderItems(pendingOrderId: string, supabase: any): Promise<any[] | null> {
   const { data, error } = await supabase
@@ -214,7 +245,7 @@ async function handleSubscriptionCreated(session: any, stripe: any, supabase: an
         shipping_address_street: session.shipping_details?.address?.line1 || null,
         shipping_address_city: session.shipping_details?.address?.city || null,
         shipping_address_postal_code: session.shipping_details?.address?.postal_code || null,
-        shipping_address_country: session.shipping_details?.address?.country || 'France',
+        shipping_address_country: resolveCountryName(session.shipping_details?.address?.country),
         delivery_preference: travelInfo?.delivery_preference || 'metropole',
       })
       .select()
@@ -244,11 +275,11 @@ async function handleSubscriptionCreated(session: any, stripe: any, supabase: an
       shipping_address_street: session.shipping_details?.address?.line1 || null,
       shipping_address_city: session.shipping_details?.address?.city || null,
       shipping_address_postal_code: session.shipping_details?.address?.postal_code || null,
-      shipping_address_country: session.shipping_details?.address?.country || 'France',
+      shipping_address_country: resolveCountryName(session.shipping_details?.address?.country),
       billing_address_street: session.customer_details?.address?.line1 || null,
       billing_address_city: session.customer_details?.address?.city || null,
       billing_address_postal_code: session.customer_details?.address?.postal_code || null,
-      billing_address_country: session.customer_details?.address?.country || 'France',
+      billing_address_country: resolveCountryName(session.customer_details?.address?.country),
     })
     .select()
     .single();
@@ -465,11 +496,11 @@ async function handleOneTimePayment(session: any, supabase: any) {
       shipping_address_street: session.shipping_details?.address?.line1 || null,
       shipping_address_city: session.shipping_details?.address?.city || null,
       shipping_address_postal_code: session.shipping_details?.address?.postal_code || null,
-      shipping_address_country: session.shipping_details?.address?.country || 'France',
+      shipping_address_country: resolveCountryName(session.shipping_details?.address?.country),
       billing_address_street: session.customer_details?.address?.line1 || null,
       billing_address_city: session.customer_details?.address?.city || null,
       billing_address_postal_code: session.customer_details?.address?.postal_code || null,
-      billing_address_country: session.customer_details?.address?.country || 'France',
+      billing_address_country: resolveCountryName(session.customer_details?.address?.country),
     })
     .select()
     .single();
