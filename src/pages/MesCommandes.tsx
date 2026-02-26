@@ -176,10 +176,13 @@ const MesCommandes = () => {
     if (pref === 'airport_pickup') {
       return { type: 'Récupération Aéroport', icon: Plane, date: order.arrival_date_reunion || null };
     }
-    if (pref === 'ship_to_metropole' || pref === 'mainland_delivery') {
+    if (pref === 'ship_to_metropole' || pref === 'mainland_delivery' || pref === 'metropole') {
       return { type: 'Livraison Métropole', icon: Truck, date: null };
     }
-    return { type: 'Non défini', icon: Package };
+    if (pref === 'ship_to_reunion' || pref === 'reunion') {
+      return { type: 'Livraison Réunion', icon: Truck, date: null };
+    }
+    return { type: pref, icon: Package };
   };
 
   const getStatusBadge = (status: string) => {
