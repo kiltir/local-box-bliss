@@ -465,15 +465,36 @@ const MesCommandes = () => {
                               </TableBody>
                             </Table>
                             
-                            {/* Total de la commande */}
-                            <div className="border-t border-border p-4 bg-muted/20">
-                              <div className="flex justify-between items-center">
-                                <span className="font-semibold text-foreground">Total de la commande</span>
-                                <span className="font-bold text-lg text-foreground">
-                                  {selectedOrder.total_amount.toFixed(2)}€
-                                </span>
-                              </div>
-                            </div>
+                            {/* Récapitulatif avec frais de livraison */}
+                            {(() => {
+                              const items = getItemsForOrder(selectedOrder.id);
+                              const subtotal = items.reduce((sum, item) => sum + (Number(item.unit_price) * item.quantity), 0);
+                              const shippingCost = Math.max(0, selectedOrder.total_amount - subtotal);
+                              const total = subtotal + shippingCost;
+                              
+                              return (
+                                <div className="border-t border-border p-4 bg-muted/20 space-y-2">
+                                  <div className="flex justify-between items-center text-sm text-muted-foreground">
+                                    <span>Sous-total articles</span>
+                                    <span>{subtotal.toFixed(2)}€</span>
+                                  </div>
+                                  <div className="flex justify-between items-center text-sm text-muted-foreground">
+                                    <div className="flex items-center gap-1">
+                                      <Truck className="h-4 w-4" />
+                                      <span>Frais de livraison</span>
+                                    </div>
+                                    <span>{shippingCost > 0 ? `${shippingCost.toFixed(2)}€` : 'Offerts'}</span>
+                                  </div>
+                                  <Separator />
+                                  <div className="flex justify-between items-center">
+                                    <span className="font-semibold text-foreground">Total de la commande</span>
+                                    <span className="font-bold text-lg text-foreground">
+                                      {total.toFixed(2)}€
+                                    </span>
+                                  </div>
+                                </div>
+                              );
+                            })()}
                           </div>
                         )}
                       </div>
