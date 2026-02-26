@@ -584,6 +584,7 @@ export type Database = {
           shipping_address_country: string | null
           shipping_address_postal_code: string | null
           shipping_address_street: string | null
+          shipping_cost: number | null
           status: string
           time_preference: string | null
           total_amount: number
@@ -608,6 +609,7 @@ export type Database = {
           shipping_address_country?: string | null
           shipping_address_postal_code?: string | null
           shipping_address_street?: string | null
+          shipping_cost?: number | null
           status?: string
           time_preference?: string | null
           total_amount: number
@@ -632,6 +634,7 @@ export type Database = {
           shipping_address_country?: string | null
           shipping_address_postal_code?: string | null
           shipping_address_street?: string | null
+          shipping_cost?: number | null
           status?: string
           time_preference?: string | null
           total_amount?: number

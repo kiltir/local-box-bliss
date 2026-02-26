@@ -511,6 +511,7 @@ serve(async (req) => {
           pending_order_id: pendingOrderId,
           is_subscription: 'true',
           is_mixed_cart: isMixedCart ? 'true' : 'false',
+          shipping_cost: (shippingCostBase / 100).toString(),
         },
       };
       
@@ -606,6 +607,7 @@ serve(async (req) => {
       metadata: {
         user_id: user?.id || 'guest',
         pending_order_id: pendingOrderId,
+        shipping_cost: (shippingCostBase / 100).toString(),
       },
     };
 
