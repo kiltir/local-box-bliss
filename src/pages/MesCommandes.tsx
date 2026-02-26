@@ -467,10 +467,9 @@ const MesCommandes = () => {
                             
                             {/* Récapitulatif avec frais de livraison */}
                             {(() => {
-                              const items = getItemsForOrder(selectedOrder.id);
-                              const subtotal = items.reduce((sum, item) => sum + (Number(item.unit_price) * item.quantity), 0);
-                              const shippingCost = Math.max(0, selectedOrder.total_amount - subtotal);
-                              const total = subtotal + shippingCost;
+                              const shippingCost = Number((selectedOrder as any).shipping_cost) || 0;
+                              const subtotal = selectedOrder.total_amount - shippingCost;
+                              const total = selectedOrder.total_amount;
                               
                               return (
                                 <div className="border-t border-border p-4 bg-muted/20 space-y-2">
