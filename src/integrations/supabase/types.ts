@@ -578,6 +578,7 @@ export type Database = {
           delivery_preference: string | null
           departure_date_reunion: string | null
           departure_time_reunion: string | null
+          destinataire: string | null
           id: string
           nom_prenom: string | null
           order_number: string
@@ -604,6 +605,7 @@ export type Database = {
           delivery_preference?: string | null
           departure_date_reunion?: string | null
           departure_time_reunion?: string | null
+          destinataire?: string | null
           id?: string
           nom_prenom?: string | null
           order_number: string
@@ -630,6 +632,7 @@ export type Database = {
           delivery_preference?: string | null
           departure_date_reunion?: string | null
           departure_time_reunion?: string | null
+          destinataire?: string | null
           id?: string
           nom_prenom?: string | null
           order_number?: string

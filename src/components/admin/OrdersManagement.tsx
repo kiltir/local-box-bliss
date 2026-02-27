@@ -127,6 +127,7 @@ export const OrdersManagement = () => {
             <TableRow>
               <TableHead>N° Commande</TableHead>
               <TableHead>Client</TableHead>
+              <TableHead>Destinataire</TableHead>
               <TableHead>Date</TableHead>
               <TableHead>Montant</TableHead>
               <TableHead>Statut</TableHead>
@@ -137,6 +138,7 @@ export const OrdersManagement = () => {
               <TableRow key={order.id}>
                 <TableCell className="font-medium">{order.order_number}</TableCell>
                 <TableCell>{(order as any).nom_prenom || order.profiles?.full_name || 'N/A'}</TableCell>
+                <TableCell>{(order as any).destinataire || '—'}</TableCell>
                 <TableCell>{format(new Date(order.created_at), 'dd MMM yyyy', { locale: fr })}</TableCell>
                 <TableCell>{order.total_amount.toFixed(2)} €</TableCell>
                 <TableCell>{getStatusBadge(order.status)}</TableCell>
