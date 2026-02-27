@@ -179,7 +179,7 @@ const MesCommandes = () => {
     if (pref === 'ship_to_metropole' || pref === 'mainland_delivery' || pref === 'metropole') {
       return { type: 'Livraison Métropole', icon: Truck, date: null };
     }
-    if (pref === 'ship_to_reunion' || pref === 'reunion') {
+    if (pref === 'ship_to_reunion' || pref === 'reunion' || pref === 'reunion_delivery') {
       return { type: 'Livraison Réunion', icon: Truck, date: null };
     }
     return { type: pref, icon: Package };
