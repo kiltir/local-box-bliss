@@ -81,6 +81,7 @@ export const OrdersManagement = () => {
 
   const filteredOrders = orders.filter(order => {
     const matchesSearch = order.order_number.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (order as any).nom_prenom?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       order.profiles?.full_name?.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = statusFilter === 'all' || order.status === statusFilter;
     return matchesSearch && matchesStatus;
@@ -135,7 +136,7 @@ export const OrdersManagement = () => {
             {filteredOrders.map((order) => (
               <TableRow key={order.id}>
                 <TableCell className="font-medium">{order.order_number}</TableCell>
-                <TableCell>{order.profiles?.full_name || 'N/A'}</TableCell>
+                <TableCell>{(order as any).nom_prenom || order.profiles?.full_name || 'N/A'}</TableCell>
                 <TableCell>{format(new Date(order.created_at), 'dd MMM yyyy', { locale: fr })}</TableCell>
                 <TableCell>{order.total_amount.toFixed(2)} €</TableCell>
                 <TableCell>{getStatusBadge(order.status)}</TableCell>

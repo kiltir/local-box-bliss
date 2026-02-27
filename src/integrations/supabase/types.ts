@@ -579,6 +579,7 @@ export type Database = {
           departure_date_reunion: string | null
           departure_time_reunion: string | null
           id: string
+          nom_prenom: string | null
           order_number: string
           shipping_address_city: string | null
           shipping_address_country: string | null
@@ -604,6 +605,7 @@ export type Database = {
           departure_date_reunion?: string | null
           departure_time_reunion?: string | null
           id?: string
+          nom_prenom?: string | null
           order_number: string
           shipping_address_city?: string | null
           shipping_address_country?: string | null
@@ -629,6 +631,7 @@ export type Database = {
           departure_date_reunion?: string | null
           departure_time_reunion?: string | null
           id?: string
+          nom_prenom?: string | null
           order_number?: string
           shipping_address_city?: string | null
           shipping_address_country?: string | null
