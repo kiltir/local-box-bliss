@@ -31,6 +31,25 @@ const Auth = () => {
     }
   }, [user, navigate]);
 
+  const translateAuthError = (message: string): string => {
+    const translations: Record<string, string> = {
+      'User already registered': 'Un compte avec cet email existe déjà. Essayez de vous connecter.',
+      'Invalid login credentials': 'Email ou mot de passe incorrect.',
+      'Password should be at least 6 characters': 'Le mot de passe doit contenir au moins 6 caractères.',
+      'Password should contain at least one character of each': 'Le mot de passe doit contenir au moins une lettre et un chiffre.',
+      'Unable to validate email address: invalid format': "Format d'adresse email invalide.",
+      'Email rate limit exceeded': 'Trop de tentatives. Veuillez réessayer plus tard.',
+      'For security purposes, you can only request this after': 'Pour des raisons de sécurité, veuillez patienter avant de réessayer.',
+      'Signup requires a valid password': 'Veuillez saisir un mot de passe valide.',
+      'To signup, please provide your email': 'Veuillez saisir une adresse email.',
+      'Email not confirmed': "Votre email n'a pas encore été confirmé. Vérifiez votre boîte de réception.",
+    };
+    for (const [key, value] of Object.entries(translations)) {
+      if (message.includes(key)) return value;
+    }
+    return message;
+  };
+
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -39,19 +58,11 @@ const Auth = () => {
       const { error } = await signUp(email, password, fullName);
       
       if (error) {
-        if (error.message.includes('User already registered')) {
-          toast({
-            title: "Compte existant",
-            description: "Un compte avec cet email existe déjà. Essayez de vous connecter.",
-            variant: "destructive",
-          });
-        } else {
-          toast({
-            title: "Erreur d'inscription",
-            description: error.message,
-            variant: "destructive",
-          });
-        }
+        toast({
+          title: "Erreur d'inscription",
+          description: translateAuthError(error.message),
+          variant: "destructive",
+        });
       } else {
         navigate('/inscription-confirmee');
       }
@@ -74,19 +85,11 @@ const Auth = () => {
       const { error } = await signIn(email, password);
       
       if (error) {
-        if (error.message.includes('Invalid login credentials')) {
-          toast({
-            title: "Erreur de connexion",
-            description: "Email ou mot de passe incorrect.",
-            variant: "destructive",
-          });
-        } else {
-          toast({
-            title: "Erreur de connexion",
-            description: error.message,
-            variant: "destructive",
-          });
-        }
+        toast({
+          title: "Erreur de connexion",
+          description: translateAuthError(error.message),
+          variant: "destructive",
+        });
       } else {
         toast({
           title: "Connexion réussie !",
@@ -115,7 +118,7 @@ const Auth = () => {
       if (error) {
         toast({
           title: "Erreur",
-          description: error.message,
+          description: translateAuthError(error.message),
           variant: "destructive",
         });
       } else {
