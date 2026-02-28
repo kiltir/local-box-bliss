@@ -6,7 +6,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Separator } from "@/components/ui/separator";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import { ShoppingCart, CreditCard, ArrowLeft, Crown, Truck } from 'lucide-react';
+import { ShoppingCart, CreditCard, ArrowLeft, Crown, Truck, AlertTriangle } from 'lucide-react';
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useCart } from '@/hooks/useCart';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
@@ -423,6 +424,12 @@ const Checkout = () => {
                       );
                     })}
                   </RadioGroup>
+                  <Alert className="mt-4 border-amber-500/50 bg-amber-50 dark:bg-amber-950/20">
+                    <AlertTriangle className="h-4 w-4 text-amber-600" />
+                    <AlertDescription className="text-amber-800 dark:text-amber-200">
+                      Attention ! Le mode de livraison sélectionné concerne toute la commande, y compris les abonnements.
+                    </AlertDescription>
+                  </Alert>
                 </CardContent>
               </Card>
             )}
