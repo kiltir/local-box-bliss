@@ -511,7 +511,11 @@ serve(async (req) => {
           pending_order_id: pendingOrderId,
           is_subscription: 'true',
           is_mixed_cart: isMixedCart ? 'true' : 'false',
-          shipping_cost: (shippingCostBase / 100).toString(),
+          shipping_cost: (() => {
+            const subQty = subscriptionItems.reduce((s: number, i: any) => s + i.quantity, 0);
+            const otQty = isMixedCart ? oneTimeItems.reduce((s: number, i: any) => s + i.quantity, 0) : 0;
+            return ((shippingCostBase / 100) * (subQty + otQty)).toString();
+          })(),
         },
       };
       
@@ -607,7 +611,7 @@ serve(async (req) => {
       metadata: {
         user_id: user?.id || 'guest',
         pending_order_id: pendingOrderId,
-        shipping_cost: (shippingCostBase / 100).toString(),
+        shipping_cost: ((shippingCostBase / 100) * totalOneTimeQuantity).toString(),
       },
     };
 

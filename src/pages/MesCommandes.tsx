@@ -21,6 +21,7 @@ interface Order {
   status: string;
   created_at: string;
   user_id: string;
+  shipping_cost?: number;
   delivery_preference?: string;
   arrival_date_reunion?: string;
   departure_date_reunion?: string;
@@ -470,7 +471,7 @@ const MesCommandes = () => {
                             
                             {/* Récapitulatif avec frais de livraison */}
                             {(() => {
-                              const shippingCost = Number((selectedOrder as any).shipping_cost) || 0;
+                              const shippingCost = Number(selectedOrder.shipping_cost) || 0;
                               const subtotal = selectedOrder.total_amount - shippingCost;
                               const total = selectedOrder.total_amount;
                               
