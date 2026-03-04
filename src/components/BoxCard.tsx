@@ -116,7 +116,7 @@ const BoxCard = ({ title, price, description, image, items, theme, rating, revie
   };
 
   // Utiliser la nouvelle image téléchargée "KitirBox"
-  const boxImage = "/lovable-uploads/c3069f51-0eec-4ebc-b702-b987e85233e0.png";
+  const boxImage = "/lovable-uploads/KB_box_achat_unique.png";
 
   return (
     <div className="bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 group">
