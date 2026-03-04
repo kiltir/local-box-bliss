@@ -80,7 +80,7 @@ const SubscriptionCard: React.FC<SubscriptionCardProps> = ({ subscription, onCli
     toast.success(`Abonnement ${subscription.baseTitle} ${selectedOption.label} ajouté au panier !`);
   };
 
-  const boxImage = "/lovable-uploads/box-abonnement.jpg";
+  const boxImage = "/lovable-uploads/KB_box_abonnement.png";
 
   return (
     <Card className="overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border-2 border-gradient-to-r from-amber-200 to-orange-200 relative group">
