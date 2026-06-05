@@ -57,8 +57,8 @@ const BoxesSection = () => {
       
       <div className="container-section py-[15px] relative z-10">
         <FadeInSection className="text-center mb-12">
-          <h2 className="text-3xl font-bold mb-4" style={{ fontFamily: "'Chewy', cursive" }}>Découvrez nos box</h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
+          <h2 className="text-3xl font-bold mb-4 text-slate-50" style={{ fontFamily: "'Chewy', cursive" }}>Découvrez nos box</h2>
+          <p className="text-xl max-w-3xl mx-auto mb-8 text-slate-50">
             Choisissez parmi nos 4 thématiques pensées et confectionnées avec soin pour une meilleure expérience.
           </p>
           
