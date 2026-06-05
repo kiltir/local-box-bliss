@@ -54,8 +54,6 @@ const BoxesSection = () => {
           backgroundImage: `url(${themeBackgrounds[selectedTheme]})`,
         }}
       />
-      {/* Overlay pour améliorer la lisibilité */}
-      <div className="absolute inset-0 bg-background/80 backdrop-blur-sm" />
       
       <div className="container-section py-[15px] relative z-10">
         <FadeInSection className="text-center mb-12">
