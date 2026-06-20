@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/carousel";
 import { Skeleton } from "@/components/ui/skeleton";
 import { FadeInSection } from '@/components/animations';
+import reunionBg from '@/assets/reunion-paysage-bg.jpg.asset.json';
 
 // Fallback images if no images in database
 const fallbackImages = [
@@ -40,13 +41,18 @@ const CallToAction = () => {
     : fallbackImages.map(url => ({ url, title: null }));
 
   return (
-    <section className="py-16 bg-leaf-yellow text-white">
-      <div className="container-section py-[15px]">
+    <section className="py-16 relative text-white">
+      <div 
+        className="absolute inset-0 bg-cover bg-center"
+        style={{ backgroundImage: `url(${reunionBg.url})` }}
+      />
+      <div className="absolute inset-0 bg-black/50" />
+      <div className="container-section py-[15px] relative z-10">
         <FadeInSection className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl font-bold mb-4 text-slate-900" style={{ fontFamily: "'Chewy', cursive" }}>
+          <h2 className="text-3xl font-bold mb-4 text-white" style={{ fontFamily: "'Chewy', cursive" }}>
             Une expérience inédite à partager ?
           </h2>
-          <p className="text-xl mb-8 text-slate-900">
+          <p className="text-xl mb-8 text-white">
             Vous avez commandé votre box ? Votre avis nous intéresse. Rejoignez la communauté !
           </p>
           
