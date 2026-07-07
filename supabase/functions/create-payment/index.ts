@@ -81,6 +81,12 @@ serve(async (req) => {
       apiVersion: "2023-10-16",
     });
 
+    // Canonical box images shown on the Stripe checkout, per purchase type
+    const ONE_TIME_IMAGE = '/lovable-uploads/KB_box_achat_unique.png';
+    const SUBSCRIPTION_IMAGE = '/lovable-uploads/KB_box_abonnement.png';
+    const oneTimeImageUrl = toAbsoluteUrl(ONE_TIME_IMAGE, requestOrigin);
+    const subscriptionImageUrl = toAbsoluteUrl(SUBSCRIPTION_IMAGE, requestOrigin);
+
     const supabaseClient = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
@@ -346,10 +352,18 @@ serve(async (req) => {
         if (existingProducts.data.length > 0) {
           productId = existingProducts.data[0].id;
           logStep("Found existing product", { productId, productName });
+          if (subscriptionImageUrl) {
+            try {
+              await stripe.products.update(productId, { images: [subscriptionImageUrl] });
+            } catch (e) {
+              logStep("Failed to update subscription product image", { productId, error: (e as Error).message });
+            }
+          }
         } else {
           const newProduct = await stripe.products.create({
             name: productName,
             description: `Abonnement mensuel ${item.box.theme} - Engagement ${months} mois`,
+            ...(subscriptionImageUrl ? { images: [subscriptionImageUrl] } : {}),
             metadata: {
               box_id: item.box.id.toString(),
               theme: item.box.theme,
@@ -403,9 +417,6 @@ serve(async (req) => {
           const validatedPrice = dbPrice.unit;
           const unitAmount = Math.round(validatedPrice * 100);
           
-          const originalImage = item.box.image;
-          const normalizedImage = toAbsoluteUrl(originalImage, requestOrigin);
-          
           oneTimeItemsData.push({
             boxId: item.box.id,
             title: item.box.baseTitle,
@@ -413,7 +424,7 @@ serve(async (req) => {
             unitAmount: unitAmount,
             quantity: item.quantity,
             description: item.box.description || `Box ${item.box.theme}`,
-            image: normalizedImage,
+            image: oneTimeImageUrl,
           });
         }
         
@@ -543,9 +554,6 @@ serve(async (req) => {
       const validatedPrice = dbPrice.unit;
       const unitAmount = Math.round(validatedPrice * 100);
       
-      const originalImage = item.box.image;
-      const normalizedImage = toAbsoluteUrl(originalImage, requestOrigin);
-      
       logStep("Processing item with validated price", { 
         title: item.box.baseTitle, 
         validatedPrice,
@@ -558,8 +566,8 @@ serve(async (req) => {
         description: item.box.description || `Box ${item.box.theme}`,
       };
 
-      if (normalizedImage) {
-        productData.images = [normalizedImage];
+      if (oneTimeImageUrl) {
+        productData.images = [oneTimeImageUrl];
       }
 
       return {
