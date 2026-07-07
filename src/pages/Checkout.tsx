@@ -27,6 +27,7 @@ interface ShippingCostData {
 const Checkout = () => {
   const navigate = useNavigate();
   const { items, getTotalPrice } = useCart();
+  const { getImagesForBox } = useBoxImages();
   const { user, loading } = useAuth();
   const [isProcessing, setIsProcessing] = useState(false);
   const [selectedDelivery, setSelectedDelivery] = useState<DeliveryOption>('metropole');
