@@ -81,6 +81,12 @@ serve(async (req) => {
       apiVersion: "2023-10-16",
     });
 
+    // Canonical box images shown on the Stripe checkout, per purchase type
+    const ONE_TIME_IMAGE = '/lovable-uploads/KB_box_achat_unique.png';
+    const SUBSCRIPTION_IMAGE = '/lovable-uploads/KB_box_abonnement.png';
+    const oneTimeImageUrl = toAbsoluteUrl(ONE_TIME_IMAGE, requestOrigin);
+    const subscriptionImageUrl = toAbsoluteUrl(SUBSCRIPTION_IMAGE, requestOrigin);
+
     const supabaseClient = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
