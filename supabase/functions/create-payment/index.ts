@@ -352,6 +352,13 @@ serve(async (req) => {
         if (existingProducts.data.length > 0) {
           productId = existingProducts.data[0].id;
           logStep("Found existing product", { productId, productName });
+          if (subscriptionImageUrl) {
+            try {
+              await stripe.products.update(productId, { images: [subscriptionImageUrl] });
+            } catch (e) {
+              logStep("Failed to update subscription product image", { productId, error: (e as Error).message });
+            }
+          }
         } else {
           const newProduct = await stripe.products.create({
             name: productName,
