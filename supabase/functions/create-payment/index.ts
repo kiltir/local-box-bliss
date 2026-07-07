@@ -356,6 +356,7 @@ serve(async (req) => {
           const newProduct = await stripe.products.create({
             name: productName,
             description: `Abonnement mensuel ${item.box.theme} - Engagement ${months} mois`,
+            ...(subscriptionImageUrl ? { images: [subscriptionImageUrl] } : {}),
             metadata: {
               box_id: item.box.id.toString(),
               theme: item.box.theme,
@@ -409,9 +410,6 @@ serve(async (req) => {
           const validatedPrice = dbPrice.unit;
           const unitAmount = Math.round(validatedPrice * 100);
           
-          const originalImage = item.box.image;
-          const normalizedImage = toAbsoluteUrl(originalImage, requestOrigin);
-          
           oneTimeItemsData.push({
             boxId: item.box.id,
             title: item.box.baseTitle,
@@ -419,7 +417,7 @@ serve(async (req) => {
             unitAmount: unitAmount,
             quantity: item.quantity,
             description: item.box.description || `Box ${item.box.theme}`,
-            image: normalizedImage,
+            image: oneTimeImageUrl,
           });
         }
         
@@ -549,9 +547,6 @@ serve(async (req) => {
       const validatedPrice = dbPrice.unit;
       const unitAmount = Math.round(validatedPrice * 100);
       
-      const originalImage = item.box.image;
-      const normalizedImage = toAbsoluteUrl(originalImage, requestOrigin);
-      
       logStep("Processing item with validated price", { 
         title: item.box.baseTitle, 
         validatedPrice,
@@ -564,8 +559,8 @@ serve(async (req) => {
         description: item.box.description || `Box ${item.box.theme}`,
       };
 
-      if (normalizedImage) {
-        productData.images = [normalizedImage];
+      if (oneTimeImageUrl) {
+        productData.images = [oneTimeImageUrl];
       }
 
       return {
