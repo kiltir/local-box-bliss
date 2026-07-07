@@ -13,6 +13,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Separator } from '@/components/ui/separator';
 import { boxes } from '@/data/boxes';
+import { useBoxImages } from '@/hooks/useBoxImages';
 
 interface Order {
   id: string;
@@ -56,6 +57,7 @@ interface OrderItem {
 const MesCommandes = () => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
+  const { getImagesForBox } = useBoxImages();
   const [orders, setOrders] = useState<Order[]>([]);
   const [orderItems, setOrderItems] = useState<OrderItem[]>([]);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
@@ -431,15 +433,17 @@ const MesCommandes = () => {
                                 {getItemsForOrder(selectedOrder.id).map((item) => {
                                   const boxData = getBoxData(item.box_type);
                                   const isSubscription = isSubscriptionItem(item);
-                                  
+                                  const dynamicImages = boxData ? getImagesForBox(boxData.id) : [];
+                                  const displayImage = dynamicImages[0] || boxData?.image;
+
                                   return (
                                     <TableRow key={item.id}>
                                       <TableCell>
                                         <div className="flex items-center space-x-3">
                                           <div className="relative">
-                                            {boxData?.image ? (
+                                            {displayImage ? (
                                               <img 
-                                                src={boxData.image} 
+                                                src={displayImage} 
                                                 alt={getItemDisplayName(item)}
                                                 className="w-12 h-12 object-cover rounded"
                                               />
