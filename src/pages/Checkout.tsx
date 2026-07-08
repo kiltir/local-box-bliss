@@ -365,22 +365,20 @@ const Checkout = () => {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {items.map((item, index) => {
-                      const displayImage = getImagesForBox(item.box.id)[0] || item.box.image;
-                      return (
-                        <TableRow key={`${item.box.id}-${item.subscriptionType || 'single'}-${index}`}>
-                          <TableCell>
-                            <div className="flex items-center space-x-3">
-                              <div className="relative">
-                                <img 
-                                  src={displayImage} 
-                                  alt={item.box.baseTitle}
-                                  className="w-12 h-12 object-cover rounded"
-                                />
-                                {item.subscriptionType && (
-                                  <Crown className="absolute -top-1 -right-1 h-4 w-4 text-amber-500" />
-                                )}
-                              </div>
+                    {items.map((item, index) => (
+                      <TableRow key={`${item.box.id}-${item.subscriptionType || 'single'}-${index}`}>
+                        <TableCell>
+                          <div className="flex items-center space-x-3">
+                            <div className="relative">
+                              <img 
+                                src={getImagesForBox(item.box.id)[0] || item.box.image} 
+                                alt={item.box.baseTitle}
+                                className="w-12 h-12 object-cover rounded"
+                              />
+                              {item.subscriptionType && (
+                                <Crown className="absolute -top-1 -right-1 h-4 w-4 text-amber-500" />
+                              )}
+                            </div>
                             <div>
                             <p className="font-medium">{getItemDisplayName(item)}</p>
                               <p className="text-sm text-gray-500">{getItemDescription(item)}</p>
