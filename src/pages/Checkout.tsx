@@ -365,13 +365,19 @@ const Checkout = () => {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {items.map((item, index) => (
+                    {items.map((item, index) => {
+                      const isSubscription = !!item.subscriptionType;
+                      const boxIdForImages = (item.box as any).boxId || item.box.id;
+                      const displayImage = isSubscription
+                        ? '/lovable-uploads/KB_box_abonnement.png'
+                        : (getImagesForBox(boxIdForImages)[0] || item.box.image);
+                      return (
                       <TableRow key={`${item.box.id}-${item.subscriptionType || 'single'}-${index}`}>
                         <TableCell>
                           <div className="flex items-center space-x-3">
                             <div className="relative">
                               <img 
-                                src={getImagesForBox(item.box.id)[0] || item.box.image} 
+                                src={displayImage} 
                                 alt={item.box.baseTitle}
                                 className="w-12 h-12 object-cover rounded"
                               />
@@ -391,7 +397,8 @@ const Checkout = () => {
                           {getItemTotalDisplay(item)}
                         </TableCell>
                       </TableRow>
-                    ))}
+                      );
+                    })}
                   </TableBody>
                 </Table>
               </CardContent>
