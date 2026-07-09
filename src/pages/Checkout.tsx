@@ -375,11 +375,11 @@ const Checkout = () => {
                       <TableRow key={`${item.box.id}-${item.subscriptionType || 'single'}-${index}`}>
                         <TableCell>
                           <div className="flex items-center space-x-3">
-                            <div className="relative">
+                            <div className="relative h-12 w-12 flex-shrink-0">
                               <img 
                                 src={displayImage} 
                                 alt={item.box.baseTitle}
-                                className="w-12 h-12 object-cover rounded"
+                                className="h-full w-full rounded object-cover"
                               />
                               {item.subscriptionType && (
                                 <Crown className="absolute -top-1 -right-1 h-4 w-4 text-amber-500" />
