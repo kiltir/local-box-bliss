@@ -56,6 +56,144 @@ const resolveCountryName = (code: string | null | undefined, fallback = 'France'
   return countryCodeToName[upper] || upper;
 };
 
+// Send order confirmation email via Resend gateway (to customer + BCC contact@kiltirbox.com)
+async function sendOrderConfirmationEmail(params: {
+  customerEmail: string;
+  customerName: string | null;
+  orderNumber: string;
+  items: Array<{ title: string; quantity: number; unitPrice: number; subscriptionLabel?: string }>;
+  totalAmount: number;
+  shippingCost: number;
+  shippingAddress: {
+    name?: string | null;
+    street?: string | null;
+    city?: string | null;
+    postal_code?: string | null;
+    country?: string | null;
+  };
+  travelInfo?: any;
+  deliveryPreference?: string;
+}) {
+  const lovableKey = Deno.env.get('LOVABLE_API_KEY');
+  const resendKey = Deno.env.get('RESEND_API_KEY');
+  if (!lovableKey || !resendKey) {
+    logStep('Email skipped: missing API keys');
+    return;
+  }
+
+  const brand = '#8B4513';
+  const fmtEur = (n: number) => `${n.toFixed(2).replace('.', ',')} €`;
+
+  const itemsRows = params.items.map((it) => `
+    <tr>
+      <td style="padding:12px 8px;border-bottom:1px solid #eee;">
+        <strong>${it.title}</strong>${it.subscriptionLabel ? `<br/><span style="color:#666;font-size:13px;">${it.subscriptionLabel}</span>` : ''}
+      </td>
+      <td style="padding:12px 8px;border-bottom:1px solid #eee;text-align:center;">${it.quantity}</td>
+      <td style="padding:12px 8px;border-bottom:1px solid #eee;text-align:right;">${fmtEur(it.unitPrice * it.quantity)}</td>
+    </tr>
+  `).join('');
+
+  const addr = params.shippingAddress;
+  const addressBlock = `
+    ${addr.name ? `${addr.name}<br/>` : ''}
+    ${addr.street || ''}<br/>
+    ${addr.postal_code || ''} ${addr.city || ''}<br/>
+    ${addr.country || ''}
+  `;
+
+  let travelBlock = '';
+  if (params.travelInfo && (params.travelInfo.arrival_date_reunion || params.travelInfo.departure_date_reunion)) {
+    travelBlock = `
+      <div style="margin-top:20px;padding:16px;background:#fff8f0;border-left:4px solid ${brand};border-radius:4px;">
+        <h3 style="margin:0 0 8px;color:${brand};font-size:16px;">✈️ Informations voyage</h3>
+        ${params.travelInfo.arrival_date_reunion ? `<p style="margin:4px 0;">Arrivée à La Réunion : <strong>${params.travelInfo.arrival_date_reunion}</strong>${params.travelInfo.arrival_time_reunion ? ` à ${params.travelInfo.arrival_time_reunion}` : ''}</p>` : ''}
+        ${params.travelInfo.departure_date_reunion ? `<p style="margin:4px 0;">Départ de La Réunion : <strong>${params.travelInfo.departure_date_reunion}</strong>${params.travelInfo.departure_time_reunion ? ` à ${params.travelInfo.departure_time_reunion}` : ''}</p>` : ''}
+      </div>
+    `;
+  }
+
+  const subtotal = params.totalAmount - (params.shippingCost || 0);
+
+  const html = `
+<!DOCTYPE html>
+<html><body style="margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f5f5f5;color:#333;">
+  <div style="max-width:600px;margin:0 auto;background:#fff;">
+    <div style="background:${brand};padding:32px 24px;text-align:center;">
+      <h1 style="color:#fff;margin:0;font-size:26px;">Kiltirbox</h1>
+      <p style="color:#fff;margin:8px 0 0;opacity:0.9;">Merci pour votre commande !</p>
+    </div>
+    <div style="padding:32px 24px;">
+      <p style="font-size:16px;">Bonjour ${params.customerName || ''},</p>
+      <p style="font-size:15px;line-height:1.6;">
+        Nous avons bien reçu votre commande <strong>${params.orderNumber}</strong> et vous en remercions chaleureusement 🌺.
+        Toute l'équipe Kiltirbox met un point d'honneur à vous faire découvrir les meilleurs produits de La Réunion.
+      </p>
+
+      <h2 style="color:${brand};font-size:18px;margin-top:28px;border-bottom:2px solid ${brand};padding-bottom:8px;">Récapitulatif</h2>
+      <table style="width:100%;border-collapse:collapse;margin-top:12px;">
+        <thead>
+          <tr style="background:#faf6f2;">
+            <th style="padding:10px 8px;text-align:left;font-size:13px;color:#666;">Produit</th>
+            <th style="padding:10px 8px;text-align:center;font-size:13px;color:#666;">Qté</th>
+            <th style="padding:10px 8px;text-align:right;font-size:13px;color:#666;">Total</th>
+          </tr>
+        </thead>
+        <tbody>${itemsRows}</tbody>
+      </table>
+
+      <table style="width:100%;margin-top:16px;">
+        <tr><td style="padding:4px 8px;color:#666;">Sous-total</td><td style="padding:4px 8px;text-align:right;">${fmtEur(subtotal)}</td></tr>
+        <tr><td style="padding:4px 8px;color:#666;">Frais de livraison</td><td style="padding:4px 8px;text-align:right;">${params.shippingCost > 0 ? fmtEur(params.shippingCost) : 'Offerts'}</td></tr>
+        <tr><td style="padding:8px;font-weight:bold;font-size:16px;border-top:2px solid ${brand};">Total payé</td><td style="padding:8px;text-align:right;font-weight:bold;font-size:16px;color:${brand};border-top:2px solid ${brand};">${fmtEur(params.totalAmount)}</td></tr>
+      </table>
+
+      <h2 style="color:${brand};font-size:18px;margin-top:28px;border-bottom:2px solid ${brand};padding-bottom:8px;">Livraison</h2>
+      <p style="line-height:1.6;">${addressBlock}</p>
+      ${travelBlock}
+
+      <div style="margin-top:32px;padding:20px;background:#faf6f2;border-radius:6px;text-align:center;">
+        <p style="margin:0;font-style:italic;color:#555;">
+          Mèrsi ! 🌴<br/>
+          Une question ? Écrivez-nous à <a href="mailto:contact@kiltirbox.com" style="color:${brand};">contact@kiltirbox.com</a>
+        </p>
+      </div>
+    </div>
+    <div style="background:#2a2a2a;color:#aaa;text-align:center;padding:16px;font-size:12px;">
+      © ${new Date().getFullYear()} Kiltirbox — Un morceau de La Réunion chez vous
+    </div>
+  </div>
+</body></html>`;
+
+  try {
+    const response = await fetch('https://connector-gateway.lovable.dev/resend/emails', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${lovableKey}`,
+        'X-Connection-Api-Key': resendKey,
+      },
+      body: JSON.stringify({
+        from: 'Kiltirbox <contact@kiltirbox.com>',
+        to: [params.customerEmail],
+        bcc: ['contact@kiltirbox.com'],
+        subject: `Confirmation de votre commande ${params.orderNumber} - Kiltirbox`,
+        html,
+      }),
+    });
+
+    if (!response.ok) {
+      const errorBody = await response.text();
+      logStep('Resend email failed', { status: response.status, body: errorBody });
+      return;
+    }
+    logStep('Order confirmation email sent', { to: params.customerEmail, orderNumber: params.orderNumber });
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    logStep('Resend email exception', { error: msg });
+  }
+}
+
 // Helper: fetch items from pending_orders table
 async function fetchPendingOrderItems(pendingOrderId: string, supabase: any): Promise<any[] | null> {
   const { data, error } = await supabase
