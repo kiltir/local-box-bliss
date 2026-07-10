@@ -727,6 +727,32 @@ async function handleOneTimePayment(session: any, supabase: any) {
     }
   }
 
+  // Send confirmation email
+  const customerEmail = session.customer_details?.email || session.customer_email;
+  if (customerEmail) {
+    await sendOrderConfirmationEmail({
+      customerEmail,
+      customerName: session.customer_details?.name || null,
+      orderNumber,
+      items: items.map((it: any) => ({
+        title: it.title || `Box ${it.theme || ''}`.trim(),
+        quantity: it.quantity || 1,
+        unitPrice: it.price,
+      })),
+      totalAmount,
+      shippingCost: parseFloat(session.metadata?.shipping_cost || '0'),
+      shippingAddress: {
+        name: session.shipping_details?.name,
+        street: session.shipping_details?.address?.line1,
+        city: session.shipping_details?.address?.city,
+        postal_code: session.shipping_details?.address?.postal_code,
+        country: resolveCountryName(session.shipping_details?.address?.country),
+      },
+      travelInfo,
+      deliveryPreference,
+    });
+  }
+
   // Clean up pending order
   await supabase.from('pending_orders').delete().eq('id', pendingOrderId);
   logStep('Pending order cleaned up', { pendingOrderId });
