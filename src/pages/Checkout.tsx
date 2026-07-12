@@ -174,10 +174,9 @@ const Checkout = () => {
 
   const getItemDescription = (item: any) => {
     if (item.subscriptionType) {
-      const months = item.subscriptionType === '6months' ? 6 : 12;
-      return `Prélèvement mensuel pendant ${months} mois`;
+      return 'Prélèvements mensuels';
     }
-    return item.box.theme;
+    return 'Achat unique';
   };
 
   const getItemPriceDisplay = (item: any) => {
