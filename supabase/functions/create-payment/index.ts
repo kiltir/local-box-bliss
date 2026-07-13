@@ -376,7 +376,7 @@ serve(async (req) => {
         
         const priceData = await stripe.prices.create({
           product: productId,
-          unit_amount: monthlyPriceCents + shippingCostBase,
+          unit_amount: monthlyPriceCents,
           currency: currency,
           recurring: {
             interval: 'month',
@@ -386,15 +386,13 @@ serve(async (req) => {
             box_id: item.box.id.toString(),
             theme: item.box.theme,
             monthly_box_price: monthlyPriceCents.toString(),
-            monthly_shipping: shippingCostBase.toString(),
           },
         });
         
         logStep("Created recurring price", { 
           priceId: priceData.id, 
-          monthlyAmount: monthlyPriceCents + shippingCostBase,
+          monthlyAmount: monthlyPriceCents,
           boxPrice: monthlyPriceCents,
-          shipping: shippingCostBase
         });
         
         stripeSubscriptionItems.push({
@@ -408,7 +406,43 @@ serve(async (req) => {
         price: item.price,
         quantity: item.quantity,
       }));
-      
+
+      // Add recurring shipping line item for subscription boxes (separate from product price)
+      const subscriptionTotalQuantity = subscriptionItems.reduce(
+        (sum: number, item: any) => sum + item.quantity,
+        0
+      );
+      if (subscriptionTotalQuantity > 0) {
+        const recurringShippingProduct = await stripe.products.create({
+          name: shippingLabel,
+          description: 'Frais de livraison mensuels par box',
+        });
+
+        const recurringShippingPrice = await stripe.prices.create({
+          product: recurringShippingProduct.id,
+          unit_amount: shippingCostBase,
+          currency: currency,
+          recurring: {
+            interval: 'month',
+            interval_count: 1,
+          },
+          metadata: {
+            is_shipping: 'true',
+            is_subscription: 'true',
+          },
+        });
+
+        allLineItems.push({
+          price: recurringShippingPrice.id,
+          quantity: subscriptionTotalQuantity,
+        });
+
+        logStep("Added recurring shipping line item", {
+          unitAmount: shippingCostBase,
+          quantity: subscriptionTotalQuantity,
+        });
+      }
+
       if (isMixedCart) {
         const oneTimeItemsData: any[] = [];
         for (const item of oneTimeItems) {
