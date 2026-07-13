@@ -6,7 +6,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Separator } from "@/components/ui/separator";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import { ShoppingCart, CreditCard, ArrowLeft, Crown, Truck, AlertTriangle } from 'lucide-react';
+import { ShoppingCart, CreditCard, ArrowLeft, Crown, Package, Truck, AlertTriangle } from 'lucide-react';
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useBoxImages } from '@/hooks/useBoxImages';
 import { useCart } from '@/hooks/useCart';
