@@ -329,9 +329,12 @@ serve(async (req) => {
     // SUBSCRIPTION FLOW (including mixed carts)
     if (hasSubscription) {
       logStep("Processing subscription order", { isMixedCart });
-      
-      const stripeSubscriptionItems: any[] = [];
-      
+
+      // We build line items by interleaving each product with its shipping line,
+      // so the Stripe checkout displays the shipping row right below the
+      // subscription/product it concerns.
+      const allLineItems: any[] = [];
+
       for (const item of subscriptionItems) {
         const boxId = item.box.boxId || item.box.id;
         const key = `${boxId}-${normalizeTheme(item.box.theme)}`;
@@ -394,27 +397,15 @@ serve(async (req) => {
           monthlyAmount: monthlyPriceCents,
           boxPrice: monthlyPriceCents,
         });
-        
-        stripeSubscriptionItems.push({
+
+        allLineItems.push({
           price: priceData.id,
           quantity: item.quantity,
         });
-      }
-      
-      // Prepare one-time items for line_items (for mixed carts)
-      const allLineItems: any[] = stripeSubscriptionItems.map(item => ({
-        price: item.price,
-        quantity: item.quantity,
-      }));
 
-      // Add recurring shipping line item for subscription boxes (separate from product price)
-      const subscriptionTotalQuantity = subscriptionItems.reduce(
-        (sum: number, item: any) => sum + item.quantity,
-        0
-      );
-      if (subscriptionTotalQuantity > 0) {
+        // Recurring shipping line placed right after this subscription item
         const recurringShippingProduct = await stripe.products.create({
-          name: shippingLabel,
+          name: `${shippingLabel} — ${item.box.baseTitle}`,
           description: 'Frais de livraison mensuels par box',
         });
 
@@ -429,83 +420,61 @@ serve(async (req) => {
           metadata: {
             is_shipping: 'true',
             is_subscription: 'true',
+            box_id: item.box.id.toString(),
+            theme: item.box.theme,
           },
         });
 
         allLineItems.push({
           price: recurringShippingPrice.id,
-          quantity: subscriptionTotalQuantity,
+          quantity: item.quantity,
         });
 
-        logStep("Added recurring shipping line item", {
+        logStep("Added recurring shipping line right after subscription item", {
+          boxId: item.box.id,
           unitAmount: shippingCostBase,
-          quantity: subscriptionTotalQuantity,
+          quantity: item.quantity,
         });
       }
 
       if (isMixedCart) {
-        const oneTimeItemsData: any[] = [];
         for (const item of oneTimeItems) {
           const key = `${item.box.id}-${normalizeTheme(item.box.theme)}`;
           const dbPrice = priceMap.get(key)!;
-          const validatedPrice = dbPrice.unit;
-          const unitAmount = Math.round(validatedPrice * 100);
-          
-          oneTimeItemsData.push({
-            boxId: item.box.id,
-            title: item.box.baseTitle,
-            theme: item.box.theme,
-            unitAmount: unitAmount,
-            quantity: item.quantity,
-            description: item.box.description || `Box ${item.box.theme}`,
-            image: oneTimeImageUrl,
-          });
-        }
-        
-        const oneTimeItemsTotalQuantity = oneTimeItemsData.reduce((sum, item) => sum + item.quantity, 0);
-        
-        for (const item of oneTimeItemsData) {
+          const unitAmount = Math.round(dbPrice.unit * 100);
+
           const productData: any = {
-            name: `${item.title} (Achat unique)`,
-            description: item.description,
+            name: `${item.box.baseTitle} (Achat unique)`,
+            description: item.box.description || `Box ${item.box.theme}`,
           };
-          if (item.image) {
-            productData.images = [item.image];
+          if (oneTimeImageUrl) {
+            productData.images = [oneTimeImageUrl];
           }
-          
+
           const oneTimeProduct = await stripe.products.create(productData);
-          
+
           const oneTimePrice = await stripe.prices.create({
             product: oneTimeProduct.id,
-            unit_amount: item.unitAmount,
+            unit_amount: unitAmount,
             currency: currency,
             metadata: {
-              box_id: item.boxId.toString(),
-              theme: item.theme,
+              box_id: item.box.id.toString(),
+              theme: item.box.theme,
               is_one_time: 'true',
             },
           });
-          
+
           allLineItems.push({
             price: oneTimePrice.id,
             quantity: item.quantity,
           });
-          
-          logStep("Created one-time line item", { 
-            productId: oneTimeProduct.id,
-            priceId: oneTimePrice.id,
-            title: item.title,
-            amount: item.unitAmount
-          });
-        }
-        
-        // Add shipping for one-time items
-        if (oneTimeItemsTotalQuantity > 0) {
+
+          // Shipping line placed right after this one-time item
           const shippingProduct = await stripe.products.create({
-            name: shippingLabel,
+            name: `${shippingLabel} — ${item.box.baseTitle}`,
             description: 'Frais de livraison par box',
           });
-          
+
           const shippingPrice = await stripe.prices.create({
             product: shippingProduct.id,
             unit_amount: shippingCostBase,
@@ -513,17 +482,21 @@ serve(async (req) => {
             metadata: {
               is_shipping: 'true',
               is_one_time: 'true',
+              box_id: item.box.id.toString(),
+              theme: item.box.theme,
             },
           });
-          
+
           allLineItems.push({
             price: shippingPrice.id,
-            quantity: oneTimeItemsTotalQuantity,
+            quantity: item.quantity,
           });
-          
-          logStep("Added one-time shipping to line items", { 
-            unitAmount: shippingCostBase,
-            quantity: oneTimeItemsTotalQuantity,
+
+          logStep("Added one-time item with its shipping line", {
+            boxId: item.box.id,
+            unitAmount,
+            shippingUnitAmount: shippingCostBase,
+            quantity: item.quantity,
           });
         }
       }
@@ -582,55 +555,54 @@ serve(async (req) => {
     // ONE-TIME PAYMENT FLOW
     logStep("Processing one-time payment order");
     
-    const lineItems = items.map((item: any) => {
+    // Interleave each product with its own shipping line so Stripe checkout
+    // displays the shipping row directly under the product it concerns.
+    const lineItems: any[] = [];
+    const totalOneTimeQuantity = items.reduce((sum: number, item: any) => sum + item.quantity, 0);
+
+    for (const item of items) {
       const key = `${item.box.id}-${normalizeTheme(item.box.theme)}`;
-      const dbPrice = priceMap.get(key)!
-      const validatedPrice = dbPrice.unit;
-      const unitAmount = Math.round(validatedPrice * 100);
-      
-      logStep("Processing item with validated price", { 
-        title: item.box.baseTitle, 
-        validatedPrice,
+      const dbPrice = priceMap.get(key)!;
+      const unitAmount = Math.round(dbPrice.unit * 100);
+
+      logStep("Processing item with validated price", {
+        title: item.box.baseTitle,
+        validatedPrice: dbPrice.unit,
         quantity: item.quantity,
         unitAmount,
       });
-      
+
       const productData: any = {
         name: item.box.baseTitle,
         description: item.box.description || `Box ${item.box.theme}`,
       };
-
       if (oneTimeImageUrl) {
         productData.images = [oneTimeImageUrl];
       }
 
-      return {
+      lineItems.push({
         price_data: {
           currency: currency,
           product_data: productData,
           unit_amount: unitAmount,
         },
         quantity: item.quantity,
-      };
-    });
+      });
 
-    logStep("Line items created with validated prices", { count: lineItems.length });
-
-    // Calculate total quantity for shipping
-    const totalOneTimeQuantity = items.reduce((sum: number, item: any) => sum + item.quantity, 0);
-
-    // Add shipping as a line item
-    lineItems.push({
-      price_data: {
-        currency: 'eur',
-        product_data: {
-          name: shippingLabel,
-          description: 'Frais de livraison par box',
+      lineItems.push({
+        price_data: {
+          currency: 'eur',
+          product_data: {
+            name: `${shippingLabel} — ${item.box.baseTitle}`,
+            description: 'Frais de livraison par box',
+          },
+          unit_amount: shippingCostBase,
         },
-        unit_amount: shippingCostBase,
-      },
-      quantity: totalOneTimeQuantity,
-    });
+        quantity: item.quantity,
+      });
+    }
+
+    logStep("Line items created with per-item shipping", { count: lineItems.length });
 
     const sessionConfig: any = {
       line_items: lineItems,
