@@ -355,52 +355,86 @@ const Checkout = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Produit</TableHead>
-                      <TableHead className="text-center">Quantité</TableHead>
-                      <TableHead className="text-right">Prix unitaire</TableHead>
-                      <TableHead className="text-right">Total</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {items.map((item, index) => {
-                      const isSubscription = !!item.subscriptionType;
-                      const boxIdForImages = (item.box as any).boxId || item.box.id;
-                      const displayImage = isSubscription
-                        ? '/lovable-uploads/KB_box_abonnement.png'
-                        : (getImagesForBox(boxIdForImages)[0] || item.box.image);
-                      return (
-                      <TableRow key={`${item.box.id}-${item.subscriptionType || 'single'}-${index}`}>
-                        <TableCell>
-                          <div className="flex items-center space-x-3">
-                            <div className="relative h-12 w-12 flex-shrink-0">
-                              <img 
-                                src={displayImage} 
-                                alt={item.box.baseTitle}
-                                className="h-full w-full rounded object-cover"
-                              />
-                              {item.subscriptionType && (
-                                <Crown className="absolute -top-1 -right-1 h-4 w-4 text-amber-500" />
+                <div className="space-y-4">
+                  {items.map((item, index) => {
+                    const isSubscription = !!item.subscriptionType;
+                    const boxIdForImages = (item.box as any).boxId || item.box.id;
+                    const displayImage = isSubscription
+                      ? '/lovable-uploads/KB_box_abonnement.png'
+                      : (getImagesForBox(boxIdForImages)[0] || item.box.image);
+                    return (
+                      <div
+                        key={`${item.box.id}-${item.subscriptionType || 'single'}-${index}`}
+                        className="flex flex-col sm:flex-row gap-4 p-4 rounded-xl border border-border bg-card/50 hover:bg-muted/30 transition-colors"
+                      >
+                        {/* Image produit */}
+                        <div className="relative flex-shrink-0 mx-auto sm:mx-0">
+                          <div className="h-20 w-20 sm:h-24 sm:w-24 rounded-lg overflow-hidden bg-muted">
+                            <img
+                              src={displayImage}
+                              alt={item.box.baseTitle}
+                              className="h-full w-full object-cover"
+                            />
+                          </div>
+                          <div className="absolute -bottom-2 -right-2 rounded-full bg-background p-1 shadow-sm border border-border">
+                            {isSubscription ? (
+                              <Crown className="h-4 w-4 text-yellow-foreground" />
+                            ) : (
+                              <Package className="h-4 w-4 text-secondary-foreground" />
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Infos produit */}
+                        <div className="flex-1 min-w-0 text-center sm:text-left">
+                          <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-1">
+                            <p className="font-semibold text-foreground leading-tight">
+                              {getItemDisplayName(item)}
+                            </p>
+                            <Badge
+                              variant={isSubscription ? 'yellow' : 'secondary'}
+                              className="w-fit mx-auto sm:mx-0"
+                            >
+                              {isSubscription ? (
+                                <span className="flex items-center gap-1">
+                                  <Crown className="h-3 w-3" />
+                                  Abonnement
+                                </span>
+                              ) : (
+                                <span className="flex items-center gap-1">
+                                  <Package className="h-3 w-3" />
+                                  Achat unique
+                                </span>
                               )}
+                            </Badge>
+                          </div>
+                          <p className="text-sm text-muted-foreground mb-3">
+                            {getItemDescription(item)}
+                          </p>
+
+                          <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-6 text-sm">
+                            <div className="flex items-center justify-center sm:justify-start gap-2">
+                              <span className="text-muted-foreground">Quantité :</span>
+                              <span className="font-medium">{item.quantity}</span>
                             </div>
-                            <div>
-                            <p className="font-medium">{getItemDisplayName(item)}</p>
-                              <p className="text-sm text-gray-500">{getItemDescription(item)}</p>
+                            <div className="flex items-center justify-center sm:justify-start gap-2">
+                              <span className="text-muted-foreground">Prix unitaire :</span>
+                              <span className="font-medium">{getItemPriceDisplay(item)}</span>
                             </div>
                           </div>
-                        </TableCell>
-                        <TableCell className="text-center">{item.quantity}</TableCell>
-                        <TableCell className="text-right">{getItemPriceDisplay(item)}</TableCell>
-                        <TableCell className="text-right">
-                          {getItemTotalDisplay(item)}
-                        </TableCell>
-                      </TableRow>
-                      );
-                    })}
-                  </TableBody>
-                </Table>
+                        </div>
+
+                        {/* Total */}
+                        <div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-center gap-2 pt-2 sm:pt-0 border-t sm:border-t-0 border-border">
+                          <span className="text-sm text-muted-foreground sm:hidden">Total</span>
+                          <div className="text-right">
+                            {getItemTotalDisplay(item)}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
               </CardContent>
             </Card>
 
