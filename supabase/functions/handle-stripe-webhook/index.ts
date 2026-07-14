@@ -562,27 +562,39 @@ async function handleSubscriptionCreated(session: any, stripe: any, supabase: an
         title: it.title || `Box ${it.theme}`,
         quantity: it.quantity || 1,
         unitPrice: it.price,
+        durationMonths: it.durationMonths || (it.subscriptionType === '1year' || it.subscriptionType === '12_months' ? 12 : 6),
         subscriptionLabel: `Abonnement ${it.durationMonths || 6} mois (Mois 1/${it.durationMonths || 6})`,
       })),
       ...oneTimeItems.map((it: any) => ({
         title: it.title || `Box ${it.theme}`,
         quantity: it.quantity || 1,
         unitPrice: it.price,
+        durationMonths: null,
       })),
     ];
+    const totalUnits = allItems.reduce((s: number, i: any) => s + (i.quantity || 1), 0);
+    const shippingCostFirstMonth = parseFloat(session.metadata?.shipping_cost || '0');
+    const shippingUnitCost = totalUnits > 0 ? shippingCostFirstMonth / totalUnits : 0;
     await sendOrderConfirmationEmail({
       customerEmail,
       customerName: session.customer_details?.name || null,
       orderNumber,
       items: emailItems,
-      totalAmount: session.amount_total / 100,
-      shippingCost: parseFloat(session.metadata?.shipping_cost || '0'),
+      amountPaidNow: session.amount_total / 100,
+      shippingUnitCost,
       shippingAddress: {
         name: session.shipping_details?.name,
         street: session.shipping_details?.address?.line1,
         city: session.shipping_details?.address?.city,
         postal_code: session.shipping_details?.address?.postal_code,
         country: resolveCountryName(session.shipping_details?.address?.country),
+      },
+      billingAddress: {
+        name: session.customer_details?.name,
+        street: session.customer_details?.address?.line1,
+        city: session.customer_details?.address?.city,
+        postal_code: session.customer_details?.address?.postal_code,
+        country: resolveCountryName(session.customer_details?.address?.country),
       },
       travelInfo,
       deliveryPreference,
