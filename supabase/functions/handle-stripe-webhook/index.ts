@@ -826,6 +826,9 @@ async function handleOneTimePayment(session: any, supabase: any) {
   // Send confirmation email
   const customerEmail = session.customer_details?.email || session.customer_email;
   if (customerEmail) {
+    const totalUnits = items.reduce((s: number, i: any) => s + (i.quantity || 1), 0);
+    const shippingCostTotal = parseFloat(session.metadata?.shipping_cost || '0');
+    const shippingUnitCost = totalUnits > 0 ? shippingCostTotal / totalUnits : 0;
     await sendOrderConfirmationEmail({
       customerEmail,
       customerName: session.customer_details?.name || null,
@@ -834,15 +837,23 @@ async function handleOneTimePayment(session: any, supabase: any) {
         title: it.title || `Box ${it.theme || ''}`.trim(),
         quantity: it.quantity || 1,
         unitPrice: it.price,
+        durationMonths: null,
       })),
-      totalAmount,
-      shippingCost: parseFloat(session.metadata?.shipping_cost || '0'),
+      amountPaidNow: totalAmount,
+      shippingUnitCost,
       shippingAddress: {
         name: session.shipping_details?.name,
         street: session.shipping_details?.address?.line1,
         city: session.shipping_details?.address?.city,
         postal_code: session.shipping_details?.address?.postal_code,
         country: resolveCountryName(session.shipping_details?.address?.country),
+      },
+      billingAddress: {
+        name: session.customer_details?.name,
+        street: session.customer_details?.address?.line1,
+        city: session.customer_details?.address?.city,
+        postal_code: session.customer_details?.address?.postal_code,
+        country: resolveCountryName(session.customer_details?.address?.country),
       },
       travelInfo,
       deliveryPreference,
