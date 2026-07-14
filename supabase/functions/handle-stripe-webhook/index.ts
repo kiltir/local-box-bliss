@@ -94,16 +94,7 @@ async function sendOrderConfirmationEmail(params: {
     return;
   }
 
-  // Palette inspired by Resend's "Order Confirmation" template
-  const COLORS = {
-    bg: '#f6f9fc',
-    card: '#ffffff',
-    text: '#1a1a1a',
-    muted: '#525f7f',
-    subtle: '#8898aa',
-    border: '#e6ebf1',
-    accent: '#8B4513', // brand accent
-  };
+  const brand = '#8B4513';
   const fmtEur = (n: number) => `${n.toFixed(2).replace('.', ',')} €`;
 
   // Compute engagement totals (full contract) and shipping figures
@@ -119,22 +110,15 @@ async function sendOrderConfirmationEmail(params: {
   }
   const totalEngagement = itemsEngagement + subsShippingEngagement + oneTimeShippingEngagement;
 
-  // Rows for the recap (engagement view: unit price × qty × months)
-  const itemsRows = params.items.map((it) => {
-    const months = it.durationMonths && it.durationMonths > 0 ? it.durationMonths : 1;
-    const lineTotal = it.unitPrice * it.quantity;
-    const detail = it.subscriptionLabel
-      ? `<div style="color:${COLORS.subtle};font-size:12px;margin-top:2px;">${it.subscriptionLabel}</div>`
-      : `<div style="color:${COLORS.subtle};font-size:12px;margin-top:2px;">Achat unique</div>`;
-    return `
-      <tr>
-        <td style="padding:14px 0;border-bottom:1px solid ${COLORS.border};color:${COLORS.text};font-size:14px;">
-          <div style="font-weight:600;">${it.title}</div>${detail}
-        </td>
-        <td style="padding:14px 0;border-bottom:1px solid ${COLORS.border};color:${COLORS.muted};font-size:14px;text-align:center;">${it.quantity}${months > 1 ? ` × ${months} mois` : ''}</td>
-        <td style="padding:14px 0;border-bottom:1px solid ${COLORS.border};color:${COLORS.text};font-size:14px;text-align:right;font-weight:600;">${fmtEur(lineTotal)}</td>
-      </tr>`;
-  }).join('');
+  const itemsRows = params.items.map((it) => `
+    <tr>
+      <td style="padding:12px 8px;border-bottom:1px solid #eee;">
+        <strong>${it.title}</strong>${it.subscriptionLabel ? `<br/><span style="color:#666;font-size:13px;">${it.subscriptionLabel}</span>` : ''}
+      </td>
+      <td style="padding:12px 8px;border-bottom:1px solid #eee;text-align:center;">${it.quantity}</td>
+      <td style="padding:12px 8px;border-bottom:1px solid #eee;text-align:right;">${fmtEur(it.unitPrice * it.quantity)}</td>
+    </tr>
+  `).join('');
 
   const renderAddress = (a: {
     name?: string | null;
@@ -143,12 +127,10 @@ async function sendOrderConfirmationEmail(params: {
     postal_code?: string | null;
     country?: string | null;
   }) => `
-    ${a.name ? `<div style="font-weight:600;color:${COLORS.text};">${a.name}</div>` : ''}
-    <div style="color:${COLORS.muted};line-height:1.6;">
-      ${a.street || ''}<br/>
-      ${a.postal_code || ''} ${a.city || ''}<br/>
-      ${a.country || ''}
-    </div>
+    ${a.name ? `${a.name}<br/>` : ''}
+    ${a.street || ''}<br/>
+    ${a.postal_code || ''} ${a.city || ''}<br/>
+    ${a.country || ''}
   `;
 
   const normalizeAddr = (a: any) => [a?.name, a?.street, a?.city, a?.postal_code, a?.country]
@@ -161,89 +143,79 @@ async function sendOrderConfirmationEmail(params: {
   let travelBlock = '';
   if (params.travelInfo && (params.travelInfo.arrival_date_reunion || params.travelInfo.departure_date_reunion)) {
     travelBlock = `
-      <div style="margin-top:16px;padding:14px 16px;background:${COLORS.bg};border:1px solid ${COLORS.border};border-radius:6px;">
-        <div style="font-weight:600;color:${COLORS.text};font-size:13px;margin-bottom:6px;">✈️ Informations voyage</div>
-        ${params.travelInfo.arrival_date_reunion ? `<div style="color:${COLORS.muted};font-size:13px;">Arrivée à La Réunion : <strong style="color:${COLORS.text};">${params.travelInfo.arrival_date_reunion}</strong>${params.travelInfo.arrival_time_reunion ? ` à ${params.travelInfo.arrival_time_reunion}` : ''}</div>` : ''}
-        ${params.travelInfo.departure_date_reunion ? `<div style="color:${COLORS.muted};font-size:13px;">Départ de La Réunion : <strong style="color:${COLORS.text};">${params.travelInfo.departure_date_reunion}</strong>${params.travelInfo.departure_time_reunion ? ` à ${params.travelInfo.departure_time_reunion}` : ''}</div>` : ''}
+      <div style="margin-top:20px;padding:16px;background:#fff8f0;border-left:4px solid ${brand};border-radius:4px;">
+        <h3 style="margin:0 0 8px;color:${brand};font-size:16px;">✈️ Informations voyage</h3>
+        ${params.travelInfo.arrival_date_reunion ? `<p style="margin:4px 0;">Arrivée à La Réunion : <strong>${params.travelInfo.arrival_date_reunion}</strong>${params.travelInfo.arrival_time_reunion ? ` à ${params.travelInfo.arrival_time_reunion}` : ''}</p>` : ''}
+        ${params.travelInfo.departure_date_reunion ? `<p style="margin:4px 0;">Départ de La Réunion : <strong>${params.travelInfo.departure_date_reunion}</strong>${params.travelInfo.departure_time_reunion ? ` à ${params.travelInfo.departure_time_reunion}` : ''}</p>` : ''}
       </div>
     `;
   }
 
-  const sectionTitle = (label: string) => `
-    <h2 style="color:${COLORS.text};font-size:15px;font-weight:600;margin:0 0 12px;letter-spacing:0.3px;text-transform:uppercase;">${label}</h2>
-  `;
-
-  const card = (inner: string) => `
-    <div style="background:${COLORS.card};border:1px solid ${COLORS.border};border-radius:8px;padding:24px;margin-top:16px;">
-      ${inner}
-    </div>
-  `;
-
-  const recapSection = card(`
-    ${sectionTitle('Récapitulatif de commande')}
-    <table style="width:100%;border-collapse:collapse;">
-      <tbody>${itemsRows}</tbody>
-    </table>
-    <table style="width:100%;margin-top:12px;">
-      <tr>
-        <td style="padding:14px 0 0;color:${COLORS.text};font-size:15px;font-weight:700;">Total engagement</td>
-        <td style="padding:14px 0 0;text-align:right;color:${COLORS.accent};font-size:18px;font-weight:700;">${fmtEur(totalEngagement)}</td>
-      </tr>
-    </table>
-  `);
-
   const hasSubscription = params.items.some((i) => i.durationMonths && i.durationMonths > 0);
   const firstPaymentTitle = hasSubscription ? '1ère mensualité' : 'Paiement';
-  const firstPaymentSection = card(`
-    ${sectionTitle(firstPaymentTitle)}
-    <div style="color:${COLORS.muted};font-size:13px;line-height:1.6;margin-bottom:12px;">
-      ${hasSubscription
-        ? "Montant prélevé aujourd'hui pour la première box et les frais de livraison du premier mois. Les mensualités suivantes seront prélevées automatiquement chaque mois."
-        : "Montant réglé aujourd'hui pour votre commande."}
-    </div>
-    <table style="width:100%;">
-      <tr>
-        <td style="padding:12px 0;border-top:1px solid ${COLORS.border};color:${COLORS.text};font-size:15px;font-weight:700;">Total payé</td>
-        <td style="padding:12px 0;border-top:1px solid ${COLORS.border};text-align:right;color:${COLORS.accent};font-size:18px;font-weight:700;">${fmtEur(params.amountPaidNow)}</td>
-      </tr>
-    </table>
-  `);
-
-  const shippingSection = card(`
-    ${sectionTitle('Livraison')}
-    ${renderAddress(params.shippingAddress)}
-    ${travelBlock}
-  `);
-
-  const billingSection = card(`
-    ${sectionTitle('Facturation')}
-    ${billingSameAsShipping
-      ? `<div style="color:${COLORS.muted};font-size:13px;margin-bottom:10px;font-style:italic;">Identique à l'adresse de livraison</div>${renderAddress(params.shippingAddress)}`
-      : renderAddress(params.billingAddress)}
-  `);
+  const firstPaymentText = hasSubscription
+    ? "Montant prélevé aujourd'hui pour la première box et les frais de livraison du premier mois. Les mensualités suivantes seront prélevées automatiquement chaque mois."
+    : "Montant réglé aujourd'hui pour votre commande.";
 
   const html = `
 <!DOCTYPE html>
-<html><body style="margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;background:${COLORS.bg};color:${COLORS.text};">
-  <div style="max-width:640px;margin:0 auto;padding:32px 20px;">
-    <div style="text-align:center;padding:8px 0 24px;">
-      <div style="font-size:22px;font-weight:700;color:${COLORS.accent};letter-spacing:0.5px;">Kiltirbox</div>
+<html><body style="margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f5f5f5;color:#333;">
+  <div style="max-width:600px;margin:0 auto;background:#fff;">
+    <div style="background:${brand};padding:32px 24px;text-align:center;">
+      <h1 style="color:#fff;margin:0;font-size:26px;">Kiltirbox</h1>
+      <p style="color:#fff;margin:8px 0 0;opacity:0.9;">Merci pour votre commande !</p>
     </div>
-
-    <div style="background:${COLORS.card};border:1px solid ${COLORS.border};border-radius:8px;padding:32px;">
-      <h1 style="margin:0 0 8px;font-size:22px;color:${COLORS.text};">Merci pour votre commande${params.customerName ? `, ${params.customerName}` : ''} !</h1>
-      <p style="margin:0;color:${COLORS.muted};font-size:14px;line-height:1.6;">
-        Votre commande <strong style="color:${COLORS.text};">${params.orderNumber}</strong> est bien confirmée. Vous trouverez ci-dessous le détail complet.
+    <div style="padding:32px 24px;">
+      <p style="font-size:16px;">Bonjour ${params.customerName || ''},</p>
+      <p style="font-size:15px;line-height:1.6;">
+        Nous avons bien reçu votre commande <strong>${params.orderNumber}</strong> et vous en remercions chaleureusement 🌺.
+        Toute l'équipe Kiltirbox met un point d'honneur à vous faire découvrir les meilleurs produits de La Réunion.
       </p>
+
+      <h2 style="color:${brand};font-size:18px;margin-top:28px;border-bottom:2px solid ${brand};padding-bottom:8px;">Récapitulatif de commande</h2>
+      <table style="width:100%;border-collapse:collapse;margin-top:12px;">
+        <thead>
+          <tr style="background:#faf6f2;">
+            <th style="padding:10px 8px;text-align:left;font-size:13px;color:#666;">Produit</th>
+            <th style="padding:10px 8px;text-align:center;font-size:13px;color:#666;">Qté</th>
+            <th style="padding:10px 8px;text-align:right;font-size:13px;color:#666;">Total</th>
+          </tr>
+        </thead>
+        <tbody>${itemsRows}</tbody>
+      </table>
+      <table style="width:100%;margin-top:16px;">
+        <tr>
+          <td style="padding:8px;font-weight:bold;font-size:16px;border-top:2px solid ${brand};">Total engagement</td>
+          <td style="padding:8px;text-align:right;font-weight:bold;font-size:16px;color:${brand};border-top:2px solid ${brand};">${fmtEur(totalEngagement)}</td>
+        </tr>
+      </table>
+
+      <h2 style="color:${brand};font-size:18px;margin-top:28px;border-bottom:2px solid ${brand};padding-bottom:8px;">${firstPaymentTitle}</h2>
+      <p style="font-size:14px;color:#666;line-height:1.6;margin:12px 0;">${firstPaymentText}</p>
+      <table style="width:100%;margin-top:12px;">
+        <tr>
+          <td style="padding:8px;font-weight:bold;font-size:16px;border-top:2px solid ${brand};">Total payé</td>
+          <td style="padding:8px;text-align:right;font-weight:bold;font-size:16px;color:${brand};border-top:2px solid ${brand};">${fmtEur(params.amountPaidNow)}</td>
+        </tr>
+      </table>
+
+      <h2 style="color:${brand};font-size:18px;margin-top:28px;border-bottom:2px solid ${brand};padding-bottom:8px;">Livraison</h2>
+      <p style="line-height:1.6;">${renderAddress(params.shippingAddress)}</p>
+      ${travelBlock}
+
+      <h2 style="color:${brand};font-size:18px;margin-top:28px;border-bottom:2px solid ${brand};padding-bottom:8px;">Facturation</h2>
+      ${billingSameAsShipping
+        ? `<p style="font-size:13px;color:#666;font-style:italic;margin:0 0 10px;">Identique à l'adresse de livraison</p><p style="line-height:1.6;">${renderAddress(params.shippingAddress)}</p>`
+        : `<p style="line-height:1.6;">${renderAddress(params.billingAddress)}</p>`}
+
+      <div style="margin-top:32px;padding:20px;background:#faf6f2;border-radius:6px;text-align:center;">
+        <p style="margin:0;font-style:italic;color:#555;">
+          Mèrsi ! 🌴<br/>
+          Une question ? Écrivez-nous à <a href="mailto:contact@kiltirbox.com" style="color:${brand};">contact@kiltirbox.com</a>
+        </p>
+      </div>
     </div>
-
-    ${recapSection}
-    ${firstPaymentSection}
-    ${shippingSection}
-    ${billingSection}
-
-    <div style="text-align:center;color:${COLORS.subtle};font-size:12px;padding:24px 0 8px;line-height:1.6;">
-      Une question ? Écrivez-nous à <a href="mailto:contact@kiltirbox.com" style="color:${COLORS.accent};text-decoration:none;">contact@kiltirbox.com</a><br/>
+    <div style="background:#2a2a2a;color:#aaa;text-align:center;padding:16px;font-size:12px;">
       © ${new Date().getFullYear()} Kiltirbox — Un morceau de La Réunion chez vous
     </div>
   </div>
