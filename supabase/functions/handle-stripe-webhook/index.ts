@@ -94,7 +94,9 @@ async function sendOrderConfirmationEmail(params: {
     return;
   }
 
-  const brand = '#8B4513';
+  const brandYellow = '#FFD700';
+  const brandBlue = '#2563EB';
+  const brandOrange = '#F97316';
   const fmtEur = (n: number) => `${n.toFixed(2).replace('.', ',')} €`;
 
   // Compute engagement totals (full contract) and shipping figures
@@ -143,8 +145,8 @@ async function sendOrderConfirmationEmail(params: {
   let travelBlock = '';
   if (params.travelInfo && (params.travelInfo.arrival_date_reunion || params.travelInfo.departure_date_reunion)) {
     travelBlock = `
-      <div style="margin-top:20px;padding:16px;background:#fff8f0;border-left:4px solid ${brand};border-radius:4px;">
-        <h3 style="margin:0 0 8px;color:${brand};font-size:16px;">✈️ Informations voyage</h3>
+      <div style="margin-top:20px;padding:16px;background:#fffbeb;border-left:4px solid ${brandBlue};border-radius:4px;">
+        <h3 style="margin:0 0 8px;color:${brandBlue};font-size:16px;">✈️ Informations voyage</h3>
         ${params.travelInfo.arrival_date_reunion ? `<p style="margin:4px 0;">Arrivée à La Réunion : <strong>${params.travelInfo.arrival_date_reunion}</strong>${params.travelInfo.arrival_time_reunion ? ` à ${params.travelInfo.arrival_time_reunion}` : ''}</p>` : ''}
         ${params.travelInfo.departure_date_reunion ? `<p style="margin:4px 0;">Départ de La Réunion : <strong>${params.travelInfo.departure_date_reunion}</strong>${params.travelInfo.departure_time_reunion ? ` à ${params.travelInfo.departure_time_reunion}` : ''}</p>` : ''}
       </div>
@@ -160,10 +162,10 @@ async function sendOrderConfirmationEmail(params: {
   const html = `
 <!DOCTYPE html>
 <html><body style="margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f5f5f5;color:#333;">
-  <div style="max-width:600px;margin:0 auto;background:#fff;">
-    <div style="background:${brand};padding:32px 24px;text-align:center;">
-      <h1 style="color:#fff;margin:0;font-size:26px;">Kiltirbox</h1>
-      <p style="color:#fff;margin:8px 0 0;opacity:0.9;">Merci pour votre commande !</p>
+  <div style="max-width:600px;margin:0 auto;background:#fff;border-radius:8px;overflow:hidden;">
+    <div style="background:linear-gradient(135deg,${brandYellow} 0%,${brandOrange} 100%);padding:32px 24px;text-align:center;">
+      <h1 style="color:#fff;margin:0;font-size:26px;text-shadow:0 1px 2px rgba(0,0,0,0.15);">Kiltirbox</h1>
+      <p style="color:#fff;margin:8px 0 0;opacity:0.95;">Merci pour votre commande !</p>
     </div>
     <div style="padding:32px 24px;">
       <p style="font-size:16px;">Bonjour ${params.customerName || ''},</p>
@@ -172,54 +174,55 @@ async function sendOrderConfirmationEmail(params: {
         Toute l'équipe Kiltirbox met un point d'honneur à vous faire découvrir les meilleurs produits de La Réunion.
       </p>
 
-      <h2 style="color:${brand};font-size:18px;margin-top:28px;border-bottom:2px solid ${brand};padding-bottom:8px;">Récapitulatif de commande</h2>
+      <h2 style="color:${brandBlue};font-size:18px;margin-top:28px;border-bottom:2px solid ${brandBlue};padding-bottom:8px;">Récapitulatif de commande</h2>
       <table style="width:100%;border-collapse:collapse;margin-top:12px;">
         <thead>
-          <tr style="background:#faf6f2;">
-            <th style="padding:10px 8px;text-align:left;font-size:13px;color:#666;">Produit</th>
-            <th style="padding:10px 8px;text-align:center;font-size:13px;color:#666;">Qté</th>
-            <th style="padding:10px 8px;text-align:right;font-size:13px;color:#666;">Total</th>
+          <tr style="background:#fffbeb;">
+            <th style="padding:10px 8px;text-align:left;font-size:13px;color:#444;">Produit</th>
+            <th style="padding:10px 8px;text-align:center;font-size:13px;color:#444;">Qté</th>
+            <th style="padding:10px 8px;text-align:right;font-size:13px;color:#444;">Total</th>
           </tr>
         </thead>
         <tbody>${itemsRows}</tbody>
       </table>
       <table style="width:100%;margin-top:16px;">
         <tr>
-          <td style="padding:8px;font-weight:bold;font-size:16px;border-top:2px solid ${brand};">Total engagement</td>
-          <td style="padding:8px;text-align:right;font-weight:bold;font-size:16px;color:${brand};border-top:2px solid ${brand};">${fmtEur(totalEngagement)}</td>
+          <td style="padding:8px;font-weight:bold;font-size:16px;border-top:2px solid ${brandOrange};">Total engagement</td>
+          <td style="padding:8px;text-align:right;font-weight:bold;font-size:16px;color:${brandOrange};border-top:2px solid ${brandOrange};">${fmtEur(totalEngagement)}</td>
         </tr>
       </table>
 
-      <h2 style="color:${brand};font-size:18px;margin-top:28px;border-bottom:2px solid ${brand};padding-bottom:8px;">${firstPaymentTitle}</h2>
+      <h2 style="color:${brandBlue};font-size:18px;margin-top:28px;border-bottom:2px solid ${brandBlue};padding-bottom:8px;">${firstPaymentTitle}</h2>
       <p style="font-size:14px;color:#666;line-height:1.6;margin:12px 0;">${firstPaymentText}</p>
       <table style="width:100%;margin-top:12px;">
         <tr>
-          <td style="padding:8px;font-weight:bold;font-size:16px;border-top:2px solid ${brand};">Total payé</td>
-          <td style="padding:8px;text-align:right;font-weight:bold;font-size:16px;color:${brand};border-top:2px solid ${brand};">${fmtEur(params.amountPaidNow)}</td>
+          <td style="padding:8px;font-weight:bold;font-size:16px;border-top:2px solid ${brandOrange};">Total payé</td>
+          <td style="padding:8px;text-align:right;font-weight:bold;font-size:16px;color:${brandOrange};border-top:2px solid ${brandOrange};">${fmtEur(params.amountPaidNow)}</td>
         </tr>
       </table>
 
-      <h2 style="color:${brand};font-size:18px;margin-top:28px;border-bottom:2px solid ${brand};padding-bottom:8px;">Livraison</h2>
+      <h2 style="color:${brandBlue};font-size:18px;margin-top:28px;border-bottom:2px solid ${brandBlue};padding-bottom:8px;">Livraison</h2>
       <p style="line-height:1.6;">${renderAddress(params.shippingAddress)}</p>
       ${travelBlock}
 
-      <h2 style="color:${brand};font-size:18px;margin-top:28px;border-bottom:2px solid ${brand};padding-bottom:8px;">Facturation</h2>
+      <h2 style="color:${brandBlue};font-size:18px;margin-top:28px;border-bottom:2px solid ${brandBlue};padding-bottom:8px;">Facturation</h2>
       ${billingSameAsShipping
         ? `<p style="font-size:13px;color:#666;font-style:italic;margin:0 0 10px;">Identique à l'adresse de livraison</p><p style="line-height:1.6;">${renderAddress(params.shippingAddress)}</p>`
         : `<p style="line-height:1.6;">${renderAddress(params.billingAddress)}</p>`}
 
-      <div style="margin-top:32px;padding:20px;background:#faf6f2;border-radius:6px;text-align:center;">
+      <div style="margin-top:32px;padding:20px;background:linear-gradient(135deg,#fffbeb 0%,#fff7ed 100%);border-radius:6px;text-align:center;border:1px solid ${brandYellow};">
         <p style="margin:0;font-style:italic;color:#555;">
           Mèrsi ! 🌴<br/>
-          Une question ? Écrivez-nous à <a href="mailto:contact@kiltirbox.com" style="color:${brand};">contact@kiltirbox.com</a>
+          Une question ? Écrivez-nous à <a href="mailto:contact@kiltirbox.com" style="color:${brandBlue};font-weight:bold;">contact@kiltirbox.com</a>
         </p>
       </div>
     </div>
-    <div style="background:#2a2a2a;color:#aaa;text-align:center;padding:16px;font-size:12px;">
+    <div style="background:${brandBlue};color:#fff;text-align:center;padding:16px;font-size:12px;opacity:0.95;">
       © ${new Date().getFullYear()} Kiltirbox — Un morceau de La Réunion chez vous
     </div>
   </div>
 </body></html>`;
+
 
   try {
     const response = await fetch('https://connector-gateway.lovable.dev/resend/emails', {
