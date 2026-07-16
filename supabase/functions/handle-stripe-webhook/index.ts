@@ -586,6 +586,46 @@ async function handleSubscriptionCreated(session: any, stripe: any, supabase: an
     const totalUnits = allItems.reduce((s: number, i: any) => s + (i.quantity || 1), 0);
     const shippingCostFirstMonth = parseFloat(session.metadata?.shipping_cost || '0');
     const shippingUnitCost = totalUnits > 0 ? shippingCostFirstMonth / totalUnits : 0;
+
+    // Build monthly schedule for the confirmation email.
+    const firstMonthShippingUnit = session.metadata?.first_month_shipping_cost
+      ? parseFloat(session.metadata.first_month_shipping_cost)
+      : shippingUnitCost;
+    const subsequentShippingUnit = session.metadata?.subsequent_shipping_cost
+      ? parseFloat(session.metadata.subsequent_shipping_cost)
+      : firstMonthShippingUnit;
+    const subsequentShippingLabel = session.metadata?.subsequent_shipping_label
+      || session.metadata?.first_month_shipping_label
+      || null;
+
+    const maxMonths = subscriptionItems.reduce((m: number, it: any) => {
+      const d = it.durationMonths || (it.subscriptionType === '1year' || it.subscriptionType === '12_months' ? 12 : 6);
+      return Math.max(m, d);
+    }, 0);
+
+    const schedule: Array<{ month: number; dateStr: string; amount: number }> = [];
+    if (maxMonths > 1) {
+      const anchor = new Date(stripeSubscription.current_period_end * 1000);
+      for (let m = 2; m <= maxMonths; m++) {
+        const d = new Date(anchor);
+        d.setMonth(d.getMonth() + (m - 2));
+        let amount = 0;
+        for (const it of subscriptionItems) {
+          const dur = it.durationMonths || (it.subscriptionType === '1year' || it.subscriptionType === '12_months' ? 12 : 6);
+          if (m <= dur) {
+            const qty = it.quantity || 1;
+            const monthlyProduct = (Number(it.price) / dur) * qty;
+            amount += monthlyProduct + subsequentShippingUnit * qty;
+          }
+        }
+        schedule.push({
+          month: m,
+          dateStr: d.toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' }),
+          amount,
+        });
+      }
+    }
+
     await sendOrderConfirmationEmail({
       customerEmail,
       customerName: session.customer_details?.name || null,
@@ -609,6 +649,8 @@ async function handleSubscriptionCreated(session: any, stripe: any, supabase: an
       },
       travelInfo,
       deliveryPreference,
+      schedule,
+      subsequentShippingLabel,
     });
   }
 
