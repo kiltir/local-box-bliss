@@ -290,7 +290,7 @@ async function sendOrderConfirmationEmail(params: {
 }
 
 // Helper: fetch items from pending_orders table
-async function fetchPendingOrderItems(pendingOrderId: string, supabase: any): Promise<any[] | null> {
+async function fetchPendingOrderItems(pendingOrderId: string, supabase: any): Promise<any | null> {
   const { data, error } = await supabase
     .from('pending_orders')
     .select('items, travel_info')
