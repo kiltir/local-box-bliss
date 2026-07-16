@@ -597,6 +597,13 @@ serve(async (req) => {
           pending_order_id: pendingOrderId,
           is_subscription: 'true',
           is_mixed_cart: isMixedCart ? 'true' : 'false',
+          airport_pickup: isAirportPickup ? 'true' : 'false',
+          subsequent_shipping_cost: (isAirportPickup && subsequentShippingCost !== null)
+            ? (subsequentShippingCost / 100).toString()
+            : '',
+          subsequent_shipping_label: (isAirportPickup && subsequentShippingLabel) || '',
+          first_month_shipping_cost: (shippingCostBase / 100).toString(),
+          first_month_shipping_label: shippingLabel,
           shipping_cost: (() => {
             const subQty = subscriptionItems.reduce((s: number, i: any) => s + i.quantity, 0);
             const otQty = isMixedCart ? oneTimeItems.reduce((s: number, i: any) => s + i.quantity, 0) : 0;
@@ -604,6 +611,31 @@ serve(async (req) => {
           })(),
         },
       };
+
+      // Negative-delta case (airport cheaper than the subsequent rate, e.g.
+      // 15€ airport vs 25€ métropole). Apply a one-time coupon that offsets
+      // the extra recurring shipping charged on the first invoice, summed
+      // across all subscription items.
+      if (isAirportPickup && subsequentShippingCost !== null && subsequentShippingCost > shippingCostBase) {
+        const perUnitOffsetCents = subsequentShippingCost - shippingCostBase;
+        const totalOffsetCents = subscriptionItems.reduce(
+          (sum: number, it: any) => sum + perUnitOffsetCents * it.quantity,
+          0,
+        );
+        if (totalOffsetCents > 0) {
+          const coupon = await stripe.coupons.create({
+            amount_off: totalOffsetCents,
+            currency: currency,
+            duration: 'once',
+            name: `Ajustement livraison aéroport 1er mois`,
+          });
+          sessionConfig.discounts = [{ coupon: coupon.id }];
+          logStep("Applied one-time coupon to offset first-month shipping", {
+            couponId: coupon.id,
+            totalOffsetCents,
+          });
+        }
+      }
       
       const session = await stripe.checkout.sessions.create(sessionConfig);
       
