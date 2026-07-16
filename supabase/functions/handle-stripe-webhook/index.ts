@@ -86,12 +86,6 @@ async function sendOrderConfirmationEmail(params: {
   };
   travelInfo?: any;
   deliveryPreference?: string;
-  schedule?: Array<{
-    month: number;
-    dateStr: string;
-    amount: number;
-  }>;
-  subsequentShippingLabel?: string | null;
 }) {
   const lovableKey = Deno.env.get('LOVABLE_API_KEY');
   const resendKey = Deno.env.get('RESEND_API_KEY');
@@ -165,35 +159,6 @@ async function sendOrderConfirmationEmail(params: {
     ? "Montant prélevé aujourd'hui pour la première box et les frais de livraison du premier mois. Les mensualités suivantes seront prélevées automatiquement chaque mois."
     : "Montant réglé aujourd'hui pour votre commande.";
 
-  // Monthly schedule block (subscriptions only)
-  let scheduleBlock = '';
-  if (hasSubscription && params.schedule && params.schedule.length > 0) {
-    const scheduleRows = params.schedule.map((row) => `
-      <tr>
-        <td style="padding:10px 8px;border-bottom:1px solid #eee;">Mois ${row.month}</td>
-        <td style="padding:10px 8px;border-bottom:1px solid #eee;">${row.dateStr}</td>
-        <td style="padding:10px 8px;border-bottom:1px solid #eee;text-align:right;font-weight:600;">${fmtEur(row.amount)}</td>
-      </tr>
-    `).join('');
-    const note = params.subsequentShippingLabel
-      ? `<p style="font-size:13px;color:#666;margin:8px 0 12px;">Frais de livraison des mensualités suivantes : <strong>${params.subsequentShippingLabel}</strong>.</p>`
-      : '';
-    scheduleBlock = `
-      <h3 style="color:${brandBlue};font-size:16px;margin-top:24px;">Échéancier des prochaines mensualités</h3>
-      ${note}
-      <table style="width:100%;border-collapse:collapse;margin-top:8px;">
-        <thead>
-          <tr style="background:#fffbeb;">
-            <th style="padding:10px 8px;text-align:left;font-size:13px;color:#444;">Échéance</th>
-            <th style="padding:10px 8px;text-align:left;font-size:13px;color:#444;">Date estimée</th>
-            <th style="padding:10px 8px;text-align:right;font-size:13px;color:#444;">Montant</th>
-          </tr>
-        </thead>
-        <tbody>${scheduleRows}</tbody>
-      </table>
-    `;
-  }
-
   const html = `
 <!DOCTYPE html>
 <html><body style="margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f5f5f5;color:#333;">
@@ -235,7 +200,6 @@ async function sendOrderConfirmationEmail(params: {
           <td style="padding:8px;text-align:right;font-weight:bold;font-size:16px;color:${brandOrange};border-top:2px solid ${brandOrange};">${fmtEur(params.amountPaidNow)}</td>
         </tr>
       </table>
-      ${scheduleBlock}
 
       <h2 style="color:${brandBlue};font-size:18px;margin-top:28px;border-bottom:2px solid ${brandBlue};padding-bottom:8px;">Livraison</h2>
       <p style="line-height:1.6;">${renderAddress(params.shippingAddress)}</p>
@@ -290,7 +254,7 @@ async function sendOrderConfirmationEmail(params: {
 }
 
 // Helper: fetch items from pending_orders table
-async function fetchPendingOrderItems(pendingOrderId: string, supabase: any): Promise<any | null> {
+async function fetchPendingOrderItems(pendingOrderId: string, supabase: any): Promise<any[] | null> {
   const { data, error } = await supabase
     .from('pending_orders')
     .select('items, travel_info')
@@ -586,46 +550,6 @@ async function handleSubscriptionCreated(session: any, stripe: any, supabase: an
     const totalUnits = allItems.reduce((s: number, i: any) => s + (i.quantity || 1), 0);
     const shippingCostFirstMonth = parseFloat(session.metadata?.shipping_cost || '0');
     const shippingUnitCost = totalUnits > 0 ? shippingCostFirstMonth / totalUnits : 0;
-
-    // Build monthly schedule for the confirmation email.
-    const firstMonthShippingUnit = session.metadata?.first_month_shipping_cost
-      ? parseFloat(session.metadata.first_month_shipping_cost)
-      : shippingUnitCost;
-    const subsequentShippingUnit = session.metadata?.subsequent_shipping_cost
-      ? parseFloat(session.metadata.subsequent_shipping_cost)
-      : firstMonthShippingUnit;
-    const subsequentShippingLabel = session.metadata?.subsequent_shipping_label
-      || session.metadata?.first_month_shipping_label
-      || null;
-
-    const maxMonths = subscriptionItems.reduce((m: number, it: any) => {
-      const d = it.durationMonths || (it.subscriptionType === '1year' || it.subscriptionType === '12_months' ? 12 : 6);
-      return Math.max(m, d);
-    }, 0);
-
-    const schedule: Array<{ month: number; dateStr: string; amount: number }> = [];
-    if (maxMonths > 1) {
-      const anchor = new Date(stripeSubscription.current_period_end * 1000);
-      for (let m = 2; m <= maxMonths; m++) {
-        const d = new Date(anchor);
-        d.setMonth(d.getMonth() + (m - 2));
-        let amount = 0;
-        for (const it of subscriptionItems) {
-          const dur = it.durationMonths || (it.subscriptionType === '1year' || it.subscriptionType === '12_months' ? 12 : 6);
-          if (m <= dur) {
-            const qty = it.quantity || 1;
-            const monthlyProduct = (Number(it.price) / dur) * qty;
-            amount += monthlyProduct + subsequentShippingUnit * qty;
-          }
-        }
-        schedule.push({
-          month: m,
-          dateStr: d.toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' }),
-          amount,
-        });
-      }
-    }
-
     await sendOrderConfirmationEmail({
       customerEmail,
       customerName: session.customer_details?.name || null,
@@ -649,8 +573,6 @@ async function handleSubscriptionCreated(session: any, stripe: any, supabase: an
       },
       travelInfo,
       deliveryPreference,
-      schedule,
-      subsequentShippingLabel,
     });
   }
 

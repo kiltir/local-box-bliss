@@ -31,7 +31,6 @@ const Checkout = () => {
   const { user, loading } = useAuth();
   const [isProcessing, setIsProcessing] = useState(false);
   const [selectedDelivery, setSelectedDelivery] = useState<DeliveryOption>('metropole');
-  const [selectedSubsequentDelivery, setSelectedSubsequentDelivery] = useState<DeliveryOption>('reunion');
   const [shippingCosts, setShippingCosts] = useState<ShippingCostData[]>([]);
   const [shippingLoading, setShippingLoading] = useState(true);
 
@@ -75,22 +74,6 @@ const Checkout = () => {
   };
 
   const showDeliverySelector = isMetropoleDefault();
-
-  // Détecter si le mode de livraison est "récupération à l'aéroport"
-  const isAirportPickup = (() => {
-    const travelInfo = localStorage.getItem('travelInfo');
-    if (!travelInfo) return false;
-    try {
-      const parsed = JSON.parse(travelInfo);
-      return parsed.delivery_preference === 'airport_pickup_arrival'
-        || parsed.delivery_preference === 'airport_pickup_departure';
-    } catch {
-      return false;
-    }
-  })();
-
-  const hasSubscriptionsInCart = items.some((i: any) => i.subscriptionType);
-  const showSubsequentSelector = isAirportPickup && hasSubscriptionsInCart;
 
   const handlePayment = async () => {
     if (items.length === 0) {
@@ -154,15 +137,6 @@ const Checkout = () => {
         parsedTravelInfo = {
           ...parsedTravelInfo,
           delivery_preference: selectedDelivery === 'reunion' ? 'reunion_delivery' : 'metropole'
-        };
-      }
-
-      // Pour les abonnements avec récupération à l'aéroport, on capture aussi
-      // le type de livraison qui sera utilisé pour les mensualités suivantes.
-      if (showSubsequentSelector) {
-        parsedTravelInfo = {
-          ...(parsedTravelInfo || {}),
-          subsequent_delivery: selectedSubsequentDelivery === 'reunion' ? 'reunion_delivery' : 'metropole',
         };
       }
       
@@ -267,19 +241,15 @@ const Checkout = () => {
 
   const calculateTotalShippingCost = () => {
     const { baseCost } = getBaseDeliveryCost();
-    // Pour les abonnements avec récupération à l'aéroport, seule la 1ère
-    // mensualité utilise le tarif aéroport ; les mensualités suivantes
-    // utilisent le tarif Réunion ou Métropole choisi par le client.
-    const subsequentCost = showSubsequentSelector
-      ? getShippingByType(selectedSubsequentDelivery).baseCost
-      : baseCost;
     let totalShipping = 0;
 
     items.forEach(item => {
       if (item.subscriptionType === '6months') {
-        totalShipping += (baseCost + subsequentCost * 5) * item.quantity;
+        // Abonnement 6 mois : frais de livraison × 6 × quantité
+        totalShipping += baseCost * 6 * item.quantity;
       } else if (item.subscriptionType === '1year') {
-        totalShipping += (baseCost + subsequentCost * 11) * item.quantity;
+        // Abonnement 12 mois : frais de livraison × 12 × quantité
+        totalShipping += baseCost * 12 * item.quantity;
       } else {
         // Achat unique : frais de livraison × quantité (1 livraison par box)
         totalShipping += baseCost * item.quantity;
@@ -292,9 +262,6 @@ const Checkout = () => {
   // Calcul du total engagement (montant total de tous les abonnements sur leur durée)
   const calculateTotalEngagement = () => {
     const { baseCost } = getBaseDeliveryCost();
-    const subsequentCost = showSubsequentSelector
-      ? getShippingByType(selectedSubsequentDelivery).baseCost
-      : baseCost;
     let totalEngagement = 0;
 
     items.forEach(item => {
@@ -302,7 +269,7 @@ const Checkout = () => {
         // item.box.price est le coût total de l'abonnement
         const subscriptionCost = item.box.price * item.quantity;
         const months = item.subscriptionType === '6months' ? 6 : 12;
-        const shippingCost = (baseCost + subsequentCost * (months - 1)) * item.quantity;
+        const shippingCost = baseCost * months * item.quantity;
         totalEngagement += subscriptionCost + shippingCost;
       }
     });
@@ -505,43 +472,6 @@ const Checkout = () => {
                       Attention ! Le mode de livraison sélectionné concerne toute la commande, y compris les abonnements.
                     </AlertDescription>
                   </Alert>
-                </CardContent>
-              </Card>
-            )}
-
-            {showSubsequentSelector && (
-              <Card className="mt-6">
-                <CardHeader>
-                  <CardTitle className="flex items-center">
-                    <Truck className="h-5 w-5 mr-2" />
-                    Livraison des mensualités suivantes
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-muted-foreground mb-4">
-                    Vous avez choisi la récupération à l'aéroport pour la 1ère box ({getShippingByType('airport').baseCost.toFixed(2)}€).
-                    Sélectionnez le mode de livraison qui s'appliquera aux mensualités suivantes.
-                  </p>
-                  <RadioGroup
-                    value={selectedSubsequentDelivery}
-                    onValueChange={(value) => setSelectedSubsequentDelivery(value as DeliveryOption)}
-                    className="space-y-3"
-                  >
-                    {(['reunion', 'metropole'] as DeliveryOption[]).map((type) => {
-                      const shipping = getShippingByType(type);
-                      return (
-                        <div key={`sub-${type}`} className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-muted/50 transition-colors cursor-pointer">
-                          <RadioGroupItem value={type} id={`sub-${type}`} />
-                          <Label htmlFor={`sub-${type}`} className="flex-1 cursor-pointer">
-                            <div className="flex justify-between items-center">
-                              <p className="font-medium">{shipping.label}</p>
-                              <span className="font-semibold text-leaf-green">{shipping.baseCost.toFixed(2)}€ <span className="font-normal text-muted-foreground">par box / mois</span></span>
-                            </div>
-                          </Label>
-                        </div>
-                      );
-                    })}
-                  </RadioGroup>
                 </CardContent>
               </Card>
             )}
