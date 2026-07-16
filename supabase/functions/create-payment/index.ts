@@ -112,6 +112,14 @@ serve(async (req) => {
     // Determine shipping based on delivery preference
     let shippingCostBase: number;
     let shippingLabel: string;
+    // When airport pickup is used together with a subscription, the airport
+    // rate applies only to the first monthly invoice; subsequent invoices
+    // use the rate the customer chose for follow-up deliveries (Réunion or
+    // Métropole).
+    let subsequentShippingCost: number | null = null;
+    let subsequentShippingLabel: string | null = null;
+    const isAirportPickup = travelInfo?.delivery_preference === 'airport_pickup_arrival'
+      || travelInfo?.delivery_preference === 'airport_pickup_departure';
 
     const getShipping = (type: string) => {
       const found = shippingMap.get(type);
@@ -143,6 +151,20 @@ serve(async (req) => {
       const s = getShipping('metropole');
       shippingCostBase = Math.round(s.cost * 100);
       shippingLabel = s.label;
+    }
+
+    if (isAirportPickup) {
+      const subsequentType = travelInfo?.subsequent_delivery === 'reunion_delivery'
+        ? 'reunion'
+        : 'metropole';
+      const s = getShipping(subsequentType);
+      subsequentShippingCost = Math.round(s.cost * 100);
+      subsequentShippingLabel = s.label;
+      logStep("Airport pickup detected — subsequent shipping resolved", {
+        subsequentType,
+        subsequentShippingCost,
+        subsequentShippingLabel,
+      });
     }
 
     // Fetch all box prices from database for validation
