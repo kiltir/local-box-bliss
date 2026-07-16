@@ -31,6 +31,7 @@ const Checkout = () => {
   const { user, loading } = useAuth();
   const [isProcessing, setIsProcessing] = useState(false);
   const [selectedDelivery, setSelectedDelivery] = useState<DeliveryOption>('metropole');
+  const [selectedSubsequentDelivery, setSelectedSubsequentDelivery] = useState<DeliveryOption>('reunion');
   const [shippingCosts, setShippingCosts] = useState<ShippingCostData[]>([]);
   const [shippingLoading, setShippingLoading] = useState(true);
 
@@ -74,6 +75,22 @@ const Checkout = () => {
   };
 
   const showDeliverySelector = isMetropoleDefault();
+
+  // Détecter si le mode de livraison est "récupération à l'aéroport"
+  const isAirportPickup = (() => {
+    const travelInfo = localStorage.getItem('travelInfo');
+    if (!travelInfo) return false;
+    try {
+      const parsed = JSON.parse(travelInfo);
+      return parsed.delivery_preference === 'airport_pickup_arrival'
+        || parsed.delivery_preference === 'airport_pickup_departure';
+    } catch {
+      return false;
+    }
+  })();
+
+  const hasSubscriptionsInCart = items.some((i: any) => i.subscriptionType);
+  const showSubsequentSelector = isAirportPickup && hasSubscriptionsInCart;
 
   const handlePayment = async () => {
     if (items.length === 0) {
@@ -137,6 +154,15 @@ const Checkout = () => {
         parsedTravelInfo = {
           ...parsedTravelInfo,
           delivery_preference: selectedDelivery === 'reunion' ? 'reunion_delivery' : 'metropole'
+        };
+      }
+
+      // Pour les abonnements avec récupération à l'aéroport, on capture aussi
+      // le type de livraison qui sera utilisé pour les mensualités suivantes.
+      if (showSubsequentSelector) {
+        parsedTravelInfo = {
+          ...(parsedTravelInfo || {}),
+          subsequent_delivery: selectedSubsequentDelivery === 'reunion' ? 'reunion_delivery' : 'metropole',
         };
       }
       
@@ -241,15 +267,19 @@ const Checkout = () => {
 
   const calculateTotalShippingCost = () => {
     const { baseCost } = getBaseDeliveryCost();
+    // Pour les abonnements avec récupération à l'aéroport, seule la 1ère
+    // mensualité utilise le tarif aéroport ; les mensualités suivantes
+    // utilisent le tarif Réunion ou Métropole choisi par le client.
+    const subsequentCost = showSubsequentSelector
+      ? getShippingByType(selectedSubsequentDelivery).baseCost
+      : baseCost;
     let totalShipping = 0;
 
     items.forEach(item => {
       if (item.subscriptionType === '6months') {
-        // Abonnement 6 mois : frais de livraison × 6 × quantité
-        totalShipping += baseCost * 6 * item.quantity;
+        totalShipping += (baseCost + subsequentCost * 5) * item.quantity;
       } else if (item.subscriptionType === '1year') {
-        // Abonnement 12 mois : frais de livraison × 12 × quantité
-        totalShipping += baseCost * 12 * item.quantity;
+        totalShipping += (baseCost + subsequentCost * 11) * item.quantity;
       } else {
         // Achat unique : frais de livraison × quantité (1 livraison par box)
         totalShipping += baseCost * item.quantity;
@@ -262,6 +292,9 @@ const Checkout = () => {
   // Calcul du total engagement (montant total de tous les abonnements sur leur durée)
   const calculateTotalEngagement = () => {
     const { baseCost } = getBaseDeliveryCost();
+    const subsequentCost = showSubsequentSelector
+      ? getShippingByType(selectedSubsequentDelivery).baseCost
+      : baseCost;
     let totalEngagement = 0;
 
     items.forEach(item => {
@@ -269,7 +302,7 @@ const Checkout = () => {
         // item.box.price est le coût total de l'abonnement
         const subscriptionCost = item.box.price * item.quantity;
         const months = item.subscriptionType === '6months' ? 6 : 12;
-        const shippingCost = baseCost * months * item.quantity;
+        const shippingCost = (baseCost + subsequentCost * (months - 1)) * item.quantity;
         totalEngagement += subscriptionCost + shippingCost;
       }
     });
