@@ -508,6 +508,43 @@ const Checkout = () => {
                 </CardContent>
               </Card>
             )}
+
+            {showSubsequentSelector && (
+              <Card className="mt-6">
+                <CardHeader>
+                  <CardTitle className="flex items-center">
+                    <Truck className="h-5 w-5 mr-2" />
+                    Livraison des mensualités suivantes
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Vous avez choisi la récupération à l'aéroport pour la 1ère box ({getShippingByType('airport').baseCost.toFixed(2)}€).
+                    Sélectionnez le mode de livraison qui s'appliquera aux mensualités suivantes.
+                  </p>
+                  <RadioGroup
+                    value={selectedSubsequentDelivery}
+                    onValueChange={(value) => setSelectedSubsequentDelivery(value as DeliveryOption)}
+                    className="space-y-3"
+                  >
+                    {(['reunion', 'metropole'] as DeliveryOption[]).map((type) => {
+                      const shipping = getShippingByType(type);
+                      return (
+                        <div key={`sub-${type}`} className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-muted/50 transition-colors cursor-pointer">
+                          <RadioGroupItem value={type} id={`sub-${type}`} />
+                          <Label htmlFor={`sub-${type}`} className="flex-1 cursor-pointer">
+                            <div className="flex justify-between items-center">
+                              <p className="font-medium">{shipping.label}</p>
+                              <span className="font-semibold text-leaf-green">{shipping.baseCost.toFixed(2)}€ <span className="font-normal text-muted-foreground">par box / mois</span></span>
+                            </div>
+                          </Label>
+                        </div>
+                      );
+                    })}
+                  </RadioGroup>
+                </CardContent>
+              </Card>
+            )}
           </div>
 
           {/* Payment Summary */}
