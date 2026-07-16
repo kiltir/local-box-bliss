@@ -86,6 +86,12 @@ async function sendOrderConfirmationEmail(params: {
   };
   travelInfo?: any;
   deliveryPreference?: string;
+  schedule?: Array<{
+    month: number;
+    dateStr: string;
+    amount: number;
+  }>;
+  subsequentShippingLabel?: string | null;
 }) {
   const lovableKey = Deno.env.get('LOVABLE_API_KEY');
   const resendKey = Deno.env.get('RESEND_API_KEY');
@@ -159,6 +165,35 @@ async function sendOrderConfirmationEmail(params: {
     ? "Montant prélevé aujourd'hui pour la première box et les frais de livraison du premier mois. Les mensualités suivantes seront prélevées automatiquement chaque mois."
     : "Montant réglé aujourd'hui pour votre commande.";
 
+  // Monthly schedule block (subscriptions only)
+  let scheduleBlock = '';
+  if (hasSubscription && params.schedule && params.schedule.length > 0) {
+    const scheduleRows = params.schedule.map((row) => `
+      <tr>
+        <td style="padding:10px 8px;border-bottom:1px solid #eee;">Mois ${row.month}</td>
+        <td style="padding:10px 8px;border-bottom:1px solid #eee;">${row.dateStr}</td>
+        <td style="padding:10px 8px;border-bottom:1px solid #eee;text-align:right;font-weight:600;">${fmtEur(row.amount)}</td>
+      </tr>
+    `).join('');
+    const note = params.subsequentShippingLabel
+      ? `<p style="font-size:13px;color:#666;margin:8px 0 12px;">Frais de livraison des mensualités suivantes : <strong>${params.subsequentShippingLabel}</strong>.</p>`
+      : '';
+    scheduleBlock = `
+      <h3 style="color:${brandBlue};font-size:16px;margin-top:24px;">Échéancier des prochaines mensualités</h3>
+      ${note}
+      <table style="width:100%;border-collapse:collapse;margin-top:8px;">
+        <thead>
+          <tr style="background:#fffbeb;">
+            <th style="padding:10px 8px;text-align:left;font-size:13px;color:#444;">Échéance</th>
+            <th style="padding:10px 8px;text-align:left;font-size:13px;color:#444;">Date estimée</th>
+            <th style="padding:10px 8px;text-align:right;font-size:13px;color:#444;">Montant</th>
+          </tr>
+        </thead>
+        <tbody>${scheduleRows}</tbody>
+      </table>
+    `;
+  }
+
   const html = `
 <!DOCTYPE html>
 <html><body style="margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f5f5f5;color:#333;">
@@ -200,6 +235,7 @@ async function sendOrderConfirmationEmail(params: {
           <td style="padding:8px;text-align:right;font-weight:bold;font-size:16px;color:${brandOrange};border-top:2px solid ${brandOrange};">${fmtEur(params.amountPaidNow)}</td>
         </tr>
       </table>
+      ${scheduleBlock}
 
       <h2 style="color:${brandBlue};font-size:18px;margin-top:28px;border-bottom:2px solid ${brandBlue};padding-bottom:8px;">Livraison</h2>
       <p style="line-height:1.6;">${renderAddress(params.shippingAddress)}</p>
