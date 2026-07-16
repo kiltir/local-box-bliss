@@ -112,6 +112,14 @@ serve(async (req) => {
     // Determine shipping based on delivery preference
     let shippingCostBase: number;
     let shippingLabel: string;
+    // When airport pickup is used together with a subscription, the airport
+    // rate applies only to the first monthly invoice; subsequent invoices
+    // use the rate the customer chose for follow-up deliveries (Réunion or
+    // Métropole).
+    let subsequentShippingCost: number | null = null;
+    let subsequentShippingLabel: string | null = null;
+    const isAirportPickup = travelInfo?.delivery_preference === 'airport_pickup_arrival'
+      || travelInfo?.delivery_preference === 'airport_pickup_departure';
 
     const getShipping = (type: string) => {
       const found = shippingMap.get(type);
@@ -143,6 +151,20 @@ serve(async (req) => {
       const s = getShipping('metropole');
       shippingCostBase = Math.round(s.cost * 100);
       shippingLabel = s.label;
+    }
+
+    if (isAirportPickup) {
+      const subsequentType = travelInfo?.subsequent_delivery === 'reunion_delivery'
+        ? 'reunion'
+        : 'metropole';
+      const s = getShipping(subsequentType);
+      subsequentShippingCost = Math.round(s.cost * 100);
+      subsequentShippingLabel = s.label;
+      logStep("Airport pickup detected — subsequent shipping resolved", {
+        subsequentType,
+        subsequentShippingCost,
+        subsequentShippingLabel,
+      });
     }
 
     // Fetch all box prices from database for validation
@@ -404,14 +426,27 @@ serve(async (req) => {
         });
 
         // Recurring shipping line placed right after this subscription item
+        // If airport pickup was chosen, the *recurring* shipping uses the
+        // subsequent rate (Réunion or Métropole). A separate one-time
+        // adjustment (line item or coupon) will offset month 1 to reach the
+        // airport price.
+        const recurringShippingUnitAmount = (isAirportPickup && subsequentShippingCost !== null)
+          ? subsequentShippingCost
+          : shippingCostBase;
+        const recurringShippingLabel = (isAirportPickup && subsequentShippingLabel)
+          ? subsequentShippingLabel
+          : shippingLabel;
+
         const recurringShippingProduct = await stripe.products.create({
-          name: `${shippingLabel} — ${item.box.baseTitle}`,
-          description: 'Frais de livraison mensuels par box',
+          name: `${recurringShippingLabel} — ${item.box.baseTitle}`,
+          description: isAirportPickup
+            ? 'Frais de livraison mensuels (à partir du 2e mois)'
+            : 'Frais de livraison mensuels par box',
         });
 
         const recurringShippingPrice = await stripe.prices.create({
           product: recurringShippingProduct.id,
-          unit_amount: shippingCostBase,
+          unit_amount: recurringShippingUnitAmount,
           currency: currency,
           recurring: {
             interval: 'month',
@@ -432,9 +467,42 @@ serve(async (req) => {
 
         logStep("Added recurring shipping line right after subscription item", {
           boxId: item.box.id,
-          unitAmount: shippingCostBase,
+          unitAmount: recurringShippingUnitAmount,
           quantity: item.quantity,
+          isAirportPickup,
         });
+
+        // First-month adjustment for airport pickup: add a one-time line item
+        // for the positive delta (airport - subsequent). A negative delta is
+        // handled globally below via a one-time coupon on the whole session.
+        if (isAirportPickup && subsequentShippingCost !== null) {
+          const deltaCents = shippingCostBase - subsequentShippingCost;
+          if (deltaCents > 0) {
+            const adjustmentProduct = await stripe.products.create({
+              name: `Complément livraison aéroport — ${item.box.baseTitle} (1er mois)`,
+              description: `Différence entre ${shippingLabel} et ${recurringShippingLabel}`,
+            });
+            const adjustmentPrice = await stripe.prices.create({
+              product: adjustmentProduct.id,
+              unit_amount: deltaCents,
+              currency: currency,
+              metadata: {
+                is_shipping_adjustment: 'true',
+                is_first_month_only: 'true',
+                box_id: item.box.id.toString(),
+              },
+            });
+            allLineItems.push({
+              price: adjustmentPrice.id,
+              quantity: item.quantity,
+            });
+            logStep("Added first-month airport shipping supplement", {
+              boxId: item.box.id,
+              deltaCents,
+              quantity: item.quantity,
+            });
+          }
+        }
       }
 
       if (isMixedCart) {
@@ -529,6 +597,13 @@ serve(async (req) => {
           pending_order_id: pendingOrderId,
           is_subscription: 'true',
           is_mixed_cart: isMixedCart ? 'true' : 'false',
+          airport_pickup: isAirportPickup ? 'true' : 'false',
+          subsequent_shipping_cost: (isAirportPickup && subsequentShippingCost !== null)
+            ? (subsequentShippingCost / 100).toString()
+            : '',
+          subsequent_shipping_label: (isAirportPickup && subsequentShippingLabel) || '',
+          first_month_shipping_cost: (shippingCostBase / 100).toString(),
+          first_month_shipping_label: shippingLabel,
           shipping_cost: (() => {
             const subQty = subscriptionItems.reduce((s: number, i: any) => s + i.quantity, 0);
             const otQty = isMixedCart ? oneTimeItems.reduce((s: number, i: any) => s + i.quantity, 0) : 0;
@@ -536,6 +611,31 @@ serve(async (req) => {
           })(),
         },
       };
+
+      // Negative-delta case (airport cheaper than the subsequent rate, e.g.
+      // 15€ airport vs 25€ métropole). Apply a one-time coupon that offsets
+      // the extra recurring shipping charged on the first invoice, summed
+      // across all subscription items.
+      if (isAirportPickup && subsequentShippingCost !== null && subsequentShippingCost > shippingCostBase) {
+        const perUnitOffsetCents = subsequentShippingCost - shippingCostBase;
+        const totalOffsetCents = subscriptionItems.reduce(
+          (sum: number, it: any) => sum + perUnitOffsetCents * it.quantity,
+          0,
+        );
+        if (totalOffsetCents > 0) {
+          const coupon = await stripe.coupons.create({
+            amount_off: totalOffsetCents,
+            currency: currency,
+            duration: 'once',
+            name: `Ajustement livraison aéroport 1er mois`,
+          });
+          sessionConfig.discounts = [{ coupon: coupon.id }];
+          logStep("Applied one-time coupon to offset first-month shipping", {
+            couponId: coupon.id,
+            totalOffsetCents,
+          });
+        }
+      }
       
       const session = await stripe.checkout.sessions.create(sessionConfig);
       
