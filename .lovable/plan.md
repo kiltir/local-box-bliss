@@ -1,99 +1,50 @@
+## Objectif
 
-## Plan : Afficher votre logo dans les résultats Google
+Quand une **date de récupération à l'aéroport** est sélectionnée dans la 1ʳᵉ section (`delivery_preference = airport_pickup_arrival` ou `airport_pickup_departure`), le tarif aéroport (15€) doit s'appliquer **uniquement à la 1ʳᵉ livraison** de chaque abonnement. Les mois suivants (2 → 6 ou 2 → 12) basculent automatiquement sur le tarif **Métropole**. Les achats uniques présents dans le panier bénéficient aussi du tarif aéroport (une seule livraison, donc identique au comportement actuel).
 
-### Ce que Google affiche
-Google affiche une petite icône (favicon) à côté du nom de votre site dans les résultats de recherche. Pour que cela fonctionne correctement, il faut :
-- Un favicon en plusieurs tailles
-- Un fichier "manifest" qui décrit votre site
-- Des balises HTML appropriées
+Cette règle **ne s'applique QUE** si l'option aéroport est choisie. Métropole et Réunion conservent leur logique actuelle (tarif unique appliqué à toutes les livraisons).
 
----
+## Changements
 
-### Ce qui sera fait
+### 1. `src/pages/Checkout.tsx` — récapitulatif panier
 
-#### 1. Copier le logo dans le dossier public
-Votre logo `kiltirbox-logo.png` sera copié dans `public/` pour être accessible.
+Modifier `calculateTotalShippingCost` pour, lorsque la préférence courante est `airport` :
 
-#### 2. Créer un fichier manifest (site.webmanifest)
-Ce fichier indique à Google et aux navigateurs les informations sur votre site :
-- Nom du site
-- Icônes disponibles
-- Couleurs de thème
+- Achat unique : `airport × qty` (inchangé)
+- Abonnement 6 mois : `airport × qty` (1er mois) + `metropole × 5 × qty`
+- Abonnement 12 mois : `airport × qty` (1er mois) + `metropole × 11 × qty`
 
-#### 3. Mettre à jour index.html
-Ajout des balises nécessaires :
-- **Apple Touch Icon** : Pour les appareils Apple (iPhone, iPad)
-- **Manifest** : Lien vers le fichier webmanifest
-- **Theme color** : Couleur de la barre de navigation mobile
-- **Favicon PNG** : Version moderne du favicon
+Ajouter une ligne d'explication sous "Frais de livraison" quand le tarif aéroport est appliqué à un panier contenant au moins un abonnement : *« Tarif aéroport appliqué au 1er mois, tarif Métropole pour les mois suivants. »*
 
----
+### 2. `supabase/functions/create-payment/index.ts` — checkout Stripe
 
-### Fichiers créés
-- `public/site.webmanifest` - Manifest de l'application web
-- `public/logo-192.png` - Logo copié pour le manifest
+Actuellement, chaque item d'abonnement génère une ligne de livraison récurrente unique au tarif aéroport. Il faut :
 
-### Fichiers modifiés
-- `index.html` - Ajout des balises favicon et manifest
+- Récupérer **deux** tarifs depuis `shipping_costs` : `airport` et `metropole`.
+- Détecter le mode aéroport via `travelInfo.delivery_preference`.
 
----
+Si mode **aéroport** :
 
-### Balises HTML ajoutées
+- **Ligne récurrente de livraison** de chaque abonnement → créée au tarif **Métropole** (au lieu d'aéroport). Label conservé « Livraison — {titre} ».
+- **Supplément 1er mois** ajouté via `subscription_data.add_invoice_items` (facturés uniquement sur la 1ʳᵉ facture Stripe) : un item par abonnement, montant = `(airport - metropole)` cents, quantité = `item.quantity`, description = *« Supplément livraison aéroport (1er mois) — {titre} »*.
+- **Achats uniques** dans un panier mixte : ligne de livraison au tarif aéroport (inchangé).
 
-```html
-<!-- Apple Touch Icon -->
-<link rel="apple-touch-icon" href="/kiltirbox-logo.png" />
+Si mode **Métropole ou Réunion** : comportement actuel inchangé.
 
-<!-- Web App Manifest -->
-<link rel="manifest" href="/site.webmanifest" />
+Mettre à jour `metadata.shipping_cost` (utilisé pour l'affichage dans MesCommandes) pour refléter le montant réellement facturé au 1er paiement :
+- Abonnements : `airport × subQty + metropole × (months-1) × subQty` — mais comme `shipping_cost` représente historiquement le montant du 1er paiement, on stocke `airport × subQty + airport × oneTimeQty` (montant payé initialement, hors récurrent futur). À valider selon l'usage aval ; par défaut = somme des livraisons de la 1ʳᵉ facture.
 
-<!-- Theme Color -->
-<meta name="theme-color" content="#8B4513" />
+### 3. Aucune migration base de données
 
-<!-- Favicon PNG (moderne) -->
-<link rel="icon" type="image/png" href="/kiltirbox-logo.png" />
-```
+Les tarifs `airport` et `metropole` existent déjà dans la table `shipping_costs`. Aucun schéma à modifier.
 
----
+## Points techniques
 
-### Contenu du manifest
+- `add_invoice_items` sur `subscription_data` est la mécanique Stripe standard pour surfacturer uniquement la 1ʳᵉ facture d'un abonnement — pas de coupon ni de logique custom nécessaire.
+- Le supplément apparaîtra comme ligne distincte sur le checkout Stripe et la 1ʳᵉ facture, ce qui reste lisible pour le client.
+- Les commandes existantes ne sont pas rétroactivement modifiées.
 
-```json
-{
-  "name": "KiltirBox",
-  "short_name": "KiltirBox",
-  "description": "Box de produits réunionnais authentiques",
-  "start_url": "/",
-  "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#8B4513",
-  "icons": [
-    {
-      "src": "/kiltirbox-logo.png",
-      "sizes": "192x192",
-      "type": "image/png"
-    }
-  ]
-}
-```
+## Hors périmètre
 
----
-
-### Important à savoir
-
-**Délai d'indexation** : Google ne met pas à jour les favicons immédiatement. Cela peut prendre **plusieurs semaines** avant que votre logo apparaisse dans les résultats de recherche.
-
-**Après publication** : Une fois le site publié, vous pouvez accélérer le processus en :
-1. Allant sur [Google Search Console](https://search.google.com/search-console)
-2. Utilisant l'outil "Inspection d'URL" sur votre page d'accueil
-3. Demandant une réindexation
-
----
-
-### Résumé des changements
-| Élément | Avant | Après |
-|---------|-------|-------|
-| Favicon | .ico basique | Logo KiltirBox en PNG |
-| Apple Touch Icon | Absent | Logo KiltirBox |
-| Manifest | Absent | site.webmanifest configuré |
-| Theme color | Absent | Marron (#8B4513) |
+- Emails de confirmation : la structure actuelle affichera automatiquement le bon montant payé si `amountPaidNow` est calculé à partir de la session Stripe. À vérifier après implémentation, correction en suivant si besoin.
+- Admin `OrdersManagement` : lecture seule, pas de changement requis.

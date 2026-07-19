@@ -213,6 +213,27 @@ const Checkout = () => {
     return { label: 'Livraison métropole', baseCost: 25 };
   };
 
+  // Détermine le type de livraison actuellement sélectionné
+  const getDeliveryType = (): 'airport' | 'metropole' | 'reunion' => {
+    if (showDeliverySelector) return selectedDelivery;
+    const travelInfo = localStorage.getItem('travelInfo');
+    if (!travelInfo) return 'metropole';
+    try {
+      const parsed = JSON.parse(travelInfo);
+      switch (parsed.delivery_preference) {
+        case 'airport_pickup_arrival':
+        case 'airport_pickup_departure':
+          return 'airport';
+        case 'reunion_delivery':
+          return 'reunion';
+        default:
+          return 'metropole';
+      }
+    } catch {
+      return 'metropole';
+    }
+  };
+
   const getBaseDeliveryCost = () => {
     // Si le sélecteur est affiché, utiliser la sélection de l'utilisateur
     if (showDeliverySelector) {
@@ -241,15 +262,18 @@ const Checkout = () => {
 
   const calculateTotalShippingCost = () => {
     const { baseCost } = getBaseDeliveryCost();
+    const deliveryType = getDeliveryType();
+    const isAirport = deliveryType === 'airport';
+    const metropoleCost = isAirport ? getShippingByType('metropole').baseCost : baseCost;
     let totalShipping = 0;
 
     items.forEach(item => {
       if (item.subscriptionType === '6months') {
-        // Abonnement 6 mois : frais de livraison × 6 × quantité
-        totalShipping += baseCost * 6 * item.quantity;
+        // Abonnement 6 mois : 1er mois au tarif courant, 5 mois suivants au tarif métropole si aéroport
+        totalShipping += (baseCost + metropoleCost * 5) * item.quantity;
       } else if (item.subscriptionType === '1year') {
-        // Abonnement 12 mois : frais de livraison × 12 × quantité
-        totalShipping += baseCost * 12 * item.quantity;
+        // Abonnement 12 mois : 1er mois au tarif courant, 11 mois suivants au tarif métropole si aéroport
+        totalShipping += (baseCost + metropoleCost * 11) * item.quantity;
       } else {
         // Achat unique : frais de livraison × quantité (1 livraison par box)
         totalShipping += baseCost * item.quantity;
@@ -262,6 +286,9 @@ const Checkout = () => {
   // Calcul du total engagement (montant total de tous les abonnements sur leur durée)
   const calculateTotalEngagement = () => {
     const { baseCost } = getBaseDeliveryCost();
+    const deliveryType = getDeliveryType();
+    const isAirport = deliveryType === 'airport';
+    const metropoleCost = isAirport ? getShippingByType('metropole').baseCost : baseCost;
     let totalEngagement = 0;
 
     items.forEach(item => {
@@ -269,7 +296,7 @@ const Checkout = () => {
         // item.box.price est le coût total de l'abonnement
         const subscriptionCost = item.box.price * item.quantity;
         const months = item.subscriptionType === '6months' ? 6 : 12;
-        const shippingCost = baseCost * months * item.quantity;
+        const shippingCost = (baseCost + metropoleCost * (months - 1)) * item.quantity;
         totalEngagement += subscriptionCost + shippingCost;
       }
     });
@@ -497,7 +524,12 @@ const Checkout = () => {
                   <span>Livraison totale</span>
                   <span>{deliveryInfo.cost.toFixed(2)}€</span>
                 </div>
-                
+                {hasSubscriptions && getDeliveryType() === 'airport' && (
+                  <p className="text-xs text-muted-foreground -mt-2">
+                    Tarif aéroport appliqué au 1er mois, tarif Métropole pour les mois suivants.
+                  </p>
+                )}
+
                 {hasSubscriptions && (
                   <>
                     <Separator />
