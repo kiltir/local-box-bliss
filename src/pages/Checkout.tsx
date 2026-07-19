@@ -524,7 +524,12 @@ const Checkout = () => {
                   <span>Livraison totale</span>
                   <span>{deliveryInfo.cost.toFixed(2)}€</span>
                 </div>
-                
+                {hasSubscriptions && getDeliveryType() === 'airport' && (
+                  <p className="text-xs text-muted-foreground -mt-2">
+                    Tarif aéroport appliqué au 1er mois, tarif Métropole pour les mois suivants.
+                  </p>
+                )}
+
                 {hasSubscriptions && (
                   <>
                     <Separator />
