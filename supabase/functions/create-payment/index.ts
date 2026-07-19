@@ -342,6 +342,9 @@ serve(async (req) => {
       // so the Stripe checkout displays the shipping row right below the
       // subscription/product it concerns.
       const allLineItems: any[] = [];
+      // Airport supplement items added ONLY to the first invoice via
+      // subscription_data.add_invoice_items (Stripe native mechanism).
+      const firstInvoiceExtras: any[] = [];
 
       for (const item of subscriptionItems) {
         const boxId = item.box.boxId || item.box.id;
@@ -412,14 +415,18 @@ serve(async (req) => {
         });
 
         // Recurring shipping line placed right after this subscription item
+        // When airport mode is active, recurring shipping stays at the
+        // Métropole rate; the airport surcharge is added only to the 1st invoice.
+        const recurringShippingCents = isAirportMode ? metropoleShippingCents : shippingCostBase;
+        const recurringShippingLabel = isAirportMode ? metropoleShipping.label : shippingLabel;
         const recurringShippingProduct = await stripe.products.create({
-          name: `${shippingLabel} — ${item.box.baseTitle}`,
+          name: `${recurringShippingLabel} — ${item.box.baseTitle}`,
           description: 'Frais de livraison mensuels par box',
         });
 
         const recurringShippingPrice = await stripe.prices.create({
           product: recurringShippingProduct.id,
-          unit_amount: shippingCostBase,
+          unit_amount: recurringShippingCents,
           currency: currency,
           recurring: {
             interval: 'month',
@@ -438,10 +445,37 @@ serve(async (req) => {
           quantity: item.quantity,
         });
 
+        // First-invoice-only airport surcharge (delta airport - métropole)
+        if (isAirportMode) {
+          const surchargeCents = shippingCostBase - metropoleShippingCents;
+          if (surchargeCents > 0) {
+            const surchargeProduct = await stripe.products.create({
+              name: `Supplément livraison aéroport (1er mois) — ${item.box.baseTitle}`,
+              description: 'Facturé uniquement sur la première facture',
+            });
+            const surchargePrice = await stripe.prices.create({
+              product: surchargeProduct.id,
+              unit_amount: surchargeCents,
+              currency: currency,
+              metadata: {
+                is_shipping: 'true',
+                is_airport_surcharge: 'true',
+                box_id: item.box.id.toString(),
+                theme: item.box.theme,
+              },
+            });
+            firstInvoiceExtras.push({
+              price: surchargePrice.id,
+              quantity: item.quantity,
+            });
+          }
+        }
+
         logStep("Added recurring shipping line right after subscription item", {
           boxId: item.box.id,
-          unitAmount: shippingCostBase,
+          unitAmount: recurringShippingCents,
           quantity: item.quantity,
+          airportSurchargeApplied: isAirportMode,
         });
       }
 
@@ -530,6 +564,7 @@ serve(async (req) => {
             user_id: user!.id,
             pending_order_id: pendingOrderId,
           },
+          ...(firstInvoiceExtras.length > 0 ? { add_invoice_items: firstInvoiceExtras } : {}),
         },
         payment_method_collection: 'always',
         metadata: {
