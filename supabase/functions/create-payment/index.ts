@@ -112,6 +112,13 @@ serve(async (req) => {
     // Determine shipping based on delivery preference
     let shippingCostBase: number;
     let shippingLabel: string;
+    let isAirportMode = false;
+    // Métropole fallback used for subsequent months of subscriptions when airport mode is active
+    const metropoleShipping = (() => {
+      const found = shippingMap.get('metropole');
+      return found || { label: 'Livraison métropole', cost: 25 };
+    })();
+    const metropoleShippingCents = Math.round(metropoleShipping.cost * 100);
 
     const getShipping = (type: string) => {
       const found = shippingMap.get(type);
@@ -125,6 +132,7 @@ serve(async (req) => {
           const s = getShipping('airport');
           shippingCostBase = Math.round(s.cost * 100);
           shippingLabel = s.label;
+          isAirportMode = true;
           break;
         }
         case 'reunion_delivery': {
