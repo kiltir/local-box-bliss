@@ -48,6 +48,7 @@ const Hero = () => {
     setDepartureDate(undefined);
     setSelectedPickupDate(null);
     localStorage.removeItem('travelInfo');
+    window.dispatchEvent(new Event('travelInfoChanged'));
     toast.info("Sélection de dates annulée");
   };
 
