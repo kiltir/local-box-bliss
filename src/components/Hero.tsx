@@ -23,7 +23,7 @@ const Hero = () => {
   const [selectedPickupDate, setSelectedPickupDate] = useState<'arrival' | 'departure' | null>(null);
   const saveTravelInfoToLocalStorage = () => {
     if (!arrivalDate || !departureDate || !selectedPickupDate) {
-      toast.success("Dates de séjour enregistrées !");
+      toast.error("Veuillez sélectionner vos dates et votre préférence de récupération");
       return;
     }
     const travelInfo = {
@@ -34,6 +34,7 @@ const Hero = () => {
       delivery_preference: selectedPickupDate === 'arrival' ? 'airport_pickup_arrival' : 'airport_pickup_departure'
     };
     localStorage.setItem('travelInfo', JSON.stringify(travelInfo));
+    window.dispatchEvent(new Event('travelInfoChanged'));
     toast.success("Dates de séjour enregistrées !");
   };
   const handleCommander = () => {
@@ -47,6 +48,7 @@ const Hero = () => {
     setDepartureDate(undefined);
     setSelectedPickupDate(null);
     localStorage.removeItem('travelInfo');
+    window.dispatchEvent(new Event('travelInfoChanged'));
     toast.info("Sélection de dates annulée");
   };
 
