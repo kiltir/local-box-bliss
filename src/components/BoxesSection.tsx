@@ -27,7 +27,7 @@ const BoxesSection = () => {
     handleBoxChange
   } = useBoxes();
 
-  const { purchaseType, handlePurchaseTypeChange } = usePurchaseType();
+  const { purchaseType, handlePurchaseTypeChange, isSubscriptionDisabled } = usePurchaseType();
   const { getBoxStats } = useBoxesReviews();
   const { subscriptions } = useSubscriptions();
 
@@ -67,7 +67,7 @@ const BoxesSection = () => {
           </div>
 
           {/* Sélecteur de type d'achat */}
-          <PurchaseTypeSelector selectedType={purchaseType} onTypeChange={handlePurchaseTypeChange} />
+          <PurchaseTypeSelector selectedType={purchaseType} onTypeChange={handlePurchaseTypeChange} subscriptionDisabled={isSubscriptionDisabled} />
         </FadeInSection>
           
         <div className="grid grid-cols-1 md:grid-cols-1 gap-8 max-w-md mx-auto">
