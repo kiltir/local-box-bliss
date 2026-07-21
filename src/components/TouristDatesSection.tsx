@@ -37,6 +37,7 @@ const TouristDatesSection = () => {
     };
 
     localStorage.setItem('travelInfo', JSON.stringify(travelInfo));
+    window.dispatchEvent(new Event('travelInfoChanged'));
     toast.success("Dates de séjour enregistrées !");
   };
 
@@ -52,6 +53,7 @@ const TouristDatesSection = () => {
     setDepartureDate(undefined);
     setSelectedPickupDate(null);
     localStorage.removeItem('travelInfo');
+    window.dispatchEvent(new Event('travelInfoChanged'));
     toast.info("Sélection de dates annulée");
   };
 
