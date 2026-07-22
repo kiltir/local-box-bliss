@@ -311,7 +311,7 @@ const Hero = () => {
 
               {/* Nouvelle phrase d'information importante */}
               <div className="max-w-2xl mx-auto mb-8">
-                <p className="text-sm backdrop-blur-sm px-6 rounded-lg text-slate-50 py-[10px]">*Possibilité de récupérer la 1ère box d'un abonnement sur place à l'aéroport de Roland Garros à la Réunion si la commande a été passée 15 jours avant un vol prévu. Dans le cas contraire, une adresse métropolitaine vous sera demandée pour la livraison.</p>
+                <p className="text-sm backdrop-blur-sm px-6 rounded-lg text-slate-50 py-[10px]">*Possibilité de récupérer une box sur place à l'aéroport de Roland Garros à la Réunion si la commande a été passée 15 jours avant un vol prévu. Dans le cas où la livraison à l'aéroport ne peut pas se faire, la commande sera envoyée à l'adresse de livraison renseignée au tarif en vigueur.</p>
               </div>
             </motion.div>
           </motion.div>
