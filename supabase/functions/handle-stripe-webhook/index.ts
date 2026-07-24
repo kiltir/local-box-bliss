@@ -184,13 +184,16 @@ async function sendOrderConfirmationEmail(params: {
   const hasSubscription = params.items.some((i) => i.durationMonths && i.durationMonths > 0);
   const firstPaymentTitle = hasSubscription ? '1ère mensualité' : 'Paiement';
 
+  const logoUrl = 'https://kiltirbox.com/kiltirbox-logo.png';
+
   const html = `
 <!DOCTYPE html>
-<html><body style="margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f5f5f5;color:#333;">
-  <div style="max-width:600px;margin:0 auto;background:#fff;border-radius:8px;overflow:hidden;">
-    <div style="background:linear-gradient(135deg,${brandYellow} 0%,${brandOrange} 100%);padding:32px 24px;text-align:center;">
-      <h1 style="color:#fff;margin:0;font-size:26px;text-shadow:0 1px 2px rgba(0,0,0,0.15);">Kiltirbox</h1>
-      <p style="color:#fff;margin:8px 0 0;opacity:0.95;">Merci pour votre commande !</p>
+<html><body style="margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#fff8e1;color:#333;">
+  <div style="max-width:600px;margin:0 auto;background:#fff;border-radius:8px;overflow:hidden;border:1px solid #ffe082;">
+    <div style="background:${brandYellow};padding:28px 24px;text-align:center;border-bottom:4px solid ${brandOrange};">
+      <img src="${logoUrl}" alt="Kiltirbox" style="width:110px;height:auto;display:block;margin:0 auto 12px;"/>
+      <h1 style="color:#5d3a00;margin:0;font-size:26px;font-weight:800;">Kiltirbox</h1>
+      <p style="color:#5d3a00;margin:8px 0 0;font-weight:600;">Merci pour votre commande !</p>
     </div>
     <div style="padding:32px 24px;">
       <p style="font-size:16px;">Bonjour ${params.customerName || ''},</p>
@@ -199,13 +202,13 @@ async function sendOrderConfirmationEmail(params: {
         Toute l'équipe Kiltirbox met un point d'honneur à vous faire découvrir les meilleurs produits de La Réunion.
       </p>
 
-      <h2 style="color:${brandBlue};font-size:18px;margin-top:28px;border-bottom:2px solid ${brandBlue};padding-bottom:8px;">Récapitulatif de commande</h2>
+      <h2 style="color:${brandBlue};font-size:18px;margin-top:28px;border-left:5px solid ${brandYellow};padding:8px 12px;background:#fffbeb;border-radius:0 4px 4px 0;">Récapitulatif de commande</h2>
       <table style="width:100%;border-collapse:collapse;margin-top:12px;">
         <thead>
-          <tr style="background:#fffbeb;">
-            <th style="padding:10px 8px;text-align:left;font-size:13px;color:#444;">Produit</th>
-            <th style="padding:10px 8px;text-align:center;font-size:13px;color:#444;">Qté</th>
-            <th style="padding:10px 8px;text-align:right;font-size:13px;color:#444;">Total</th>
+          <tr style="background:${brandYellow};">
+            <th style="padding:10px 8px;text-align:left;font-size:13px;color:#5d3a00;">Produit</th>
+            <th style="padding:10px 8px;text-align:center;font-size:13px;color:#5d3a00;">Qté</th>
+            <th style="padding:10px 8px;text-align:right;font-size:13px;color:#5d3a00;">Total</th>
           </tr>
         </thead>
         <tbody>${itemsRows}</tbody>
@@ -216,18 +219,18 @@ async function sendOrderConfirmationEmail(params: {
           <td style="padding:8px;text-align:right;font-size:14px;color:#444;">${fmtEur(totalShippingEngagement)}</td>
         </tr>
         <tr>
-          <td style="padding:8px;font-weight:bold;font-size:16px;border-top:2px solid ${brandOrange};">Total engagement</td>
-          <td style="padding:8px;text-align:right;font-weight:bold;font-size:16px;color:${brandOrange};border-top:2px solid ${brandOrange};">${fmtEur(totalEngagement)}</td>
+          <td style="padding:8px;font-weight:bold;font-size:16px;border-top:2px solid ${brandOrange};background:#fffbeb;">Total engagement</td>
+          <td style="padding:8px;text-align:right;font-weight:bold;font-size:16px;color:${brandOrange};border-top:2px solid ${brandOrange};background:#fffbeb;">${fmtEur(totalEngagement)}</td>
         </tr>
       </table>
 
-      <h2 style="color:${brandBlue};font-size:18px;margin-top:28px;border-bottom:2px solid ${brandBlue};padding-bottom:8px;">${firstPaymentTitle}</h2>
+      <h2 style="color:${brandBlue};font-size:18px;margin-top:28px;border-left:5px solid ${brandYellow};padding:8px 12px;background:#fffbeb;border-radius:0 4px 4px 0;">${firstPaymentTitle}</h2>
       <table style="width:100%;border-collapse:collapse;margin-top:12px;">
         <thead>
-          <tr style="background:#fffbeb;">
-            <th style="padding:10px 8px;text-align:left;font-size:13px;color:#444;">Produit</th>
-            <th style="padding:10px 8px;text-align:center;font-size:13px;color:#444;">Qté</th>
-            <th style="padding:10px 8px;text-align:right;font-size:13px;color:#444;">Total</th>
+          <tr style="background:${brandYellow};">
+            <th style="padding:10px 8px;text-align:left;font-size:13px;color:#5d3a00;">Produit</th>
+            <th style="padding:10px 8px;text-align:center;font-size:13px;color:#5d3a00;">Qté</th>
+            <th style="padding:10px 8px;text-align:right;font-size:13px;color:#5d3a00;">Total</th>
           </tr>
         </thead>
         <tbody>${firstPaymentItemsRows}</tbody>
@@ -238,22 +241,22 @@ async function sendOrderConfirmationEmail(params: {
           <td style="padding:8px;text-align:right;font-size:14px;color:#444;">${fmtEur(firstPaymentShipping)}</td>
         </tr>
         <tr>
-          <td style="padding:8px;font-weight:bold;font-size:16px;border-top:2px solid ${brandOrange};">Total payé</td>
-          <td style="padding:8px;text-align:right;font-weight:bold;font-size:16px;color:${brandOrange};border-top:2px solid ${brandOrange};">${fmtEur(params.amountPaidNow)}</td>
+          <td style="padding:8px;font-weight:bold;font-size:16px;border-top:2px solid ${brandOrange};background:${brandYellow};color:#5d3a00;">Total payé</td>
+          <td style="padding:8px;text-align:right;font-weight:bold;font-size:16px;color:#5d3a00;border-top:2px solid ${brandOrange};background:${brandYellow};">${fmtEur(params.amountPaidNow)}</td>
         </tr>
       </table>
 
-      <h2 style="color:${brandBlue};font-size:18px;margin-top:28px;border-bottom:2px solid ${brandBlue};padding-bottom:8px;">Livraison</h2>
+      <h2 style="color:${brandBlue};font-size:18px;margin-top:28px;border-left:5px solid ${brandYellow};padding:8px 12px;background:#fffbeb;border-radius:0 4px 4px 0;">Livraison</h2>
       <p style="line-height:1.6;">${renderAddress(params.shippingAddress)}</p>
       ${travelBlock}
 
-      <h2 style="color:${brandBlue};font-size:18px;margin-top:28px;border-bottom:2px solid ${brandBlue};padding-bottom:8px;">Facturation</h2>
+      <h2 style="color:${brandBlue};font-size:18px;margin-top:28px;border-left:5px solid ${brandYellow};padding:8px 12px;background:#fffbeb;border-radius:0 4px 4px 0;">Facturation</h2>
       ${billingSameAsShipping
         ? `<p style="font-size:13px;color:#666;font-style:italic;margin:0 0 10px;">Identique à l'adresse de livraison</p><p style="line-height:1.6;">${renderAddress(params.shippingAddress)}</p>`
         : `<p style="line-height:1.6;">${renderAddress(params.billingAddress)}</p>`}
 
-      <div style="margin-top:32px;padding:20px;background:linear-gradient(135deg,#fffbeb 0%,#fff7ed 100%);border-radius:6px;text-align:center;border:1px solid ${brandYellow};">
-        <p style="margin:0;font-style:italic;color:#555;">
+      <div style="margin-top:32px;padding:20px;background:${brandYellow};border-radius:6px;text-align:center;border:2px solid ${brandOrange};">
+        <p style="margin:0;font-weight:600;color:#5d3a00;">
           Mèrsi ! 🌴<br/>
           Une question ? Écrivez-nous à <a href="mailto:contact@kiltirbox.com" style="color:${brandBlue};font-weight:bold;">contact@kiltirbox.com</a>
         </p>
@@ -264,6 +267,7 @@ async function sendOrderConfirmationEmail(params: {
     </div>
   </div>
 </body></html>`;
+
 
 
   try {
