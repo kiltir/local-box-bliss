@@ -122,6 +122,26 @@ async function sendOrderConfirmationEmail(params: {
     </tr>
   `).join('');
 
+  // First-month/one-time payment rows: same layout as engagement table.
+  // For subscription items, unitPrice is already the monthly price.
+  const firstPaymentItemsRows = params.items.map((it) => {
+    const label = it.durationMonths && it.durationMonths > 0
+      ? `Mensualité 1/${it.durationMonths}`
+      : (it.subscriptionLabel || 'Achat unique');
+    return `
+    <tr>
+      <td style="padding:12px 8px;border-bottom:1px solid #eee;">
+        <strong>${it.title}</strong><br/><span style="color:#666;font-size:13px;">${label}</span>
+      </td>
+      <td style="padding:12px 8px;border-bottom:1px solid #eee;text-align:center;">${it.quantity}</td>
+      <td style="padding:12px 8px;border-bottom:1px solid #eee;text-align:right;">${fmtEur(it.unitPrice * it.quantity)}</td>
+    </tr>`;
+  }).join('');
+
+  const firstPaymentItemsTotal = params.items.reduce((s, it) => s + it.unitPrice * it.quantity, 0);
+  const firstPaymentShipping = Math.max(0, params.amountPaidNow - firstPaymentItemsTotal);
+  const totalShippingEngagement = subsShippingEngagement + oneTimeShippingEngagement;
+
   const renderAddress = (a: {
     name?: string | null;
     street?: string | null;
@@ -155,9 +175,6 @@ async function sendOrderConfirmationEmail(params: {
 
   const hasSubscription = params.items.some((i) => i.durationMonths && i.durationMonths > 0);
   const firstPaymentTitle = hasSubscription ? '1ère mensualité' : 'Paiement';
-  const firstPaymentText = hasSubscription
-    ? "Montant prélevé aujourd'hui pour la première box et les frais de livraison du premier mois. Les mensualités suivantes seront prélevées automatiquement chaque mois."
-    : "Montant réglé aujourd'hui pour votre commande.";
 
   const html = `
 <!DOCTYPE html>
@@ -187,14 +204,31 @@ async function sendOrderConfirmationEmail(params: {
       </table>
       <table style="width:100%;margin-top:16px;">
         <tr>
+          <td style="padding:8px;font-size:14px;color:#444;">Frais de livraison</td>
+          <td style="padding:8px;text-align:right;font-size:14px;color:#444;">${fmtEur(totalShippingEngagement)}</td>
+        </tr>
+        <tr>
           <td style="padding:8px;font-weight:bold;font-size:16px;border-top:2px solid ${brandOrange};">Total engagement</td>
           <td style="padding:8px;text-align:right;font-weight:bold;font-size:16px;color:${brandOrange};border-top:2px solid ${brandOrange};">${fmtEur(totalEngagement)}</td>
         </tr>
       </table>
 
       <h2 style="color:${brandBlue};font-size:18px;margin-top:28px;border-bottom:2px solid ${brandBlue};padding-bottom:8px;">${firstPaymentTitle}</h2>
-      <p style="font-size:14px;color:#666;line-height:1.6;margin:12px 0;">${firstPaymentText}</p>
-      <table style="width:100%;margin-top:12px;">
+      <table style="width:100%;border-collapse:collapse;margin-top:12px;">
+        <thead>
+          <tr style="background:#fffbeb;">
+            <th style="padding:10px 8px;text-align:left;font-size:13px;color:#444;">Produit</th>
+            <th style="padding:10px 8px;text-align:center;font-size:13px;color:#444;">Qté</th>
+            <th style="padding:10px 8px;text-align:right;font-size:13px;color:#444;">Total</th>
+          </tr>
+        </thead>
+        <tbody>${firstPaymentItemsRows}</tbody>
+      </table>
+      <table style="width:100%;margin-top:16px;">
+        <tr>
+          <td style="padding:8px;font-size:14px;color:#444;">Frais de livraison</td>
+          <td style="padding:8px;text-align:right;font-size:14px;color:#444;">${fmtEur(firstPaymentShipping)}</td>
+        </tr>
         <tr>
           <td style="padding:8px;font-weight:bold;font-size:16px;border-top:2px solid ${brandOrange};">Total payé</td>
           <td style="padding:8px;text-align:right;font-weight:bold;font-size:16px;color:${brandOrange};border-top:2px solid ${brandOrange};">${fmtEur(params.amountPaidNow)}</td>
