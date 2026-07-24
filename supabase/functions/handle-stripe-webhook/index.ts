@@ -125,6 +125,9 @@ async function sendOrderConfirmationEmail(params: {
   // First-month/one-time payment rows: same layout as engagement table.
   // For subscription items, unitPrice is already the monthly price.
   const firstPaymentItemsRows = params.items.map((it) => {
+    const monthlyUnit = it.durationMonths && it.durationMonths > 0
+      ? it.unitPrice / it.durationMonths
+      : it.unitPrice;
     const label = it.durationMonths && it.durationMonths > 0
       ? `Mensualité 1/${it.durationMonths}`
       : (it.subscriptionLabel || 'Achat unique');
@@ -134,11 +137,16 @@ async function sendOrderConfirmationEmail(params: {
         <strong>${it.title}</strong><br/><span style="color:#666;font-size:13px;">${label}</span>
       </td>
       <td style="padding:12px 8px;border-bottom:1px solid #eee;text-align:center;">${it.quantity}</td>
-      <td style="padding:12px 8px;border-bottom:1px solid #eee;text-align:right;">${fmtEur(it.unitPrice * it.quantity)}</td>
+      <td style="padding:12px 8px;border-bottom:1px solid #eee;text-align:right;">${fmtEur(monthlyUnit * it.quantity)}</td>
     </tr>`;
   }).join('');
 
-  const firstPaymentItemsTotal = params.items.reduce((s, it) => s + it.unitPrice * it.quantity, 0);
+  const firstPaymentItemsTotal = params.items.reduce((s, it) => {
+    const monthlyUnit = it.durationMonths && it.durationMonths > 0
+      ? it.unitPrice / it.durationMonths
+      : it.unitPrice;
+    return s + monthlyUnit * it.quantity;
+  }, 0);
   const firstPaymentShipping = Math.max(0, params.amountPaidNow - firstPaymentItemsTotal);
   const totalShippingEngagement = subsShippingEngagement + oneTimeShippingEngagement;
 
