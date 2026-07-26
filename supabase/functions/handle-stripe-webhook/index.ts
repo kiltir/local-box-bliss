@@ -216,11 +216,10 @@ async function sendOrderConfirmationEmail(params: {
 <html><body style="margin:0;padding:0;font-family:${bodyFont};background:${brandCream};color:${textPrimary};">
   <div style="max-width:620px;margin:0 auto;background:#FFFFFF;border:1px solid ${borderSoft};">
     <!-- En-tête -->
-    <div style="background:${brandYellowSoft};padding:36px 24px 28px;text-align:center;border-bottom:1px solid ${borderSoft};">
-      <img src="${logoUrl}" alt="Kiltirbox" style="width:96px;height:auto;display:block;margin:0 auto 14px;"/>
-      <h1 style="font-family:${headingFont};color:${brandBrownDark};margin:0;font-size:28px;font-weight:normal;letter-spacing:1px;">KiltirBox</h1>
-      <div style="width:40px;height:2px;background:${brandYellow};margin:14px auto;"></div>
-      <p style="color:${brandBrown};margin:0;font-size:15px;letter-spacing:0.5px;">Merci pour votre commande</p>
+    <div style="background:${brandYellowSoft};padding:42px 24px 32px;text-align:center;border-bottom:1px solid ${borderSoft};">
+      <img src="${logoUrl}" alt="Kiltirbox" style="width:160px;height:auto;display:block;margin:0 auto 18px;"/>
+      <div style="width:40px;height:2px;background:${brandYellow};margin:12px auto;"></div>
+      <p style="color:${brandBrown};margin:10px 0 0;font-size:15px;letter-spacing:0.5px;">Merci pour votre commande</p>
     </div>
 
     <!-- Corps -->
