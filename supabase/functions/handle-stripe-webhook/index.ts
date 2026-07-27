@@ -94,7 +94,9 @@ async function sendOrderConfirmationEmail(params: {
     return;
   }
 
-  // Palette harmonisée avec le site KiltirBox : brun terre, jaune doux, crème.
+  // Palette harmonisée avec le site KiltirBox : bleu KiltirBox, brun terre, jaune doux, crème.
+  const brandBlue = '#35a1de';        // bleu KiltirBox (en-tête)
+  const brandBlueDark = '#1E7AA8';    // bleu foncé pour titres / bordures
   const brandBrown = '#8B4513';       // earth-brown (principal)
   const brandBrownDark = '#5C2E0C';   // pour titres
   const brandYellow = '#FFD700';      // accent doré
@@ -197,8 +199,9 @@ async function sendOrderConfirmationEmail(params: {
   const logoUrl = 'https://kiltirbox.com/kiltirbox-logo.png';
 
   const sectionTitle = (label: string) => `
-    <h2 style="font-family:${headingFont};color:${brandBrownDark};font-size:20px;font-weight:normal;margin:36px 0 4px;letter-spacing:0.3px;">${label}</h2>
-    <div style="width:48px;height:2px;background:${brandYellow};margin-bottom:16px;"></div>
+    <div style="margin:42px 0 18px;padding:16px 18px;background:linear-gradient(135deg, ${brandBlue} 0%, ${brandBlueDark} 100%);border-radius:8px;box-shadow:0 3px 12px rgba(53,161,222,0.22);">
+      <h2 style="font-family:${headingFont};color:#FFFFFF;font-size:18px;font-weight:normal;margin:0;letter-spacing:0.5px;">${label}</h2>
+    </div>
   `;
 
   const tableHead = `
@@ -216,10 +219,10 @@ async function sendOrderConfirmationEmail(params: {
 <html><body style="margin:0;padding:0;font-family:${bodyFont};background:${brandCream};color:${textPrimary};">
   <div style="max-width:620px;margin:0 auto;background:#FFFFFF;border:1px solid ${borderSoft};">
     <!-- En-tête -->
-    <div style="background:${brandYellowSoft};padding:42px 24px 32px;text-align:center;border-bottom:1px solid ${borderSoft};">
+    <div style="background:${brandBlue};padding:42px 24px 32px;text-align:center;border-bottom:1px solid ${brandBlueDark};">
       <img src="${logoUrl}" alt="Kiltirbox" style="width:160px;height:auto;display:block;margin:0 auto 18px;"/>
       <div style="width:40px;height:2px;background:${brandYellow};margin:12px auto;"></div>
-      <p style="color:${brandBrown};margin:10px 0 0;font-size:15px;letter-spacing:0.5px;">Merci pour votre commande</p>
+      <p style="color:#FFFFFF;margin:10px 0 0;font-size:15px;letter-spacing:0.5px;">Merci pour votre commande</p>
     </div>
 
     <!-- Corps -->
