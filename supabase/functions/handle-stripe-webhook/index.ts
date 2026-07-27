@@ -608,7 +608,7 @@ async function handleSubscriptionCreated(session: any, stripe: any, supabase: an
         quantity: it.quantity || 1,
         unitPrice: it.price,
         durationMonths: it.durationMonths || (it.subscriptionType === '1year' || it.subscriptionType === '12_months' ? 12 : 6),
-        subscriptionLabel: `Abonnement ${it.durationMonths || 6} mois (Mois 1/${it.durationMonths || 6})`,
+        subscriptionLabel: `Abonnement ${it.durationMonths || 6} mois`,
       })),
       ...oneTimeItems.map((it: any) => ({
         title: it.title || `Box ${it.theme}`,
