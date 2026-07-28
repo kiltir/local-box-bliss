@@ -67,6 +67,7 @@ async function sendOrderConfirmationEmail(params: {
     unitPrice: number;
     subscriptionLabel?: string;
     durationMonths?: number | null;
+    currentMonth?: number | null;
   }>;
   amountPaidNow: number;
   shippingUnitCost: number;
@@ -144,7 +145,7 @@ async function sendOrderConfirmationEmail(params: {
       ? it.unitPrice / it.durationMonths
       : it.unitPrice;
     const label = it.durationMonths && it.durationMonths > 0
-      ? `Mensualité 1/${it.durationMonths}`
+      ? `Mensualité ${it.currentMonth && it.currentMonth > 0 ? it.currentMonth : 1}/${it.durationMonths}`
       : (it.subscriptionLabel || 'Achat unique');
     return `
     <tr>
