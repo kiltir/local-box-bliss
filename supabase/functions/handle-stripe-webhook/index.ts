@@ -86,6 +86,11 @@ async function sendOrderConfirmationEmail(params: {
   };
   travelInfo?: any;
   deliveryPreference?: string;
+  isRecurring?: boolean;
+  paymentSectionTitle?: string;
+  emailSubject?: string;
+  headerSubtitle?: string;
+  introText?: string;
 }) {
   const lovableKey = Deno.env.get('LOVABLE_API_KEY');
   const resendKey = Deno.env.get('RESEND_API_KEY');
