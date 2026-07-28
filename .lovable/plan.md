@@ -1,42 +1,62 @@
 ## Objectif
 
-Améliorer l'email de confirmation de commande envoyé après paiement (fichier `supabase/functions/handle-stripe-webhook/index.ts`) :
+1. Envoyer un email de confirmation à chaque prélèvement mensuel d'abonnement (client + BCC `contact@kiltirbox.com`).
+2. Afficher explicitement la progression « Mois X / Y » de chaque abonnement dans l'espace client (`/mes-commandes`) et dans l'admin (onglet Commandes).
 
-1. Ajouter les **frais de livraison** dans la section « Récapitulatif de commande ».
-2. Remplacer le paragraphe d'explication de la section « 1ère mensualité » par une **liste détaillée** (produit, quantité, prix) au même format que le récapitulatif, avec ligne de livraison et total.
+## 1. Email à chaque mensualité prélevée
 
-## Changements
+Fichier : `supabase/functions/handle-stripe-webhook/index.ts`, fonction `handleInvoicePaid`.
 
-### 1. Section « Récapitulatif de commande »
-Sous le tableau des produits, avant la ligne « Total engagement », ajouter une ligne :
-- **Frais de livraison** — montant total des frais sur toute la durée d'engagement (somme de `shippingUnitCost × quantité × mois` pour chaque article, soit `subsShippingEngagement + oneTimeShippingEngagement`, déjà calculé).
+- Après création de la commande mensuelle, appeler `sendOrderConfirmationEmail` avec :
+  - `items` = un seul item abonnement `{ title: "Box <theme>", quantity: 1, unitPrice: monthly_price, durationMonths: duration_months, subscriptionLabel: "Mensualité X/Y" }`
+  - `amountPaidNow = invoice.amount_paid / 100`
+  - `shippingUnitCost` calculé à partir de `invoice.amount_paid - subscription.monthly_price` (frais standards du mois en cours)
+  - Adresses de livraison depuis la table `subscriptions`
+  - Adresse de facturation : récupérer depuis `invoice.customer_address` (fourni par Stripe) ou fallback profile
+- Récupérer l'email client depuis `invoice.customer_email` (ou depuis `auth.users` via `subscription.user_id` si manquant).
+- Adapter légèrement le template : dans l'en-tête, pour les mensualités > 1, l'intitulé « Merci pour votre commande » devient « Prélèvement mensuel confirmé » (via un nouveau flag optionnel `isRecurring`). Le titre du bloc « 1ère mensualité » devient « Mensualité X/Y ».
 
-Le « Total engagement » reste inchangé (il inclut déjà les frais).
+Aucune migration DB. Déploiement automatique de l'edge function.
 
-### 2. Section « 1ère mensualité » / « Paiement »
-- Supprimer le paragraphe explicatif actuel.
-- Afficher un tableau identique à celui du récapitulatif listant, pour chaque article :
-  - Titre (avec libellé d'abonnement si applicable)
-  - Quantité
-  - Prix payé **ce mois-ci** :
-    - Abonnement : `monthlyPrice × quantité` (prix mensuel de la 1ère mensualité)
-    - Achat unique : `unitPrice × quantité` (payé intégralement)
-- Ajouter une ligne **Frais de livraison** = frais réellement facturés aujourd'hui (tarif aéroport pour le 1er mois si applicable, sinon tarif standard).
-- Conserver la ligne « Total payé » = `amountPaidNow` (inchangé).
+## 2. Progression « Mois X / Y » dans les UIs
 
-### 3. Données à passer à `sendOrderConfirmationEmail`
-La fonction reçoit déjà `items` avec `unitPrice`, `quantity`, `durationMonths`. Pour la 1ère mensualité il faut le **prix mensuel** de chaque abonnement. Deux options :
-- Ajouter un champ `monthlyPrice` optionnel dans le type `items` de `sendOrderConfirmationEmail` et le passer depuis chaque appelant (`handleSubscriptionCreated`, `handleOneTimePayment`). Pour les achats uniques, `monthlyPrice = unitPrice`. Pour les abonnements, récupérer le prix mensuel depuis les items du `pending_order` (déjà présent côté panier) ou depuis Stripe.
-- Ajouter aussi `firstMonthShippingCost` (montant réel facturé pour la livraison aujourd'hui) au lieu de le recalculer, afin que la somme corresponde exactement à `amountPaidNow`.
+La donnée fiable est dans la table `subscriptions` (`total_paid_months` / `duration_months`). Les commandes mensuelles (`ABO-...`) sont créées côté webhook et n'ont pas de lien direct avec la subscription, mais le champ `order_items.box_type` contient déjà `Mois X/Y`.
+
+### 2.a Espace client — `src/pages/MesCommandes.tsx`
+
+- Nouveau bloc « Mes abonnements » en haut de la page, au-dessus de la liste des commandes.
+- Fetch de `subscriptions` où `user_id = current user`.
+- Pour chaque abonnement actif/terminé, afficher une carte compacte :
+  - Titre `Box <theme> — Abonnement <duration_months> mois`
+  - Badge de statut (`active`, `completed`, `past_due`, `canceled`)
+  - Ligne « Mensualité **X / Y** » + barre de progression (`Progress` shadcn)
+  - Prochain prélèvement : `current_period_end` (si `active` et `X < Y`)
+- L'affichage « Mois X/Y » dans le libellé de chaque item de commande reste inchangé (déjà présent).
+
+### 2.b Admin — `src/components/admin/OrdersManagement.tsx`
+
+- Ajouter une deuxième vue (Tabs interne : « Commandes » / « Abonnements ») OU un tableau supplémentaire sous les commandes.
+- Choix retenu : sous-onglets internes pour ne pas surcharger.
+- Onglet « Abonnements » : tableau listant chaque subscription avec colonnes :
+  - Client (via jointure profile)
+  - Box (theme)
+  - Durée
+  - Progression `X / Y` + mini barre
+  - Statut
+  - Prochain prélèvement
+  - Prix mensuel
+- Read-only (aligné avec la règle « admin orders = read-only »).
 
 ## Aspects techniques
 
-- Fichier modifié : `supabase/functions/handle-stripe-webhook/index.ts` uniquement.
-- Aucune migration DB, aucun changement d'UI côté frontend.
-- Réutiliser les mêmes styles inline (couleurs `brandYellow`, `brandBlue`, `brandOrange`, helper `fmtEur`).
-- Déploiement automatique de l'edge function après édition.
-- Test conseillé : déclencher un paiement test (panier mixte : 1 abonnement 6 mois + 1 achat unique + livraison aéroport) et vérifier visuellement l'email reçu à `contact@kiltirbox.com`.
+- Un seul fichier edge modifié (`handle-stripe-webhook/index.ts`) — ajouter un champ optionnel `isRecurring?: boolean` et `paymentTitleOverride?: string` au paramètre de `sendOrderConfirmationEmail`.
+- Pas de nouvelle migration.
+- Nouvelle utilisation du composant `Progress` (`@/components/ui/progress`, déjà installé via shadcn).
+- Types Supabase : `subscriptions` déjà présent dans `src/integrations/supabase/types.ts`.
+- Test : déclencher un `invoice.paid` via Stripe CLI ou attendre le prochain cycle mensuel ; vérifier réception email + BCC.
 
-## Questions ouvertes
+## Hors périmètre
 
-- Pour récupérer `monthlyPrice` d'un abonnement côté webhook, préférez-vous que je le lise depuis `pending_orders.items` (champ déjà stocké au moment de la création du panier) ou depuis les `line_items` Stripe ? Le plus fiable est `pending_orders.items` — je pars sur cette option sauf indication contraire.
+- Pas de modification du flux de création initial d'abonnement (déjà envoie email).
+- Pas de refonte du template ; ajustements minimes du header/section title uniquement.
+- Pas de gestion d'annulation d'abonnement côté UI client (non demandé).
