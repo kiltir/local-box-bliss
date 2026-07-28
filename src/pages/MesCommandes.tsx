@@ -250,7 +250,52 @@ const MesCommandes = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="bg-card rounded-lg shadow-sm p-8">
           <h1 className="text-3xl font-bold text-foreground mb-8">Mes commandes</h1>
-          
+
+          {subscriptions.length > 0 && (
+            <div className="mb-10">
+              <h2 className="text-xl font-semibold text-foreground mb-4 flex items-center gap-2">
+                <Crown className="h-5 w-5 text-primary" />
+                Mes abonnements
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {subscriptions.map((sub) => {
+                  const progress = Math.min(100, Math.round((sub.total_paid_months / sub.duration_months) * 100));
+                  const statusMap: Record<string, { label: string; variant: 'success' | 'secondary' | 'destructive' | 'yellow' | 'orange' | 'default' }> = {
+                    active: { label: 'Actif', variant: 'success' },
+                    completed: { label: 'Terminé', variant: 'yellow' },
+                    past_due: { label: 'Paiement en retard', variant: 'orange' },
+                    canceled: { label: 'Annulé', variant: 'destructive' },
+                  };
+                  const st = statusMap[sub.status] || { label: sub.status, variant: 'secondary' as const };
+                  const isActive = sub.status === 'active' && sub.total_paid_months < sub.duration_months;
+                  return (
+                    <Card key={sub.id} className="border border-border">
+                      <CardContent className="p-5">
+                        <div className="flex items-start justify-between gap-3 mb-3">
+                          <div>
+                            <div className="font-semibold text-foreground">Box {sub.theme}</div>
+                            <div className="text-sm text-muted-foreground">Abonnement {sub.duration_months} mois</div>
+                          </div>
+                          <Badge variant={st.variant}>{st.label}</Badge>
+                        </div>
+                        <div className="text-sm mb-2">
+                          Mensualité <span className="font-semibold text-foreground">{sub.total_paid_months}</span> / {sub.duration_months}
+                        </div>
+                        <Progress value={progress} className="h-2 mb-3" />
+                        <div className="flex items-center justify-between text-xs text-muted-foreground">
+                          <span>{Number(sub.monthly_price).toFixed(2)} € / mois</span>
+                          {isActive && sub.current_period_end && (
+                            <span>Prochain prélèvement : {new Date(sub.current_period_end).toLocaleDateString('fr-FR')}</span>
+                          )}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
           {orders.length === 0 ? (
             <div className="text-center py-12">
               <Package className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
