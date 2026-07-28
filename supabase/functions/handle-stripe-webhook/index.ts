@@ -768,7 +768,7 @@ async function handleInvoicePaid(invoice: any, stripe: any, supabase: any) {
           items: [{
             title: `Box ${subscription.theme}`,
             quantity: 1,
-            unitPrice: monthlyItemTotal,
+            unitPrice: monthlyItemTotal * subscription.duration_months,
             durationMonths: subscription.duration_months,
             subscriptionLabel: `Abonnement ${subscription.duration_months} mois`,
           }],
