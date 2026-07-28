@@ -772,6 +772,7 @@ async function handleInvoicePaid(invoice: any, stripe: any, supabase: any) {
             unitPrice: monthlyItemTotal * subscription.duration_months,
             durationMonths: subscription.duration_months,
             subscriptionLabel: `Abonnement ${subscription.duration_months} mois`,
+            currentMonth: newPaidMonths,
           }],
           amountPaidNow,
           shippingUnitCost: monthlyShipping,
