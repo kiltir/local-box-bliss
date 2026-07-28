@@ -199,7 +199,10 @@ async function sendOrderConfirmationEmail(params: {
   }
 
   const hasSubscription = params.items.some((i) => i.durationMonths && i.durationMonths > 0);
-  const firstPaymentTitle = hasSubscription ? '1ère mensualité' : 'Paiement';
+  const firstPaymentTitle = params.paymentSectionTitle || (hasSubscription ? '1ère mensualité' : 'Paiement');
+  const headerSubtitle = params.headerSubtitle || 'Merci pour votre commande';
+  const introText = params.introText || `Nous avons bien reçu votre commande <strong style="color:${brandBrownDark};">${params.orderNumber}</strong> et vous en remercions chaleureusement.
+        Toute l'équipe KiltirBox met un point d'honneur à vous faire découvrir les meilleurs produits de La Réunion.`;
 
   const logoUrl = 'https://kiltirbox.com/kiltirbox-logo.png';
 
@@ -227,16 +230,13 @@ async function sendOrderConfirmationEmail(params: {
     <div style="background:${brandBlue};padding:42px 24px 32px;text-align:center;border-bottom:1px solid ${brandBlueDark};">
       <img src="${logoUrl}" alt="Kiltirbox" style="width:160px;height:auto;display:block;margin:0 auto 18px;"/>
       <div style="width:40px;height:2px;background:${brandYellow};margin:12px auto;"></div>
-      <p style="color:#FFFFFF;margin:10px 0 0;font-size:15px;letter-spacing:0.5px;">Merci pour votre commande</p>
+      <p style="color:#FFFFFF;margin:10px 0 0;font-size:15px;letter-spacing:0.5px;">${headerSubtitle}</p>
     </div>
 
     <!-- Corps -->
     <div style="padding:36px 32px;">
       <p style="font-family:${headingFont};font-size:18px;color:${brandBrownDark};margin:0 0 12px;">Bonjour ${params.customerName || ''},</p>
-      <p style="font-size:15px;line-height:1.7;color:${textPrimary};margin:0;">
-        Nous avons bien reçu votre commande <strong style="color:${brandBrownDark};">${params.orderNumber}</strong> et vous en remercions chaleureusement.
-        Toute l'équipe KiltirBox met un point d'honneur à vous faire découvrir les meilleurs produits de La Réunion.
-      </p>
+      <p style="font-size:15px;line-height:1.7;color:${textPrimary};margin:0;">${introText}</p>
 
       ${sectionTitle('Récapitulatif de commande')}
       <table style="width:100%;border-collapse:collapse;">
@@ -311,7 +311,7 @@ async function sendOrderConfirmationEmail(params: {
         from: 'Kiltirbox <contact@kiltirbox.com>',
         to: [params.customerEmail],
         bcc: ['contact@kiltirbox.com'],
-        subject: `Confirmation de votre commande ${params.orderNumber} - Kiltirbox`,
+        subject: params.emailSubject || `Confirmation de votre commande ${params.orderNumber} - Kiltirbox`,
         html,
       }),
     });
