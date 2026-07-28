@@ -9,6 +9,8 @@ import { Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Progress } from '@/components/ui/progress';
 
 interface Order {
   id: string;
@@ -22,14 +24,29 @@ interface Order {
   };
 }
 
+interface AdminSubscription {
+  id: string;
+  user_id: string;
+  theme: string;
+  status: string;
+  duration_months: number;
+  monthly_price: number;
+  total_paid_months: number;
+  current_period_end: string | null;
+  created_at: string;
+  profiles: { full_name: string | null };
+}
+
 export const OrdersManagement = () => {
   const [orders, setOrders] = useState<Order[]>([]);
+  const [subscriptions, setSubscriptions] = useState<AdminSubscription[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
 
   useEffect(() => {
     fetchOrders();
+    fetchSubscriptions();
   }, []);
 
   const fetchOrders = async () => {
@@ -66,6 +83,24 @@ export const OrdersManagement = () => {
     }
   };
 
+  const fetchSubscriptions = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('subscriptions')
+        .select('*')
+        .order('created_at', { ascending: false });
+      if (error) throw error;
+      const withProfiles = await Promise.all((data || []).map(async (s: any) => {
+        const { data: profile } = await supabase
+          .from('profiles').select('full_name').eq('id', s.user_id).single();
+        return { ...s, profiles: profile || { full_name: null } };
+      }));
+      setSubscriptions(withProfiles as AdminSubscription[]);
+    } catch (e) {
+      console.error('Error fetching subscriptions:', e);
+    }
+  };
+
 
   const getStatusBadge = (status: string) => {
     const statusMap: Record<string, { label: string; variant: 'default' | 'secondary' | 'destructive' | 'outline' | 'success' | 'purple' | 'yellow' | 'orange' }> = {
@@ -99,7 +134,15 @@ export const OrdersManagement = () => {
     <Card>
       <CardHeader>
         <CardTitle>Gestion des commandes</CardTitle>
-        <div className="flex gap-4 mt-4">
+      </CardHeader>
+      <CardContent>
+        <Tabs defaultValue="orders" className="w-full">
+          <TabsList className="mb-4">
+            <TabsTrigger value="orders">Commandes</TabsTrigger>
+            <TabsTrigger value="subs">Abonnements ({subscriptions.length})</TabsTrigger>
+          </TabsList>
+          <TabsContent value="orders">
+            <div className="flex gap-4 mb-4">
           <Input
             placeholder="Rechercher par n° de commande ou client..."
             value={searchTerm}
@@ -119,9 +162,7 @@ export const OrdersManagement = () => {
               <SelectItem value="interrompue">Interrompue</SelectItem>
             </SelectContent>
           </Select>
-        </div>
-      </CardHeader>
-      <CardContent>
+            </div>
         <Table>
           <TableHeader>
             <TableRow>
@@ -146,6 +187,53 @@ export const OrdersManagement = () => {
             ))}
           </TableBody>
         </Table>
+          </TabsContent>
+          <TabsContent value="subs">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Client</TableHead>
+                  <TableHead>Box</TableHead>
+                  <TableHead>Durée</TableHead>
+                  <TableHead className="min-w-[180px]">Progression</TableHead>
+                  <TableHead>Statut</TableHead>
+                  <TableHead>Prochain prélèv.</TableHead>
+                  <TableHead>Prix mensuel</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {subscriptions.map((s) => {
+                  const pct = Math.min(100, Math.round((s.total_paid_months / s.duration_months) * 100));
+                  const statusMap: Record<string, { label: string; variant: any }> = {
+                    active: { label: 'Actif', variant: 'success' },
+                    completed: { label: 'Terminé', variant: 'yellow' },
+                    past_due: { label: 'En retard', variant: 'orange' },
+                    canceled: { label: 'Annulé', variant: 'destructive' },
+                  };
+                  const st = statusMap[s.status] || { label: s.status, variant: 'secondary' };
+                  const isActive = s.status === 'active' && s.total_paid_months < s.duration_months;
+                  return (
+                    <TableRow key={s.id}>
+                      <TableCell>{s.profiles?.full_name || 'N/A'}</TableCell>
+                      <TableCell>{s.theme}</TableCell>
+                      <TableCell>{s.duration_months} mois</TableCell>
+                      <TableCell>
+                        <div className="text-xs mb-1">{s.total_paid_months} / {s.duration_months}</div>
+                        <Progress value={pct} className="h-2" />
+                      </TableCell>
+                      <TableCell><Badge variant={st.variant}>{st.label}</Badge></TableCell>
+                      <TableCell>{isActive && s.current_period_end ? format(new Date(s.current_period_end), 'dd MMM yyyy', { locale: fr }) : '—'}</TableCell>
+                      <TableCell>{Number(s.monthly_price).toFixed(2)} €</TableCell>
+                    </TableRow>
+                  );
+                })}
+                {subscriptions.length === 0 && (
+                  <TableRow><TableCell colSpan={7} className="text-center text-muted-foreground py-6">Aucun abonnement</TableCell></TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </TabsContent>
+        </Tabs>
       </CardContent>
     </Card>
   );
