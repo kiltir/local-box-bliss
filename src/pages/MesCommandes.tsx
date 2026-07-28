@@ -14,6 +14,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Separator } from '@/components/ui/separator';
 import { boxes } from '@/data/boxes';
 import { useBoxImages } from '@/hooks/useBoxImages';
+import { Progress } from '@/components/ui/progress';
 
 interface Order {
   id: string;
@@ -54,6 +55,17 @@ interface OrderItem {
   unit_price: number;
 }
 
+interface UserSubscription {
+  id: string;
+  theme: string;
+  status: string;
+  duration_months: number;
+  monthly_price: number;
+  total_paid_months: number;
+  current_period_end: string | null;
+  created_at: string;
+}
+
 const MesCommandes = () => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
@@ -61,6 +73,7 @@ const MesCommandes = () => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [orderItems, setOrderItems] = useState<OrderItem[]>([]);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+  const [subscriptions, setSubscriptions] = useState<UserSubscription[]>([]);
   
   const [isLoadingOrders, setIsLoadingOrders] = useState(true);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
@@ -114,6 +127,18 @@ const MesCommandes = () => {
 
         if (itemsError) throw itemsError;
         setOrderItems(itemsData || []);
+      }
+
+      // Fetch subscriptions
+      const { data: subsData, error: subsError } = await supabase
+        .from('subscriptions')
+        .select('id, theme, status, duration_months, monthly_price, total_paid_months, current_period_end, created_at')
+        .eq('user_id', user?.id)
+        .order('created_at', { ascending: false });
+      if (subsError) {
+        console.error('Erreur lors du chargement des abonnements:', subsError);
+      } else {
+        setSubscriptions(subsData || []);
       }
     } catch (error) {
       console.error('Erreur lors du chargement des commandes:', error);
