@@ -722,6 +722,82 @@ async function handleInvoicePaid(invoice: any, stripe: any, supabase: any) {
 
   await decrementStock(subscription.theme, 1, supabase);
 
+  // Send recurring monthly confirmation email (skip the very first invoice,
+  // whose email is already sent from handleSubscriptionCreated on checkout.session.completed).
+  if (invoice.billing_reason && invoice.billing_reason !== 'subscription_create') {
+    try {
+      const amountPaidNow = invoice.amount_paid / 100;
+      const monthlyItemTotal = Number(subscription.monthly_price) || 0;
+      const monthlyShipping = Math.max(0, amountPaidNow - monthlyItemTotal);
+
+      let customerEmail = invoice.customer_email as string | undefined;
+      if (!customerEmail) {
+        const { data: userData } = await supabase.auth.admin.getUserById(subscription.user_id);
+        customerEmail = userData?.user?.email;
+      }
+
+      let billingAddress = {
+        name: invoice.customer_name || null,
+        street: invoice.customer_address?.line1 || null,
+        city: invoice.customer_address?.city || null,
+        postal_code: invoice.customer_address?.postal_code || null,
+        country: resolveCountryName(invoice.customer_address?.country),
+      };
+      if (!billingAddress.street) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('full_name,billing_address_street,billing_address_city,billing_address_postal_code,billing_address_country')
+          .eq('id', subscription.user_id)
+          .single();
+        if (profile) {
+          billingAddress = {
+            name: billingAddress.name || profile.full_name || null,
+            street: profile.billing_address_street || null,
+            city: profile.billing_address_city || null,
+            postal_code: profile.billing_address_postal_code || null,
+            country: resolveCountryName(profile.billing_address_country),
+          };
+        }
+      }
+
+      if (customerEmail) {
+        await sendOrderConfirmationEmail({
+          customerEmail,
+          customerName: invoice.customer_name || null,
+          orderNumber,
+          items: [{
+            title: `Box ${subscription.theme}`,
+            quantity: 1,
+            unitPrice: monthlyItemTotal,
+            durationMonths: subscription.duration_months,
+            subscriptionLabel: `Abonnement ${subscription.duration_months} mois`,
+          }],
+          amountPaidNow,
+          shippingUnitCost: monthlyShipping,
+          shippingAddress: {
+            name: null,
+            street: subscription.shipping_address_street,
+            city: subscription.shipping_address_city,
+            postal_code: subscription.shipping_address_postal_code,
+            country: subscription.shipping_address_country,
+          },
+          billingAddress,
+          deliveryPreference: subscription.delivery_preference,
+          isRecurring: true,
+          paymentSectionTitle: `Mensualité ${newPaidMonths}/${subscription.duration_months}`,
+          emailSubject: `Prélèvement mensuel confirmé (${newPaidMonths}/${subscription.duration_months}) - Kiltirbox`,
+          headerSubtitle: `Prélèvement mensuel confirmé — Mois ${newPaidMonths}/${subscription.duration_months}`,
+          introText: `Votre prélèvement mensuel pour votre abonnement <strong>Box ${subscription.theme}</strong> a bien été effectué. Il s'agit de la mensualité <strong>${newPaidMonths}/${subscription.duration_months}</strong>. Merci pour votre fidélité !`,
+        });
+      } else {
+        logStep('Recurring email skipped: no customer email', { subscriptionId });
+      }
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      logStep('Failed to send recurring email', { error: msg });
+    }
+  }
+
   if (newPaidMonths >= subscription.duration_months) {
     logStep('Subscription engagement completed, canceling', { subscriptionId });
     
