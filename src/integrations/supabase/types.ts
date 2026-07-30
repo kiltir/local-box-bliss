@@ -818,7 +818,6 @@ export type Database = {
           delivery_preference: string | null
           duration_months: number
           id: string
-          monthly_price: number
           shipping_address_city: string | null
           shipping_address_country: string | null
           shipping_address_postal_code: string | null
@@ -828,6 +827,7 @@ export type Database = {
           stripe_subscription_id: string
           theme: string
           total_paid_months: number
+          total_price: number
           updated_at: string
           user_id: string
         }
@@ -840,7 +840,6 @@ export type Database = {
           delivery_preference?: string | null
           duration_months: number
           id?: string
-          monthly_price: number
           shipping_address_city?: string | null
           shipping_address_country?: string | null
           shipping_address_postal_code?: string | null
@@ -850,6 +849,7 @@ export type Database = {
           stripe_subscription_id: string
           theme: string
           total_paid_months?: number
+          total_price: number
           updated_at?: string
           user_id: string
         }
@@ -862,7 +862,6 @@ export type Database = {
           delivery_preference?: string | null
           duration_months?: number
           id?: string
-          monthly_price?: number
           shipping_address_city?: string | null
           shipping_address_country?: string | null
           shipping_address_postal_code?: string | null
@@ -872,6 +871,7 @@ export type Database = {
           stripe_subscription_id?: string
           theme?: string
           total_paid_months?: number
+          total_price?: number
           updated_at?: string
           user_id?: string
         }
