@@ -511,7 +511,7 @@ async function handleSubscriptionCreated(session: any, stripe: any, supabase: an
         theme: item.theme || item.title?.replace('Box ', ''),
         status: 'active',
         duration_months: durationMonths,
-        monthly_price: item.price,
+        total_price: item.price,
         total_paid_months: 1,
         current_period_start: new Date(stripeSubscription.current_period_start * 1000).toISOString(),
         current_period_end: new Date(stripeSubscription.current_period_end * 1000).toISOString(),
@@ -715,7 +715,7 @@ async function handleInvoicePaid(invoice: any, stripe: any, supabase: any) {
       order_id: orderData.id,
       box_type: `Box ${subscription.theme} - Abonnement (Mois ${newPaidMonths}/${subscription.duration_months})`,
       quantity: 1,
-      unit_price: subscription.monthly_price,
+      unit_price: subscription.total_price / subscription.duration_months,
     });
 
     logStep('Monthly order created', { orderId: orderData.id, month: newPaidMonths });
@@ -725,10 +725,10 @@ async function handleInvoicePaid(invoice: any, stripe: any, supabase: any) {
 
   // Send recurring monthly confirmation email (skip the very first invoice,
   // whose email is already sent from handleSubscriptionCreated on checkout.session.completed).
-  if (invoice.billing_reason && invoice.billing_reason !== 'subscription_create') {
+    if (invoice.billing_reason && invoice.billing_reason !== 'subscription_create') {
     try {
       const amountPaidNow = invoice.amount_paid / 100;
-      const monthlyItemTotal = Number(subscription.monthly_price) || 0;
+      const monthlyItemTotal = Number(subscription.total_price) / subscription.duration_months;
       const monthlyShipping = Math.max(0, amountPaidNow - monthlyItemTotal);
 
       let customerEmail = invoice.customer_email as string | undefined;
