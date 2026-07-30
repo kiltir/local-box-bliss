@@ -60,7 +60,7 @@ interface UserSubscription {
   theme: string;
   status: string;
   duration_months: number;
-  monthly_price: number;
+  total_price: number;
   total_paid_months: number;
   current_period_end: string | null;
   created_at: string;
@@ -132,7 +132,7 @@ const MesCommandes = () => {
       // Fetch subscriptions
       const { data: subsData, error: subsError } = await supabase
         .from('subscriptions')
-        .select('id, theme, status, duration_months, monthly_price, total_paid_months, current_period_end, created_at')
+        .select('id, theme, status, duration_months, total_price, total_paid_months, current_period_end, created_at')
         .eq('user_id', user?.id)
         .order('created_at', { ascending: false });
       if (subsError) {
@@ -283,7 +283,7 @@ const MesCommandes = () => {
                         </div>
                         <Progress value={progress} className="h-2 mb-3" />
                         <div className="flex items-center justify-between text-xs text-muted-foreground">
-                          <span>{Number(sub.monthly_price).toFixed(2)} € / mois</span>
+                          <span>{Number(sub.total_price / sub.duration_months).toFixed(2)} € / mois</span>
                           {isActive && sub.current_period_end && (
                             <span>Prochain prélèvement : {new Date(sub.current_period_end).toLocaleDateString('fr-FR')}</span>
                           )}
