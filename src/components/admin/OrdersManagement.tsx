@@ -30,7 +30,7 @@ interface AdminSubscription {
   theme: string;
   status: string;
   duration_months: number;
-  monthly_price: number;
+  total_price: number;
   total_paid_months: number;
   current_period_end: string | null;
   created_at: string;
