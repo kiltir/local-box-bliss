@@ -283,7 +283,7 @@ const MesCommandes = () => {
                         </div>
                         <Progress value={progress} className="h-2 mb-3" />
                         <div className="flex items-center justify-between text-xs text-muted-foreground">
-                          <span>{Number(sub.monthly_price).toFixed(2)} € / mois</span>
+                          <span>{Number(sub.total_price / sub.duration_months).toFixed(2)} € / mois</span>
                           {isActive && sub.current_period_end && (
                             <span>Prochain prélèvement : {new Date(sub.current_period_end).toLocaleDateString('fr-FR')}</span>
                           )}

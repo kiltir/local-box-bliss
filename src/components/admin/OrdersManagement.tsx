@@ -223,7 +223,7 @@ export const OrdersManagement = () => {
                       </TableCell>
                       <TableCell><Badge variant={st.variant}>{st.label}</Badge></TableCell>
                       <TableCell>{isActive && s.current_period_end ? format(new Date(s.current_period_end), 'dd MMM yyyy', { locale: fr }) : '—'}</TableCell>
-                      <TableCell>{Number(s.monthly_price).toFixed(2)} €</TableCell>
+                      <TableCell>{Number(s.total_price / s.duration_months).toFixed(2)} €</TableCell>
                     </TableRow>
                   );
                 })}
