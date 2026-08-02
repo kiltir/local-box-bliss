@@ -661,7 +661,7 @@ serve(async (req) => {
       automatic_tax: { enabled: false },
       billing_address_collection: 'required',
       shipping_address_collection: {
-        allowed_countries: ['FR', 'RE', 'BE', 'CH', 'DE', 'ES', 'IT', 'NL', 'LU'],
+        allowed_countries: allowedCountries,
       },
       custom_text: {
         shipping_address: {
