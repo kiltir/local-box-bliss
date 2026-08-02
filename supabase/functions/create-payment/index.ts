@@ -153,10 +153,13 @@ serve(async (req) => {
       shippingLabel = s.label;
     }
 
-    // Lock the shipping country on Stripe checkout based on the delivery mode
-    const isReunionDestination =
-      travelInfo?.delivery_preference === 'reunion_delivery' || isAirportMode;
-    const allowedCountries: string[] = isReunionDestination ? ['RE'] : ['FR'];
+    // Lock the shipping country on Stripe checkout based on the delivery mode.
+    // Airport pickup: no lock (fallback delivery possible in RE or FR).
+    const allowedCountries: string[] = isAirportMode
+      ? ['FR', 'RE']
+      : travelInfo?.delivery_preference === 'reunion_delivery'
+        ? ['RE']
+        : ['FR'];
     logStep("Allowed shipping countries resolved", { allowedCountries });
 
     // Fetch all box prices from database for validation
