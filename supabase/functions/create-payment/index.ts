@@ -153,6 +153,12 @@ serve(async (req) => {
       shippingLabel = s.label;
     }
 
+    // Lock the shipping country on Stripe checkout based on the delivery mode
+    const isReunionDestination =
+      travelInfo?.delivery_preference === 'reunion_delivery' || isAirportMode;
+    const allowedCountries: string[] = isReunionDestination ? ['RE'] : ['FR'];
+    logStep("Allowed shipping countries resolved", { allowedCountries });
+
     // Fetch all box prices from database for validation
     const { data: dbPrices, error: pricesError } = await supabaseClient
       .from('box_prices')
@@ -552,7 +558,7 @@ serve(async (req) => {
         cancel_url: `${requestOrigin}/payment-canceled`,
         billing_address_collection: 'required',
         shipping_address_collection: {
-          allowed_countries: ['FR', 'RE', 'BE', 'CH', 'DE', 'ES', 'IT', 'NL', 'LU'],
+          allowed_countries: allowedCountries,
         },
         custom_text: {
           submit: {
@@ -655,7 +661,7 @@ serve(async (req) => {
       automatic_tax: { enabled: false },
       billing_address_collection: 'required',
       shipping_address_collection: {
-        allowed_countries: ['FR', 'RE', 'BE', 'CH', 'DE', 'ES', 'IT', 'NL', 'LU'],
+        allowed_countries: allowedCountries,
       },
       custom_text: {
         shipping_address: {
