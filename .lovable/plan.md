@@ -1,33 +1,22 @@
+# Verrouiller le pays de livraison sur Stripe selon le mode choisi
+
 ## Objectif
+Sur la page de paiement Stripe, le client ne doit plus pouvoir choisir n'importe quel pays : le pays d'adresse de livraison est imposé par le mode de livraison sélectionné sur la page « Finaliser votre commande ».
 
-Simuler le prélèvement de la 2ème mensualité d'un abonnement existant (mode test Stripe) et observer l'ensemble des effets : mise à jour de la table `subscriptions`, création de la commande mensuelle `ABO-...`, envoi de l'email récurrent, affichage « Mois X / Y » dans `/mes-commandes` et dans l'admin.
+## Règles
+| Mode choisi | Pays autorisé sur Stripe |
+|---|---|
+| Livraison Métropole (par défaut) | France (FR) |
+| Livraison La Réunion | La Réunion (RE) |
+| Récupération à l'aéroport (mois 1) + mensualités métropole | France (FR) |
 
-## Méthode retenue : événement `invoice.paid` signé
+Note : dans Stripe, La Réunion est un pays distinct (« Réunion », code RE) ; l'adresse de livraison Réunion ne sera donc plus saisissable en « France » et inversement.
 
-Le webhook `handle-stripe-webhook` vérifie la signature Stripe. La simulation consiste donc à :
+## Détails techniques
+Dans `supabase/functions/create-payment/index.ts`, la préférence de livraison est déjà résolue (`travelInfo.delivery_preference` → `reunion_delivery`, `airport_pickup_*`, sinon métropole) pour calculer les frais.
 
-1. Sélectionner un abonnement de test existant dans `subscriptions` (celui créé récemment : Box Découverte, 12 mois, `total_paid_months = 1`) et relever son `stripe_subscription_id` + `stripe_customer_id`.
-2. Récupérer depuis Stripe (API test, via la clé `STRIPE_SECRET_KEY`) la vraie subscription pour construire un payload d'`invoice.paid` réaliste : `subscription`, `customer_email`, `customer_name`, `customer_address`, `amount_paid`, `period_start`, `period_end`, `billing_reason: "subscription_cycle"`.
-3. Construire l'événement `invoice.paid` complet, calculer l'en-tête `Stripe-Signature` (HMAC SHA-256 `t=<ts>,v1=<sig>` avec `STRIPE_WEBHOOK_SECRET`) et l'envoyer en POST à l'URL de la fonction edge.
-4. Observer les résultats :
-   - logs de la fonction `handle-stripe-webhook`
-   - requête SQL sur `subscriptions` (`total_paid_months` doit passer à 2, `current_period_*` mis à jour)
-   - requête SQL sur `orders` / `order_items` (nouvelle commande `ABO-...` avec libellé `Mois 2/12`)
-   - confirmation d'envoi de l'email récurrent (log Resend) — l'email part sur l'adresse client de test + BCC `contact@kiltirbox.com`
-   - capture d'écran de `/mes-commandes` et de l'onglet Admin « Abonnements » pour vérifier la progression 2/12
+- Ajouter une variable `allowedCountries` calculée dans ce même bloc : `['RE']` pour `reunion_delivery`, `['FR']` dans tous les autres cas (métropole et aéroport, puisque les mensualités suivantes partent en métropole).
+- Remplacer la liste figée `['FR','RE','BE','CH','DE','ES','IT','NL','LU']` par cette variable dans les deux appels `shipping_address_collection.allowed_countries` (mode abonnement ~ligne 555 et mode achat unique ~ligne 658).
+- Redéployer la fonction edge `create-payment`.
 
-## Points d'attention
-
-- La simulation crée une **vraie ligne de commande** en base et **envoie un vrai email** (adresse de test `getacek851@kingcq.com` + BCC pro). Si tu préfères éviter le BCC, je peux d'abord faire un dry-run en lisant seulement le code, ou supprimer la commande de test après observation.
-- Aucun paiement réel n'est déclenché : l'événement est synthétique, Stripe n'est pas débité.
-- Aucune modification du code applicatif n'est prévue. Si l'observation révèle un bug (montant de livraison, libellé du mois, email manquant), je le signalerai et proposerai un correctif dans un second temps.
-
-## Aspects techniques
-
-- Script Python jetable sous `/tmp/` (hors dépôt) pour la signature HMAC et l'envoi.
-- Secrets `STRIPE_SECRET_KEY` / `STRIPE_WEBHOOK_SECRET` lus via l'outil secrets, jamais affichés ni journalisés.
-- Nettoyage optionnel en fin de test : suppression de la commande `ABO-...` générée et remise de `total_paid_months` à sa valeur initiale.
-
-## Question ouverte
-
-Souhaites-tu que je **conserve** ou que je **nettoie** les données générées (commande de test + compteur d'abonnement) après observation ? Par défaut je nettoie.
+Aucun changement de base de données, aucun impact sur le calcul des frais de port.
