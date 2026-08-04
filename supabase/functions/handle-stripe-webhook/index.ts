@@ -691,21 +691,58 @@ async function handleInvoicePaid(invoice: any, stripe: any, supabase: any) {
 
   // Create monthly order
   const orderNumber = `ABO-${Date.now()}-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
-  
+
+  const monthlyItemPrice = Number(subscription.total_price) / subscription.duration_months;
+  const monthlyShippingCost = Math.max(0, invoice.amount_paid / 100 - monthlyItemPrice);
+
+  // Reuse the billing / recipient info from the initial subscription order
+  const { data: previousOrder } = await supabase
+    .from('orders')
+    .select('nom_prenom,destinataire,billing_address_street,billing_address_city,billing_address_postal_code,billing_address_country')
+    .eq('user_id', subscription.user_id)
+    .not('billing_address_street', 'is', null)
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  let fallbackBilling = previousOrder;
+  if (!fallbackBilling?.billing_address_street) {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('full_name,billing_address_street,billing_address_city,billing_address_postal_code,billing_address_country')
+      .eq('id', subscription.user_id)
+      .maybeSingle();
+    if (profile) {
+      fallbackBilling = {
+        nom_prenom: profile.full_name,
+        destinataire: null,
+        billing_address_street: profile.billing_address_street,
+        billing_address_city: profile.billing_address_city,
+        billing_address_postal_code: profile.billing_address_postal_code,
+        billing_address_country: profile.billing_address_country,
+      } as any;
+    }
+  }
+
   const { data: orderData, error: orderError } = await supabase
     .from('orders')
     .insert({
       user_id: subscription.user_id,
       order_number: orderNumber,
       total_amount: invoice.amount_paid / 100,
-      nom_prenom: invoice.customer_name || null,
-      destinataire: null,
+      shipping_cost: monthlyShippingCost,
+      nom_prenom: invoice.customer_name || fallbackBilling?.nom_prenom || null,
+      destinataire: fallbackBilling?.destinataire || null,
       status: 'confirmee',
       delivery_preference: subscription.delivery_preference,
       shipping_address_street: subscription.shipping_address_street,
       shipping_address_city: subscription.shipping_address_city,
       shipping_address_postal_code: subscription.shipping_address_postal_code,
       shipping_address_country: subscription.shipping_address_country,
+      billing_address_street: invoice.customer_address?.line1 || fallbackBilling?.billing_address_street || null,
+      billing_address_city: invoice.customer_address?.city || fallbackBilling?.billing_address_city || null,
+      billing_address_postal_code: invoice.customer_address?.postal_code || fallbackBilling?.billing_address_postal_code || null,
+      billing_address_country: resolveCountryName(invoice.customer_address?.country) || fallbackBilling?.billing_address_country || null,
     })
     .select()
     .single();
@@ -715,7 +752,7 @@ async function handleInvoicePaid(invoice: any, stripe: any, supabase: any) {
       order_id: orderData.id,
       box_type: `Box ${subscription.theme} - Abonnement (Mois ${newPaidMonths}/${subscription.duration_months})`,
       quantity: 1,
-      unit_price: subscription.total_price / subscription.duration_months,
+      unit_price: monthlyItemPrice,
     });
 
     logStep('Monthly order created', { orderId: orderData.id, month: newPaidMonths });
