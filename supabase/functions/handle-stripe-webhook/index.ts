@@ -695,17 +695,30 @@ async function handleInvoicePaid(invoice: any, stripe: any, supabase: any) {
   const monthlyItemPrice = Number(subscription.total_price) / subscription.duration_months;
   const monthlyShippingCost = Math.max(0, invoice.amount_paid / 100 - monthlyItemPrice);
 
-  // Reuse the billing / recipient info from the initial subscription order
-  const { data: previousOrder } = await supabase
+  // Reuse the billing / recipient info from the INITIAL order of this subscription
+  // (the first order created at/after the subscription was created).
+  const subStart = new Date(new Date(subscription.created_at).getTime() - 60_000).toISOString();
+  const { data: initialOrder } = await supabase
     .from('orders')
-    .select('nom_prenom,destinataire,billing_address_street,billing_address_city,billing_address_postal_code,billing_address_country')
+    .select('nom_prenom,destinataire,billing_address_street,billing_address_city,billing_address_postal_code,billing_address_country,shipping_address_street,shipping_address_city,shipping_address_postal_code,shipping_address_country,delivery_preference')
     .eq('user_id', subscription.user_id)
-    .not('billing_address_street', 'is', null)
-    .order('created_at', { ascending: false })
+    .gte('created_at', subStart)
+    .order('created_at', { ascending: true })
     .limit(1)
     .maybeSingle();
 
-  let fallbackBilling = previousOrder;
+  let fallbackBilling: any = initialOrder;
+  if (!fallbackBilling?.billing_address_street) {
+    const { data: previousOrder } = await supabase
+      .from('orders')
+      .select('nom_prenom,destinataire,billing_address_street,billing_address_city,billing_address_postal_code,billing_address_country')
+      .eq('user_id', subscription.user_id)
+      .not('billing_address_street', 'is', null)
+      .order('created_at', { ascending: true })
+      .limit(1)
+      .maybeSingle();
+    fallbackBilling = previousOrder || fallbackBilling;
+  }
   if (!fallbackBilling?.billing_address_street) {
     const { data: profile } = await supabase
       .from('profiles')
@@ -714,8 +727,8 @@ async function handleInvoicePaid(invoice: any, stripe: any, supabase: any) {
       .maybeSingle();
     if (profile) {
       fallbackBilling = {
+        ...(fallbackBilling || {}),
         nom_prenom: profile.full_name,
-        destinataire: null,
         billing_address_street: profile.billing_address_street,
         billing_address_city: profile.billing_address_city,
         billing_address_postal_code: profile.billing_address_postal_code,
@@ -724,6 +737,20 @@ async function handleInvoicePaid(invoice: any, stripe: any, supabase: any) {
     }
   }
 
+  // Addresses stay identical to those given at subscription time
+  const lockedShipping = {
+    street: subscription.shipping_address_street || initialOrder?.shipping_address_street || null,
+    city: subscription.shipping_address_city || initialOrder?.shipping_address_city || null,
+    postal_code: subscription.shipping_address_postal_code || initialOrder?.shipping_address_postal_code || null,
+    country: subscription.shipping_address_country || initialOrder?.shipping_address_country || null,
+  };
+  const lockedBilling = {
+    street: fallbackBilling?.billing_address_street || invoice.customer_address?.line1 || null,
+    city: fallbackBilling?.billing_address_city || invoice.customer_address?.city || null,
+    postal_code: fallbackBilling?.billing_address_postal_code || invoice.customer_address?.postal_code || null,
+    country: fallbackBilling?.billing_address_country || resolveCountryName(invoice.customer_address?.country) || null,
+  };
+
   const { data: orderData, error: orderError } = await supabase
     .from('orders')
     .insert({
@@ -731,18 +758,18 @@ async function handleInvoicePaid(invoice: any, stripe: any, supabase: any) {
       order_number: orderNumber,
       total_amount: invoice.amount_paid / 100,
       shipping_cost: monthlyShippingCost,
-      nom_prenom: invoice.customer_name || fallbackBilling?.nom_prenom || null,
+      nom_prenom: fallbackBilling?.nom_prenom || invoice.customer_name || null,
       destinataire: fallbackBilling?.destinataire || null,
       status: 'confirmee',
-      delivery_preference: subscription.delivery_preference,
-      shipping_address_street: subscription.shipping_address_street,
-      shipping_address_city: subscription.shipping_address_city,
-      shipping_address_postal_code: subscription.shipping_address_postal_code,
-      shipping_address_country: subscription.shipping_address_country,
-      billing_address_street: invoice.customer_address?.line1 || fallbackBilling?.billing_address_street || null,
-      billing_address_city: invoice.customer_address?.city || fallbackBilling?.billing_address_city || null,
-      billing_address_postal_code: invoice.customer_address?.postal_code || fallbackBilling?.billing_address_postal_code || null,
-      billing_address_country: resolveCountryName(invoice.customer_address?.country) || fallbackBilling?.billing_address_country || null,
+      delivery_preference: subscription.delivery_preference || initialOrder?.delivery_preference || null,
+      shipping_address_street: lockedShipping.street,
+      shipping_address_city: lockedShipping.city,
+      shipping_address_postal_code: lockedShipping.postal_code,
+      shipping_address_country: lockedShipping.country,
+      billing_address_street: lockedBilling.street,
+      billing_address_city: lockedBilling.city,
+      billing_address_postal_code: lockedBilling.postal_code,
+      billing_address_country: lockedBilling.country,
     })
     .select()
     .single();
@@ -774,34 +801,18 @@ async function handleInvoicePaid(invoice: any, stripe: any, supabase: any) {
         customerEmail = userData?.user?.email;
       }
 
-      let billingAddress = {
-        name: invoice.customer_name || null,
-        street: invoice.customer_address?.line1 || null,
-        city: invoice.customer_address?.city || null,
-        postal_code: invoice.customer_address?.postal_code || null,
-        country: resolveCountryName(invoice.customer_address?.country),
+      const billingAddress = {
+        name: fallbackBilling?.nom_prenom || invoice.customer_name || null,
+        street: lockedBilling.street,
+        city: lockedBilling.city,
+        postal_code: lockedBilling.postal_code,
+        country: lockedBilling.country,
       };
-      if (!billingAddress.street) {
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('full_name,billing_address_street,billing_address_city,billing_address_postal_code,billing_address_country')
-          .eq('id', subscription.user_id)
-          .single();
-        if (profile) {
-          billingAddress = {
-            name: billingAddress.name || profile.full_name || null,
-            street: profile.billing_address_street || null,
-            city: profile.billing_address_city || null,
-            postal_code: profile.billing_address_postal_code || null,
-            country: resolveCountryName(profile.billing_address_country),
-          };
-        }
-      }
 
       if (customerEmail) {
         await sendOrderConfirmationEmail({
           customerEmail,
-          customerName: invoice.customer_name || null,
+          customerName: fallbackBilling?.nom_prenom || invoice.customer_name || null,
           orderNumber,
           items: [{
             title: `Box ${subscription.theme}`,
@@ -814,14 +825,14 @@ async function handleInvoicePaid(invoice: any, stripe: any, supabase: any) {
           amountPaidNow,
           shippingUnitCost: monthlyShipping,
           shippingAddress: {
-            name: null,
-            street: subscription.shipping_address_street,
-            city: subscription.shipping_address_city,
-            postal_code: subscription.shipping_address_postal_code,
-            country: subscription.shipping_address_country,
+            name: fallbackBilling?.destinataire || null,
+            street: lockedShipping.street,
+            city: lockedShipping.city,
+            postal_code: lockedShipping.postal_code,
+            country: lockedShipping.country,
           },
           billingAddress,
-          deliveryPreference: subscription.delivery_preference,
+          deliveryPreference: subscription.delivery_preference || initialOrder?.delivery_preference || null,
           isRecurring: true,
           paymentSectionTitle: `Mensualité ${newPaidMonths}/${subscription.duration_months}`,
           emailSubject: `Prélèvement mensuel confirmé (${newPaidMonths}/${subscription.duration_months}) - Kiltirbox`,
