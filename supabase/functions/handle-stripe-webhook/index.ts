@@ -689,9 +689,8 @@ async function handleInvoicePaid(invoice: any, stripe: any, supabase: any) {
     of: subscription.duration_months 
   });
 
-  // Create monthly order
-  const orderNumber = `ABO-${Date.now()}-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
-
+  // Create monthly order (order number kept identical to the initial subscription
+  // order, only the last 6 characters change to identify the installment)
   const monthlyItemPrice = Number(subscription.total_price) / subscription.duration_months;
   const monthlyShippingCost = Math.max(0, invoice.amount_paid / 100 - monthlyItemPrice);
 
@@ -700,7 +699,7 @@ async function handleInvoicePaid(invoice: any, stripe: any, supabase: any) {
   const subStart = new Date(new Date(subscription.created_at).getTime() - 60_000).toISOString();
   const { data: initialOrder } = await supabase
     .from('orders')
-    .select('nom_prenom,destinataire,billing_address_street,billing_address_city,billing_address_postal_code,billing_address_country,shipping_address_street,shipping_address_city,shipping_address_postal_code,shipping_address_country,delivery_preference')
+    .select('order_number,nom_prenom,destinataire,billing_address_street,billing_address_city,billing_address_postal_code,billing_address_country,shipping_address_street,shipping_address_city,shipping_address_postal_code,shipping_address_country,delivery_preference')
     .eq('user_id', subscription.user_id)
     .gte('created_at', subStart)
     .order('created_at', { ascending: true })
@@ -736,6 +735,13 @@ async function handleInvoicePaid(invoice: any, stripe: any, supabase: any) {
       } as any;
     }
   }
+
+  // Same prefix as the initial order, distinct 6-char suffix per installment
+  const installmentSuffix = `${String(newPaidMonths).padStart(2, '0')}${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
+  const basePrefix = initialOrder?.order_number
+    ? initialOrder.order_number.slice(0, -6)
+    : `ABO-${Date.now()}-`;
+  const orderNumber = `${basePrefix}${installmentSuffix}`;
 
   // Addresses stay identical to those given at subscription time
   const lockedShipping = {
