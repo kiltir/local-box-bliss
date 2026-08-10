@@ -534,7 +534,8 @@ async function handleSubscriptionCreated(session: any, stripe: any, supabase: an
   }
 
   // Create initial order for the first month
-  const orderNumber = `ABO-${Date.now()}-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
+  // Suffix "01" + 4 random chars: subsequent installments reuse this prefix
+  const orderNumber = `ABO-${Date.now()}-01${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
   const deliveryPreference = travelInfo?.delivery_preference || 'metropole';
   
   const { data: orderData, error: orderError } = await supabase
