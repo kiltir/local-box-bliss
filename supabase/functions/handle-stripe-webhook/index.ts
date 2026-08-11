@@ -571,11 +571,16 @@ async function handleSubscriptionCreated(session: any, stripe: any, supabase: an
   const orderItemsToInsert: any[] = [];
 
   for (const item of subscriptionItems) {
+    const durationMonths = item.durationMonths || 6;
+    const qty = item.quantity || 1;
+    const monthlyPrice = Number(item.price) / durationMonths;
     orderItemsToInsert.push({
       order_id: orderData.id,
-      box_type: `${item.title} - Abonnement (Mois 1/${item.durationMonths || 6})`,
-      quantity: item.quantity || 1,
-      unit_price: item.price,
+      box_type: `${item.title} - Abonnement (Mois 1/${durationMonths})`,
+      quantity: qty,
+      unit_price: Number(monthlyPrice.toFixed(2)),
+      // Reste à payer après cette 1ère mensualité
+      cumul_engagement: Number((monthlyPrice * (durationMonths - 1) * qty).toFixed(2)),
     });
   }
 
@@ -585,6 +590,7 @@ async function handleSubscriptionCreated(session: any, stripe: any, supabase: an
       box_type: item.title || `Box ${item.theme}`,
       quantity: item.quantity || 1,
       unit_price: item.price,
+      cumul_engagement: Number(item.price),
     });
   }
 
@@ -788,6 +794,9 @@ async function handleInvoicePaid(invoice: any, stripe: any, supabase: any) {
       box_type: `Box ${subscription.theme} - Abonnement (Mois ${newPaidMonths}/${subscription.duration_months})`,
       quantity: 1,
       unit_price: monthlyItemPrice,
+      cumul_engagement: Number(
+        Math.max(0, Number(subscription.total_price) - monthlyItemPrice * newPaidMonths).toFixed(2)
+      ),
     });
 
     logStep('Monthly order created', { orderId: orderData.id, month: newPaidMonths });
@@ -980,6 +989,7 @@ async function handleOneTimePayment(session: any, supabase: any) {
       box_type: item.title || item.id?.toString() || 'Unknown',
       quantity: item.quantity,
       unit_price: item.price,
+      cumul_engagement: Number(item.price),
     }));
 
   if (orderItems.length > 0) {
