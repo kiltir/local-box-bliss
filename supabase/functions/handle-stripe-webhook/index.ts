@@ -845,7 +845,7 @@ async function handleInvoicePaid(invoice: any, stripe: any, supabase: any) {
           paymentSectionTitle: `Mensualité ${newPaidMonths}/${subscription.duration_months}`,
           emailSubject: `Prélèvement mensuel confirmé (${newPaidMonths}/${subscription.duration_months}) - Kiltirbox`,
           headerSubtitle: `Prélèvement mensuel confirmé — Mois ${newPaidMonths}/${subscription.duration_months}`,
-          introText: `Votre prélèvement mensuel pour votre abonnement <strong>Box ${subscription.theme}</strong> a bien été effectué. Il s'agit de la mensualité <strong>${newPaidMonths}/${subscription.duration_months}</strong>. Merci pour votre fidélité !`,
+          introText: `Votre commande <strong>${orderNumber}</strong> est prête.<br/><br/>Votre prélèvement mensuel pour votre abonnement <strong>Box ${subscription.theme}</strong> a bien été effectué. Il s'agit de la mensualité <strong>${newPaidMonths}/${subscription.duration_months}</strong>. Merci pour votre fidélité !`,
         });
       } else {
         logStep('Recurring email skipped: no customer email', { subscriptionId });
