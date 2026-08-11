@@ -202,7 +202,8 @@ async function sendOrderConfirmationEmail(params: {
   const hasSubscription = params.items.some((i) => i.durationMonths && i.durationMonths > 0);
   const firstPaymentTitle = params.paymentSectionTitle || (hasSubscription ? '1ère mensualité' : 'Paiement');
   const headerSubtitle = params.headerSubtitle || 'Merci pour votre commande';
-  const introText = params.introText || `Nous avons bien reçu votre commande <strong style="color:${brandBrownDark};">${params.orderNumber}</strong> et vous en remercions chaleureusement.
+  const introText = params.introText || `Votre commande <strong style="color:${brandBrownDark};">${params.orderNumber}</strong> est prête.<br/><br/>
+        Nous avons bien reçu votre commande et vous en remercions chaleureusement.
         Toute l'équipe KiltirBox met un point d'honneur à vous faire découvrir les meilleurs produits de La Réunion.`;
 
   const logoUrl = 'https://kiltirbox.com/kiltirbox-logo.png';
@@ -844,7 +845,7 @@ async function handleInvoicePaid(invoice: any, stripe: any, supabase: any) {
           paymentSectionTitle: `Mensualité ${newPaidMonths}/${subscription.duration_months}`,
           emailSubject: `Prélèvement mensuel confirmé (${newPaidMonths}/${subscription.duration_months}) - Kiltirbox`,
           headerSubtitle: `Prélèvement mensuel confirmé — Mois ${newPaidMonths}/${subscription.duration_months}`,
-          introText: `Votre prélèvement mensuel pour votre abonnement <strong>Box ${subscription.theme}</strong> a bien été effectué. Il s'agit de la mensualité <strong>${newPaidMonths}/${subscription.duration_months}</strong>. Merci pour votre fidélité !`,
+          introText: `Votre commande <strong>${orderNumber}</strong> est prête.<br/><br/>Votre prélèvement mensuel pour votre abonnement <strong>Box ${subscription.theme}</strong> a bien été effectué. Il s'agit de la mensualité <strong>${newPaidMonths}/${subscription.duration_months}</strong>. Merci pour votre fidélité !`,
         });
       } else {
         logStep('Recurring email skipped: no customer email', { subscriptionId });
