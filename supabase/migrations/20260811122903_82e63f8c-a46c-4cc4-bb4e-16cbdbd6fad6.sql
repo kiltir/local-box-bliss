@@ -1,0 +1,1 @@
+ALTER TABLE public.order_items ADD COLUMN IF NOT EXISTS cumul_engagement numeric NOT NULL DEFAULT 0;
