@@ -555,6 +555,7 @@ export type Database = {
         Row: {
           box_type: string
           created_at: string
+          cumul_engagement: number
           id: string
           order_id: string
           quantity: number
@@ -563,6 +564,7 @@ export type Database = {
         Insert: {
           box_type: string
           created_at?: string
+          cumul_engagement?: number
           id?: string
           order_id: string
           quantity?: number
@@ -571,6 +573,7 @@ export type Database = {
         Update: {
           box_type?: string
           created_at?: string
+          cumul_engagement?: number
           id?: string
           order_id?: string
           quantity?: number
