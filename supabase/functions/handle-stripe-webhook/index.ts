@@ -202,7 +202,8 @@ async function sendOrderConfirmationEmail(params: {
   const hasSubscription = params.items.some((i) => i.durationMonths && i.durationMonths > 0);
   const firstPaymentTitle = params.paymentSectionTitle || (hasSubscription ? '1ère mensualité' : 'Paiement');
   const headerSubtitle = params.headerSubtitle || 'Merci pour votre commande';
-  const introText = params.introText || `Nous avons bien reçu votre commande <strong style="color:${brandBrownDark};">${params.orderNumber}</strong> et vous en remercions chaleureusement.
+  const introText = params.introText || `Votre commande <strong style="color:${brandBrownDark};">${params.orderNumber}</strong> est prête.<br/><br/>
+        Nous avons bien reçu votre commande et vous en remercions chaleureusement.
         Toute l'équipe KiltirBox met un point d'honneur à vous faire découvrir les meilleurs produits de La Réunion.`;
 
   const logoUrl = 'https://kiltirbox.com/kiltirbox-logo.png';
