@@ -311,6 +311,21 @@ serve(async (req) => {
       );
     }
 
+    await notifyAdmin({
+      event: 'supplier_application',
+      title: 'Nouvelle candidature fournisseur',
+      details: {
+        'Nom': data.nom.trim(),
+        'Raison sociale': data.raisonSociale.trim(),
+        'SIRET': data.siret.trim(),
+        'Email': data.email.trim().toLowerCase(),
+        'Téléphone': data.telephone.trim(),
+        'Ville': `${data.codePostal.trim()} ${data.ville.trim()}`,
+        'Activité': data.activite.trim(),
+        'Produits': data.produits.trim().slice(0, 500),
+      },
+    });
+
     // Generate signed upload URLs for photos if requested
     const uploadUrls: { path: string; signedUrl: string }[] = [];
     
