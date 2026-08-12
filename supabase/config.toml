@@ -11,3 +11,6 @@ verify_jwt = false
 
 [functions.submit-supplier-application]
 verify_jwt = false
+
+[functions.notify-admin]
+verify_jwt = false
