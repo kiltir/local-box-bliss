@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.3";
+import { notifyAdmin } from "../_shared/notifyAdmin.ts";
 
 // Allowed origins for CORS
 const ALLOWED_ORIGINS = [
@@ -244,6 +245,17 @@ serve(async (req) => {
     }
 
     console.log(`Contact form submitted successfully`);
+
+    await notifyAdmin({
+      event: 'contact_form',
+      title: 'Nouveau message de contact',
+      details: {
+        'Nom': name.trim(),
+        'Email': email.trim().toLowerCase(),
+        'Sujet': subject.trim(),
+        'Message': message.trim().slice(0, 1000),
+      },
+    });
 
     return new Response(
       JSON.stringify({ success: true, message: 'Message envoyé avec succès' }),
