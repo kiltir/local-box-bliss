@@ -108,6 +108,12 @@ const Footer = () => {
           title: "Inscription réussie !",
           description: "Merci de vous être inscrit à notre newsletter."
         });
+        supabase.functions.invoke('notify-admin', {
+          body: {
+            event: 'newsletter_subscription',
+            details: { 'Email': email.trim().toLowerCase() },
+          },
+        }).catch(() => {});
         setEmail('');
       }
     } catch (error) {
