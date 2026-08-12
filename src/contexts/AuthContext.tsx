@@ -50,7 +50,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const signUp = async (email: string, password: string, fullName?: string) => {
     const redirectUrl = `https://kiltirbox.com/auth`;
     
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -60,6 +60,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         }
       }
     });
+
+    if (!error && data?.user) {
+      // Notification interne (non bloquante)
+      supabase.functions.invoke('notify-admin', {
+        body: {
+          event: 'account_created',
+          details: {
+            'Email': email,
+            'Nom': fullName || '—',
+          },
+        },
+      }).catch(() => {});
+    }
     return { error };
   };
 
