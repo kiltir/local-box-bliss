@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.3";
+import { notifyAdmin } from "../_shared/notifyAdmin.ts";
 
 // Allowed origins for CORS
 const ALLOWED_ORIGINS = [
@@ -310,6 +311,21 @@ serve(async (req) => {
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
+
+    await notifyAdmin({
+      event: 'supplier_application',
+      title: 'Nouvelle candidature fournisseur',
+      details: {
+        'Nom': data.nom.trim(),
+        'Raison sociale': data.raisonSociale.trim(),
+        'SIRET': data.siret.trim(),
+        'Email': data.email.trim().toLowerCase(),
+        'Téléphone': data.telephone.trim(),
+        'Ville': `${data.codePostal.trim()} ${data.ville.trim()}`,
+        'Activité': data.activite.trim(),
+        'Produits': data.produits.trim().slice(0, 500),
+      },
+    });
 
     // Generate signed upload URLs for photos if requested
     const uploadUrls: { path: string; signedUrl: string }[] = [];
