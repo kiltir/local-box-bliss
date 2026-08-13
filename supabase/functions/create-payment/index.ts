@@ -681,6 +681,20 @@ serve(async (req) => {
       },
     };
 
+    // Generate an official Stripe invoice for one-time purchases
+    sessionConfig.invoice_creation = {
+      enabled: true,
+      invoice_data: {
+        description: 'Commande KiltirBox — achat unique',
+        footer: 'KiltirBox — Une question ? contact@kiltirbox.com',
+        metadata: {
+          user_id: user?.id || 'guest',
+          pending_order_id: pendingOrderId,
+          shipping_cost: ((shippingCostBase / 100) * totalOneTimeQuantity).toString(),
+        },
+      },
+    };
+
     if (customerId) {
       sessionConfig.customer = customerId;
     } else {
