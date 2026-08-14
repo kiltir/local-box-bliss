@@ -672,6 +672,9 @@ serve(async (req) => {
           product_data: {
             name: `${shippingLabel} — ${item.box.baseTitle}`,
             description: 'Frais de livraison par box',
+            ...((await getShippingImages(shippingLabel)).length
+              ? { images: await getShippingImages(shippingLabel) }
+              : {}),
           },
           unit_amount: shippingCostBase,
         },
