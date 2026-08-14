@@ -162,6 +162,25 @@ serve(async (req) => {
         : ['FR'];
     logStep("Allowed shipping countries resolved", { allowedCountries });
 
+    // Shipping images: reuse the images set on the matching Stripe dashboard
+    // product (searched by its exact name = the shipping label from the DB).
+    const shippingImagesCache = new Map<string, string[]>();
+    const getShippingImages = async (label: string): Promise<string[]> => {
+      if (shippingImagesCache.has(label)) return shippingImagesCache.get(label)!;
+      let images: string[] = [];
+      try {
+        const found = await stripe.products.search({
+          query: `name:'${label.replace(/'/g, "\\'")}' active:'true'`,
+        });
+        const withImage = found.data.find((p: any) => p.images && p.images.length > 0);
+        if (withImage) images = withImage.images.slice(0, 1);
+      } catch (e) {
+        logStep("Failed to fetch shipping product image", { label, error: (e as Error).message });
+      }
+      shippingImagesCache.set(label, images);
+      return images;
+    };
+
     // Fetch all box prices from database for validation
     const { data: dbPrices, error: pricesError } = await supabaseClient
       .from('box_prices')
@@ -428,9 +447,11 @@ serve(async (req) => {
         // Métropole rate; the airport surcharge is added only to the 1st invoice.
         const recurringShippingCents = isAirportMode ? metropoleShippingCents : shippingCostBase;
         const recurringShippingLabel = isAirportMode ? metropoleShipping.label : shippingLabel;
+        const recurringShippingImages = await getShippingImages(recurringShippingLabel);
         const recurringShippingProduct = await stripe.products.create({
           name: `${recurringShippingLabel} — ${item.box.baseTitle}`,
           description: 'Frais de livraison mensuels par box',
+          ...(recurringShippingImages.length ? { images: recurringShippingImages } : {}),
         });
 
         const recurringShippingPrice = await stripe.prices.create({
@@ -458,9 +479,11 @@ serve(async (req) => {
         if (isAirportMode) {
           const surchargeCents = shippingCostBase - metropoleShippingCents;
           if (surchargeCents > 0) {
+            const airportImages = await getShippingImages(shippingLabel);
             const surchargeProduct = await stripe.products.create({
               name: `Supplément livraison aéroport (1er mois) — ${item.box.baseTitle}`,
               description: 'Facturé uniquement sur la première facture',
+              ...(airportImages.length ? { images: airportImages } : {}),
             });
             const surchargePrice = await stripe.prices.create({
               product: surchargeProduct.id,
@@ -521,9 +544,11 @@ serve(async (req) => {
           });
 
           // Shipping line placed right after this one-time item
+          const mixedShippingImages = await getShippingImages(shippingLabel);
           const shippingProduct = await stripe.products.create({
             name: `${shippingLabel} — ${item.box.baseTitle}`,
             description: 'Frais de livraison par box',
+            ...(mixedShippingImages.length ? { images: mixedShippingImages } : {}),
           });
 
           const shippingPrice = await stripe.prices.create({
@@ -647,6 +672,9 @@ serve(async (req) => {
           product_data: {
             name: `${shippingLabel} — ${item.box.baseTitle}`,
             description: 'Frais de livraison par box',
+            ...((await getShippingImages(shippingLabel)).length
+              ? { images: await getShippingImages(shippingLabel) }
+              : {}),
           },
           unit_amount: shippingCostBase,
         },
