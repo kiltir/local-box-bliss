@@ -162,6 +162,25 @@ serve(async (req) => {
         : ['FR'];
     logStep("Allowed shipping countries resolved", { allowedCountries });
 
+    // Shipping images: reuse the images set on the matching Stripe dashboard
+    // product (searched by its exact name = the shipping label from the DB).
+    const shippingImagesCache = new Map<string, string[]>();
+    const getShippingImages = async (label: string): Promise<string[]> => {
+      if (shippingImagesCache.has(label)) return shippingImagesCache.get(label)!;
+      let images: string[] = [];
+      try {
+        const found = await stripe.products.search({
+          query: `name:'${label.replace(/'/g, "\\'")}' active:'true'`,
+        });
+        const withImage = found.data.find((p: any) => p.images && p.images.length > 0);
+        if (withImage) images = withImage.images.slice(0, 1);
+      } catch (e) {
+        logStep("Failed to fetch shipping product image", { label, error: (e as Error).message });
+      }
+      shippingImagesCache.set(label, images);
+      return images;
+    };
+
     // Fetch all box prices from database for validation
     const { data: dbPrices, error: pricesError } = await supabaseClient
       .from('box_prices')
