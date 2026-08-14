@@ -339,7 +339,12 @@ const Auth = () => {
                         {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                       </button>
                     </div>
-                    <p className="text-sm text-gray-500">Minimum 6 caractères</p>
+                    <ul className="text-xs text-gray-500 space-y-1 mt-1">
+                      <li>Minimum 6 caractères</li>
+                      <li>Au moins une lettre (a–z)</li>
+                      <li>Au moins un chiffre (0–9)</li>
+                      <li>Au moins un caractère spécial (@, #, !, …)</li>
+                    </ul>
                   </div>
                   <Button 
                     type="submit" 
