@@ -162,21 +162,66 @@ serve(async (req) => {
         : ['FR'];
     logStep("Allowed shipping countries resolved", { allowedCountries });
 
-    // Shipping images: reuse the images set on the matching Stripe dashboard
-    // product (searched by its exact name = the shipping label from the DB).
+    // Shipping images: reuse the images set on the matching Stripe dashboard product.
+    // The Stripe search index is eventually consistent (and misses freshly created
+    // products), so we list the catalogue once and match names loosely instead.
     const shippingImagesCache = new Map<string, string[]>();
+    let stripeProductsCache: any[] | null = null;
+
+    const loadStripeProducts = async (): Promise<any[]> => {
+      if (stripeProductsCache) return stripeProductsCache;
+      const all: any[] = [];
+      try {
+        for await (const p of stripe.products.list({ active: true, limit: 100 })) {
+          all.push(p);
+          if (all.length >= 300) break;
+        }
+      } catch (e) {
+        logStep("Failed to list Stripe products", { error: (e as Error).message });
+      }
+      stripeProductsCache = all;
+      logStep("Stripe products loaded for shipping images", { count: all.length });
+      return all;
+    };
+
+    const normalizeName = (s: string): string =>
+      s
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^a-z0-9]+/g, ' ')
+        .trim();
+
     const getShippingImages = async (label: string): Promise<string[]> => {
       if (shippingImagesCache.has(label)) return shippingImagesCache.get(label)!;
       let images: string[] = [];
-      try {
-        const found = await stripe.products.search({
-          query: `name:'${label.replace(/'/g, "\\'")}' active:'true'`,
+      const target = normalizeName(label);
+      const products = await loadStripeProducts();
+      const withImages = products.filter((p: any) => p.images && p.images.length > 0);
+
+      let match = withImages.find((p: any) => normalizeName(p.name || '') === target);
+      if (!match) {
+        match = withImages.find((p: any) => {
+          const n = normalizeName(p.name || '');
+          return n.includes(target) || target.includes(n);
         });
-        const withImage = found.data.find((p: any) => p.images && p.images.length > 0);
-        if (withImage) images = withImage.images.slice(0, 1);
-      } catch (e) {
-        logStep("Failed to fetch shipping product image", { label, error: (e as Error).message });
       }
+      if (!match) {
+        // Keyword fallback: reunion / metropole / aeroport
+        const keyword = target.includes('reunion')
+          ? 'reunion'
+          : target.includes('aeroport') || target.includes('airport')
+            ? 'aeroport'
+            : target.includes('metropole')
+              ? 'metropole'
+              : null;
+        if (keyword) {
+          match = withImages.find((p: any) => normalizeName(p.name || '').includes(keyword));
+        }
+      }
+
+      if (match) images = match.images.slice(0, 1);
+      logStep("Shipping image resolved", { label, matched: match?.name ?? null, hasImage: images.length > 0 });
       shippingImagesCache.set(label, images);
       return images;
     };
