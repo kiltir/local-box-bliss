@@ -237,15 +237,6 @@ serve(async (req) => {
       ],
     };
 
-    const getProductSearchText = (product: any): string => {
-      const metadata = product?.metadata && typeof product.metadata === 'object'
-        ? Object.entries(product.metadata)
-            .flatMap(([key, value]) => [key, String(value)])
-            .join(' ')
-        : '';
-      return normalizeName(`${product?.name ?? ''} ${product?.description ?? ''} ${metadata}`);
-    };
-
     const getShippingImages = async (label: string): Promise<string[]> => {
       const mode = resolveShippingMode(label);
       const cachedImages = shippingImagesCache.get(mode);
