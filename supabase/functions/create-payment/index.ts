@@ -81,6 +81,19 @@ serve(async (req) => {
       apiVersion: "2023-10-16",
     });
 
+    try {
+      const stripeAccount = await stripe.accounts.retrieve();
+      logStep("Stripe account connected", {
+        accountId: stripeAccount.id,
+        businessName: stripeAccount.business_profile?.name ?? null,
+        country: stripeAccount.country ?? null,
+      });
+    } catch (error) {
+      logStep("Unable to identify connected Stripe account", {
+        error: error instanceof Error ? error.message : String(error),
+      });
+    }
+
     // Canonical box images shown on the Stripe checkout, per purchase type
     const ONE_TIME_IMAGE = '/lovable-uploads/KB_box_achat_unique.png';
     const SUBSCRIPTION_IMAGE = '/lovable-uploads/KB_box_abonnement.png';
@@ -243,14 +256,29 @@ serve(async (req) => {
       const products = await loadStripeProducts();
       const withImages = products.filter((p: any) => p.images && p.images.length > 0);
 
-      // Exact product-name match first, then the most specific alias match across
-      // name, description and metadata. Longer aliases win over generic keywords.
+      // Exact product-name match first, then aliases in the product name. Only use
+      // metadata as a secondary signal when it explicitly describes shipping;
+      // product descriptions often mention Réunion and must not cause false matches.
       let match = withImages.find((p: any) => normalizeName(p.name ?? '') === target);
       const aliases = shippingAliases[mode].map(normalizeName).sort((a, b) => b.length - a.length);
       if (!match) {
         match = withImages.find((product: any) => {
-          const searchText = getProductSearchText(product);
-          return aliases.some((alias) => searchText.includes(alias));
+          const productName = normalizeName(product?.name ?? '');
+          return aliases.some((alias) => productName.includes(alias));
+        });
+      }
+      if (!match) {
+        match = withImages.find((product: any) => {
+          const metadata = product?.metadata && typeof product.metadata === 'object'
+            ? product.metadata
+            : {};
+          const shippingMetadata = normalizeName([
+            metadata.shipping_mode,
+            metadata.delivery_mode,
+            metadata.delivery_type,
+            metadata.shipping_type,
+          ].filter(Boolean).join(' '));
+          return aliases.some((alias) => shippingMetadata.includes(alias));
         });
       }
 
