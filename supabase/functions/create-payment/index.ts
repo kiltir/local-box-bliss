@@ -81,6 +81,19 @@ serve(async (req) => {
       apiVersion: "2023-10-16",
     });
 
+    try {
+      const stripeAccount = await stripe.accounts.retrieve();
+      logStep("Stripe account connected", {
+        accountId: stripeAccount.id,
+        businessName: stripeAccount.business_profile?.name ?? null,
+        country: stripeAccount.country ?? null,
+      });
+    } catch (error) {
+      logStep("Unable to identify connected Stripe account", {
+        error: error instanceof Error ? error.message : String(error),
+      });
+    }
+
     // Canonical box images shown on the Stripe checkout, per purchase type
     const ONE_TIME_IMAGE = '/lovable-uploads/KB_box_achat_unique.png';
     const SUBSCRIPTION_IMAGE = '/lovable-uploads/KB_box_abonnement.png';
@@ -163,8 +176,8 @@ serve(async (req) => {
     logStep("Allowed shipping countries resolved", { allowedCountries });
 
     // Shipping images: reuse the images set on the matching Stripe dashboard product.
-    // The Stripe search index is eventually consistent (and misses freshly created
-    // products), so we list the catalogue once and match names loosely instead.
+    // The Stripe search index is eventually consistent, so inspect the whole catalogue
+    // and match the product name, description and metadata with delivery-mode aliases.
     const shippingImagesCache = new Map<string, string[]>();
     let stripeProductsCache: any[] | null = null;
 
@@ -172,7 +185,9 @@ serve(async (req) => {
       if (stripeProductsCache) return stripeProductsCache;
       const all: any[] = [];
       try {
-        for await (const p of stripe.products.list({ active: true, limit: 100 })) {
+        // Do not filter by `active`: an archived catalogue product can still provide
+        // the public image URL used by the dynamically-created Checkout line item.
+        for await (const p of stripe.products.list({ limit: 100 })) {
           all.push(p);
           if (all.length >= 300) break;
         }
@@ -192,37 +207,91 @@ serve(async (req) => {
         .replace(/[^a-z0-9]+/g, ' ')
         .trim();
 
+    type ShippingMode = 'metropole' | 'reunion' | 'airport';
+
+    const resolveShippingMode = (label: string): ShippingMode => {
+      const normalized = normalizeName(label);
+      if (normalized.includes('reunion')) return 'reunion';
+      if (
+        normalized.includes('aeroport') ||
+        normalized.includes('airport') ||
+        normalized.includes('recuperation') ||
+        normalized.includes('retrait')
+      ) {
+        return 'airport';
+      }
+      return 'metropole';
+    };
+
+    const shippingAliases: Record<ShippingMode, string[]> = {
+      metropole: ['livraison metropole', 'france metropolitaine', 'metropole', 'hexagone'],
+      reunion: ['livraison reunion', 'livraison la reunion', 'la reunion', 'reunion'],
+      airport: [
+        'recuperation a l aeroport',
+        'recuperation aeroport',
+        'retrait a l aeroport',
+        'retrait aeroport',
+        'livraison aeroport',
+        'aeroport',
+        'airport',
+      ],
+    };
+
     const getShippingImages = async (label: string): Promise<string[]> => {
-      if (shippingImagesCache.has(label)) return shippingImagesCache.get(label)!;
+      const mode = resolveShippingMode(label);
+      const cachedImages = shippingImagesCache.get(mode);
+      if (cachedImages) return cachedImages;
+
       let images: string[] = [];
       const target = normalizeName(label);
       const products = await loadStripeProducts();
       const withImages = products.filter((p: any) => p.images && p.images.length > 0);
 
-      let match = withImages.find((p: any) => normalizeName(p.name || '') === target);
+      // Exact product-name match first, then aliases in the product name. Only use
+      // metadata as a secondary signal when it explicitly describes shipping;
+      // product descriptions often mention Réunion and must not cause false matches.
+      let match = withImages.find((p: any) => normalizeName(p.name ?? '') === target);
+      const aliases = shippingAliases[mode].map(normalizeName).sort((a, b) => b.length - a.length);
       if (!match) {
-        match = withImages.find((p: any) => {
-          const n = normalizeName(p.name || '');
-          return n.includes(target) || target.includes(n);
+        match = withImages.find((product: any) => {
+          const productName = normalizeName(product?.name ?? '');
+          return aliases.some((alias) => productName.includes(alias));
         });
       }
       if (!match) {
-        // Keyword fallback: reunion / metropole / aeroport
-        const keyword = target.includes('reunion')
-          ? 'reunion'
-          : target.includes('aeroport') || target.includes('airport')
-            ? 'aeroport'
-            : target.includes('metropole')
-              ? 'metropole'
-              : null;
-        if (keyword) {
-          match = withImages.find((p: any) => normalizeName(p.name || '').includes(keyword));
-        }
+        match = withImages.find((product: any) => {
+          const metadata = product?.metadata && typeof product.metadata === 'object'
+            ? product.metadata
+            : {};
+          const shippingMetadata = normalizeName([
+            metadata.shipping_mode,
+            metadata.delivery_mode,
+            metadata.delivery_type,
+            metadata.shipping_type,
+          ].filter(Boolean).join(' '));
+          return aliases.some((alias) => shippingMetadata.includes(alias));
+        });
       }
 
       if (match) images = match.images.slice(0, 1);
-      logStep("Shipping image resolved", { label, matched: match?.name ?? null, hasImage: images.length > 0 });
-      shippingImagesCache.set(label, images);
+      logStep("Shipping image resolved", {
+        label,
+        mode,
+        matched: match?.name ?? null,
+        matchedActive: match?.active ?? null,
+        hasImage: images.length > 0,
+      });
+      if (!match) {
+        logStep("Illustrated Stripe products available for shipping match", {
+          mode,
+          count: withImages.length,
+          candidates: withImages.slice(0, 40).map((product: any) => ({
+            name: product.name ?? '(sans nom)',
+            active: product.active ?? null,
+          })),
+        });
+      }
+      shippingImagesCache.set(mode, images);
       return images;
     };
 
