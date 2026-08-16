@@ -209,6 +209,12 @@ serve(async (req) => {
 
     type ShippingMode = 'metropole' | 'reunion' | 'airport';
 
+    // Site-hosted fallback images: the Stripe delivery products only exist in the
+    // live catalogue, so a test-mode session can never resolve them.
+    const shippingFallbackImages: Partial<Record<ShippingMode, string>> = {
+      metropole: '/lovable-uploads/KB_livraison_metropole.png',
+    };
+
     const resolveShippingMode = (label: string): ShippingMode => {
       const normalized = normalizeName(label);
       if (normalized.includes('reunion')) return 'reunion';
@@ -274,6 +280,16 @@ serve(async (req) => {
       }
 
       if (match) images = match.images.slice(0, 1);
+      if (images.length === 0) {
+        const fallbackPath = shippingFallbackImages[mode];
+        if (fallbackPath) {
+          const fallbackUrl = toAbsoluteUrl(fallbackPath, requestOrigin);
+          if (fallbackUrl) {
+            images = [fallbackUrl];
+            logStep("Shipping image fallback used", { mode, url: fallbackUrl });
+          }
+        }
+      }
       logStep("Shipping image resolved", {
         label,
         mode,
@@ -281,7 +297,7 @@ serve(async (req) => {
         matchedActive: match?.active ?? null,
         hasImage: images.length > 0,
       });
-      if (!match) {
+      if (!match && images.length === 0) {
         logStep("Illustrated Stripe products available for shipping match", {
           mode,
           count: withImages.length,
