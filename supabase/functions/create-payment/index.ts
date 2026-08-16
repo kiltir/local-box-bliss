@@ -213,6 +213,8 @@ serve(async (req) => {
     // live catalogue, so a test-mode session can never resolve them.
     const shippingFallbackImages: Partial<Record<ShippingMode, string>> = {
       metropole: '/lovable-uploads/KB_livraison_metropole.png',
+      reunion: '/lovable-uploads/KB_livraison_reunion.png',
+      airport: '/lovable-uploads/KB_livraison_aeroport.png',
     };
 
     const resolveShippingMode = (label: string): ShippingMode => {
