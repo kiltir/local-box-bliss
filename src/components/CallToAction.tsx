@@ -91,8 +91,8 @@ const CallToAction = () => {
                     </CarouselItem>
                   ))}
                 </CarouselContent>
-                <CarouselPrevious className="left-0 bg-white/80 hover:bg-white border-none text-slate-900 transition-transform duration-200 hover:scale-110" />
-                <CarouselNext className="right-0 bg-white/80 hover:bg-white border-none text-slate-900 transition-transform duration-200 hover:scale-110" />
+                <CarouselPrevious className="left-0 bg-transparent hover:bg-transparent border-none text-white transition-transform duration-200 hover:scale-110" />
+                <CarouselNext className="right-0 bg-transparent hover:bg-transparent border-none text-white transition-transform duration-200 hover:scale-110" />
               </Carousel>
             )}
           </div>
