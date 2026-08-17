@@ -65,7 +65,7 @@ const ConditionsGenerales = () => {
                   Les services du site sont normalement accessibles aux clients 7 jours sur 7, 24 heures sur 24 toute l'année sauf en cas d'interruption volontaire ou non, notamment pour des besoins de maintenance ou de force majeure.
                 </p>
                 <p className="text-gray-700 leading-relaxed">
-                  La responsabilité de KiltirBox ne peut être engagée en cas de préjudice quel qu'en soit la nature, résultant d'une indisponibilité du site lié au cas précités.
+                  La responsabilité de KiltirBox ne peut être engagée en cas de préjudice quel qu'en soit la nature, résultant d'une indisponibilité du site lié aux cas précités.
                 </p>
               </section>
 
