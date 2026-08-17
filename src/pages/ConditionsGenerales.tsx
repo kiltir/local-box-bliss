@@ -134,7 +134,8 @@ const ConditionsGenerales = () => {
                   Le paiement est exigible immédiatement suite à la commande.
                 </p>
                 <p className="text-gray-700 leading-relaxed mb-4">
-                  Le paiement des achats et des abonnements s'effectue en une seule fois au moyen d'une carte de paiement bancaire (Bleue, Visa, Mastercard ou American express).
+                  Le paiement des achats uniques s'effectue en une seule fois au moyen d'une carte de paiement bancaire (Bleue, Visa, Mastercard ou American express).<br />
+                  Le paiement des abonnements implique un total engagement correspondant au montant total des mensualités et des frais de livraison globaux. La 1ère mensualité est payée à la souscription et les mensualités suivantes seront prélevées directement jusqu'au solde du total engagement.
                 </p>
                 <p className="text-gray-700 leading-relaxed mb-4">
                   Le client garantit à KiltirBox qu'il est pleinement autorisé à utiliser la carte de paiement pour le paiement de sa commande et que ces moyens de paiement donnent légalement accès à des fonds suffisant pour couvrir tous les coûts résultants de sa commande sur le site.
