@@ -163,7 +163,7 @@ const ConditionsGenerales = () => {
                   Le service d'envoi de box couvre uniquement la zone géographique déterminée à l'Article « zone géographique ».
                 </p>
                 <p className="text-gray-700 leading-relaxed mb-4">
-                  Les tarifs de livraison sont inclus dans le prix des box.
+                  Les tarifs de livraison ne sont pas inclus dans le prix des box.
                 </p>
                 <p className="text-gray-700 leading-relaxed mb-4">
                   En cas de gratuité annoncée d'un ou plusieurs modes de livraison à partir d'un certain montant d'achat, ce montant comprend réductions et promotions comprises et correspond au montant final du panier.
@@ -182,7 +182,7 @@ const ConditionsGenerales = () => {
                   Le colis est pris en charge par la Poste et remis à l'adresse de livraison indiqué par le client. Si vous êtes absent lors de la livraison et si les dimensions de votre colis le permettent, le facteur laissera votre colis dans votre boîte aux lettres. Dans le cas contraire, vous trouverez un avis de passage vous invitant à retirer votre colis dans votre bureau de Poste dans les 15 jours ouvrés suivant la réception du récépissé.
                 </p>
                 <p className="text-gray-700 leading-relaxed mb-4">
-                  Les premières box de chaque abonnement sont expédiées sous dix jours ouvrés. À compter du deuxième mois d'abonnement, toutes les box sont expédiées entre le 5 et le 10 du mois.
+                  Les premières box de chaque abonnement sont expédiées sous dix jours ouvrés. À compter de la deuxième mensualité d'abonnement, toutes les box sont expédiées entre le 5 et le 10 du mois.
                 </p>
                 <p className="text-gray-700 leading-relaxed mb-4">
                   Les délais moyens de livraison changent selon le prestataire.
