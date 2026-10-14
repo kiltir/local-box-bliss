@@ -81,7 +81,7 @@ const CallToAction = () => {
                 <CarouselContent className="-ml-2 md:-ml-4">
                   {images.map((image, index) => (
                     <CarouselItem key={index} className="pl-2 md:pl-4 basis-1/3">
-                      <div className="aspect-square overflow-hidden rounded-xl shadow-lg group">
+                      <div className="aspect-square overflow-hidden group">
                         <img
                           src={image.url}
                           alt={image.title || `Photo communauté ${index + 1}`}
